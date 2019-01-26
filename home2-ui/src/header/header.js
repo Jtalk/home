@@ -9,7 +9,7 @@ import HeaderUserItem from "./header-user-item";
 class Header extends React.Component {
 
     render() {
-        return <Menu secondary pointing attached="top">
+        return <Menu secondary pointing>
             <HeaderOwner ownerName={this.props.ownerName} />
             <HeaderMenuItem title="Item1" href="/item1.html"/>
             <HeaderMenuItem title="Item2" href="/item2.html" active={true}/>

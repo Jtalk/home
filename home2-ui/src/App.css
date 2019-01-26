@@ -34,3 +34,42 @@
 .ui.right.aligned.search.item {
   align-self: center;
 }
+
+.header > a {
+  color: black;
+}
+
+.header > a:visited {
+  color: grey;
+}
+
+.main-content-pushable {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.main-content-pusher {
+  flex: 1 0 auto;
+}
+
+footer {
+  border-width: 0px 0px 0px 0px !important;
+  border-image-width: 0px 0px 0px 0px !important;
+  bottom: 0;
+  margin: 0px;
+  flex-shrink: 0;
+}
+
+footer a {
+  color: white;
+}
+
+.ui.container.framed {
+  border-left-style: solid;
+  border-right-style: solid;
+  border-left-width: 2px;
+  border-right-width: 2px;
+  border-color: lightgray;
+  background-color: white;
+}
