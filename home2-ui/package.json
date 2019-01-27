@@ -3,12 +3,14 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "bbcode-to-react": "^0.2.9",
     "react": "^16.7.0",
     "react-dom": "^16.7.0",
+    "react-router": "^4.3.1",
+    "react-router-dom": "^4.3.1",
     "react-scripts": "2.1.3",
-    "semantic-ui-react": "^0.84.0",
     "semantic-ui-css": "^2.4.1",
-    "bbcode-to-react": "^0.2.9"
+    "semantic-ui-react": "^0.84.0"
   },
   "scripts": {
     "start": "PORT=8070 react-scripts start",
