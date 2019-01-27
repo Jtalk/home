@@ -1,5 +1,7 @@
 import React from "react";
 import {Card, Divider, List} from "semantic-ui-react";
+import {formatDateTime} from "../utils/date-time";
+
 
 class LatestPosts extends React.Component {
 
@@ -40,7 +42,7 @@ class LatestPosts extends React.Component {
                     <a href={post.url}>{post.title}</a>
                 </List.Header>
                 <List.Description>
-                    {post.createTime.toLocaleString()}
+                    {formatDateTime(post.createTime)}
                 </List.Description>
             </List.Content>
         </List.Item>

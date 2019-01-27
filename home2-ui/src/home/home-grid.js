@@ -3,7 +3,7 @@ import {Grid} from "semantic-ui-react";
 import OwnerCard from "./owner-card";
 import LatestPosts from "./latest-posts";
 import "../bbcode/tags";
-import parser from "bbcode-to-react";
+import {formatMarkup} from "../utils/text-markup";
 
 class HomeGrid extends React.Component {
 
@@ -29,7 +29,7 @@ class HomeGrid extends React.Component {
             <Grid.Row>
                 {/*{ Something about footer-margin style was below }*/}
                 <Grid.Column width={10} as="main">
-                    {parser.toReact(this.state.text)}
+                    {formatMarkup(this.state.text)}
                 </Grid.Column>
                 <Grid.Column width={4}>
                     <OwnerCard ownerPhotoUrl="/images/avatar.png"
