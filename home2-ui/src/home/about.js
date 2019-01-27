@@ -5,7 +5,7 @@ import LatestPosts from "./latest-posts";
 import "../bbcode/tags";
 import {formatMarkup} from "../utils/text-markup";
 
-class HomeGrid extends React.Component {
+class About extends React.Component {
 
     constructor(props) {
         super(props);
@@ -27,7 +27,6 @@ class HomeGrid extends React.Component {
     render() {
         return <Grid stackable centered>
             <Grid.Row>
-                {/*{ Something about footer-margin style was below }*/}
                 <Grid.Column width={10} as="main">
                     {formatMarkup(this.state.text)}
                 </Grid.Column>
@@ -38,6 +37,10 @@ class HomeGrid extends React.Component {
             </Grid.Row>
         </Grid>
     }
+
+    componentDidMount() {
+        document.title = this.props.ownerName + ": About";
+    }
 }
 
-export default HomeGrid;
+export default About;

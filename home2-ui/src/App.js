@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import './App.css';
 import Header from './header/header';
-import HomeGrid from "./home/home-grid";
+import About from "./home/about";
 import {Container} from "semantic-ui-react";
 import Footer from "./footer/footer";
 import {BrowserRouter as Router, Route, Switch} from "react-router-dom";
@@ -9,7 +9,17 @@ import Blog from "./blog/blog";
 import WebError from "./error/web-error";
 
 class App extends Component {
+
+    constructor(props) {
+        super(props);
+        this.state = {
+            ownerName: "Vasya Pupkin"
+        };
+    }
+
+
     render() {
+        document.title = this.state.ownerName;
         return <Router>
             <div className="main-content-pushable">
                 <Switch>
@@ -22,15 +32,15 @@ class App extends Component {
         </Router>
     }
 
-    home(match) {
-        return this.page("About", <HomeGrid ownerName="Vasya Pupkin"/>);
+    home() {
+        return this.page("About", <About ownerName={this.state.ownerName}/>);
     }
 
-    blog(match) {
-        return this.page("Blog", <Blog/>);
+    blog() {
+        return this.page("Blog", <Blog ownerName={this.state.ownerName}/>);
     }
 
-    error(match) {
+    error() {
         return this.page(null, <WebError httpCode={404} message={"Not found"}/>);
     }
 

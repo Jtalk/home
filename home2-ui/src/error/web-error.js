@@ -9,6 +9,10 @@ class WebError extends React.Component {
             {this.props.httpCode}: {this.props.message}
         </Container>
     }
+
+    componentDidMount() {
+        document.title = this.props.httpCode;
+    }
 }
 
 export default WebError;

@@ -68,15 +68,19 @@ class Blog extends React.Component {
                             </Menu>
                         </Segment>
                     </Grid.Row>,
-                articleId => null
+                () => null
             )}
         </Grid>
+    }
+
+    componentDidMount() {
+        document.title = this.props.ownerName + ": Blog";
     }
 
     blogRouting(indexRender, articleRender) {
         return <Router>
             <Switch>
-                <Route exact path="/blog" render={match => indexRender()}/>
+                <Route exact path="/blog" render={() => indexRender()}/>
                 <Route exact path="/blog/article/:articleId" render={param => {
                     console.log(param);
                     return articleRender(param.match.params.articleId);
