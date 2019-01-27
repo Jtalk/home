@@ -14,7 +14,7 @@ class App extends Component {
             <div className="main-content-pushable">
                 <Switch>
                     <Route exact path="/" render={this.home.bind(this)}/>
-                    <Route exact path="/blog" render={this.blog.bind(this)}/>
+                    <Route path="/blog" render={this.blog.bind(this)}/>
                     <Route render={this.error.bind(this)}/>
                 </Switch>
                 <Footer/>
