@@ -12,7 +12,7 @@ class Header extends React.Component {
         return <Menu secondary pointing>
             <HeaderOwner ownerName={this.props.ownerName} />
             {this.item("About", "/")}
-            {this.item("Item2", "/item2.html")}
+            {this.item("Projects", "/projects")}
             {this.item("Blog", "/blog")}
             <HeaderMenuDropdownItem title="Item4" items={[
                 {title: "Item4.1"},
