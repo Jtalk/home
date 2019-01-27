@@ -1,11 +1,9 @@
 import React from "react";
-import "../bbcode/tags";
 import BlogArticle from "./blog-article";
 import {Grid, Menu, Segment} from "semantic-ui-react";
 import OwnerCard from "../home/owner-card";
 import LatestPosts from "../home/latest-posts";
-import {Link} from "react-router-dom";
-import {BrowserRouter as Router, Route, Switch} from "react-router-dom";
+import {BrowserRouter as Router, Link, Route, Switch} from "react-router-dom";
 import BlogArticleLoader from "./blog-article-loader";
 import WebError from "../error/web-error";
 
