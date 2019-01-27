@@ -32,11 +32,7 @@ class HomeGrid extends React.Component {
                     {formatMarkup(this.state.text)}
                 </Grid.Column>
                 <Grid.Column width={4}>
-                    <OwnerCard ownerPhotoUrl="/images/avatar.png"
-                               ownerName="Vasya Pupkin"
-                               ownerNickname="VPupkin"
-                               ownerDescription="Very cool guy"
-                               ownerEmail="vasya@example.com"/>
+                    <OwnerCard/>
                    <LatestPosts/>
                 </Grid.Column>
             </Grid.Row>
