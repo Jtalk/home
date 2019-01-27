@@ -1,15 +1,24 @@
 import React from "react";
 import {Dropdown} from "semantic-ui-react";
+import {Link} from "react-router-dom";
 
-class HeaderMenuDropdownItem extends React.Component {
+export default class HeaderMenuDropdownItem extends React.Component {
 
     render() {
         return <Dropdown item text={this.props.title}>
             <Dropdown.Menu>
-                 {this.props.items.map(item => <Dropdown.Item active={item.active} text={item.title} key={item.title}/>)}
+                {this.props.items.map(item =>
+                    <Link to={item.href}
+                          className={"ui dropdown " + HeaderMenuDropdownItem._activeClass(item.active)}
+                          key={item.title}>
+                        {item.title}
+                    </Link>
+                )}
             </Dropdown.Menu>
         </Dropdown>
     }
-}
 
-export default HeaderMenuDropdownItem;
+    static _activeClass(active) {
+        return active ? "active item" : "item";
+    }
+}

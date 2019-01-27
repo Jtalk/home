@@ -1,5 +1,6 @@
 import React from "react";
-import {Button, Divider, Form, Grid, Image, Input, Message, Segment, TextArea} from "semantic-ui-react";
+import {Button, Divider, Form, Grid, Image, Input, Segment, TextArea} from "semantic-ui-react";
+import {ErrorMessage, formStateClass, SuccessMessage} from "../form/form-message";
 
 export default class EditBio extends React.Component {
 
@@ -37,7 +38,7 @@ export default class EditBio extends React.Component {
             <Grid.Column width={11}>
                 <Segment raised>
                     <h2>Edit bio</h2>
-                    <Form className={this._formClass()}>
+                    <Form className={formStateClass(this.state.success, this.state.errorMessage)}>
                         <Divider/>
                         <Grid stackable>
                             <Grid.Row>
@@ -58,13 +59,8 @@ export default class EditBio extends React.Component {
                                         <label>Owner short bio</label>
                                         <input placeholder="Short bio" value={owner.description} onChange={this._onChange}/>
                                     </Form.Field>
-                                    <Message success>
-                                        Changes successfully saved
-                                    </Message>
-                                    <Message error>
-                                        <Message.Header>Error:</Message.Header>
-                                        {this.state.errorMessage}
-                                    </Message>
+                                    <SuccessMessage message="Changes successfully saved"/>
+                                    <ErrorMessage message={this.state.errorMessage}/>
                                 </Grid.Column>
                                 <Grid.Column width={5}>
                                     <Form.Field>
@@ -87,16 +83,6 @@ export default class EditBio extends React.Component {
                 </Segment>
             </Grid.Column>
         </Grid>
-    }
-
-    _formClass() {
-        if (!!this.state.errorMessage) {
-            return "error";
-        } else if (this.state.success) {
-            return "success";
-        } else {
-            return "";
-        }
     }
 
     _onChange(event) {
