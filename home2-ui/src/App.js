@@ -8,6 +8,7 @@ import {BrowserRouter as Router, Route, Switch} from "react-router-dom";
 import Blog from "./blog/blog";
 import WebError from "./error/web-error";
 import Projects from "./projects/projects";
+import AdminRouter from "./admin/admin-router";
 
 class App extends Component {
 
@@ -26,6 +27,7 @@ class App extends Component {
                     <Route exact path="/" render={this.home.bind(this)}/>
                     <Route path="/projects" render={this.projects.bind(this)}/>
                     <Route path="/blog" render={this.blog.bind(this)}/>
+                    <Route path="/admin" render={this.admin.bind(this)}/>
                     <Route render={this.error.bind(this)}/>
                 </Switch>
                 <Footer/>
@@ -43,6 +45,10 @@ class App extends Component {
 
     blog() {
         return this.page("Blog", <Blog ownerName={this.state.ownerName}/>);
+    }
+
+    admin() {
+        return this.page(null, <AdminRouter/>);
     }
 
     error() {

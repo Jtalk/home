@@ -1,5 +1,6 @@
 import React from "react";
 import {Dropdown} from "semantic-ui-react";
+import {Link} from "react-router-dom";
 
 class HeaderUserItem extends React.Component {
 
@@ -9,7 +10,8 @@ class HeaderUserItem extends React.Component {
         }
         return <Dropdown item text={this.props.user} icon="user">
             <Dropdown.Menu>
-                 <Dropdown.Item text="Logout"/>
+                <Link className="dropdown item" to="/admin/bio">Edit Bio</Link>
+                <Dropdown.Item text="Logout"/>
             </Dropdown.Menu>
         </Dropdown>
     }
