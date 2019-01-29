@@ -85,6 +85,10 @@ export default class EditBio extends React.Component {
         </Grid>
     }
 
+    componentDidMount() {
+        document.title = this.props.ownerName + ": Edit Bio";
+    }
+
     _onChange(event) {
 
     }

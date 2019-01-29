@@ -79,14 +79,8 @@ export default class EditBlog extends React.Component {
         </Grid>
     }
 
-    _formClass() {
-        if (!!this.state.errorMessage) {
-            return "error";
-        } else if (this.state.success) {
-            return "success";
-        } else {
-            return "";
-        }
+    componentDidMount() {
+        document.title = this.props.ownerName + ": Edit Blog";
     }
 
     _onChange(event) {

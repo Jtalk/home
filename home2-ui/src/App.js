@@ -48,7 +48,7 @@ class App extends Component {
     }
 
     admin() {
-        return this.page(null, <AdminRouter/>);
+        return this.page(null, <AdminRouter ownerName={this.state.ownerName}/>);
     }
 
     error() {
