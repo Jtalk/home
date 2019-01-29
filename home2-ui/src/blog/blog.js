@@ -3,11 +3,10 @@ import BlogArticle from "./blog-article";
 import {Grid, Menu, Segment} from "semantic-ui-react";
 import OwnerCard from "../home/owner-card";
 import LatestPosts from "../home/latest-posts";
-import {BrowserRouter as Router, Link, Route, Switch} from "react-router-dom";
+import {Link, Route} from "react-router-dom";
 import BlogArticleLoader from "./blog-article-loader";
-import WebError from "../error/web-error";
 
-class Blog extends React.Component {
+export default class Blog extends React.Component {
 
     constructor(props) {
         super(props);
@@ -76,17 +75,10 @@ class Blog extends React.Component {
     }
 
     blogRouting(indexRender, articleRender) {
-        return <Router>
-            <Switch>
-                <Route exact path="/blog" render={() => indexRender()}/>
-                <Route exact path="/blog/article/:articleId" render={param => {
-                    console.log(param);
-                    return articleRender(param.match.params.articleId);
-                }}/>
-                <Route render={() => <WebError httpCode={404} message="Not Found"/>}/>
-            </Switch>
-        </Router>
+        return [
+            <Route exact key="blog" path="/blog" render={() => indexRender()}/>,
+            <Route exact key="article" path="/blog/article/:articleId"
+                   render={param => articleRender(param.match.params.articleId)}/>
+        ]
     }
 }
-
-export default Blog;
