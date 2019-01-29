@@ -9,7 +9,7 @@ class BlogArticleLoader extends React.Component {
         this.state = {
             article: {
                 title: "Blog Entry 1",
-                href: "/blog/blog-entry-1",
+                href: "/blog/article/blog-entry-1",
                 tags: [{name: "Hello"}, {name: "Tags!"}],
                 content: "[h1]Header [abbr title=\"Lenghty explanation\"]LE[/abbr][/h1]" +
                     " [p]Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium," +
