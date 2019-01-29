@@ -3,6 +3,7 @@ import {Route, Switch} from "react-router";
 import EditBio from "./edit-bio";
 import EditBlog from "./edit-blog";
 import EditBlogArticle from "./edit-blog-article";
+import EditProjects from "./edit-projects";
 
 export default class AdminRouter extends React.Component {
 
@@ -10,6 +11,10 @@ export default class AdminRouter extends React.Component {
         return <Switch>
             <Route exact path="/admin/bio"
                    render={() => <EditBio ownerName={this.props.ownerName}/>}/>
+            <Route exact path="/admin/projects"
+                   render={() => <EditProjects ownerName={this.props.ownerName}/>}/>
+            <Route exact path="/admin/projects/:projectId"
+                   render={params => <EditProjects currentProjectId={params.match.params.projectId} ownerName={this.props.ownerName}/>}/>
             <Route exact path="/admin/blog"
                    render={() => <EditBlog ownerName={this.props.ownerName}/>}/>
             <Route exact path="/admin/blog/article/:id"

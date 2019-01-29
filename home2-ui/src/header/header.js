@@ -15,8 +15,8 @@ class Header extends React.Component {
             {this.item("Projects", "/projects")}
             {this.item("Blog", "/blog")}
             <HeaderMenuDropdownItem title="Admin" items={[
+                {title: "Edit Projects", href: "/admin/projects"},
                 {title: "Edit Blog", href: "/admin/blog"},
-                {title: "Item4.2", href: "/test", active: true},
                 {title: "Item4.3", href: "/test"},
                 {title: "Item4.4", href: "/test"},
             ]}/>
