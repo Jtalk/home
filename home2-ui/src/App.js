@@ -6,11 +6,15 @@ import {Container} from "semantic-ui-react";
 import Footer from "./footer/footer";
 import {BrowserRouter as Router, Route, Switch} from "react-router-dom";
 import Blog from "./blog/blog";
-import WebError from "./error/web-error";
 import Projects from "./projects/projects";
-import AdminRouter from "./admin/admin-router";
+import EditBio from "./admin/edit-bio";
+import EditProjects from "./admin/edit-projects";
+import EditFooter from "./admin/edit-footer";
+import EditBlogRouter from "./admin/edit-blog-router";
+import EditImages from "./admin/edit-images";
+import NotFound from "./error/not-found";
 
-class App extends Component {
+export default class App extends Component {
 
     constructor(props) {
         super(props);
@@ -21,48 +25,99 @@ class App extends Component {
 
     render() {
         document.title = this.state.ownerName;
-        return <Router>
-            <div className="main-content-pushable">
-                <Switch>
-                    <Route exact path="/" render={this.home.bind(this)}/>
-                    <Route path="/projects" render={this.projects.bind(this)}/>
-                    <Route path="/blog" render={this.blog.bind(this)}/>
-                    <Route path="/admin" render={this.admin.bind(this)}/>
-                    <Route render={this.error.bind(this)}/>
-                </Switch>
-                <Footer/>
-            </div>
-        </Router>
+        return <div className="main-content-pushable">
+            <Container className="main-content-pusher framed">
+                <Router>
+                    <Switch>
+                        {this._buildRoutes(this._mainRoutes().concat(this._serviceRoutes()))}
+                    </Switch>
+                </Router>
+            </Container>
+            <Footer/>
+        </div>
     }
 
-    home() {
-        return this.page("About", <About ownerName={this.state.ownerName}/>);
+    _buildRoutes(routes) {
+        return routes.flatMap(route => {
+            if (Array.isArray(route.routes) && route.routes.length) {
+                return this._buildRoutes(route.routes)
+            } else {
+                return [<Route key={route.title} {...route}/>]
+            }
+        });
     }
 
-    projects() {
-        return this.page("Projects", <Projects ownerName={this.state.ownerName}/>)
+    _mainRoutes() {
+        return [
+            {title: "About", path: "/", render: () => this.home(this.title), exact: true},
+            {title: "Projects", path: "/projects", render: () => this.projects(this.title)},
+            {title: "Blog", path: "/blog/articles", render: () => this.blog(this.title)},
+            {
+                title: "Admin", routes: [
+                    {
+                        title: "Edit Bio",
+                        path: "/admin/bio",
+                        exact: true,
+                        render: () => this.page(this.title, <EditBio ownerName={this.state.ownerName}/>)
+                    },
+                    {
+                        title: "Edit Projects",
+                        path: "/admin/projects/:projectId?",
+                        exact: true,
+                        render: params => this.page(this.title, <EditProjects currentProjectId={params.match.params.projectId}
+                                                                                 ownerName={this.state.ownerName}/>),
+                    },
+                    {
+                        title: "Edit Blog",
+                        path: "/admin/blog/articles/:articleId?",
+                        exact: true,
+                        render: params => this.page(this.title, <EditBlogRouter ownerName={this.state.ownerName} articleId={params.match.params.articleId}/>),
+                    },
+                    {
+                        title: "Edit Images",
+                        path: "/admin/images/:idx?",
+                        exact: true,
+                        render: params => this.page(this.title, <EditImages currentPageIdx={params.match.params.idx}
+                                                                                ownerName={this.state.ownerName}/>),
+                    },
+                    {
+                        title: "Edit Footer",
+                        path: "/admin/footer",
+                        exact: true,
+                        render: () => this.page(this.title, <EditFooter ownerName={this.state.ownerName}/>)
+                    }
+                ]
+            },
+        ]
     }
 
-    blog() {
-        return this.page("Blog", <Blog ownerName={this.state.ownerName}/>);
+    _serviceRoutes() {
+        return [
+            { title: "Error 404", component: params => this.error(params.match.location) },
+        ]
     }
 
-    admin() {
-        return this.page(null, <AdminRouter ownerName={this.state.ownerName}/>);
+    home(name) {
+        return this.page(name, <About ownerName={this.state.ownerName}/>);
     }
 
-    error() {
-        return this.page(null, <WebError httpCode={404} message={"Not found"}/>);
+    projects(name) {
+        return this.page(name, <Projects ownerName={this.state.ownerName}/>)
+    }
+
+    blog(name) {
+        return this.page(name, <Blog ownerName={this.state.ownerName}/>);
+    }
+
+    error(location) {
+        return this.page(null, <NotFound location={location}/>);
     }
 
     page(activeLink, mainComponent) {
-        return <Container className="main-content-pusher framed">
-            <Header ownerName="Vasya Pupkin" activeLink={activeLink}/>
+        return <div>
+            <Header ownerName="Vasya Pupkin" activeLink={activeLink} links={this._mainRoutes()}/>
             {mainComponent}
-        </Container>
+        </div>
     }
 }
 
-
-
-export default App;

@@ -1,9 +1,7 @@
 import React from "react";
 import {Divider, Form, Grid, Icon, Image, Input, List, Menu, Segment} from "semantic-ui-react";
 import {Link} from "react-router-dom";
-import {Redirect, Route, Switch} from "react-router";
 import {ErrorMessage} from "../form/form-message";
-import * as assert from "assert";
 
 export default class EditProjects extends React.Component {
 
@@ -39,26 +37,24 @@ export default class EditProjects extends React.Component {
         ];
         this.state = {
             projects: projects,
-            currentProject: projects.find(p => p.id === this.props.currentProjectId)
+            currentProject: projects.find(p => p.id === this.props.currentProjectId) || projects[0]
+        };
+    }
+
+    static getDerivedStateFromProps(props, state) {
+        return {
+            projects: state.projects,
+            currentProject: state.projects.find(p => p.id === props.currentProjectId) || state.projects[0]
         };
     }
 
     render() {
-        return <Switch>
-            <Redirect exact from="/admin/projects" to={this.state.projects[0].editHref}/>
-            <Route from="/admin/projects/:id" render={() => this._renderProjects()}/>
-        </Switch>
-    }
-
-    _renderProjects() {
-        assert(this.state.currentProject || this.props.currentProjectId === undefined,
-            `No project found: ${this.props.currentProjectId}, found: ${this.state.currentProject}`);
         return <Grid centered>
             <Grid.Column width={13}>
                 <Segment raised>
                     <Menu tabular>
                         {
-                            this.state.projects.map(project => project.id === this.props.currentProjectId
+                            this.state.projects.map(project => project.id === this.state.currentProject.id
                             ? <Menu.Item active key={project.id}>{project.title}</Menu.Item>
                             : <Link className="item" to={project.editHref} key={project.id}>{project.title}</Link>)
                         }

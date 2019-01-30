@@ -15,7 +15,7 @@ export default class Blog extends React.Component {
             articles: [
                 {
                     title: "Blog Entry 1",
-                    href: "/blog/article/blog-entry-1",
+                    href: "/blog/articles/blog-entry-1",
                     tags: [{name: "Hello"}, {name: "Tags!"}],
                     content: "[h1]Header [abbr title=\"Lenghty explanation\"]LE[/abbr][/h1]" +
                         " [p]Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium," +
@@ -27,7 +27,7 @@ export default class Blog extends React.Component {
                 },
                 {
                     title: "Blog Entry 2",
-                    href: "/blog/article/blog-entry-2",
+                    href: "/blog/articles/blog-entry-2",
                     tags: [{name: "Hello"}, {name: "Other"}, {name: "Tags!"}],
                     content: "[h1]Header [abbr title=\"Lenghty explanation\"]LE[/abbr][/h1]" +
                         " [p]Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium," +
@@ -76,8 +76,8 @@ export default class Blog extends React.Component {
 
     blogRouting(indexRender, articleRender) {
         return [
-            <Route exact key="blog" path="/blog" render={() => indexRender()}/>,
-            <Route exact key="article" path="/blog/article/:articleId"
+            <Route exact key="blog" path="/blog/articles" render={() => indexRender()}/>,
+            <Route exact key="article" path="/blog/articles/:articleId"
                    render={param => articleRender(param.match.params.articleId)}/>
         ]
     }

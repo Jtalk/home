@@ -13,8 +13,8 @@ export default class EditBlog extends React.Component {
                 {
                     id: "blog-entry-1",
                     title: "Blog Entry 1",
-                    href: "/blog/article/blog-entry-1",
-                    editHref: "/admin/blog/article/blog-entry-1",
+                    href: "/blog/articles/blog-entry-1",
+                    editHref: "/admin/blog/articles/blog-entry-1",
                     tags: [{name: "Hello"}, {name: "Tags!"}],
                     content: "[h1]Header [abbr title=\"Lenghty explanation\"]LE[/abbr][/h1]" +
                         " [p]Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium," +
@@ -28,8 +28,8 @@ export default class EditBlog extends React.Component {
                 {
                     id: "blog-entry-2",
                     title: "Blog Entry 2",
-                    href: "/blog/article/blog-entry-2",
-                    editHref: "/admin/blog/article/blog-entry-2",
+                    href: "/blog/articles/blog-entry-2",
+                    editHref: "/admin/blog/articles/blog-entry-2",
                     tags: [{name: "Hello"}, {name: "Other"}, {name: "Tags!"}],
                     content: "[h1]Header [abbr title=\"Lenghty explanation\"]LE[/abbr][/h1]" +
                         " [p]Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium," +
@@ -77,10 +77,6 @@ export default class EditBlog extends React.Component {
                 </Segment>
             </Grid.Column>
         </Grid>
-    }
-
-    componentDidMount() {
-        document.title = this.props.ownerName + ": Edit Blog";
     }
 
     _onChange(event) {

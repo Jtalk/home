@@ -22,6 +22,15 @@ export default class EditImages extends React.Component {
         }
     }
 
+    static getDerivedStateFromProps(props, state) {
+        return {
+            images: state.images,
+            pagination: {current: props.currentPageIdx && 0, pagesTotal: 3},
+            executed: state.executed,
+            errorMessage: state.errorMessage
+        }
+    }
+
     render() {
         return <Grid centered>
             <Grid.Column width={16}>

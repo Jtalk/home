@@ -94,10 +94,6 @@ export default class EditBlogArticle extends React.Component {
         </Grid>
     }
 
-    componentDidMount() {
-        document.title = this.props.ownerName + ": Edit Blog Article";
-    }
-
     _onChange(event) {
 
     }

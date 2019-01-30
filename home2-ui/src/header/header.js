@@ -11,12 +11,12 @@ class Header extends React.Component {
     render() {
         return <Menu secondary pointing>
             <HeaderOwner ownerName={this.props.ownerName} />
-            {this.item("About", "/")}
-            {this.item("Projects", "/projects")}
-            {this.item("Blog", "/blog")}
+            {this._item("About", "/")}
+            {this._item("Projects", "/projects")}
+            {this._item("Blog", "/blog")}
             <HeaderMenuDropdownItem title="Admin" items={[
                 {title: "Edit Projects", href: "/admin/projects"},
-                {title: "Edit Blog", href: "/admin/blog"},
+                {title: "Edit Blog", href: "/admin/blog/articles"},
                 {title: "Edit Images", href: "/admin/images"},
                 {title: "Edit Footer", href: "/admin/footer"},
             ]}/>
@@ -27,7 +27,13 @@ class Header extends React.Component {
         </Menu>
     }
 
-    item(title, href) {
+    _items() {
+        return this.props.links.map(link => {
+            return this._item(link.title, link.path)
+        });
+    }
+
+    _item(title, href) {
         return <HeaderMenuItem key={title} title={title} href={href} active={title === this.props.activeLink}/>
     }
 }
