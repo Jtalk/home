@@ -18,7 +18,7 @@ class Header extends React.Component {
                 {title: "Edit Projects", href: "/admin/projects"},
                 {title: "Edit Blog", href: "/admin/blog"},
                 {title: "Edit Images", href: "/admin/images"},
-                {title: "Item4.4", href: "/test"},
+                {title: "Edit Footer", href: "/admin/footer"},
             ]}/>
             <Menu.Menu position="right">
                 <HeaderSearch/>

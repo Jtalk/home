@@ -5,6 +5,7 @@ import EditBlog from "./edit-blog";
 import EditBlogArticle from "./edit-blog-article";
 import EditProjects from "./edit-projects";
 import EditImages from "./edit-images";
+import EditFooter from "./edit-footer";
 
 export default class AdminRouter extends React.Component {
 
@@ -24,6 +25,8 @@ export default class AdminRouter extends React.Component {
                    render={() => <EditImages currentPageIdx={0} ownerName={this.props.ownerName}/>}/>
             <Route exact path="/admin/images/:idx"
                    render={params => <EditImages currentPageIdx={params.match.params.idx} ownerName={this.props.ownerName}/>}/>
+            <Route exact path="/admin/footer"
+                   render={params => <EditFooter ownerName={this.props.ownerName}/>}/>
         </Switch>
     }
 }
