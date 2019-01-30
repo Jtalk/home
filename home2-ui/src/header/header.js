@@ -17,7 +17,7 @@ class Header extends React.Component {
             <HeaderMenuDropdownItem title="Admin" items={[
                 {title: "Edit Projects", href: "/admin/projects"},
                 {title: "Edit Blog", href: "/admin/blog"},
-                {title: "Item4.3", href: "/test"},
+                {title: "Edit Images", href: "/admin/images"},
                 {title: "Item4.4", href: "/test"},
             ]}/>
             <Menu.Menu position="right">
