@@ -14,9 +14,9 @@ export default class AdminRouter extends React.Component {
             <Route exact path="/admin/bio"
                    render={() => <EditBio ownerName={this.props.ownerName}/>}/>
             <Route exact path="/admin/projects"
-                   render={() => <EditProjects ownerName={this.props.ownerName}/>}/>
+                   component={() => <EditProjects ownerName={this.props.ownerName}/>}/>
             <Route exact path="/admin/projects/:projectId"
-                   render={params => <EditProjects currentProjectId={params.match.params.projectId} ownerName={this.props.ownerName}/>}/>
+                   component={params => <EditProjects currentProjectId={params.match.params.projectId} ownerName={this.props.ownerName}/>}/>
             <Route exact path="/admin/blog"
                    render={() => <EditBlog ownerName={this.props.ownerName}/>}/>
             <Route exact path="/admin/blog/article/:id"

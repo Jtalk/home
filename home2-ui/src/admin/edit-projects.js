@@ -1,8 +1,9 @@
 import React from "react";
 import {Divider, Form, Grid, Icon, Image, Input, List, Menu, Segment} from "semantic-ui-react";
 import {Link} from "react-router-dom";
-import {Redirect, Switch} from "react-router";
+import {Redirect, Route, Switch} from "react-router";
 import {ErrorMessage} from "../form/form-message";
+import * as assert from "assert";
 
 export default class EditProjects extends React.Component {
 
@@ -39,14 +40,20 @@ export default class EditProjects extends React.Component {
         this.state = {
             projects: projects,
             currentProject: projects.find(p => p.id === this.props.currentProjectId)
-        }
+        };
     }
 
     render() {
+        return <Switch>
+            <Redirect exact from="/admin/projects" to={this.state.projects[0].editHref}/>
+            <Route from="/admin/projects/:id" render={() => this._renderProjects()}/>
+        </Switch>
+    }
+
+    _renderProjects() {
+        assert(this.state.currentProject || this.props.currentProjectId === undefined,
+            `No project found: ${this.props.currentProjectId}, found: ${this.state.currentProject}`);
         return <Grid centered>
-            <Switch>
-                <Redirect exact from="/admin/projects" to={this.state.projects[0].editHref}/>
-            </Switch>
             <Grid.Column width={13}>
                 <Segment raised>
                     <Menu tabular>
