@@ -86,7 +86,7 @@ export default class EditProjects extends React.Component {
     _projectView() {
         return <div>
             <h2>Edit project</h2>
-            <Form error={this.state.errorMessage} success={this.state.executed && this.state.errorMessage}>
+            <Form error={this.state.errorMessage} success={this.state.executed && !this.state.errorMessage}>
                 <Divider/>
                 <Grid stackable centered>
                     <Grid.Row>
