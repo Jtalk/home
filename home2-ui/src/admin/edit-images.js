@@ -74,7 +74,7 @@ export default class EditImages extends React.Component {
     }
 
     componentDidMount() {
-        document.title = this.props.ownerName + ": Edit Bio";
+        document.title = this.props.ownerName + ": Edit Images";
     }
 
     _onChange(event) {
