@@ -10,16 +10,8 @@ class Header extends React.Component {
 
     render() {
         return <Menu secondary pointing>
-            <HeaderOwner ownerName={this.props.ownerName} />
-            {this._item("About", "/")}
-            {this._item("Projects", "/projects")}
-            {this._item("Blog", "/blog")}
-            <HeaderMenuDropdownItem title="Admin" items={[
-                {title: "Edit Projects", href: "/admin/projects"},
-                {title: "Edit Blog", href: "/admin/blog/articles"},
-                {title: "Edit Images", href: "/admin/images"},
-                {title: "Edit Footer", href: "/admin/footer"},
-            ]}/>
+            <HeaderOwner ownerName={this.props.ownerName}/>
+            {this._items()}
             <Menu.Menu position="right">
                 <HeaderSearch/>
                 <HeaderUserItem user="TestUser"/>
@@ -27,14 +19,22 @@ class Header extends React.Component {
         </Menu>
     }
 
-    _items() {
-        return this.props.links.map(link => {
-            return this._item(link.title, link.path)
-        });
+    static buildLink(title, path, render, exact = false) {
+        return {title: title, path: path, render: render, exact: exact}
     }
 
-    _item(title, href) {
-        return <HeaderMenuItem key={title} title={title} href={href} active={title === this.props.activeLink}/>
+    static buildSubmenu(title, links) {
+        return {title: title, routes: links.map(HeaderMenuDropdownItem.buildLink)}
+    }
+
+    _items() {
+        return this.props.links.map(link => {
+            if (link.routes) {
+                return <HeaderMenuDropdownItem key={link.title} title={link.title} activeLink={this.props.activeLink} items={link.routes}/>
+            } else {
+                return <HeaderMenuItem key={link.title} title={link.title} href={link.path} active={link.title === this.props.activeLink}/>
+            }
+        });
     }
 }
 
