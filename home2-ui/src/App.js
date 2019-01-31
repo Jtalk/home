@@ -42,49 +42,49 @@ export default class App extends Component {
             if (Array.isArray(route.routes) && route.routes.length) {
                 return this._buildRoutes(route.routes)
             } else {
-                return [<Route key={route.title} {...route}/>]
+                return [<Route key={route.title} render={params => this.page(route.title, route.renderer(params))} {...route}/>]
             }
         });
     }
 
     _mainRoutes() {
         return [
-            {title: "About", path: "/", render: () => this.home(this.title), exact: true},
-            {title: "Projects", path: "/projects", render: () => this.projects(this.title)},
-            {title: "Blog", path: "/blog/articles", render: () => this.blog(this.title)},
+            {title: "About", path: "/", renderer: () => <About ownerName={this.state.ownerName}/>, exact: true},
+            {title: "Projects", path: "/projects", renderer: () => <Projects ownerName={this.state.ownerName}/>},
+            {title: "Blog", path: "/blog/articles", renderer: () => <Blog ownerName={this.state.ownerName}/>},
             {
                 title: "Admin", routes: [
                     {
                         title: "Edit Bio",
                         path: "/admin/bio",
                         exact: true,
-                        render: () => this.page(this.title, <EditBio ownerName={this.state.ownerName}/>)
+                        renderer: () => <EditBio ownerName={this.state.ownerName}/>
                     },
                     {
                         title: "Edit Projects",
                         path: "/admin/projects/:projectId?",
                         exact: true,
-                        render: params => this.page(this.title, <EditProjects currentProjectId={params.match.params.projectId}
-                                                                                 ownerName={this.state.ownerName}/>),
+                        renderer: params => <EditProjects currentProjectId={params.match.params.projectId}
+                                                                                 ownerName={this.state.ownerName}/>,
                     },
                     {
                         title: "Edit Blog",
                         path: "/admin/blog/articles/:articleId?",
                         exact: true,
-                        render: params => this.page(this.title, <EditBlogRouter ownerName={this.state.ownerName} articleId={params.match.params.articleId}/>),
+                        renderer: params => <EditBlogRouter ownerName={this.state.ownerName} articleId={params.match.params.articleId}/>,
                     },
                     {
                         title: "Edit Images",
                         path: "/admin/images/:idx?",
                         exact: true,
-                        render: params => this.page(this.title, <EditImages currentPageIdx={params.match.params.idx}
-                                                                                ownerName={this.state.ownerName}/>),
+                        renderer: params => <EditImages currentPageIdx={params.match.params.idx}
+                                                                                ownerName={this.state.ownerName}/>,
                     },
                     {
                         title: "Edit Footer",
                         path: "/admin/footer",
                         exact: true,
-                        render: () => this.page(this.title, <EditFooter ownerName={this.state.ownerName}/>)
+                        renderer: () => <EditFooter ownerName={this.state.ownerName}/>
                     }
                 ]
             },
@@ -95,18 +95,6 @@ export default class App extends Component {
         return [
             { title: "Error 404", component: params => this.error(params.match.location) },
         ]
-    }
-
-    home(name) {
-        return this.page(name, <About ownerName={this.state.ownerName}/>);
-    }
-
-    projects(name) {
-        return this.page(name, <Projects ownerName={this.state.ownerName}/>)
-    }
-
-    blog(name) {
-        return this.page(name, <Blog ownerName={this.state.ownerName}/>);
     }
 
     error(location) {
