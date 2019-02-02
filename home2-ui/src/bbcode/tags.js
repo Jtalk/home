@@ -1,13 +1,6 @@
 import React from "react";
 import parser, {Tag} from "bbcode-to-react";
 
-
-class BrTag extends Tag {
-    static toReact() {
-        return <br/>
-    }
-}
-
 class PTag extends Tag {
     toReact() {
         return <p>{this.getComponents()}</p>
@@ -50,7 +43,6 @@ class H5Tag extends Tag {
     }
 }
 
-parser.registerTag('br', BrTag);
 parser.registerTag('p', PTag);
 parser.registerTag('abbr', AbbrTag);
 parser.registerTag('h1', H1Tag);

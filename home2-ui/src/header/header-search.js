@@ -1,6 +1,6 @@
 import React from "react";
 
-class HeaderSearch extends React.Component {
+export default class HeaderSearch extends React.Component {
 
     render() {
         return <div className="ui right aligned category search item">
@@ -12,5 +12,3 @@ class HeaderSearch extends React.Component {
         </div>
     }
 }
-
-export default HeaderSearch;

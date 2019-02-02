@@ -1,7 +1,7 @@
 import React from "react";
 import {Menu} from "semantic-ui-react";
 
-class HeaderOwner extends React.Component {
+export default class HeaderOwner extends React.Component {
 
     render() {
         return <Menu.Item>
@@ -10,5 +10,3 @@ class HeaderOwner extends React.Component {
         </Menu.Item>
     }
 }
-
-export default HeaderOwner;

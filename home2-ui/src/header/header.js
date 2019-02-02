@@ -6,7 +6,7 @@ import HeaderMenuDropdownItem from "./header-menu-dropdown-item";
 import HeaderSearch from "./header-search";
 import assert from "assert";
 
-class Header extends React.Component {
+export default class Header extends React.Component {
 
     render() {
         return <Menu secondary pointing>
@@ -37,5 +37,3 @@ class Header extends React.Component {
         });
     }
 }
-
-export default Header;
