@@ -4,7 +4,7 @@ import Header from './header/header';
 import About from "./home/about";
 import {Container} from "semantic-ui-react";
 import Footer from "./footer/footer";
-import {BrowserRouter as Router, Route, Switch} from "react-router-dom";
+import {BrowserRouter as Router, Switch} from "react-router-dom";
 import Blog from "./blog/blog";
 import Projects from "./projects/projects";
 import EditBio from "./admin/edit-bio";
@@ -13,7 +13,7 @@ import EditFooter from "./admin/edit-footer";
 import EditBlogRouter from "./admin/edit-blog-router";
 import EditImages from "./admin/edit-images";
 import NotFound from "./error/not-found";
-import {createMultiRoutingConfig, createRoute, createRoutes, createRoutingConfig} from "./routing";
+import {createMultiRoutingConfig, createRoutes, createRoutingConfig} from "./routing";
 
 export default class App extends Component {
 
@@ -59,13 +59,15 @@ export default class App extends Component {
                     "Edit Projects",
                     "/admin/projects",
                     "/admin/projects/:projectId?",
-                    params => <EditProjects currentProjectId={params.match.params.projectId} ownerName={this.state.ownerName}/>,
+                    params => <EditProjects currentProjectId={params.match.params.projectId}
+                                            ownerName={this.state.ownerName}/>,
                     true),
                 this._createComplexNavigation(
                     "Edit Blog",
                     "/admin/blog/articles",
                     "/admin/blog/articles/:articleId?",
-                    params => <EditBlogRouter ownerName={this.state.ownerName} articleId={params.match.params.articleId}/>,
+                    params => <EditBlogRouter ownerName={this.state.ownerName}
+                                              articleId={params.match.params.articleId}/>,
                     true),
                 this._createComplexNavigation(
                     "Edit Images",
@@ -84,7 +86,7 @@ export default class App extends Component {
 
     _serviceRoutes() {
         return [
-            { route: createRoutingConfig("Error 404", params => this.error(params.match.location)) },
+            {route: createRoutingConfig("Error 404", params => this.error(params.match.location))},
         ]
     }
 
