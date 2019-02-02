@@ -8,7 +8,7 @@ export default class HeaderMenuDropdownItem extends React.Component {
         return <Dropdown item text={this.props.title}>
             <Dropdown.Menu>
                 {this.props.items.map(item =>
-                    <Link to={item.path}
+                    <Link to={item.href}
                           className={"ui dropdown " + HeaderMenuDropdownItem._activeClass(item.title === this.props.activeLink)}
                           key={item.title}>
                         {item.title}
@@ -16,10 +16,6 @@ export default class HeaderMenuDropdownItem extends React.Component {
                 )}
             </Dropdown.Menu>
         </Dropdown>
-    }
-
-    static buildLink(title, path, render, exact = false) {
-        return {title: title, path: path, render: render, exact: exact}
     }
 
     static _activeClass(active) {

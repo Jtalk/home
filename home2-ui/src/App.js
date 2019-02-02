@@ -13,6 +13,7 @@ import EditFooter from "./admin/edit-footer";
 import EditBlogRouter from "./admin/edit-blog-router";
 import EditImages from "./admin/edit-images";
 import NotFound from "./error/not-found";
+import {createMultiRoutingConfig, createRoute, createRoutes, createRoutingConfig} from "./routing";
 
 export default class App extends Component {
 
@@ -37,64 +38,75 @@ export default class App extends Component {
         </div>
     }
 
-    _buildRoutes(routes) {
-        return routes.flatMap(route => {
-            if (Array.isArray(route.routes) && route.routes.length) {
-                return this._buildRoutes(route.routes)
-            } else {
-                return [<Route key={route.title} render={params => this.page(route.title, route.renderer(params))} {...route}/>]
-            }
+    _buildRoutes(navigation) {
+        return navigation.flatMap(navigationLink => {
+            return createRoutes(navigationLink.route);
         });
     }
 
     _mainRoutes() {
         return [
-            {title: "About", path: "/", renderer: () => <About ownerName={this.state.ownerName}/>, exact: true},
-            {title: "Projects", path: "/projects", renderer: () => <Projects ownerName={this.state.ownerName}/>},
-            {title: "Blog", path: "/blog/articles", renderer: () => <Blog ownerName={this.state.ownerName}/>},
-            {
-                title: "Admin", routes: [
-                    {
-                        title: "Edit Bio",
-                        path: "/admin/bio",
-                        exact: true,
-                        renderer: () => <EditBio ownerName={this.state.ownerName}/>
-                    },
-                    {
-                        title: "Edit Projects",
-                        path: "/admin/projects/:projectId?",
-                        exact: true,
-                        renderer: params => <EditProjects currentProjectId={params.match.params.projectId}
-                                                                                 ownerName={this.state.ownerName}/>,
-                    },
-                    {
-                        title: "Edit Blog",
-                        path: "/admin/blog/articles/:articleId?",
-                        exact: true,
-                        renderer: params => <EditBlogRouter ownerName={this.state.ownerName} articleId={params.match.params.articleId}/>,
-                    },
-                    {
-                        title: "Edit Images",
-                        path: "/admin/images/:idx?",
-                        exact: true,
-                        renderer: params => <EditImages currentPageIdx={params.match.params.idx}
-                                                                                ownerName={this.state.ownerName}/>,
-                    },
-                    {
-                        title: "Edit Footer",
-                        path: "/admin/footer",
-                        exact: true,
-                        renderer: () => <EditFooter ownerName={this.state.ownerName}/>
-                    }
-                ]
-            },
+            this._createNavigation("About", "/", () => <About ownerName={this.state.ownerName}/>, true),
+            this._createNavigation("Projects", "/projects", () => <Projects ownerName={this.state.ownerName}/>, false),
+            this._createNavigation("Blog", "/blog/articles", () => <Blog ownerName={this.state.ownerName}/>, false),
+            this._createNestedNavigation("Admin", [
+                this._createNavigation(
+                    "Edit Bio",
+                    "/admin/bio",
+                    () => <EditBio ownerName={this.state.ownerName}/>,
+                    true),
+                this._createComplexNavigation(
+                    "Edit Projects",
+                    "/admin/projects",
+                    "/admin/projects/:projectId?",
+                    params => <EditProjects currentProjectId={params.match.params.projectId} ownerName={this.state.ownerName}/>,
+                    true),
+                this._createComplexNavigation(
+                    "Edit Blog",
+                    "/admin/blog/articles",
+                    "/admin/blog/articles/:articleId?",
+                    params => <EditBlogRouter ownerName={this.state.ownerName} articleId={params.match.params.articleId}/>,
+                    true),
+                this._createComplexNavigation(
+                    "Edit Images",
+                    "/admin/images",
+                    "/admin/images/:idx?",
+                    params => <EditImages currentPageIdx={params.match.params.idx} ownerName={this.state.ownerName}/>,
+                    true),
+                this._createNavigation(
+                    "Edit Footer",
+                    "/admin/footer",
+                    () => <EditFooter ownerName={this.state.ownerName}/>,
+                    true)
+            ])
         ]
     }
 
     _serviceRoutes() {
         return [
-            { title: "Error 404", component: params => this.error(params.match.location) },
+            { route: createRoutingConfig("Error 404", params => this.error(params.match.location)) },
         ]
+    }
+
+    _createNavigation(title, href, renderer, exact) {
+        return this._createComplexNavigation(title, href, href, renderer, exact);
+    }
+
+    _createComplexNavigation(title, href, routePath, renderer, exact) {
+        let render = params => this.page(title, renderer(params));
+        return {
+            menu: Header.buildLink(title, href),
+            route: createRoutingConfig(routePath, render, exact)
+        };
+    }
+
+    _createNestedNavigation(title, navigations) {
+        let submenu = navigations.map(n => n.menu);
+        let routes = navigations.map(n => n.route);
+        return {
+            menu: Header.buildSubmenuLinks(title, submenu),
+            route: createMultiRoutingConfig(routes)
+        };
     }
 
     error(location) {
@@ -103,7 +115,7 @@ export default class App extends Component {
 
     page(activeLink, mainComponent) {
         return <div>
-            <Header ownerName="Vasya Pupkin" activeLink={activeLink} links={this._mainRoutes()}/>
+            <Header ownerName="Vasya Pupkin" activeLink={activeLink} links={this._mainRoutes().map(r => r.menu)}/>
             {mainComponent}
         </div>
     }

@@ -2,16 +2,22 @@ import React from "react";
 import {Link} from "react-router-dom";
 import {Menu} from "semantic-ui-react";
 
-class HeaderMenuItem extends React.Component {
+export default class HeaderMenuItem extends React.Component {
 
     render() {
-        if (this.props.active) {
-            return <Menu.Item active>{this.props.title}</Menu.Item>
+        let {title, href} = this.props.link;
+        if (this.props.activeLink === title) {
+            return <Menu.Item active>{title}</Menu.Item>
         } else {
-            return <Link to={this.props.href} className="item">{this.props.title}</Link>
+            return <Link to={href} className="item">{title}</Link>
         }
     }
 
+    static buildLink(title, href) {
+        return {
+            title: title,
+            href: href,
+            key: title
+        }
+    }
 }
-
-export default HeaderMenuItem;

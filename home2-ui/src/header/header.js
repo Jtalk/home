@@ -4,7 +4,7 @@ import {Menu} from "semantic-ui-react";
 import HeaderMenuItem from "./header-menu-item";
 import HeaderMenuDropdownItem from "./header-menu-dropdown-item";
 import HeaderSearch from "./header-search";
-import HeaderUserItem from "./header-user-item";
+import assert from "assert";
 
 class Header extends React.Component {
 
@@ -14,25 +14,25 @@ class Header extends React.Component {
             {this._items()}
             <Menu.Menu position="right">
                 <HeaderSearch/>
-                <HeaderUserItem user="TestUser"/>
             </Menu.Menu>
         </Menu>
     }
 
-    static buildLink(title, path, render, exact = false) {
-        return {title: title, path: path, render: render, exact: exact}
+    static buildLink(title, href) {
+        return HeaderMenuItem.buildLink(title, href);
     }
 
-    static buildSubmenu(title, links) {
-        return {title: title, routes: links.map(HeaderMenuDropdownItem.buildLink)}
+    static buildSubmenuLinks(title, submenu) {
+        assert(submenu.length > 0, "Empty submenu was provided for " + title);
+        return {title: title, submenu: submenu}
     }
 
     _items() {
         return this.props.links.map(link => {
-            if (link.routes) {
-                return <HeaderMenuDropdownItem key={link.title} title={link.title} activeLink={this.props.activeLink} items={link.routes}/>
+            if (link.submenu) {
+                return <HeaderMenuDropdownItem key={link.title} title={link.title} activeLink={this.props.activeLink} items={link.submenu}/>
             } else {
-                return <HeaderMenuItem key={link.title} title={link.title} href={link.path} active={link.title === this.props.activeLink}/>
+                return <HeaderMenuItem key={link.key} link={link} activeLink={this.props.activeLink}/>
             }
         });
     }
