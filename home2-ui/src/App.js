@@ -44,6 +44,13 @@ export default class App extends Component {
         </div>
     }
 
+    async componentDidMount() {
+        let response = await request.get("/owner/name")
+            .use(api);
+        await apiDelay();
+        this.setState({ownerName: response.text});
+    }
+
     _buildRoutes(navigation) {
         return navigation.flatMap(navigationLink => {
             return createRoutes(navigationLink.route);
@@ -92,7 +99,7 @@ export default class App extends Component {
 
     _serviceRoutes() {
         return [
-            {route: createRoutingConfig("Error 404", params => this.error(params.match.location))},
+            {route: createRoutingConfig("Error 404", params => this._error(params.match.location))},
         ]
     }
 
@@ -101,7 +108,7 @@ export default class App extends Component {
     }
 
     _createComplexNavigation(title, href, routePath, renderer, exact) {
-        let render = params => this.page(title, renderer(params));
+        let render = params => this._page(title, renderer(params));
         return {
             menu: Header.buildLink(title, href),
             route: createRoutingConfig(routePath, render, exact)
@@ -117,13 +124,13 @@ export default class App extends Component {
         };
     }
 
-    error(location) {
-        return this.page(null, <NotFound location={location}/>);
+    _error(location) {
+        return this._page(null, <NotFound location={location}/>);
     }
 
-    page(activeLink, mainComponent) {
+    _page(activeLink, mainComponent) {
         return <div>
-            <Header ownerName="Vasya Pupkin" activeLink={activeLink} links={this._mainRoutes().map(r => r.menu)}/>
+            <Header ownerName={this.state.ownerName} activeLink={activeLink} links={this._mainRoutes().map(r => r.menu)}/>
             {mainComponent}
         </div>
     }
