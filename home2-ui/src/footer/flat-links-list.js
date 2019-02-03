@@ -1,35 +1,18 @@
 import React from "react";
+import VerticalSeparator from "./vertical-separator";
 
 export default class FlatLinksList extends React.Component {
 
     render() {
-        let splitter = this._prepareSplitter();
         var result = this.props.links.flatMap(link => {
             return [
                 <a href={link.href} key={link.name}>{link.name}</a>,
-                splitter
+                <VerticalSeparator key={link.name + "-separator"} separator={this.props.separator}/>
             ];
         });
         if (result.length > 1) {
             result.pop(); // Remove trailing "|"
         }
         return result;
-    }
-
-    /**
-     * Links will glue to one another or their splitter if no whitespaces were inserted.
-     */
-    _prepareSplitter() {
-        if (!this.props.splitter) {
-            return ' ';
-        }
-        var splitter = this.props.splitter;
-        if (!splitter.startsWith(" ")) {
-            splitter = " " + splitter;
-        }
-        if (!splitter.endsWith(" ")) {
-            splitter += " ";
-        }
-        return splitter;
     }
 }
