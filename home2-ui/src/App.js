@@ -6,7 +6,6 @@ import {Container} from "semantic-ui-react";
 import Footer from "./footer/footer";
 import {BrowserRouter as Router, Switch} from "react-router-dom";
 import Blog from "./blog/blog";
-import Projects from "./projects/projects";
 import EditBio from "./admin/edit-bio";
 import EditProjects from "./admin/edit-projects";
 import EditFooter from "./admin/edit-footer";
@@ -14,6 +13,7 @@ import EditBlogRouter from "./admin/edit-blog-router";
 import EditImages from "./admin/edit-images";
 import NotFound from "./error/not-found";
 import {createMultiRoutingConfig, createRoutes, createRoutingConfig} from "./routing";
+import ProjectsLoader from "./projects/projects-loader";
 
 export default class App extends Component {
 
@@ -47,7 +47,7 @@ export default class App extends Component {
     _mainRoutes() {
         return [
             this._createNavigation("About", "/", () => <About ownerName={this.state.ownerName}/>, true),
-            this._createNavigation("Projects", "/projects", () => <Projects ownerName={this.state.ownerName}/>, false),
+            this._createNavigation("Projects", "/projects", () => <ProjectsLoader ownerName={this.state.ownerName}/>, false),
             this._createNavigation("Blog", "/blog/articles", () => <Blog ownerName={this.state.ownerName}/>, false),
             this._createNestedNavigation("Admin", [
                 this._createNavigation(

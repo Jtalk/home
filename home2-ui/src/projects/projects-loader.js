@@ -48,7 +48,7 @@ export default class ProjectsLoader extends React.Component {
                     let selectedProjectId = params.match.params.projectId;
                     let selectedProject = this._getSelectedProject(selectedProjectId);
                     assert(!!selectedProject, "No project was selected");
-                    return <Projects selectedProjectId={selectedProjectId} />
+                    return <Projects selectedProjectId={selectedProjectId} projects={this.state.projects} selectedProject={selectedProject} />
                 }}/>
                 <Route render={() => <NotFound/>}/>
             </Switch>
