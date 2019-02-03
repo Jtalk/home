@@ -5,17 +5,21 @@ import HeaderMenuItem from "./header-menu-item";
 import HeaderMenuDropdownItem from "./header-menu-dropdown-item";
 import HeaderSearch from "./header-search";
 import assert from "assert";
+import {Titled} from "react-titled";
+import {title} from "../utils/title-utils";
 
 export default class Header extends React.Component {
 
     render() {
-        return <Menu secondary pointing>
-            <HeaderOwner ownerName={this.props.ownerName}/>
-            {this._items()}
-            <Menu.Menu position="right">
-                <HeaderSearch/>
-            </Menu.Menu>
-        </Menu>
+        return <Titled title={prev => title(prev, this.props.activeLink)}>
+            <Menu secondary pointing>
+                <HeaderOwner ownerName={this.props.ownerName}/>
+                {this._items()}
+                <Menu.Menu position="right">
+                    <HeaderSearch/>
+                </Menu.Menu>
+            </Menu>
+        </Titled>
     }
 
     static buildLink(title, href) {

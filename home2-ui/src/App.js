@@ -15,25 +15,30 @@ import {createMultiRoutingConfig, createRoutes, createRoutingConfig} from "./rou
 import ProjectsLoader from "./projects/projects-loader";
 import FooterLoader from "./footer/footer-loader";
 import "./utils/config";
+import * as request from "superagent";
+import api from "./utils/superagent-api";
+import {apiDelay} from "./utils/test-api-delay";
+import {Titled} from "react-titled";
 
 export default class App extends Component {
 
     constructor(props) {
         super(props);
         this.state = {
-            ownerName: "Vasya Pupkin"
+            ownerName: ""
         };
     }
 
     render() {
-        document.title = this.state.ownerName;
         return <div className="main-content-pushable">
             <Container className="main-content-pusher framed">
-                <Router>
-                    <Switch>
-                        {this._buildRoutes(this._mainRoutes().concat(this._serviceRoutes()))}
-                    </Switch>
-                </Router>
+                <Titled title={() => this.state.ownerName}>
+                    <Router>
+                        <Switch>
+                            {this._buildRoutes(this._mainRoutes().concat(this._serviceRoutes()))}
+                        </Switch>
+                    </Router>
+                </Titled>
             </Container>
             <FooterLoader/>
         </div>
