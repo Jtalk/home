@@ -12,7 +12,7 @@ export default class ProjectDescription extends React.Component {
                 <Image size="small" src={this.props.logo} alt={this.props.title + " Logo"}/>
                 <Menu fluid vertical text layout="block">
                     <div className="active item">Overview</div>
-                    {this.props.links.map(link => <Link to={link.href}>link.name</Link>)}
+                    {this.props.links.map(link => <Link key={link.name} className="item" to={link.href}>{link.name}</Link>)}
                 </Menu>
             </Grid.Column>
             <Grid.Column width={12}>
