@@ -20,8 +20,10 @@ export class ContentPlaceholderOr extends React.Component {
 
     render() {
         if (this.props.loading) {
-            return <Placeholder>
-                {this.props.header ? <Placeholder.Header/> : null}
+            return <Placeholder fluid>
+                {this.props.header ? <Placeholder.Header>
+                    <Placeholder.Line length="medium"/>
+                </Placeholder.Header> : null}
                 <Placeholder.Paragraph>
                     {Array(this.props.lines).fill().map((_, i) => <Placeholder.Line key={i}/>)}
                 </Placeholder.Paragraph>

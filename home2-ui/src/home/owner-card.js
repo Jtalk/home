@@ -1,10 +1,9 @@
 import React from "react";
 import {Card, Image} from "semantic-ui-react";
 import * as request from "superagent";
-import * as prefix from "superagent-prefix"
 import {ContentPlaceholderOr, ImagePlaceholderOr, LinePlaceholderOr} from "../utils/placeholder";
-import * as config from "react-global-configuration";
 import {apiDelay} from "../utils/test-api-delay";
+import api from "../utils/superagent-api";
 
 class OwnerCard extends React.Component {
 
@@ -44,7 +43,7 @@ class OwnerCard extends React.Component {
 
     async componentDidMount() {
         let response = await request.get("/owner/info")
-            .use(prefix(config.get("api")));
+            .use(api);
         await apiDelay();
         this.setState({photoUrl: this.state.photoUrl, owner: response.body, loading: false});
     }
