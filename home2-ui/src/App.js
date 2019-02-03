@@ -14,6 +14,7 @@ import NotFound from "./error/not-found";
 import {createMultiRoutingConfig, createRoutes, createRoutingConfig} from "./routing";
 import ProjectsLoader from "./projects/projects-loader";
 import FooterLoader from "./footer/footer-loader";
+import "./utils/config";
 
 export default class App extends Component {
 

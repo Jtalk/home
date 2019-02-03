@@ -2,6 +2,9 @@ import React from "react";
 import {Card, Image} from "semantic-ui-react";
 import * as request from "superagent";
 import * as prefix from "superagent-prefix"
+import {ContentPlaceholderOr, ImagePlaceholderOr, LinePlaceholderOr} from "../utils/placeholder";
+import * as config from "react-global-configuration";
+import {apiDelay} from "../utils/test-api-delay";
 
 class OwnerCard extends React.Component {
 
@@ -10,38 +13,49 @@ class OwnerCard extends React.Component {
         this.state = {
             photoUrl: "/images/avatar.png",
             owner: {
-                name: "Vasya Pupkin",
-                nickname: "VPupkin",
-                description: "Very cool guy",
-                contacts: [
-                    { contactType: "EMAIL", value: "test@example.com" },
-                    { contactType: "SKYPE", value: "som-words" },
-                ]
-            }
+                name: "",
+                nickname: "",
+                description: "",
+                contacts: []
+            },
+            loading: true
         }
     }
 
     render() {
         return <Card>
-            <Image wrapped src={this.state.photoUrl}/>
+            <ImagePlaceholderOr square loading={this._isLoading()}>
+                <Image wrapped src={this.state.photoUrl}/>
+            </ImagePlaceholderOr>
             <Card.Content>
-                <Card.Header>{this.state.owner.name}</Card.Header>
-                <Card.Meta>{this.state.owner.nickname}</Card.Meta>
-                <Card.Description>{this.state.owner.description}</Card.Description>
+                <ContentPlaceholderOr header loading={this._isLoading()} lines={3}>
+                    <Card.Header>{this.state.owner.name}</Card.Header>
+                    <Card.Meta>{this.state.owner.nickname}</Card.Meta>
+                    <Card.Description>{this.state.owner.description}</Card.Description>
+                </ContentPlaceholderOr>
             </Card.Content>
-            <Card.Content extra icon="user">{this._findEmail()}</Card.Content>
+            <Card.Content extra icon="user">
+                <LinePlaceholderOr length="short" loading={this._isLoading()}>
+                    {this._findEmail()}
+                </LinePlaceholderOr>
+            </Card.Content>
         </Card>
     }
 
     async componentDidMount() {
         let response = await request.get("/owner/info")
-            .use(prefix("http://localhost:8090"));
-        this.setState({photoUrl: this.state.photoUrl, owner: response.body});
+            .use(prefix(config.get("api")));
+        await apiDelay();
+        this.setState({photoUrl: this.state.photoUrl, owner: response.body, loading: false});
     }
 
     _findEmail() {
         let found = this.state.owner.contacts.find(c => c.contactType === "EMAIL");
         return found && found.value;
+    }
+
+    _isLoading() {
+        return this.state.loading;
     }
 }
 
