@@ -8,7 +8,7 @@ import * as request from "superagent";
 import {ContentPlaceholderOr} from "../utils/placeholder";
 import api from "../utils/superagent-api";
 import {apiDelay} from "../utils/test-api-delay";
-import {Titled} from "react-titled";
+import {ifMount, markUnmount} from "../utils/async";
 
 
 export default class About extends React.Component {
@@ -42,6 +42,9 @@ export default class About extends React.Component {
         let response = await request.get("/owner/bio")
             .use(api);
         await apiDelay();
-        this.setState({text: response.text, loading: false})
+        ifMount(this, () => this.setState({text: response.text, loading: false}));
     }
+
+    componentWillUnmount = markUnmount.bind(this)
+
 }

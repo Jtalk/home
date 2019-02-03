@@ -4,6 +4,7 @@ import * as request from "superagent";
 import {ContentPlaceholderOr, ImagePlaceholderOr, LinePlaceholderOr} from "../utils/placeholder";
 import {apiDelay} from "../utils/test-api-delay";
 import api from "../utils/superagent-api";
+import {ifMount, markUnmount} from "../utils/async";
 
 class OwnerCard extends React.Component {
 
@@ -45,8 +46,10 @@ class OwnerCard extends React.Component {
         let response = await request.get("/owner/info")
             .use(api);
         await apiDelay();
-        this.setState({photoUrl: this.state.photoUrl, owner: response.body, loading: false});
+        ifMount(this, () => this.setState({photoUrl: this.state.photoUrl, owner: response.body, loading: false}));
     }
+
+    componentWillUnmount = markUnmount.bind(this);
 
     _findEmail() {
         let found = this.state.owner.contacts.find(c => c.contactType === "EMAIL");
