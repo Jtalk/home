@@ -3,7 +3,6 @@ import './App.css';
 import Header from './header/header';
 import About from "./home/about";
 import {Container} from "semantic-ui-react";
-import Footer from "./footer/footer";
 import {BrowserRouter as Router, Switch} from "react-router-dom";
 import Blog from "./blog/blog";
 import EditBio from "./admin/edit-bio";
@@ -14,6 +13,7 @@ import EditImages from "./admin/edit-images";
 import NotFound from "./error/not-found";
 import {createMultiRoutingConfig, createRoutes, createRoutingConfig} from "./routing";
 import ProjectsLoader from "./projects/projects-loader";
+import FooterLoader from "./footer/footer-loader";
 
 export default class App extends Component {
 
@@ -34,7 +34,7 @@ export default class App extends Component {
                     </Switch>
                 </Router>
             </Container>
-            <Footer/>
+            <FooterLoader/>
         </div>
     }
 

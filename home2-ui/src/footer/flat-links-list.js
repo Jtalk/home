@@ -3,7 +3,7 @@ import React from "react";
 export default class FlatLinksList extends React.Component {
 
     render() {
-        let splitter = this.props.splitter || '';
+        let splitter = this._prepareSplitter();
         var result = this.props.links.flatMap(link => {
             return [
                 <a href={link.href} key={link.name}>{link.name}</a>,
