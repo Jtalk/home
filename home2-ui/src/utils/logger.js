@@ -1,4 +1,6 @@
 import * as TraceKit from "tracekit";
+import * as request from "superagent";
+import api from "./superagent-api";
 
 let LEVEL_ERROR = "ERROR";
 let LEVEL_INFO = "INFO";
@@ -8,7 +10,7 @@ export class Logger {
 
     constructor(name) {
         this.name = name;
-        this.handler = consoleHandler;
+        this.handler = serverHandler;
     }
 
     static of(name) {
@@ -66,7 +68,21 @@ export function consoleHandler(e) {
         default: logger = console.log;
     }
     let date = new Date(e.timestamp).toLocaleString();
-    logger(toString(`${date} [${e.level}] ${e.message}`, e.stacktrace));
+    logger(toString(`${date} [${e.level}] ${e.scope} - ${e.message}`, e.stacktrace));
+}
+
+export function serverHandler(e) {
+    request.post("/logs", {events: [e]})
+        .use(api)
+        .catch(rej => {
+            consoleHandler({
+                message: "Cannot access log server: " + rej,
+                level: LEVEL_ERROR,
+                scope: "SYSTEM",
+                timestamp: e.timestamp
+            });
+        });
+    consoleHandler(e);
 }
 
 export function mockHandler(store) {

@@ -11,6 +11,7 @@ GET         /owner/bio         controllers.OwnerController.bio
 GET         /images/:id        controllers.ImageController.serveFile(id)
 POST        /images            controllers.ImageController.upload
 
+POST        /logs              controllers.LoggerController.post
 
 # Map static resources from the /public folder to the /assets URL path
 GET        /assets/*file        controllers.Assets.versioned(path="/public", file: Asset)
