@@ -7,11 +7,13 @@ import api from "../utils/superagent-api";
 import * as request from "superagent";
 import {imageUrl} from "../utils/image";
 import {update} from "../utils/object";
+import {Logger} from "../utils/logger";
 
 export default class EditBio extends React.Component {
 
     constructor(props) {
         super(props);
+        this.log = Logger.of(this.constructor.name);
         this.state = {
             owner: {
                 name: "",
@@ -77,8 +79,9 @@ export default class EditBio extends React.Component {
     _onSubmit = async () => {
         let photoId = await this._uploadPhoto();
         let newOwner = update(this.state.owner, o => o.photoId = photoId);
-        await request.post("/owner", update(newOwner, this._toContactCollection))
+        let response = await request.post("/owner", update(newOwner, this._toContactCollection))
             .use(api);
+        this.log.info(`Owner updated with ${response.status}: ${response.text}`);
         let newState = update(this.state, s => {
             s.owner = newOwner;
             s.executed = true;
@@ -107,6 +110,7 @@ export default class EditBio extends React.Component {
         let response = await request.post("/images")
             .attach("img", photo)
             .use(api);
+
         let body = response.body;
         if (body.status !== "ok") {
             throw Error("Error while uploading photo: " + JSON.stringify(body));
