@@ -1,6 +1,12 @@
 import React from "react";
 import {Button, Divider, Form, Grid, Image, Input, Segment, TextArea} from "semantic-ui-react";
-import {ErrorMessage, formStateClass, SuccessMessage} from "../form/form-message";
+import {ErrorMessage, SuccessMessage} from "../form/form-message";
+import {loadOwner} from "../io/api";
+import {ifMount} from "../utils/async";
+import api from "../utils/superagent-api";
+import * as request from "superagent";
+import {imageUrl} from "../utils/image";
+import {update} from "../utils/object";
 
 export default class EditBio extends React.Component {
 
@@ -8,57 +14,34 @@ export default class EditBio extends React.Component {
         super(props);
         this.state = {
             owner: {
-                photoUrl: "/images/avatar.png",
-                name: "Vasya Pupkin",
-                nickname: "VPupkin",
-                description: "Very cool guy",
-                email: "vasya@example.com",
-                bio: "[h1]Header [abbr title=\"Lenghty explanation\"]LE[/abbr][/h1]" +
-                    " [p]Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium," +
-                    " totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae" +
-                    " dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit," +
-                    " sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam" +
-                    " est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius" +
-                    " modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima" +
-                    " veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea" +
-                    " commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil" +
-                    " molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?[/p]"
+                name: "",
+                photoId: "",
+                nickname: "",
+                description: "",
+                email: "",
+                bio: ""
             },
-            defaultOwner: {
-                photoUrl: "/images/avatar.png"
-            },
-            success: undefined,
-            errorMessage: undefined
+            executed: undefined,
+            errorMessage: undefined,
+            loading: true
         }
     }
 
     render() {
-        let owner = this.state.owner ? this.state.owner : this.state.defaultOwner;
+        let owner = this.state.owner;
         return <Grid centered>
             <Grid.Column width={11}>
                 <Segment raised>
                     <h2>Edit bio</h2>
-                    <Form className={formStateClass(this.state.success, this.state.errorMessage)}>
+                    <Form onSubmit={this._onSubmit} loading={this.state.loading} error={this.state.errorMessage} success={this.state.executed && !this.state.errorMessage}>
                         <Divider/>
                         <Grid stackable>
                             <Grid.Row>
                                 <Grid.Column width={11}>
-                                    <Form.Field>
-                                        <label>Owner name</label>
-                                        <input placeholder="Name" value={owner.name} onChange={this._onChange}/>
-                                    </Form.Field>
-                                    <Form.Field>
-                                        <label>Owner nickname</label>
-                                        <input placeholder="Nickname" value={owner.nickname} onChange={this._onChange}/>
-                                    </Form.Field>
-                                    <Form.Field>
-                                        <label>Owner E-Mail</label>
-                                        <input placeholder="E-Mail" value={owner.email} onChange={this._onChange}/>
-                                    </Form.Field>
-                                    <Form.Field>
-                                        <label>Owner short bio</label>
-                                        <input placeholder="Short bio" value={owner.description} onChange={this._onChange}/>
-                                    </Form.Field>
+                                    <Form.Input label="Owner Name" placeholder="Name" value={owner.name} name="name" onChange={this._onChange}/>
+                                    <Form.Input label="Owner Nickname" placeholder="Nickname" value={owner.nickname} name="nickname" onChange={this._onChange}/>
+                                    <Form.Input label="Owner E-Mail" placeholder="E-Mail" value={owner.email} name="email" onChange={this._onChange}/>
+                                    <Form.Input label="Owner Short Bio" placeholder="Description" value={owner.description} name="description" onChange={this._onChange}/>
                                     <SuccessMessage message="Changes successfully saved"/>
                                     <ErrorMessage message={this.state.errorMessage}/>
                                 </Grid.Column>
@@ -66,16 +49,16 @@ export default class EditBio extends React.Component {
                                     <Form.Field>
                                         <label>Photo</label>
                                         <div className="image">
-                                            <Image src={owner.photoUrl} alt="Owner photo"/>
+                                            { owner.photoId && <Image src={imageUrl(owner.photoId)} alt="Owner photo"/>}
                                         </div>
-                                        <Input type="file" accept="image/jpeg, image/png, image/svg, image/gif"/>
+                                        <Input type="file" accept="image/*" onChange={this._photoSelected}/>
                                     </Form.Field>
                                     <Button primary type="submit">Save</Button>
                                 </Grid.Column>
                             </Grid.Row>
                             <Grid.Row>
                                 <Grid.Column width={16}>
-                                    <TextArea autoHeight label="Bio" placeholder="Something about me..." value={owner.bio}/>
+                                    <TextArea autoHeight label="Bio" placeholder="Something about me..." value={owner.bio} name="bio" onChange={this._onChange}/>
                                 </Grid.Column>
                             </Grid.Row>
                         </Grid>
@@ -85,11 +68,67 @@ export default class EditBio extends React.Component {
         </Grid>
     }
 
-    componentDidMount() {
-        document.title = this.props.ownerName + ": Edit Bio";
+    async componentDidMount() {
+        let owner = await loadOwner();
+        this._toFlatContacts(owner);
+        ifMount(this, () => this.setState({photoUrl: this.state.photoUrl, owner: owner, loading: false}));
     }
 
-    _onChange(event) {
+    _onSubmit = async () => {
+        let photoId = await this._uploadPhoto();
+        let newOwner = update(this.state.owner, o => o.photoId = photoId);
+        await request.post("/owner", update(newOwner, this._toContactCollection))
+            .use(api);
+        let newState = update(this.state, s => {
+            s.owner = newOwner;
+            s.executed = true;
+        });
+        this.setState(newState);
+    };
 
+    _onChange = (e, { name, value }) => {
+        let newState = Object.assign({}, this.state);
+        newState.owner = Object.assign({}, newState.owner);
+        newState.owner[name] = value;
+        this.setState(newState)
+    };
+
+    _photoSelected = (e) => {
+        let file = e.target.files[0];
+        let newState = update(this.state, s => s.photoToUpload = file);
+        this.setState(newState);
+    };
+
+    async _uploadPhoto() {
+        let photo = this.state.photoToUpload;
+        if (!photo) {
+            return this.state.owner.photoId;
+        }
+        let response = await request.post("/images")
+            .attach("img", photo)
+            .use(api);
+        let body = response.body;
+        if (body.status !== "ok") {
+            throw Error("Error while uploading photo: " + JSON.stringify(body));
+        }
+
+        return body.id;
+    }
+
+    _toFlatContacts(owner) {
+        let emailEntry = owner.contacts.find(c => c.contactType === "EMAIL");
+        owner.contacts = undefined;
+        if (emailEntry) {
+            owner.email = emailEntry.value
+        }
+        return owner;
+    }
+
+    _toContactCollection(owner) {
+        if (owner.email) {
+            owner.contacts = [{contactType: "EMAIL", value: owner.email}];
+        }
+        owner.email = undefined;
+        return owner;
     }
 }

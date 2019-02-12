@@ -2,14 +2,32 @@ package models.owner
 
 import models.owner.ModelType.ModelType
 import play.api.http.Writeable
-import play.api.libs.json.{Json, Reads, Writes}
+import play.api.libs.functional.syntax._
+import play.api.libs.json.Reads._
+import play.api.libs.json._
+import play.api.mvc._
+import utils.WebUtils
 
-case class OwnerInfo(name: String, nickname: String, description: String, bio: String, contacts: List[Contact]) {
+import scala.concurrent.ExecutionContext
+
+case class OwnerInfo(name: String, nickname: String, description: String, photoId: String, bio: String, contacts: List[Contact]) {
 }
 
 object OwnerInfo {
+
+  implicit val model: ModelType[OwnerInfo] = ModelType.OWNER
   implicit val jsonWriter: Writes[OwnerInfo] = Json.writes[OwnerInfo]
   implicit val jsonWriteable: Writeable[OwnerInfo] = Writeable.writeableOf_JsValue.map[OwnerInfo](Json.toJson _)
-  implicit val jsonReader: Reads[OwnerInfo] = Json.reads[OwnerInfo]
-  implicit val model: ModelType[OwnerInfo] = ModelType.OWNER
+  implicit val jsonReader: Reads[OwnerInfo] = (
+    (JsPath \ "name").read(minLength[String](1)) and
+      (JsPath \ "nickname").read(minLength[String](1)) and
+      (JsPath \ "description").read(minLength[String](1)) and
+      (JsPath \ "photoId").read[String] and
+      (JsPath \ "bio").read[String] and
+      (JsPath \ "contacts").read[List[Contact]])
+    .apply(OwnerInfo.apply _)
+
+
+  implicit def jsonParser(implicit bodyParsers: PlayBodyParsers, ec: ExecutionContext) = WebUtils.bodyParser[OwnerInfo]
+
 }

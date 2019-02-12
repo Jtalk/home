@@ -1,21 +1,20 @@
 import React from "react";
 import {Card, Image} from "semantic-ui-react";
-import * as request from "superagent";
 import {ContentPlaceholderOr, ImagePlaceholderOr, LinePlaceholderOr} from "../utils/placeholder";
-import {apiDelay} from "../utils/test-api-delay";
-import api from "../utils/superagent-api";
 import {ifMount, markUnmount} from "../utils/async";
+import {loadOwner} from "../io/api";
+import {imageUrl} from "../utils/image";
 
 class OwnerCard extends React.Component {
 
     constructor(props) {
         super(props);
         this.state = {
-            photoUrl: "/images/avatar.png",
             owner: {
                 name: "",
                 nickname: "",
                 description: "",
+                photoId: undefined,
                 contacts: []
             },
             loading: true
@@ -25,7 +24,7 @@ class OwnerCard extends React.Component {
     render() {
         return <Card>
             <ImagePlaceholderOr square loading={this._isLoading()}>
-                <Image wrapped src={this.state.photoUrl}/>
+                {this.state.owner.photoId && <Image wrapped src={imageUrl(this.state.owner.photoId)}/>}
             </ImagePlaceholderOr>
             <Card.Content>
                 <ContentPlaceholderOr header loading={this._isLoading()} lines={3}>
@@ -43,10 +42,8 @@ class OwnerCard extends React.Component {
     }
 
     async componentDidMount() {
-        let response = await request.get("/owner/info")
-            .use(api);
-        await apiDelay();
-        ifMount(this, () => this.setState({photoUrl: this.state.photoUrl, owner: response.body, loading: false}));
+        let owner = await loadOwner();
+        ifMount(this, () => this.setState({photoUrl: this.state.photoUrl, owner: owner, loading: false}));
     }
 
     componentWillUnmount = markUnmount.bind(this);
