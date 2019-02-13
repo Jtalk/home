@@ -77,16 +77,20 @@ export default class EditBio extends React.Component {
     }
 
     _onSubmit = async () => {
-        let photoId = await this._uploadPhoto();
-        let newOwner = update(this.state.owner, o => o.photoId = photoId);
-        let response = await request.post("/owner", update(newOwner, this._toContactCollection))
-            .use(api);
-        this.log.info(`Owner updated with ${response.status}: ${response.text}`);
-        let newState = update(this.state, s => {
-            s.owner = newOwner;
-            s.executed = true;
-        });
-        this.setState(newState);
+        try {
+            let photoId = await this._uploadPhoto();
+            let newOwner = update(this.state.owner, o => o.photoId = photoId);
+            let response = await request.post("/owner", update(newOwner, this._toContactCollection))
+                .use(api);
+            this.log.info(`Owner updated with ${response.status}: ${response.text}`);
+            let newState = update(this.state, s => {
+                s.owner = newOwner;
+                s.executed = true;
+            });
+            this.setState(newState);
+        } catch (e) {
+            this.log.error(`Exception while updating owner bio for ${JSON.stringify(this.state.owner)}`, e);
+        }
     };
 
     _onChange = (e, { name, value }) => {
@@ -103,20 +107,25 @@ export default class EditBio extends React.Component {
     };
 
     async _uploadPhoto() {
-        let photo = this.state.photoToUpload;
-        if (!photo) {
-            return this.state.owner.photoId;
-        }
-        let response = await request.post("/images")
-            .attach("img", photo)
-            .use(api);
+            let photo = this.state.photoToUpload;
+            if (!photo) {
+                return this.state.owner.photoId;
+            }
+        try {
+            let response = await request.post("/images")
+                .attach("img", photo)
+                .use(api);
 
-        let body = response.body;
-        if (body.status !== "ok") {
-            throw Error("Error while uploading photo: " + JSON.stringify(body));
+            let body = response.body;
+            if (body.status !== "ok") {
+                this.log.error(`Unexpected response from API upon photo upload: ${JSON.stringify(body)}`);
+                throw Error("API error while uploading photo");
+            }
+            return body.id;
+        } catch (e) {
+            this.log.error("Exception while uploading a new photo", e);
+            throw Error("Cannot upload a new photo")
         }
-
-        return body.id;
     }
 
     _toFlatContacts(owner) {
