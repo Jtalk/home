@@ -33,20 +33,25 @@ class LoggerController @Inject()(cc: ControllerComponents, db: Database)
     case "INFO" => m => logger.info(m)
     case _ => m => logger.error(m) // To draw attention
   }
-  private def format(e: Event) = e.stacktrace
-    .map(_.toString())
-    .map(formatSimple(e) + _)
+  private def format(e: Event) = e.exception
+    .map(formatEx)
+    .map(formatSimple(e) + "\n" + _)
     .getOrElse(formatSimple(e))
+  private def formatEx(ex: ExceptionInfo) = s"[${ex.url}] ${ex.name} - ${ex.message}${ex.useragent.map(" (" + _ + ")").getOrElse("")}\n" + ex.stack.reduce(_ + "\n" + _)
   private def formatSimple(e: Event): String = s"${formatTime(e.timestamp)} [${e.level}] ${e.scope} - ${e.message}"
   private def formatTime(timestamp: Instant) = timestamp.atZone(ZoneId.of("UTC")).format(DateTimeFormatter.ofPattern("dd/MM/yyyy hh:mm:ss.S"))
 }
 
 case class Events(events: Seq[Event])
-case class Event(message: String, scope: String, level: String, timestamp: Instant, stacktrace: Option[JsObject])
+case class Event(message: String, scope: String, level: String, timestamp: Instant, exception: Option[ExceptionInfo])
+case class ExceptionInfo(name: String, message: String, url: String, useragent: Option[String], stack: Seq[String])
 object Events {
   implicit val reads: Reads[Events] = Json.reads[Events]
   implicit def jsonParser(implicit bodyParsers: PlayBodyParsers, ec: ExecutionContext): BodyParser[Events] = WebUtils.bodyParser[Events]
 }
 object Event {
   implicit val reads: Reads[Event] = Json.reads[Event]
+}
+object ExceptionInfo {
+  implicit val reads: Reads[ExceptionInfo] = Json.reads[ExceptionInfo]
 }

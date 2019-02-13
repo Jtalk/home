@@ -5,11 +5,11 @@ import javax.inject._
 import play.api.libs.json.{JsObject, JsValue, Json}
 import play.api.mvc._
 import play.modules.reactivemongo.MongoController.{JsGridFS, JsReadFile}
+import play.modules.reactivemongo.{MongoController, ReactiveMongoApi, ReactiveMongoComponents}
 import reactivemongo.play.json._
 import utils.Extension.PipeOp
-import play.modules.reactivemongo.{MongoController, ReactiveMongoApi, ReactiveMongoComponents}
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 @Singleton
 class ImageController @Inject()(cc: ControllerComponents, materializer: Materializer, api: ReactiveMongoApi)
