@@ -11,7 +11,7 @@ import EditFooter from "./admin/edit-footer";
 import EditBlogRouter from "./admin/edit-blog-router";
 import EditImages from "./admin/edit-images";
 import NotFound from "./error/not-found";
-import {createMultiRoutingConfig, createRoutes, createRoutingConfig} from "./routing";
+import {createMultiRoutingConfig, createRoutes, createRoutingConfig} from "./utils/routing";
 import ProjectsLoader from "./projects/projects-loader";
 import FooterLoader from "./footer/footer-loader";
 import "./utils/config";
