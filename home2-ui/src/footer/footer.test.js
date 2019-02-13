@@ -2,7 +2,7 @@ import React from 'react';
 import * as Enzyme from "enzyme";
 import {mount, shallow} from "enzyme";
 import Adapter from 'enzyme-adapter-react-16';
-import {expect} from "chai";
+
 import Footer from "./footer";
 import FlatLinksList from "./flat-links-list";
 import FlatLogoList from "./flat-logo-list";
@@ -38,13 +38,13 @@ describe("<Footer/>", () => {
   });
   it('forwards links and logos to proper children', () => {
     let result = shallow(<Footer links={links} logos={logos}/>);
-    expect(result.find(FlatLinksList).props()).to.include({links: links});
-    expect(result.find(FlatLogoList).props()).to.include({logos: logos});
+    expect(result.find(FlatLinksList).props()).toMatchObject({links: links});
+    expect(result.find(FlatLogoList).props()).toMatchObject({logos: logos});
   });
   it('renders centrally aligned', () => {
     let result = shallow(<Footer links={links} logos={logos}/>);
     // I've got absolutely no idea how to test it more appropriately
-    expect(result.findWhere(n => n.is(Container) && n.props().textAlign !== "center").getElements().length).to.be.equal(0);
-    expect(result.findWhere(n => n.is(Segment) && n.props().textAlign !== "center").getElements().length).to.be.equal(0);
+    expect(result.findWhere(n => n.is(Container) && n.props().textAlign !== "center").getElements().length).toBe(0);
+    expect(result.findWhere(n => n.is(Segment) && n.props().textAlign !== "center").getElements().length).toBe(0);
   });
 });

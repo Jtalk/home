@@ -5,7 +5,7 @@ let API = "http://localhost:8090";
 
 config.set({
     api: API,
-    apiDelay: new Duration("3s"),
+    apiDelay: Duration.parse("3s"),
     image: {
         url: {
             template: `${API}/images/{}`

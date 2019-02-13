@@ -2,7 +2,7 @@ import React from 'react';
 import * as Enzyme from "enzyme";
 import {mount} from "enzyme";
 import Adapter from 'enzyme-adapter-react-16';
-import {expect} from "chai";
+
 import FlatLinksList from "./flat-links-list";
 import VerticalSeparator from "./vertical-separator";
 import FlatLogoList from "./flat-logo-list";
@@ -32,22 +32,22 @@ describe("<FlatLogoList/>", () => {
   });
   it('renders single logo without spacing', () => {
     let result = mount(<FlatLogoList logos={[logos[0]]} spacing="50px"/>);
-    expect(result.find("a").props().style).to.be.eql({});
-    expect(result.find("a").props()).to.include({href: logos[0].href});
-    expect(result.find("a").find("img").props()).to.include({src: logos[0].src, alt: logos[0].name, height: logos[0].height})
+    expect(result.find("a").props().style).toEqual({});
+    expect(result.find("a").props()).toMatchObject({href: logos[0].href});
+    expect(result.find("a").find("img").props()).toMatchObject({src: logos[0].src, alt: logos[0].name, height: logos[0].height})
   });
   it('renders multiple logos with spacing', () => {
     let result = mount(<FlatLogoList logos={logos} spacing="50px"/>);
-    expect(result.find("a").filter({href: logos[0].href}).props().style).to.be.eql({});
-    expect(result.find("a").filter({href: logos[1].href}).props().style).to.be.eql({marginLeft: "50px !important"});
-    expect(result.find("a").filter({href: logos[0].href}).find("img").props()).to.include({src: logos[0].src, alt: logos[0].name, height: logos[0].height});
-    expect(result.find("a").filter({href: logos[0].href}).find("img").props()).to.include({src: logos[0].src, alt: logos[0].name, height: logos[0].height});
+    expect(result.find("a").filter({href: logos[0].href}).props().style).toEqual({});
+    expect(result.find("a").filter({href: logos[1].href}).props().style).toEqual({marginLeft: "50px !important"});
+    expect(result.find("a").filter({href: logos[0].href}).find("img").props()).toMatchObject({src: logos[0].src, alt: logos[0].name, height: logos[0].height});
+    expect(result.find("a").filter({href: logos[0].href}).find("img").props()).toMatchObject({src: logos[0].src, alt: logos[0].name, height: logos[0].height});
   });
   it('renders multiple logos without spacing', () => {
     let result = mount(<FlatLogoList logos={logos}/>);
-    expect(result.find("a").filter({href: logos[0].href}).props().style).to.be.eql({});
-    expect(result.find("a").filter({href: logos[1].href}).props().style).to.be.eql({});
-    expect(result.find("a").filter({href: logos[0].href}).find("img").props()).to.include({src: logos[0].src, alt: logos[0].name, height: logos[0].height});
-    expect(result.find("a").filter({href: logos[0].href}).find("img").props()).to.include({src: logos[0].src, alt: logos[0].name, height: logos[0].height});
+    expect(result.find("a").filter({href: logos[0].href}).props().style).toEqual({});
+    expect(result.find("a").filter({href: logos[1].href}).props().style).toEqual({});
+    expect(result.find("a").filter({href: logos[0].href}).find("img").props()).toMatchObject({src: logos[0].src, alt: logos[0].name, height: logos[0].height});
+    expect(result.find("a").filter({href: logos[0].href}).find("img").props()).toMatchObject({src: logos[0].src, alt: logos[0].name, height: logos[0].height});
   });
 });

@@ -2,7 +2,7 @@ import React from 'react';
 import * as Enzyme from "enzyme";
 import {mount} from "enzyme";
 import Adapter from 'enzyme-adapter-react-16';
-import {expect} from "chai";
+
 import Projects from "./projects";
 import {MemoryRouter} from "react-router";
 
