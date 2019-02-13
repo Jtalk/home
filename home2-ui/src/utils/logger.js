@@ -43,13 +43,26 @@ export class Logger {
             timestamp: new Date().getTime()
         };
         if (ex) {
-            event.stacktrace = TraceKit.computeStackTrace(ex, 500);
+            event.exception = this._exception(ex);
         }
         return event;
     }
 
     _handleEvent(e) {
         this.handler(e);
+    }
+
+    _exception(ex) {
+        let tracek = TraceKit.computeStackTrace(ex, 500);
+        let rawStack = tracek.stack ? tracek.stack : [];
+        let prettyTrace = rawStack.map(l => `at ${l.func}(${l.args.join(", ")}) ${l.url}:${l.line}:${l.column}`)
+        return {
+            message: tracek.message ? tracek.message : "<empty>",
+            name: tracek.name ? tracek.name : "<unknown>",
+            stack: prettyTrace,
+            url: tracek.url ? tracek.url : "<unknown>",
+            useragent: tracek.useragent
+        }
     }
 }
 
@@ -83,8 +96,4 @@ export function serverHandler(e) {
             });
         });
     consoleHandler(e);
-}
-
-export function mockHandler(store) {
-    return (e) => store += e;
 }
