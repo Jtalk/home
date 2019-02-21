@@ -4,30 +4,18 @@ import OwnerCard from "./owner-card";
 import LatestPosts from "./latest-posts";
 import "../bbcode/tags";
 import {formatMarkup} from "../utils/text-markup";
-import * as request from "superagent";
 import {ContentPlaceholderOr} from "../utils/placeholder";
-import api from "../utils/superagent-api";
-import {apiDelay} from "../utils/test-api-delay";
-import {ifMount, markUnmount} from "../utils/async";
+import {connect} from "react-redux";
 
 
-export default class About extends React.Component {
-
-    constructor(props) {
-        super(props);
-
-        this.state = {
-            text: "",
-            loading: true
-        };
-    }
+class About extends React.Component {
 
     render() {
         return <Grid stackable centered>
             <Grid.Row>
                 <Grid.Column width={10} as="main">
-                    <ContentPlaceholderOr header lines={30} loading={this.state.loading}>
-                        {formatMarkup(this.state.text)}
+                    <ContentPlaceholderOr header lines={30} loading={this.props.loading}>
+                        {formatMarkup(this.props.text)}
                     </ContentPlaceholderOr>
                 </Grid.Column>
                 <Grid.Column width={4}>
@@ -37,14 +25,13 @@ export default class About extends React.Component {
             </Grid.Row>
         </Grid>
     }
-
-    async componentDidMount() {
-        let response = await request.get("/owner/bio")
-            .use(api);
-        await apiDelay();
-        ifMount(this, () => this.setState({text: response.text, loading: false}));
-    }
-
-    componentWillUnmount = markUnmount.bind(this)
-
 }
+
+function mapToProps(state) {
+    return {
+        text: state.owner.getIn(["data", "bio"]),
+        loading: state.owner.get("loading")
+    }
+}
+
+export default connect(mapToProps, null)(About);

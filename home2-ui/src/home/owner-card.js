@@ -1,61 +1,43 @@
 import React from "react";
 import {Card, Image} from "semantic-ui-react";
 import {ContentPlaceholderOr, ImagePlaceholderOr, LinePlaceholderOr} from "../utils/placeholder";
-import {ifMount, markUnmount} from "../utils/async";
-import {loadOwner} from "../io/api";
 import {imageUrl} from "../utils/image";
+import {connect} from "react-redux";
 
 class OwnerCard extends React.Component {
 
-    constructor(props) {
-        super(props);
-        this.state = {
-            owner: {
-                name: "",
-                nickname: "",
-                description: "",
-                photoId: undefined,
-                contacts: []
-            },
-            loading: true
-        }
-    }
-
     render() {
         return <Card>
-            <ImagePlaceholderOr square loading={this._isLoading()}>
-                {this.state.owner.photoId && <Image wrapped src={imageUrl(this.state.owner.photoId)}/>}
+            <ImagePlaceholderOr square loading={this.props.loading}>
+                {this.props.owner.photoId && <Image wrapped src={imageUrl(this.props.owner.photoId)}/>}
             </ImagePlaceholderOr>
             <Card.Content>
-                <ContentPlaceholderOr header loading={this._isLoading()} lines={3}>
-                    <Card.Header>{this.state.owner.name}</Card.Header>
-                    <Card.Meta>{this.state.owner.nickname}</Card.Meta>
-                    <Card.Description>{this.state.owner.description}</Card.Description>
+                <ContentPlaceholderOr header loading={this.props.loading} lines={3}>
+                    <Card.Header>{this.props.owner.name}</Card.Header>
+                    <Card.Meta>{this.props.owner.nickname}</Card.Meta>
+                    <Card.Description>{this.props.owner.description}</Card.Description>
                 </ContentPlaceholderOr>
             </Card.Content>
             <Card.Content extra icon="user">
-                <LinePlaceholderOr length="short" loading={this._isLoading()}>
+                <LinePlaceholderOr length="short" loading={this.props.loading}>
                     {this._findEmail()}
                 </LinePlaceholderOr>
             </Card.Content>
         </Card>
     }
 
-    async componentDidMount() {
-        let owner = await loadOwner();
-        ifMount(this, () => this.setState({photoUrl: this.state.photoUrl, owner: owner, loading: false}));
-    }
-
-    componentWillUnmount = markUnmount.bind(this);
-
     _findEmail() {
-        let found = this.state.owner.contacts.find(c => c.contactType === "EMAIL");
+        let found = this.props.owner.contacts.find(c => c.contactType === "EMAIL");
         return found && found.value;
-    }
-
-    _isLoading() {
-        return this.state.loading;
     }
 }
 
-export default OwnerCard;
+function mapToProps(state) {
+    let data = state.owner.toJS();
+    return {
+        loading: data.loading,
+        owner: data.data
+    };
+}
+
+export default connect(mapToProps, null)(OwnerCard);

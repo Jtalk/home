@@ -15,24 +15,16 @@ import {createMultiRoutingConfig, createRoutes, createRoutingConfig} from "./uti
 import ProjectsLoader from "./projects/projects-loader";
 import FooterLoader from "./footer/footer-loader";
 import "./utils/config";
-import * as request from "superagent";
-import api from "./utils/superagent-api";
-import {apiDelay} from "./utils/test-api-delay";
 import {Titled} from "react-titled";
+import * as owner from "./data/reduce/owner";
+import {connect} from "react-redux";
 
-export default class App extends Component {
-
-    constructor(props) {
-        super(props);
-        this.state = {
-            ownerName: ""
-        };
-    }
+class App extends Component {
 
     render() {
         return <div className="main-content-pushable">
             <Container className="main-content-pusher framed">
-                <Titled title={() => this.state.ownerName}>
+                <Titled title={() => this.props.ownerName}>
                     <Router>
                         <Switch>
                             {this._buildRoutes(this._mainRoutes().concat(this._serviceRoutes()))}
@@ -44,11 +36,8 @@ export default class App extends Component {
         </div>
     }
 
-    async componentDidMount() {
-        let response = await request.get("/owner/name")
-            .use(api);
-        await apiDelay();
-        this.setState({ownerName: response.text});
+    componentDidMount() {
+        this.props.load();
     }
 
     _buildRoutes(navigation) {
@@ -59,39 +48,39 @@ export default class App extends Component {
 
     _mainRoutes() {
         return [
-            this._createNavigation("About", "/", () => <About ownerName={this.state.ownerName}/>, true),
-            this._createNavigation("Projects", "/projects", () => <ProjectsLoader ownerName={this.state.ownerName}/>, false),
-            this._createNavigation("Blog", "/blog/articles", () => <Blog ownerName={this.state.ownerName}/>, false),
+            this._createNavigation("About", "/", () => <About ownerName={this.props.ownerName}/>, true),
+            this._createNavigation("Projects", "/projects", () => <ProjectsLoader ownerName={this.props.ownerName}/>, false),
+            this._createNavigation("Blog", "/blog/articles", () => <Blog ownerName={this.props.ownerName}/>, false),
             this._createNestedNavigation("Admin", [
                 this._createNavigation(
                     "Edit Bio",
                     "/admin/bio",
-                    () => <EditBio ownerName={this.state.ownerName}/>,
+                    () => <EditBio ownerName={this.props.ownerName}/>,
                     true),
                 this._createComplexNavigation(
                     "Edit Projects",
                     "/admin/projects",
                     "/admin/projects/:projectId?",
                     params => <EditProjects currentProjectId={params.match.params.projectId}
-                                            ownerName={this.state.ownerName}/>,
+                                            ownerName={this.props.ownerName}/>,
                     true),
                 this._createComplexNavigation(
                     "Edit Blog",
                     "/admin/blog/articles",
                     "/admin/blog/articles/:articleId?",
-                    params => <EditBlogRouter ownerName={this.state.ownerName}
+                    params => <EditBlogRouter ownerName={this.props.ownerName}
                                               articleId={params.match.params.articleId}/>,
                     true),
                 this._createComplexNavigation(
                     "Edit Images",
                     "/admin/images",
                     "/admin/images/:idx?",
-                    params => <EditImages currentPageIdx={params.match.params.idx} ownerName={this.state.ownerName}/>,
+                    params => <EditImages currentPageIdx={params.match.params.idx} ownerName={this.props.ownerName}/>,
                     true),
                 this._createNavigation(
                     "Edit Footer",
                     "/admin/footer",
-                    () => <EditFooter ownerName={this.state.ownerName}/>,
+                    () => <EditFooter ownerName={this.props.ownerName}/>,
                     true)
             ])
         ]
@@ -130,9 +119,18 @@ export default class App extends Component {
 
     _page(activeLink, mainComponent) {
         return <div>
-            <Header ownerName={this.state.ownerName} activeLink={activeLink} links={this._mainRoutes().map(r => r.menu)}/>
+            <Header ownerName={this.props.ownerName} activeLink={activeLink} links={this._mainRoutes().map(r => r.menu)}/>
             {mainComponent}
         </div>
     }
 }
 
+function mapStateToProps(state, oldProps) {
+    return {ownerName: state.owner.get("data").get("name")}
+}
+
+const actions = {
+    load: owner.load
+};
+
+export default connect(mapStateToProps, actions)(App);
