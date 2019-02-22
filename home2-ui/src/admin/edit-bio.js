@@ -1,21 +1,19 @@
 import React from "react";
 import {Button, Divider, Form, Grid, Image, Input, Segment, TextArea} from "semantic-ui-react";
 import {ErrorMessage, SuccessMessage} from "../form/form-message";
-import {loadOwner} from "../io/api";
-import {ifMount} from "../utils/async";
-import api from "../utils/superagent-api";
-import * as request from "superagent";
 import {imageUrl} from "../utils/image";
-import {update} from "../utils/object";
 import {Logger} from "../utils/logger";
+import {connect} from "react-redux";
+import {fromJS} from "immutable";
+import * as owner from "../data/reduce/owner";
 
-export default class EditBio extends React.Component {
+class EditBio extends React.Component {
 
     constructor(props) {
         super(props);
         this.log = Logger.of(this.constructor.name);
         this.state = {
-            owner: {
+            data: {
                 name: "",
                 photoId: "",
                 nickname: "",
@@ -23,19 +21,17 @@ export default class EditBio extends React.Component {
                 email: "",
                 bio: ""
             },
-            executed: undefined,
-            errorMessage: undefined,
-            loading: true
+            edited: false
         }
     }
 
     render() {
-        let owner = this.state.owner;
+        let owner = this.state.data;
         return <Grid centered>
             <Grid.Column width={11}>
                 <Segment raised>
                     <h2>Edit bio</h2>
-                    <Form onSubmit={this._onSubmit} loading={this.state.loading} error={this.state.errorMessage} success={this.state.executed && !this.state.errorMessage}>
+                    <Form onSubmit={this._onSubmit} loading={this.props.loading} error={this.props.errorMessage} success={this.props.updated && !this.state.errorMessage}>
                         <Divider/>
                         <Grid stackable>
                             <Grid.Row>
@@ -45,7 +41,7 @@ export default class EditBio extends React.Component {
                                     <Form.Input label="Owner E-Mail" placeholder="E-Mail" value={owner.email} name="email" onChange={this._onChange}/>
                                     <Form.Input label="Owner Short Bio" placeholder="Description" value={owner.description} name="description" onChange={this._onChange}/>
                                     <SuccessMessage message="Changes successfully saved"/>
-                                    <ErrorMessage message={this.state.errorMessage}/>
+                                    <ErrorMessage message={this.props.errorMessage}/>
                                 </Grid.Column>
                                 <Grid.Column width={5}>
                                     <Form.Field>
@@ -70,78 +66,64 @@ export default class EditBio extends React.Component {
         </Grid>
     }
 
-    async componentDidMount() {
-        let owner = await loadOwner();
-        this._toFlatContacts(owner);
-        ifMount(this, () => this.setState({photoUrl: this.state.photoUrl, owner: owner, loading: false}));
+    static getDerivedStateFromProps(newProps, oldState) {
+        let newState = Object.assign({}, oldState);
+        if (!oldState.edited) {
+            newState = Object.assign(newState, { data: newProps.data });
+        }
+        return newState;
     }
 
-    _onSubmit = async () => {
-        try {
-            let photoId = await this._uploadPhoto();
-            let newOwner = update(this.state.owner, o => o.photoId = photoId);
-            let response = await request.post("/owner", update(newOwner, this._toContactCollection))
-                .use(api);
-            this.log.info(`Owner updated with ${response.status}: ${response.text}`);
-            let newState = update(this.state, s => {
-                s.owner = newOwner;
-                s.executed = true;
-            });
-            this.setState(newState);
-        } catch (e) {
-            this.log.error(`Exception while updating owner bio for ${JSON.stringify(this.state.owner)}`, e);
-        }
+    _onSubmit = () => {
+        let owner = fromJS(this.state.data);
+        owner = this._toContactCollection(owner);
+        this.props.update(owner, this.state.photoToUpload);
+        this.setState(Object.assign({}, this.state, { edited: false }))
     };
 
     _onChange = (e, { name, value }) => {
+        this.log.debug(`Changing ${name} to ${value} in ${JSON.stringify(this.state.data)}`);
         let newState = Object.assign({}, this.state);
-        newState.owner = Object.assign({}, newState.owner);
-        newState.owner[name] = value;
+        newState.data = Object.assign({}, newState.data);
+        newState.data[name] = value;
+        newState.edited = true;
         this.setState(newState)
     };
 
     _photoSelected = (e) => {
         let file = e.target.files[0];
-        let newState = update(this.state, s => s.photoToUpload = file);
+        let newState = Object.assign({}, this.state, { photoToUpload: file });
         this.setState(newState);
     };
 
-    async _uploadPhoto() {
-            let photo = this.state.photoToUpload;
-            if (!photo) {
-                return this.state.owner.photoId;
-            }
-        try {
-            let response = await request.post("/images")
-                .attach("img", photo)
-                .use(api);
-
-            let body = response.body;
-            if (body.status !== "ok") {
-                this.log.error(`Unexpected response from API upon photo upload: ${JSON.stringify(body)}`);
-                throw Error("API error while uploading photo");
-            }
-            return body.id;
-        } catch (e) {
-            this.log.error("Exception while uploading a new photo", e);
-            throw Error("Cannot upload a new photo")
-        }
-    }
-
-    _toFlatContacts(owner) {
-        let emailEntry = owner.contacts.find(c => c.contactType === "EMAIL");
-        owner.contacts = undefined;
-        if (emailEntry) {
-            owner.email = emailEntry.value
-        }
-        return owner;
-    }
-
     _toContactCollection(owner) {
-        if (owner.email) {
-            owner.contacts = [{contactType: "EMAIL", value: owner.email}];
+        let email = owner.get("email");
+        if (email) {
+            owner = owner.set("contacts", fromJS([{contactType: "EMAIL", value: email}]));
         }
-        owner.email = undefined;
-        return owner;
+        return owner.remove("email");
     }
 }
+
+function mapToProps(state) {
+    let owner = state.owner.toJS();
+    toFlatContacts(owner.data);
+    return owner;
+}
+
+function update(update, photo) {
+    return owner.update(update, photo)
+}
+
+function toFlatContacts(owner) {
+    let emailEntry = owner.contacts.find(c => c.contactType === "EMAIL");
+    owner.contacts = undefined;
+    if (emailEntry) {
+        owner.email = emailEntry.value
+    } else {
+        owner.email = ""
+    }
+    return owner;
+}
+
+export default connect(mapToProps, { update })(EditBio);
