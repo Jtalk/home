@@ -42,14 +42,10 @@ describe('Redux(owner)', () => {
             api: '',
         });
         sm = require('superagent-mocker')(request);
+        sm.clearRoutes();
         sm.get('/owner', () => {
             return { body: mockOwner };
         });
-        sm.clearRoutes();
-    });
-    afterEach(() => {
-        sm && sm.clearRoutes();
-        config.set({});
     });
     test('default owner is provided before load', () => {
         let ownerState = {a: 1};
