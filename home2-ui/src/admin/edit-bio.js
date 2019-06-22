@@ -31,7 +31,7 @@ class EditBio extends React.Component {
             <Grid.Column width={11}>
                 <Segment raised>
                     <h2>Edit bio</h2>
-                    <Form onSubmit={this._onSubmit} loading={this.props.loading} error={this.props.errorMessage} success={this.props.updated && !this.state.errorMessage}>
+                    <Form onSubmit={this._onSubmit} loading={this.props.loading} error={!!this.props.errorMessage} success={this.props.updated && !this.props.errorMessage}>
                         <Divider/>
                         <Grid stackable>
                             <Grid.Row>

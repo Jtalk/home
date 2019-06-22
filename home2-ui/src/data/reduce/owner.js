@@ -78,9 +78,7 @@ export function load() {
 }
 
 export function update(update, photo) {
-    console.log("123");
     return async dispatch => {
-        console.log("456");
         dispatch(action(Action.UPDATE));
         try {
             let newOwner = await updateOwner(update, photo);
