@@ -4,23 +4,10 @@ import './index.css';
 import 'semantic-ui-css/semantic.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
-import {applyMiddleware, combineReducers, createStore} from "redux";
-import {reducers} from "./data/redux";
+import {createAppStore} from "./data/redux";
 import {Provider} from "react-redux";
-import thunk from "redux-thunk";
-import {createLogger} from "redux-logger";
-import {Logger, reduxLoggerOpts} from "./utils/logger";
 
-const reduxLog = Logger.of("redux");
-const store = createStore(
-    combineReducers({
-        ...reducers
-    }),
-    applyMiddleware(
-        thunk,
-        createLogger(reduxLoggerOpts(reduxLog))
-    )
-);
+const store = createAppStore();
 
 ReactDOM.render(
     <Provider store={store}>

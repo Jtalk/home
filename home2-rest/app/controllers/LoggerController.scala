@@ -37,7 +37,8 @@ class LoggerController @Inject()(cc: ControllerComponents, db: Database)
     .map(formatEx)
     .map(formatSimple(e) + "\n" + _)
     .getOrElse(formatSimple(e))
-  private def formatEx(ex: ExceptionInfo) = s"[${ex.url}] ${ex.name} - ${ex.message}${ex.useragent.map(" (" + _ + ")").getOrElse("")}\n" + ex.stack.reduce(_ + "\n" + _)
+  private def formatEx(ex: ExceptionInfo) = s"[${ex.url}] ${ex.name} - ${ex.message}${ex.useragent.map(" (" + _ + ")").getOrElse("")}\n" + formatStacktrace(ex.stack)
+  private def formatStacktrace(stack: Seq[String]) = Some(stack).filter(_.nonEmpty).map(_.reduce(_ + "\n" + _)).getOrElse("")
   private def formatSimple(e: Event): String = s"${formatTime(e.timestamp)} [${e.level}] ${e.scope} - ${e.message}"
   private def formatTime(timestamp: Instant) = timestamp.atZone(ZoneId.of("UTC")).format(DateTimeFormatter.ofPattern("dd/MM/yyyy hh:mm:ss.S"))
 }
