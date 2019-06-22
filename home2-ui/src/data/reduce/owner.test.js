@@ -1,7 +1,4 @@
-
 import * as config from "react-global-configuration";
-config.set({}, { freeze: false });
-
 import {applyMiddleware, combineReducers, createStore} from "redux";
 import {reducers} from "../redux";
 import thunk from "redux-thunk";
@@ -44,7 +41,7 @@ describe('Redux(owner)', () => {
         sm = require('superagent-mocker')(request);
         sm.clearRoutes();
         sm.get('/owner', () => {
-            return { body: mockOwner };
+            return {body: mockOwner};
         });
     });
     test('default owner is provided before load', () => {

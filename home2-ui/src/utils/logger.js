@@ -7,15 +7,17 @@ let LEVEL_ERROR = "ERROR";
 let LEVEL_INFO = "INFO";
 let LEVEL_DEBUG = "DEBUG";
 
+let defaultHandler = serverHandler;
+
 export class Logger {
 
-    constructor(name) {
+    constructor(name, handler) {
         this.name = name;
-        this.handler = serverHandler;
+        this.handler = handler;
     }
 
-    static of(name) {
-        return new Logger(name);
+    static of(name, handler = null) {
+        return new Logger(name, handler);
     }
 
     error(message, e) {
@@ -54,7 +56,11 @@ export class Logger {
     }
 
     _handleEvent(e) {
-        this.handler(e);
+        this._getHandler()(e);
+    }
+
+    _getHandler() {
+        return this.handler || defaultHandler;
     }
 
     _exception(ex) {
@@ -78,7 +84,11 @@ export function reduxLoggerOpts(logger) {
     }
 }
 
-function consoleHandler(e) {
+export function setDefaultHandler(handler) {
+    defaultHandler = handler;
+}
+
+export function consoleHandler(e) {
     var logger = console.log.bind(console);
     switch (e.level) {
         case LEVEL_ERROR: logger = console.error.bind(console); break;
@@ -91,7 +101,7 @@ function consoleHandler(e) {
     logger(e);
 }
 
-function serverHandler(e) {
+export function serverHandler(e) {
     request.post("/logs", {events: [e]})
         .use(api)
         .catch(rej => {
