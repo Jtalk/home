@@ -1,6 +1,7 @@
 import * as TraceKit from "tracekit";
 import * as request from "superagent";
 import api from "./superagent-api";
+import {Map} from "immutable";
 
 let LEVEL_ERROR = "ERROR";
 let LEVEL_INFO = "INFO";
@@ -23,6 +24,10 @@ export class Logger {
 
     info(message, e) {
         this._handleMessage(LEVEL_INFO, message, e);
+    }
+
+    log(message, e) {
+        this.info(message, e);
     }
 
     debug(message, e) {
@@ -66,25 +71,27 @@ export class Logger {
     }
 }
 
-export function consoleHandler(e) {
-    let toString = (msg, stacktrace) => {
-        if (stacktrace) {
-            msg = msg + "\n" + JSON.stringify(stacktrace);
-        }
-        return msg;
-    };
-    var logger = console.log;
-    switch (e.level) {
-        case LEVEL_ERROR: logger = console.error; break;
-        case LEVEL_INFO: logger = console.info; break;
-        case LEVEL_DEBUG: logger = console.debug; break;
-        default: logger = console.log;
+export function reduxLoggerOpts(logger) {
+    return {
+        stateTransformer: state => Map(state).toJS(),
+        actionTransformer: action => Map(action).toJS(),
     }
-    let date = new Date(e.timestamp).toLocaleString();
-    logger(toString(`${date} [${e.level}] ${e.scope} - ${e.message}`, e.stacktrace));
 }
 
-export function serverHandler(e) {
+function consoleHandler(e) {
+    var logger = console.log.bind(console);
+    switch (e.level) {
+        case LEVEL_ERROR: logger = console.error.bind(console); break;
+        case LEVEL_INFO: logger = console.info.bind(console); break;
+        case LEVEL_DEBUG: logger = console.debug.bind(console); break;
+        default: logger = console.log;
+    }
+    e = Object.assign({}, e);
+    e.timestamp = new Date(e.timestamp);
+    logger(e);
+}
+
+function serverHandler(e) {
     request.post("/logs", {events: [e]})
         .use(api)
         .catch(rej => {
