@@ -1,7 +1,7 @@
 package db
 
 import javax.inject.{Inject, Singleton}
-import models.owner.ModelType.ModelType
+import models.ModelType.ModelType
 import play.api.Logger
 import play.api.libs.json._
 import play.api.mvc.{AbstractController, ControllerComponents}
