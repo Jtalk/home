@@ -1,13 +1,6 @@
 import React from 'react';
-import * as Enzyme from "enzyme";
 import {mount} from "enzyme";
-import Adapter from 'enzyme-adapter-react-16';
-
-import FlatLinksList from "./flat-links-list";
-import VerticalSeparator from "./vertical-separator";
 import FlatLogoList from "./flat-logo-list";
-
-Enzyme.configure({ adapter: new Adapter() });
 
 describe("<FlatLogoList/>", () => {
   let logos = [
