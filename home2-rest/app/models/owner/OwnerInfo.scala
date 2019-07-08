@@ -1,6 +1,7 @@
 package models.owner
 
-import models.owner.ModelType.ModelType
+import models.ModelType
+import models.ModelType.ModelType
 import play.api.http.Writeable
 import play.api.libs.functional.syntax._
 import play.api.libs.json.Reads._

@@ -11,6 +11,10 @@ GET         /owner/bio         controllers.OwnerController.bio
 GET         /images/:id        controllers.ImageController.serveFile(id)
 POST        /images            controllers.ImageController.upload
 
+GET         /footer            controllers.FooterController.loadFooter
+GET         /footer/links      controllers.FooterController.loadFooterLinks
+GET         /footer/logos      controllers.FooterController.loadFooterLogos
+
 POST        /logs              controllers.LoggerController.post
 
 # Map static resources from the /public folder to the /assets URL path
