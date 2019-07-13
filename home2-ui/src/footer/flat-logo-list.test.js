@@ -7,14 +7,12 @@ describe("<FlatLogoList/>", () => {
     {
       href: "/test/logo-link1",
       src: "/test/images/logo1.svg",
-      name: "Test Logo 1",
-      height: 55
+      name: "Test Logo 1"
     },
     {
       href: "/test/logo-link2",
       src: "/test/images/logo2.jpg",
-      name: "Test Logo 2",
-      height: 40
+      name: "Test Logo 2"
     }
   ];
   it('renders empty list', () => {
@@ -27,20 +25,20 @@ describe("<FlatLogoList/>", () => {
     let result = mount(<FlatLogoList logos={[logos[0]]} spacing="50px"/>);
     expect(result.find("a").props().style).toEqual({});
     expect(result.find("a").props()).toMatchObject({href: logos[0].href});
-    expect(result.find("a").find("img").props()).toMatchObject({src: logos[0].src, alt: logos[0].name, height: logos[0].height})
+    expect(result.find("a").find("img").props()).toMatchObject({src: logos[0].src, alt: logos[0].name})
   });
   it('renders multiple logos with spacing', () => {
     let result = mount(<FlatLogoList logos={logos} spacing="50px"/>);
     expect(result.find("a").filter({href: logos[0].href}).props().style).toEqual({});
     expect(result.find("a").filter({href: logos[1].href}).props().style).toEqual({marginLeft: "50px !important"});
-    expect(result.find("a").filter({href: logos[0].href}).find("img").props()).toMatchObject({src: logos[0].src, alt: logos[0].name, height: logos[0].height});
-    expect(result.find("a").filter({href: logos[0].href}).find("img").props()).toMatchObject({src: logos[0].src, alt: logos[0].name, height: logos[0].height});
+    expect(result.find("a").filter({href: logos[0].href}).find("img").props()).toMatchObject({src: logos[0].src, alt: logos[0].name});
+    expect(result.find("a").filter({href: logos[0].href}).find("img").props()).toMatchObject({src: logos[0].src, alt: logos[0].name});
   });
   it('renders multiple logos without spacing', () => {
     let result = mount(<FlatLogoList logos={logos}/>);
     expect(result.find("a").filter({href: logos[0].href}).props().style).toEqual({});
     expect(result.find("a").filter({href: logos[1].href}).props().style).toEqual({});
-    expect(result.find("a").filter({href: logos[0].href}).find("img").props()).toMatchObject({src: logos[0].src, alt: logos[0].name, height: logos[0].height});
-    expect(result.find("a").filter({href: logos[0].href}).find("img").props()).toMatchObject({src: logos[0].src, alt: logos[0].name, height: logos[0].height});
+    expect(result.find("a").filter({href: logos[0].href}).find("img").props()).toMatchObject({src: logos[0].src, alt: logos[0].name});
+    expect(result.find("a").filter({href: logos[0].href}).find("img").props()).toMatchObject({src: logos[0].src, alt: logos[0].name});
   });
 });

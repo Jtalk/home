@@ -1,5 +1,7 @@
 import React from "react";
 
+const LOGO_HEIGHT = '40px';
+
 export default class FlatLogoList extends React.Component {
 
     render() {
@@ -9,7 +11,7 @@ export default class FlatLogoList extends React.Component {
                 style = {marginLeft: this.props.spacing + ' !important'};
             }
             return <a key={logo.name} href={logo.href} style={style}>
-                <img src={logo.src} height={logo.height} alt={logo.name}/>
+                <img src={logo.src} height={LOGO_HEIGHT} alt={logo.name}/>
             </a>
         });
     }
