@@ -31,7 +31,8 @@
     "superagent-suffix": "^0.1.0",
     "tracekit": "^0.4.5",
     "typechecker": "^4.7.0",
-    "what.js": "^1.0.1"
+    "what.js": "^1.0.1",
+    "lodash": "latest"
   },
   "devDependencies": {
     "enzyme": "^3.10.0",
