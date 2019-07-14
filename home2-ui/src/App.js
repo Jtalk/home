@@ -13,7 +13,7 @@ import EditImages from "./admin/edit-images";
 import NotFound from "./error/not-found";
 import {createMultiRoutingConfig, createRoutes, createRoutingConfig} from "./utils/routing";
 import ProjectsLoader from "./projects/projects-loader";
-import FooterLoader from "./footer/footer-loader";
+import {Footer} from "./footer/footer";
 import "./utils/config";
 import {Titled} from "react-titled";
 import * as owner from "./data/reduce/owner";
@@ -32,7 +32,7 @@ class App extends Component {
                     </Router>
                 </Titled>
             </Container>
-            <FooterLoader/>
+            <Footer/>
         </div>
     }
 
