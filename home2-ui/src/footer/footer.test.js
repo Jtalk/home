@@ -1,54 +1,72 @@
 import React from 'react';
 import {mount, shallow} from "enzyme";
-
-import {Footer} from "./footer";
 import FlatLinksList from "./flat-links-list";
 import FlatLogoList from "./flat-logo-list";
 import {Container, Segment} from "semantic-ui-react";
+import {Footer, StatelessFooter} from "./footer";
+import {Provider} from "react-redux";
+import {fromJS} from "immutable";
+import {createTestStore} from "../data/redux";
 
-describe("<Footer/>", () => {
-  let links = [
-    {caption: "Link1", href: "/test/link1"},
-    {caption: "Link2", href: "test/link2"},
-    {caption: "Link3", href: "test/link3"}
-  ];
-  let logos = [
-    {
-      href: "/test/logo-link1",
-      src: "/test/images/logo1.svg",
-      name: "Test Logo 1",
-      height: 55
-    },
-    {
-      href: "/test/logo-link2",
-      src: "/test/images/logo2.jpg",
-      name: "Test Logo 2",
-      height: 40
-    }
-  ];
-  let actions = {
-    load: () => {}
-  };
+let links = [
+  {caption: "Link1", href: "/test/link1"},
+  {caption: "Link2", href: "test/link2"},
+  {caption: "Link3", href: "test/link3"}
+];
+let logos = [
+  {
+    href: "/test/logo-link1",
+    src: "/test/images/logo1.svg",
+    name: "Test Logo 1"
+  },
+  {
+    href: "/test/logo-link2",
+    src: "/test/images/logo2.jpg",
+    name: "Test Logo 2"
+  }
+];
+
+describe("<StatelessFooter/>", () => {
   it('renders without errors', () => {
-    mount(<Footer links={links} logos={logos} {...actions}/>);
+    mount(<StatelessFooter links={links} logos={logos}/>);
   });
   it('renders without links or logos', () => {
-    mount(<Footer links={[]} logos={[]} {...actions}/>);
-  });
-  it('calls the loading function upon mounting', () => {
-    actions.load = jest.fn(() => {});
-    mount(<Footer links={[]} logos={[]} {...actions}/>);
-    expect(actions.load.mock.calls.length).toBeGreaterThan(0);
+    mount(<StatelessFooter links={[]} logos={[]}/>);
   });
   it('forwards links and logos to proper children', () => {
-    let result = shallow(<Footer links={links} logos={logos} {...actions}/>);
+    let result = shallow(<StatelessFooter links={links} logos={logos}/>);
     expect(result.find(FlatLinksList).props()).toMatchObject({links: links});
     expect(result.find(FlatLogoList).props()).toMatchObject({logos: logos});
   });
   it('renders centrally aligned', () => {
-    let result = shallow(<Footer links={links} logos={logos} {...actions}/>);
+    let result = shallow(<StatelessFooter links={links} logos={logos}/>);
     // I've got absolutely no idea how to test it more appropriately
     expect(result.findWhere(n => n.is(Container) && n.props().textAlign !== "center").getElements().length).toBe(0);
     expect(result.findWhere(n => n.is(Segment) && n.props().textAlign !== "center").getElements().length).toBe(0);
+  });
+});
+
+describe("<Footer/>", () => {
+
+  let store = createTestStore("footer", () => fromJS({
+      data: {
+        links: links,
+        logos: logos,
+      }
+  }));
+
+  it('calls the loading function upon mounting', () => {
+    let loaderFn = jest.fn(() => ({type: "noop"}));
+    mount(<Provider store={store}>
+      <Footer footerLoader={loaderFn}/>
+    </Provider>);
+    expect(loaderFn.mock.calls.length).toBeGreaterThan(0);
+  });
+  it('renders data from the store', () => {
+    let result = mount(<Provider store={store}>
+      <Footer footerLoader={() => ({ type: "noop" })}/>
+    </Provider>);
+    expect(result.findWhere(n => n.is(FlatLinksList)).props().links).toEqual(links);
+    expect(result.findWhere(n => n.is(FlatLogoList)).props().logos).toEqual(logos);
   });
 });

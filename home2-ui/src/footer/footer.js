@@ -1,39 +1,31 @@
-import React from "react";
+import React, {useEffect} from "react";
 import {Container, Segment} from "semantic-ui-react";
 import FlatLinksList from "./flat-links-list";
 import FlatLogoList from "./flat-logo-list";
 import * as footer from "../data/reduce/footer";
-import {connect} from "react-redux";
+import {useDispatch} from "react-redux";
+import {useImmutableSelector} from "../utils/redux-store";
 
-export class Footer extends React.Component {
+export const Footer = function ({footerLoader}) {
 
-    render() {
-        return <Segment inverted basic className="footer" as="footer" textAlign="center">
-            <Container textAlign="center">
-                <Segment inverted basic textAlign="center">
-                    <FlatLinksList links={this.props.links} separator="|"/>
-                </Segment>
-                <FlatLogoList logos={this.props.logos}/>
-            </Container>
-        </Segment>
-    }
+    let links = useImmutableSelector("footer", ["data", "links"]) || [];
+    let logos = useImmutableSelector("footer", ["data", "logos"]) || [];
+    let dispatch = useDispatch();
+    let loader = footerLoader || footer.load;
 
-    componentDidMount() {
-        this.props.load();
-    }
-}
+    useEffect(() => { dispatch(loader()); }, [loader, footerLoader, dispatch]);
 
-
-function mapStateToProps(state, oldProps) {
-    let footerData = state.footer.get("data");
-    return {
-        links: footerData.get("links").toJS(),
-        logos: footerData.get("logos").toJS(),
-    }
-}
-
-const actions = {
-    load: footer.load
+    return <StatelessFooter {...{links, logos}}/>
 };
 
-export default connect(mapStateToProps, actions)(Footer);
+export const StatelessFooter = function (props) {
+
+    return <Segment inverted basic className="footer" as="footer" textAlign="center">
+        <Container textAlign="center">
+            <Segment inverted basic textAlign="center">
+                <FlatLinksList links={props.links} separator="|"/>
+            </Segment>
+            <FlatLogoList logos={props.logos}/>
+        </Container>
+    </Segment>
+};
