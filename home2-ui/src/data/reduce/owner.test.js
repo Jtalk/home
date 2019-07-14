@@ -2,8 +2,8 @@ import * as config from "react-global-configuration";
 import {applyMiddleware, combineReducers, createStore} from "redux";
 import {reducers} from "../redux";
 import thunk from "redux-thunk";
-import * as request from "superagent";
 import * as owner from "./owner";
+import smmock from "superagent-mocker";
 
 const defaultOwner = {
     name: "",
@@ -38,17 +38,18 @@ describe('Redux(owner)', () => {
         config.set({
             api: '',
         });
-        sm = require('superagent-mocker')(request);
+        sm = smmock(owner.superagentRequest);
         sm.clearRoutes();
-        sm.get('/owner', () => {
+        sm.get("/owner", () => {
             return {body: mockOwner};
         });
     });
-    test('default owner is provided before load', () => {
-        let ownerState = {a: 1};
-        store.subscribe(() => ownerState = store.getState().owner.toJS());
-        owner.load()(store.dispatch.bind(store));
-        expect(ownerState.data).toEqual(defaultOwner);
-        expect(ownerState.loading).toBeTruthy();
+    test('default owner is provided before load', async () => {
+        let ownerStates = [];
+        store.subscribe(() => ownerStates.push(store.getState().owner.toJS()));
+        await owner.load()(store.dispatch.bind(store));
+        expect(ownerStates.length).toBeGreaterThan(0);
+        expect(ownerStates[0].data).toEqual(defaultOwner);
+        expect(ownerStates[0].loading).toBeTruthy();
     })
 });

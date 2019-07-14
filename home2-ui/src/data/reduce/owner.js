@@ -5,6 +5,9 @@ import api from "../../utils/superagent-api";
 import {apiDelay} from "../../utils/test-api-delay";
 import {Logger} from "../../utils/logger";
 
+// To be mocked in tests
+export const superagentRequest = request;
+
 let log = Logger.of("data.reduce.owner");
 
 let defaultOwner = fromJS({
