@@ -5,15 +5,16 @@ import FlatLogoList from "./flat-logo-list";
 import * as footer from "../data/reduce/footer";
 import {useDispatch} from "react-redux";
 import {useImmutableSelector} from "../utils/redux-store";
+import {useAjax} from "../context/ajax-context";
 
 export const Footer = function ({footerLoader}) {
 
     let links = useImmutableSelector("footer", ["data", "links"]) || [];
     let logos = useImmutableSelector("footer", ["data", "logos"]) || [];
     let dispatch = useDispatch();
-    let loader = footerLoader || footer.load;
+    let ajax = useAjax();
 
-    useEffect(() => { dispatch(loader()); }, [loader, footerLoader, dispatch]);
+    useEffect(() => { dispatch(footer.load(ajax)); }, [ajax, footerLoader, dispatch]);
 
     return <StatelessFooter {...{links, logos}}/>
 };

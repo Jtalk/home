@@ -1,18 +1,5 @@
-import * as config from "react-global-configuration";
-import {applyMiddleware, combineReducers, createStore} from "redux";
-import {reducers} from "../redux";
-import thunk from "redux-thunk";
+import {createTestStore} from "../redux";
 import * as owner from "./owner";
-import smmock from "superagent-mocker";
-
-const defaultOwner = {
-    name: "",
-    photoId: "",
-    nickname: "",
-    description: "",
-    contacts: [],
-    bio: ""
-};
 
 const mockOwner = {
     name: "Vasya Pupkin",
@@ -25,31 +12,37 @@ const mockOwner = {
 
 describe('Redux(owner)', () => {
     let store;
-    let sm;
+    let ajax;
     beforeEach(() => {
-        store = createStore(
-            combineReducers({
-                ...reducers
-            }),
-            applyMiddleware(
-                thunk,
-            )
-        );
-        config.set({
-            api: '',
-        });
-        sm = smmock(owner.superagentRequest);
-        sm.clearRoutes();
-        sm.get("/owner", () => {
-            return {body: mockOwner};
-        });
+        store = createTestStore("owner", owner.owner);
+        ajax = {
+            owner: {
+                load: jest.fn(async () => mockOwner),
+            }
+        };
     });
     test('default owner is provided before load', async () => {
         let ownerStates = [];
         store.subscribe(() => ownerStates.push(store.getState().owner.toJS()));
-        await owner.load()(store.dispatch.bind(store));
+        await owner.load(ajax)(store.dispatch.bind(store));
         expect(ownerStates.length).toBeGreaterThan(0);
-        expect(ownerStates[0].data).toEqual(defaultOwner);
-        expect(ownerStates[0].loading).toBeTruthy();
-    })
+        expect(ownerStates[0]).toMatchObject({
+            data: {
+                name: "",
+                contacts: [],
+            },
+            loading: true
+        })
+    });
+    test('the loaded owner is provided after load', async () => {
+        let currentState;
+        store.subscribe(() => currentState = store.getState().owner.toJS());
+        await owner.load(ajax)(store.dispatch.bind(store));
+        expect(currentState).toMatchObject({
+            data: mockOwner,
+            loading: false,
+            loaded: true,
+            errorMessage: undefined,
+        })
+    });
 });

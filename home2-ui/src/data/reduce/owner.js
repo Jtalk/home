@@ -1,12 +1,5 @@
 import {fromJS, Map} from "immutable";
-
-import * as request from "superagent";
-import api from "../../utils/superagent-api";
-import {apiDelay} from "../../utils/test-api-delay";
 import {Logger} from "../../utils/logger";
-
-// To be mocked in tests
-export const superagentRequest = request;
 
 let log = Logger.of("data.reduce.owner");
 
@@ -67,11 +60,11 @@ function error(action, errorMsg) {
     }
 }
 
-export function load() {
+export function load(ajax) {
     return async dispatch => {
         dispatch(action(Action.LOAD));
         try {
-            let owner = await loadOwner();
+            let owner = await ajax.owner.load();
             dispatch(newState(Action.LOADED, fromJS(owner)));
         } catch (e) {
             log.error("Cannot load owner info", e);
@@ -80,11 +73,11 @@ export function load() {
     }
 }
 
-export function update(update, photo) {
+export function update(ajax, update, photo) {
     return async dispatch => {
         dispatch(action(Action.UPDATE));
         try {
-            let newOwner = await updateOwner(update, photo);
+            let newOwner = await ajax.owner.update(update, photo);
             dispatch(newState(Action.UPDATED, newOwner));
         } catch (e) {
             log.error(`Exception while updating owner bio for ${JSON.stringify(update)}`, e);
@@ -93,41 +86,3 @@ export function update(update, photo) {
     };
 }
 
-async function loadOwner() {
-    let response = await request.get("/owner")
-        .use(api);
-    await apiDelay();
-    return response.body
-}
-
-async function updateOwner(update, photo) {
-    let photoId = await updatePhoto(photo);
-    if (photoId) {
-        update = update.set("photoId", photoId);
-    }
-    let response = await request.post("/owner", update)
-        .use(api);
-    log.info(`Owner updated with ${response.status}: ${response.text}`);
-    return update;
-}
-
-async function updatePhoto(photo) {
-    if (!photo) {
-        return null;
-    }
-    try {
-        let response = await request.post("/images")
-            .attach("img", photo)
-            .use(api);
-
-        let body = response.body;
-        if (body.status !== "ok") {
-            log.error(`Unexpected response from API upon photo upload: ${JSON.stringify(body)}`);
-            throw Error("API error while uploading photo");
-        }
-        return body.id;
-    } catch (e) {
-        log.error("Exception while uploading a new photo", e);
-        throw Error("Cannot upload a new photo")
-    }
-}

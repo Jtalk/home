@@ -7,6 +7,7 @@ import {Footer, StatelessFooter} from "./footer";
 import {Provider} from "react-redux";
 import {fromJS} from "immutable";
 import {createTestStore} from "../data/redux";
+import {AjaxProvider} from "../context/ajax-context";
 
 let links = [
   {caption: "Link1", href: "/test/link1"},
@@ -54,17 +55,25 @@ describe("<Footer/>", () => {
         logos: logos,
       }
   }));
+  let ajaxMock = {
+    footer: {
+      load: jest.fn(() => {})
+    }
+  };
 
   it('calls the loading function upon mounting', () => {
-    let loaderFn = jest.fn(() => ({type: "noop"}));
     mount(<Provider store={store}>
-      <Footer footerLoader={loaderFn}/>
+      <AjaxProvider ajax={ajaxMock}>
+        <Footer/>
+      </AjaxProvider>
     </Provider>);
-    expect(loaderFn.mock.calls.length).toBeGreaterThan(0);
+    expect(ajaxMock.footer.load.mock.calls.length).toBeGreaterThan(0);
   });
   it('renders data from the store', () => {
     let result = mount(<Provider store={store}>
-      <Footer footerLoader={() => ({ type: "noop" })}/>
+      <AjaxProvider ajax={ajaxMock}>
+        <Footer/>
+      </AjaxProvider>
     </Provider>);
     expect(result.findWhere(n => n.is(FlatLinksList)).props().links).toEqual(links);
     expect(result.findWhere(n => n.is(FlatLogoList)).props().logos).toEqual(logos);
