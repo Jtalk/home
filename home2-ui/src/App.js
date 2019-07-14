@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React from 'react';
 import './App.css';
 import Header from './header/header';
 import About from "./home/about";
@@ -17,120 +17,109 @@ import {Footer} from "./footer/footer";
 import "./utils/config";
 import {Titled} from "react-titled";
 import * as owner from "./data/reduce/owner";
-import {connect} from "react-redux";
+import {AjaxProvider, useAjaxLoader} from "./context/ajax-context";
+import {useImmutableSelector} from "./utils/redux-store";
 
-class App extends Component {
-
-    render() {
-        return <div className="main-content-pushable">
+export const App = function () {
+    let ownerName = useImmutableSelector("owner", ["data", "name"]);
+    useAjaxLoader(owner.load);
+    return <AjaxProvider>
+        <div className="main-content-pushable">
             <Container className="main-content-pusher framed">
-                <Titled title={() => this.props.ownerName}>
+                <Titled title={() => ownerName}>
                     <Router>
                         <Switch>
-                            {this._buildRoutes(this._mainRoutes().concat(this._serviceRoutes()))}
+                            {buildRoutes(mainRoutes().concat(serviceRoutes()))}
                         </Switch>
                     </Router>
                 </Titled>
             </Container>
             <Footer/>
         </div>
-    }
-
-    componentDidMount() {
-        this.props.load();
-    }
-
-    _buildRoutes(navigation) {
-        return navigation.flatMap(navigationLink => {
-            return createRoutes(navigationLink.route);
-        });
-    }
-
-    _mainRoutes() {
-        return [
-            this._createNavigation("About", "/", () => <About ownerName={this.props.ownerName}/>, true),
-            this._createNavigation("Projects", "/projects", () => <ProjectsLoader ownerName={this.props.ownerName}/>, false),
-            this._createNavigation("Blog", "/blog/articles", () => <Blog ownerName={this.props.ownerName}/>, false),
-            this._createNestedNavigation("Admin", [
-                this._createNavigation(
-                    "Edit Bio",
-                    "/admin/bio",
-                    () => <EditBio ownerName={this.props.ownerName}/>,
-                    true),
-                this._createComplexNavigation(
-                    "Edit Projects",
-                    "/admin/projects",
-                    "/admin/projects/:projectId?",
-                    params => <EditProjects currentProjectId={params.match.params.projectId}
-                                            ownerName={this.props.ownerName}/>,
-                    true),
-                this._createComplexNavigation(
-                    "Edit Blog",
-                    "/admin/blog/articles",
-                    "/admin/blog/articles/:articleId?",
-                    params => <EditBlogRouter ownerName={this.props.ownerName}
-                                              articleId={params.match.params.articleId}/>,
-                    true),
-                this._createComplexNavigation(
-                    "Edit Images",
-                    "/admin/images",
-                    "/admin/images/:idx?",
-                    params => <EditImages currentPageIdx={params.match.params.idx} ownerName={this.props.ownerName}/>,
-                    true),
-                this._createNavigation(
-                    "Edit Footer",
-                    "/admin/footer",
-                    () => <EditFooter ownerName={this.props.ownerName}/>,
-                    true)
-            ])
-        ]
-    }
-
-    _serviceRoutes() {
-        return [
-            {route: createRoutingConfig("Error 404", params => this._error(params.match.location))},
-        ]
-    }
-
-    _createNavigation(title, href, renderer, exact) {
-        return this._createComplexNavigation(title, href, href, renderer, exact);
-    }
-
-    _createComplexNavigation(title, href, routePath, renderer, exact) {
-        let render = params => this._page(title, renderer(params));
-        return {
-            menu: Header.buildLink(title, href),
-            route: createRoutingConfig(routePath, render, exact)
-        };
-    }
-
-    _createNestedNavigation(title, navigations) {
-        let submenu = navigations.map(n => n.menu);
-        let routes = navigations.map(n => n.route);
-        return {
-            menu: Header.buildSubmenuLinks(title, submenu),
-            route: createMultiRoutingConfig(routes)
-        };
-    }
-
-    _error(location) {
-        return this._page(null, <NotFound location={location}/>);
-    }
-
-    _page(activeLink, mainComponent) {
-        return <div>
-            <Header ownerName={this.props.ownerName} activeLink={activeLink} links={this._mainRoutes().map(r => r.menu)}/>
-            {mainComponent}
-        </div>
-    }
-}
-
-function mapStateToProps(state, oldProps) {
-    return {ownerName: state.owner.get("data").get("name")}
-}
-
-const actions = {
-    load: owner.load
+    </AjaxProvider>
 };
 
-export default connect(mapStateToProps, actions)(App);
+function buildRoutes(navigation) {
+    return navigation.flatMap(navigationLink => {
+        return createRoutes(navigationLink.route);
+    });
+}
+
+function mainRoutes(ownerName) {
+    return [
+        createNavigation("About", "/", () => <About ownerName={ownerName}/>, true),
+        createNavigation("Projects", "/projects", () => <ProjectsLoader
+            ownerName={ownerName}/>, false),
+        createNavigation("Blog", "/blog/articles", () => <Blog ownerName={ownerName}/>, false),
+        createNestedNavigation("Admin", [
+            createNavigation(
+                "Edit Bio",
+                "/admin/bio",
+                () => <EditBio ownerName={ownerName}/>,
+                true),
+            createComplexNavigation(
+                "Edit Projects",
+                "/admin/projects",
+                "/admin/projects/:projectId?",
+                params => <EditProjects currentProjectId={params.match.params.projectId}
+                                        ownerName={ownerName}/>,
+                true),
+            createComplexNavigation(
+                "Edit Blog",
+                "/admin/blog/articles",
+                "/admin/blog/articles/:articleId?",
+                params => <EditBlogRouter ownerName={ownerName}
+                                          articleId={params.match.params.articleId}/>,
+                true),
+            createComplexNavigation(
+                "Edit Images",
+                "/admin/images",
+                "/admin/images/:idx?",
+                params => <EditImages currentPageIdx={params.match.params.idx} ownerName={ownerName}/>,
+                true),
+            createNavigation(
+                "Edit Footer",
+                "/admin/footer",
+                () => <EditFooter ownerName={ownerName}/>,
+                true)
+        ])
+    ]
+}
+
+function serviceRoutes() {
+    return [
+        {route: createRoutingConfig("Error 404", params => error(params.match.location))},
+    ]
+}
+
+function createNavigation(title, href, renderer, exact) {
+    return createComplexNavigation(title, href, href, renderer, exact);
+}
+
+function createComplexNavigation(title, href, routePath, renderer, exact) {
+    let render = params => page(title, renderer(params));
+    return {
+        menu: Header.buildLink(title, href),
+        route: createRoutingConfig(routePath, render, exact)
+    };
+}
+
+function createNestedNavigation(title, navigations) {
+    let submenu = navigations.map(n => n.menu);
+    let routes = navigations.map(n => n.route);
+    return {
+        menu: Header.buildSubmenuLinks(title, submenu),
+        route: createMultiRoutingConfig(routes)
+    };
+}
+
+function error(location) {
+    return page(null, <NotFound location={location}/>);
+}
+
+function page(ownerName, activeLink, mainComponent) {
+    return <div>
+        <Header ownerName={ownerName} activeLink={activeLink} links={mainRoutes().map(r => r.menu)}/>
+        {mainComponent}
+    </div>
+}
