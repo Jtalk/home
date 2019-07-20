@@ -1,6 +1,6 @@
 import {fromJS, Map} from "immutable";
 import {Logger} from "../../utils/logger";
-import DataState from "./global/loading";
+import {Loading} from "./global/loading";
 
 let log = Logger.of("data.reduce.footer");
 
@@ -15,14 +15,14 @@ let Action = {
     LOAD_ERROR: Symbol("load error"),
 };
 
-export function footer(state = Map({dataState: DataState.LOADING, data: defaultFooter}), action) {
+export function footer(state = Map({dataState: Loading.LOADING, data: defaultFooter}), action) {
     switch (action.type) {
         case Action.LOAD:
-            return state.merge({dataState: DataState.LOADING});
+            return state.merge({dataState: Loading.LOADING});
         case Action.LOADED:
-            return Map({dataState: DataState.READY, errorMessage: undefined, data: action.data});
+            return Map({dataState: Loading.READY, errorMessage: undefined, data: action.data});
         case Action.LOAD_ERROR:
-            return state.merge({dataState: DataState.ERROR, errorMessage: action.errorMessage});
+            return state.merge({dataState: Loading.ERROR, errorMessage: action.errorMessage});
         default:
             return state;
     }
