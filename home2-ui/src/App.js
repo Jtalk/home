@@ -17,26 +17,24 @@ import {Footer} from "./footer/footer";
 import "./utils/config";
 import {Titled} from "react-titled";
 import * as owner from "./data/reduce/owner";
-import {AjaxProvider, useAjaxLoader} from "./context/ajax-context";
+import {useAjaxLoader} from "./context/ajax-context";
 import {useImmutableSelector} from "./utils/redux-store";
 
 export const App = function () {
     let ownerName = useImmutableSelector("owner", ["data", "name"]);
     useAjaxLoader(owner.load);
-    return <AjaxProvider>
-        <div className="main-content-pushable">
-            <Container className="main-content-pusher framed">
-                <Titled title={() => ownerName}>
-                    <Router>
-                        <Switch>
-                            {buildRoutes(mainRoutes().concat(serviceRoutes()))}
-                        </Switch>
-                    </Router>
-                </Titled>
-            </Container>
-            <Footer/>
-        </div>
-    </AjaxProvider>
+    return <div className="main-content-pushable">
+        <Container className="main-content-pusher framed">
+            <Titled title={() => ownerName}>
+                <Router>
+                    <Switch>
+                        {buildRoutes(mainRoutes().concat(serviceRoutes()))}
+                    </Switch>
+                </Router>
+            </Titled>
+        </Container>
+        <Footer/>
+    </div>
 };
 
 function buildRoutes(navigation) {
