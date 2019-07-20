@@ -1,5 +1,6 @@
 import {Ajax} from "../data/ajax-requests";
 import React, {createContext, useContext, useEffect} from "react";
+import {useDispatch} from "react-redux";
 
 
 export const defaultAjax = new Ajax();
@@ -18,5 +19,6 @@ export function useAjax() {
 
 export function useAjaxLoader(loader) {
     let ajax = useAjax();
-    return useEffect(() => {loader(ajax)}, [ajax, loader]);
+    let dispatch = useDispatch();
+    return useEffect(() => {dispatch(loader(ajax))}, [ajax, loader, dispatch]);
 }
