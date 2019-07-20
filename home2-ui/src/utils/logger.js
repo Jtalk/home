@@ -7,7 +7,7 @@ let LEVEL_ERROR = "ERROR";
 let LEVEL_INFO = "INFO";
 let LEVEL_DEBUG = "DEBUG";
 
-let defaultHandler = serverHandler;
+let defaultHandler = consoleHandler;
 
 export class Logger {
 
