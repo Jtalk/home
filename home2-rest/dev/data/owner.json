@@ -1,0 +1,17 @@
+{
+  "name": "Vasya S Pupkin",
+  "nickname": "vasyapup",
+  "description": "A random bloke",
+  "photoId": "",
+  "bio": "He lived and he died",
+  "contacts": [
+    {
+      "contactType": "EMAIL",
+      "value": "vasyapup@example.com"
+    },
+    {
+      "contactType": "PHONE",
+      "value": "0000000"
+    }
+  ]
+}

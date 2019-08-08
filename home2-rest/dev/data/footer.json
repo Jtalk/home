@@ -1,0 +1,17 @@
+{
+  "links": [
+    {
+      "caption": "Link 1",
+      "href": "http://example.com"
+    },
+    {
+      "caption": "Link 2",
+      "href": "http://example.com/2"
+    },
+    {
+      "caption": "Link 3",
+      "href": "https://example.com/3"
+    }
+  ],
+  "logos": []
+}
