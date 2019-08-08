@@ -1,18 +1,24 @@
 package controllers
 
 import akka.stream.Materializer
+import db.Database
 import javax.inject._
-import play.api.libs.json.{JsObject, JsValue, Json}
+import play.api.Configuration
+import play.api.libs.json._
 import play.api.mvc._
-import play.modules.reactivemongo.MongoController.{JsGridFS, JsReadFile}
-import play.modules.reactivemongo.{MongoController, ReactiveMongoApi, ReactiveMongoComponents}
+import play.modules.reactivemongo.MongoController.{JsGridFS, JsGridFSBodyParser, JsReadFile}
+import play.modules.reactivemongo.{JSONFileToSave, MongoController, ReactiveMongoApi, ReactiveMongoComponents}
 import reactivemongo.play.json._
 import utils.Extension.PipeOp
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class ImageController @Inject()(cc: ControllerComponents, materializer: Materializer, api: ReactiveMongoApi)
+class ImageController @Inject()(config: Configuration,
+                                cc: ControllerComponents,
+                                materializer: Materializer,
+                                api: ReactiveMongoApi,
+                                database: Database)
   extends AbstractController(cc) with MongoController with ReactiveMongoComponents {
 
   private implicit def ec: ExecutionContext = cc.executionContext
@@ -20,13 +26,39 @@ class ImageController @Inject()(cc: ControllerComponents, materializer: Material
   private implicit def m: Materializer = materializer
   override implicit def reactiveMongoApi: ReactiveMongoApi = api
   import MongoController.readFileReads
-  private def bodyParser = gridFSBodyParser(reactiveMongoApi.asyncGridFS)
 
-  def upload = Action(bodyParser) { request => request.body.files.head.ref.id |> uploaded |> Created.apply[JsObject] }
-
-  def serveFile(id: String) = Action.async { request => reactiveMongoApi.asyncGridFS.flatMap(api => serveById(id, api)) }
+  def upload(description: String) = Action(parseFile(description)) { request => request.body.files.head.ref.id |> uploaded |> Created.apply[JsObject] }
+  def serveFile(id: String) = Action.async { _ => reactiveMongoApi.asyncGridFS.flatMap(api => serveById(id, api)) }
+  def listFiles(page: Int) = Action.async { _ => findAllWithPagination(page).map(Ok.apply[JsValue]) }
 
   private def uploaded(id: JsValue) = Json.obj("status" -> "ok", "id" -> id)
   private def serveById(id: String, gfs: JsGridFS)
   = serve[JsValue, JsReadFile[JsValue]](gfs)(gfs.find(Json.obj("_id" -> id)), dispositionMode = CONTENT_DISPOSITION_INLINE)
+
+  private def parseFile(description: String): JsGridFSBodyParser[JsValue] = gridFSBodyParser(
+    reactiveMongoApi.asyncGridFS,
+    (name, contentType) => JSONFileToSave(Some(name), contentType, metadata = fileMeta(description)))
+
+  private def fileMeta(description: String): JsObject = Json.obj(
+    "description" -> description,
+    "uploaded" -> System.currentTimeMillis()
+  )
+
+  private def filterPrivateMeta(in: JsObject) = in.fields
+    .filter(f => publicMetadataFields.contains(f._1))
+    .map(f => (publicMetadataFields(f._1), f._2)) |> JsObject
+  private def findAll(page: Int): Future[JsArray] = database
+    .findFilesMetadata(page, pageSize)
+    .map(_.map(filterPrivateMeta))
+    .map(JsArray.apply)
+  private def findAllWithPagination(page: Int): Future[JsObject] = findAll(page)
+    .zip(database.countFiles())
+    .map(pair => Json.obj("data" -> pair._1, "pagination" -> toPagination(pair._2, pageSize)))
+  private def toPagination(totalCount: Long, pageSize: Int) = math.ceil(totalCount / pageSize).toInt
+  private def pageSize = config.get[Int]("app.images.page.size")
+  private def publicMetadataFields = Map(
+    "metadata" -> "metadata",
+    "uploadDate" -> "uploaded",
+    "filename" -> "filename",
+    "_id" -> "id")
 }

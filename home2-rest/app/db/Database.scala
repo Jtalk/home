@@ -5,7 +5,9 @@ import models.ModelType.ModelType
 import play.api.Logger
 import play.api.libs.json._
 import play.api.mvc.{AbstractController, ControllerComponents}
+import play.modules.reactivemongo.MongoController.JsGridFS
 import play.modules.reactivemongo.{MongoController, ReactiveMongoApi, ReactiveMongoComponents}
+import reactivemongo.api.{Cursor, ReadConcern}
 import reactivemongo.api.commands.WriteResult
 import reactivemongo.core.errors.GenericDatabaseException
 import reactivemongo.play.json.JsObjectDocumentWriter
@@ -21,6 +23,7 @@ class Database @Inject()(cc: ControllerComponents, val reactiveMongoApi: Reactiv
 
   val log = Logger(this.getClass)
 
+  // Data processing
   def collection[T](implicit executionContext: ExecutionContext, mt: ModelType[T]): Future[JSONCollection]
     = database.map(_.collection[JSONCollection](mt.tableName))
 
@@ -46,4 +49,15 @@ class Database @Inject()(cc: ControllerComponents, val reactiveMongoApi: Reactiv
     .map(m => GenericDatabaseException(m.getOrElse("unknown"), None))
     .map(Future.failed)
     .getOrElse(Future.unit)
+
+  // File processing
+  def findFilesMetadata(page: Int, pageSize: Int)(implicit ec: ExecutionContext): Future[Seq[JsObject]] = reactiveMongoApi.asyncGridFS.flatMap(filesMeta(_, page, pageSize))
+  def countFiles()(implicit ec: ExecutionContext): Future[Long] = reactiveMongoApi.asyncGridFS.flatMap(countFiles)
+  private def filesMeta(api: JsGridFS, page: Int, pageSize: Int)(implicit ec: ExecutionContext) = api.files
+    .find(Json.obj(), None)
+    .skip(page * pageSize)
+    .cursor[JsObject]()
+    .collect[Seq](pageSize, Cursor.FailOnError())
+  private def countFiles(api: JsGridFS)(implicit ec: ExecutionContext) = api.files
+    .count(None, None, 0, None, ReadConcern.Local)
 }

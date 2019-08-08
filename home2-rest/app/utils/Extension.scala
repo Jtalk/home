@@ -1,5 +1,7 @@
 package utils
 
+import play.api.libs.json.JsArray
+
 import scala.concurrent.{ExecutionContext, Future}
 
 object Extension {
@@ -12,6 +14,9 @@ object Extension {
   }
   implicit class SeqOpt[T](val seq: Seq[T]) extends AnyVal {
     def toOpt: Option[Seq[T]] = Some(seq).filter(_.nonEmpty)
+  }
+  implicit class JsArrayOpt[T](val array: JsArray) extends AnyVal {
+    def toOpt: Option[JsArray] = Some(array).filter(_.value.nonEmpty)
   }
   implicit class PipeOp[T](val v: T) extends AnyVal {
     def |>[R](f: T => R): R = f(v)
