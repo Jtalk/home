@@ -55,6 +55,7 @@ class Database @Inject()(cc: ControllerComponents, val reactiveMongoApi: Reactiv
   def countFiles()(implicit ec: ExecutionContext): Future[Long] = reactiveMongoApi.asyncGridFS.flatMap(countFiles)
   private def filesMeta(api: JsGridFS, page: Int, pageSize: Int)(implicit ec: ExecutionContext) = api.files
     .find(Json.obj(), None)
+    .sort(Json.obj("uploadDate" -> -1))
     .skip(page * pageSize)
     .cursor[JsObject]()
     .collect[Seq](pageSize, Cursor.FailOnError())
