@@ -3,13 +3,15 @@ package controllers
 import akka.stream.Materializer
 import db.Database
 import javax.inject._
+import models.common.Pagination
 import play.api.Configuration
 import play.api.libs.json._
 import play.api.mvc._
 import play.modules.reactivemongo.MongoController.{JsGridFS, JsGridFSBodyParser, JsReadFile}
-import play.modules.reactivemongo.{JSONFileToSave, MongoController, ReactiveMongoApi, ReactiveMongoComponents}
+import play.modules.reactivemongo._
 import reactivemongo.play.json._
-import utils.Extension.PipeOp
+import utils.Extension._
+import utils.ReactiveMongoFixes
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -37,9 +39,9 @@ class ImageController @Inject()(config: Configuration,
   = serve[JsValue, JsReadFile[JsValue]](gfs)(gfs.find(Json.obj("_id" -> id)), dispositionMode = CONTENT_DISPOSITION_INLINE)
   private def deleteById(id: String, gfs: JsGridFS)= gfs.remove(JsString(id))
 
-  private def parseFile(description: String): JsGridFSBodyParser[JsValue] = gridFSBodyParser(
+  private def parseFile(description: String): JsGridFSBodyParser[JsValue] = ReactiveMongoFixes.myVeryOwnGridFSBodyParser(
     reactiveMongoApi.asyncGridFS,
-    (name, contentType) => JSONFileToSave(Some(name), contentType, metadata = fileMeta(description)))
+    (name: String, contentType: Option[String]) => JSONFileToSave(Some(name), contentType, metadata = fileMeta(description)))
 
   private def fileMeta(description: String): JsObject = Json.obj(
     "description" -> description,
