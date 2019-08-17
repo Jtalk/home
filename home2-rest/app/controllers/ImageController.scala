@@ -29,11 +29,13 @@ class ImageController @Inject()(config: Configuration,
 
   def upload(description: String) = Action(parseFile(description)) { request => request.body.files.head.ref.id |> uploaded |> Created.apply[JsObject] }
   def serveFile(id: String) = Action.async { _ => reactiveMongoApi.asyncGridFS.flatMap(api => serveById(id, api)) }
+  def deleteFile(id: String) = Action.async { _ => reactiveMongoApi.asyncGridFS.flatMap(api => deleteById(id, api)).map(_ => Ok) }
   def listFiles(page: Int) = Action.async { _ => findAllWithPagination(page).map(Ok.apply[JsValue]) }
 
   private def uploaded(id: JsValue) = Json.obj("status" -> "ok", "id" -> id)
   private def serveById(id: String, gfs: JsGridFS)
   = serve[JsValue, JsReadFile[JsValue]](gfs)(gfs.find(Json.obj("_id" -> id)), dispositionMode = CONTENT_DISPOSITION_INLINE)
+  private def deleteById(id: String, gfs: JsGridFS)= gfs.remove(JsString(id))
 
   private def parseFile(description: String): JsGridFSBodyParser[JsValue] = gridFSBodyParser(
     reactiveMongoApi.asyncGridFS,

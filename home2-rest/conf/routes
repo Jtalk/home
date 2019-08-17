@@ -9,7 +9,8 @@ POST        /owner                     controllers.OwnerController.update
 GET         /owner/bio                 controllers.OwnerController.bio
 
 GET         /images                    controllers.ImageController.listFiles(page: Int = 0)
-GET         /images/content/:id        controllers.ImageController.serveFile(id)
+GET         /images/:id                controllers.ImageController.serveFile(id)
+DELETE      /images/:id                controllers.ImageController.deleteFile(id)
 POST        /images                    controllers.ImageController.upload(description: String)
 
 GET         /footer                    controllers.FooterController.loadFooter
