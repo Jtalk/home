@@ -53,7 +53,7 @@ describe("<EditImagesStateless/>", () => {
     let paginationMenu = pagination.findWhere(n => n.is(Menu)).find({pagination: true});
     let selectedPageItem = paginationMenu.find(Menu.Item);
     let otherPages = paginationMenu.find("a");
-    console.log(otherPages.debug());
+
     expect(selectedPageItem.props()).toMatchObject({active: true, children: 2});
     expect(otherPages.find({children: 1}).props().className).toBe("item");
     expect(otherPages.find({children: 3}).props().className).toBe("item");
@@ -98,9 +98,9 @@ describe("<ViewImages/>", () => {
     let result = mount(<ViewImages images={testImages} onDelete={onDeleteNoop}/>);
 
     expect(result.find(Card)).toHaveLength(3);
-    expect(result.findWhere(n => n.is(ViewImage) && n.key() === testImages[0].id).exists()).toBe(true);
-    expect(result.findWhere(n => n.is(ViewImage) && n.key() === testImages[1].id).exists()).toBe(true);
-    expect(result.findWhere(n => n.is(ViewImage) && n.key() === testImages[2].id).exists()).toBe(true);
+    expect(result.findWhere(n => n.key() === testImages[0].id).find(ViewImage).exists()).toBe(true);
+    expect(result.findWhere(n => n.key() === testImages[1].id).find(ViewImage).exists()).toBe(true);
+    expect(result.findWhere(n => n.key() === testImages[2].id).find(ViewImage).exists()).toBe(true);
   });
 });
 
@@ -125,8 +125,6 @@ describe("<ViewImage/>", () => {
 
     let bareImage = Object.assign({}, testImage, {description: undefined, uploadedDateTime: undefined});
     let result = shallow(<ViewImage {...bareImage} onDelete={onDeleteNoop}/>);
-
-    console.log("a", bareImage);
 
     expect(result.find(CardDescription).children().length).toBe(1);
     expect(result.findWhere(n => n.is(CardContent) && n.props()["extra"]).children().length).toBe(0);
