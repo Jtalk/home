@@ -29,12 +29,12 @@ class ImageController @Inject()(config: Configuration,
   override implicit def reactiveMongoApi: ReactiveMongoApi = api
   import MongoController.readFileReads
 
-  def upload(description: String) = Action(parseFile(description)) { request => request.body.files.head.ref.id |> uploaded |> Created.apply[JsObject] }
+  def upload(description: String) = Action.async(parseFile(description)) { request => request.body.files.head.ref.id |> uploaded }
   def serveFile(id: String) = Action.async { _ => reactiveMongoApi.asyncGridFS.flatMap(api => serveById(id, api)) }
   def deleteFile(id: String) = Action.async { _ => reactiveMongoApi.asyncGridFS.flatMap(api => deleteById(id, api)).map(_ => Ok) }
   def listFiles(page: Int) = Action.async { _ => findAllWithPagination(page).map(Ok.apply[JsValue]) }
 
-  private def uploaded(id: JsValue) = Json.obj("status" -> "ok", "id" -> id)
+  private def uploaded(id: JsValue) = findOne(id).fomap(Ok.apply[JsObject]).map(_.getOrElse(InternalServerError("Cannot find image just uploaded")))
   private def serveById(id: String, gfs: JsGridFS)
   = serve[JsValue, JsReadFile[JsValue]](gfs)(gfs.find(Json.obj("_id" -> id)), dispositionMode = CONTENT_DISPOSITION_INLINE)
   private def deleteById(id: String, gfs: JsGridFS)= gfs.remove(JsString(id))
@@ -55,6 +55,7 @@ class ImageController @Inject()(config: Configuration,
     .findFilesMetadata(page, pageSize)
     .map(_.map(filterPrivateMeta))
     .map(JsArray.apply)
+  private def findOne(id: JsValue): Future[Option[JsObject]] = database.findFileMetadata(id).fomap(filterPrivateMeta)
   private def findAllWithPagination(page: Int): Future[JsObject] = findAll(page)
     .zip(database.countFiles())
     .map(pair => Json.obj("data" -> pair._1, "pagination" -> Pagination.jsonWriter.writes(toPagination(pair._2, pageSize, page))))

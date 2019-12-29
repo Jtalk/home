@@ -7,8 +7,8 @@ import play.api.libs.json._
 import play.api.mvc.{AbstractController, ControllerComponents}
 import play.modules.reactivemongo.MongoController.JsGridFS
 import play.modules.reactivemongo.{MongoController, ReactiveMongoApi, ReactiveMongoComponents}
-import reactivemongo.api.{Cursor, ReadConcern}
 import reactivemongo.api.commands.WriteResult
+import reactivemongo.api.{Cursor, ReadConcern}
 import reactivemongo.core.errors.GenericDatabaseException
 import reactivemongo.play.json.JsObjectDocumentWriter
 import reactivemongo.play.json.collection.JSONCollection
@@ -34,7 +34,7 @@ class Database @Inject()(cc: ControllerComponents, val reactiveMongoApi: Reactiv
     val obj = Json.toJson(entity).asInstanceOf[JsObject]
     val id = findExistingSingleId.map(_.getOrElse(JsString("-1")))
     val result = id.flatMap({ id =>
-      collection.flatMap(_.update(JsObject(Seq("_id" -> id)), obj, upsert = true))
+      collection.flatMap(_.update(false).one(JsObject(Seq("_id" -> id)), obj, upsert = true))
     })
     result.flatMap(asFuture)
   }
@@ -52,6 +52,7 @@ class Database @Inject()(cc: ControllerComponents, val reactiveMongoApi: Reactiv
 
   // File processing
   def findFilesMetadata(page: Int, pageSize: Int)(implicit ec: ExecutionContext): Future[Seq[JsObject]] = reactiveMongoApi.asyncGridFS.flatMap(filesMeta(_, page, pageSize))
+  def findFileMetadata(id: JsValue)(implicit ec: ExecutionContext): Future[Option[JsObject]] = reactiveMongoApi.asyncGridFS.flatMap(fileMeta(_, id))
   def countFiles()(implicit ec: ExecutionContext): Future[Long] = reactiveMongoApi.asyncGridFS.flatMap(countFiles)
   private def filesMeta(api: JsGridFS, page: Int, pageSize: Int)(implicit ec: ExecutionContext) = api.files
     .find(Json.obj(), None)
@@ -59,6 +60,9 @@ class Database @Inject()(cc: ControllerComponents, val reactiveMongoApi: Reactiv
     .skip(page * pageSize)
     .cursor[JsObject]()
     .collect[Seq](pageSize, Cursor.FailOnError())
+  private def fileMeta(api: JsGridFS, id: JsValue)(implicit ec: ExecutionContext) = api.files
+    .find(Json.obj("_id" -> id), None)
+    .one[JsObject]
   private def countFiles(api: JsGridFS)(implicit ec: ExecutionContext) = api.files
     .count(None, None, 0, None, ReadConcern.Local)
 }

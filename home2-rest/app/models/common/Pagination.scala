@@ -3,7 +3,7 @@ package models.common
 import play.api.http.Writeable
 import play.api.libs.json.{Json, Writes}
 
-case class Pagination(total: Int, current: Int) {
+case class Pagination(total: Int, current: Int, pageSize: Int) {
 }
 
 object Pagination {
