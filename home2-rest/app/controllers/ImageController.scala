@@ -62,7 +62,10 @@ class ImageController @Inject()(config: Configuration,
   private def findAllWithPagination(page: Int): Future[JsObject] = findAll(page)
     .zip(database.countFiles())
     .map(pair => Json.obj("data" -> pair._1, "pagination" -> Pagination.jsonWriter.writes(toPagination(pair._2, pageSize, page))))
-  private def toPagination(totalCount: Long, pageSize: Int, currentPage: Int) = Pagination(total = Math.ceil(totalCount / pageSize).toInt, current = currentPage)
+  private def toPagination(totalCount: Long, pageSize: Int, currentPage: Int) = Pagination(
+    total = Math.ceil(totalCount / pageSize).toInt,
+    current = currentPage,
+    pageSize = pageSize)
   private def pageSize = config.get[Int]("app.images.page.size")
   private def publicMetadataFields = Map(
     "metadata" -> "metadata",
