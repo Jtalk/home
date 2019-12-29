@@ -95,7 +95,7 @@ function createNavigation(title, href, renderer, exact) {
 }
 
 function createComplexNavigation(title, href, routePath, renderer, exact) {
-    let render = params => page(title, renderer(params));
+    let render = params => page("V", title, renderer(params));
     return {
         menu: Header.buildLink(title, href),
         route: createRoutingConfig(routePath, render, exact)

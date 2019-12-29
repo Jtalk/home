@@ -41,11 +41,14 @@ class ImageController @Inject()(config: Configuration,
 
   private def parseFile(description: String): JsGridFSBodyParser[JsValue] = ReactiveMongoFixes.myVeryOwnGridFSBodyParser(
     reactiveMongoApi.asyncGridFS,
-    (name: String, contentType: Option[String]) => JSONFileToSave(Some(name), contentType, metadata = fileMeta(description)))
+    (name: String, contentType: Option[String]) => JSONFileToSave(
+      Some(name),
+      contentType,
+      metadata = fileMeta(description),
+      uploadDate = Some(System.currentTimeMillis())))
 
   private def fileMeta(description: String): JsObject = Json.obj(
-    "description" -> description,
-    "uploaded" -> System.currentTimeMillis()
+    "description" -> description
   )
 
   private def filterPrivateMeta(in: JsObject) = in.fields

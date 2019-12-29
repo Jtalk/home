@@ -9,6 +9,11 @@ export function useImmutableSelector(storeSegment, path) {
 
 function loadAsObj(store, pathArray) {
     let current = store;
-    pathArray.forEach(item => current = current && current.get(item));
+    pathArray.forEach(item => {
+        if (current && !current.get) {
+            console.error("Current without a get!", current, store, pathArray);
+        }
+        current = current && current.get(item)
+    });
     return current;
 }

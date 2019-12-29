@@ -89,16 +89,14 @@ export function setDefaultHandler(handler) {
 }
 
 export function consoleHandler(e) {
-    var logger = console.log.bind(console);
+    let logger = console.log.bind(console);
     switch (e.level) {
         case LEVEL_ERROR: logger = console.error.bind(console); break;
         case LEVEL_INFO: logger = console.info.bind(console); break;
         case LEVEL_DEBUG: logger = console.debug.bind(console); break;
         default: logger = console.log;
     }
-    e = Object.assign({}, e);
-    e.timestamp = new Date(e.timestamp);
-    logger(e);
+    logger(e.level, e.message, e.exception);
 }
 
 export function serverHandler(e) {
