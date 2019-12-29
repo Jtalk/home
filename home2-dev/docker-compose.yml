@@ -1,0 +1,15 @@
+version: '3'
+
+services:
+  mongo:
+    build: mongo-dbinit
+    restart: always
+    ports:
+      - 27017:27017
+    environment:
+      MONGO_INITDB_DATABASE: home
+
+  mongo-express:
+    image: mongo-express
+    ports:
+      - 8081:8081
