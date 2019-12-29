@@ -1,5 +1,5 @@
 import {sleep} from "sleepjs";
-import * as config from "react-global-configuration";
+import config from "react-global-configuration";
 
 export async function apiDelay() {
     let delay = config.get("apiDelay");
