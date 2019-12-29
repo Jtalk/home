@@ -1,92 +1,138 @@
-import React from "react";
-import {Button, Card, Divider, Form, Grid, Image, Menu, Segment} from "semantic-ui-react";
-import {ErrorMessage, SuccessMessage} from "../form/form-message";
+import React, {useEffect, useState} from "react";
+import {Button, Card, Container, Divider, Form, Grid, Image, Loader, Segment} from "semantic-ui-react";
+import {useImmutableSelector} from "../utils/redux-store";
+import {Pagination} from "../shared/pagination";
+import {checkTruthy} from "../utils/validation";
 import {formatDateTime} from "../utils/date-time";
-import {Link} from "react-router-dom";
+import ImageUploader from "react-images-upload";
+import {useAjax, useAjaxLoader} from "../context/ajax-context";
+import * as image_redux from "../data/reduce/images";
+import {Uploading} from "../data/reduce/global/uploading";
+import {ErrorMessage, SuccessMessage} from "../form/form-message";
+import {useDispatch} from "react-redux";
+import "./edit-images.css";
+import {Loading} from "../data/reduce/global/loading";
 
-export default class EditImages extends React.Component {
+export const EditImages = function ({ownerName}) {
+    useEffect(() => {
+        document.title = ownerName + ": Edit Images";
+    }, [ownerName]);
+    useAjaxLoader(image_redux.load);
+    let ajax = useAjax();
+    let dispatch = useDispatch();
 
-    constructor(props) {
-        super(props);
-        this.state = {
-            images: [
-                { description: "A test image 1", href: "/images/avatar.png", uploadedDateTime: new Date(2018, 11, 6, 13, 35)},
-                { description: "A test image 2", href: "/images/avatar.png", uploadedDateTime: new Date()},
-                { description: "A test image 3", href: "/images/avatar.png", uploadedDateTime: new Date(2016, 3, 6, 11, 3)},
-                { description: "A test image 4", href: "/images/avatar.png", uploadedDateTime: new Date()},
-                { description: "A test image 5", href: "/images/avatar.png", uploadedDateTime: new Date()},
-            ],
-            pagination: {current: this.props.currentPageIdx && 0, pagesTotal: 3},
-            executed: undefined,
-            errorMessage: undefined
-        }
-    }
+    let loadingStatus = useImmutableSelector("images", ["loading", "status"]);
+    let uploadStatus = useImmutableSelector("images", ["uploading", "status"]);
+    let errorMessage = useImmutableSelector("images", ["uploading", "error", "message"]);
+    let currentState = useImmutableSelector("images", ["data"]);
+    let images = currentState.images;
+    let pagination = currentState.pagination;
 
-    static getDerivedStateFromProps(props, state) {
-        return {
-            images: state.images,
-            pagination: {current: props.currentPageIdx && 0, pagesTotal: 3},
-            executed: state.executed,
-            errorMessage: state.errorMessage
-        }
-    }
+    let deleteImage = (id) => dispatch(image_redux.delete_(ajax, id, currentState));
+    let uploadImage = (desc, file) => dispatch(image_redux.upload(ajax, desc, file));
 
-    render() {
-        return <Grid centered>
-            <Grid.Column width={16}>
-                <Segment basic>
-                    <h1>Uploaded Images</h1>
-                    <Form error={this.state.errorMessage} success={this.state.executed && !this.state.errorMessage}>
-                        <Form.Input label="Image Caption" placeholder="A description of the image"/>
-                        <Form.Field>
-                            <input type="file"/>
-                        </Form.Field>
-                        <SuccessMessage message="Image successfully uploaded"/>
-                        <ErrorMessage message={this.state.errorMessage}/>
-                        <Form.Button primary>Upload</Form.Button>
-                    </Form>
-                    <Divider/>
-                    <Card.Group>
-                        {
-                            this.state.images.map((image, i) =>
-                                <Card key={i} className="width-fit">
-                                    <Image src={image.href} alt={image.description}/>
-                                    <Card.Content>
-                                        <Card.Description>
-                                            <Button size="small" floated="right" color="red">Delete</Button>
-                                            {image.description}
-                                        </Card.Description>
-                                    </Card.Content>
-                                    <Card.Content extra>
-                                        {formatDateTime(image.uploadedDateTime)}
-                                    </Card.Content>
-                                </Card>
-                            )
-                        }
-                    </Card.Group>
-                    <Segment floated="right" compact basic>
-                        <Menu pagination floated="right">
-                            {
-                                Array(this.state.pagination.pagesTotal).fill().map((_, i) => {
-                                    if (this.state.pagination.current === i) {
-                                        return <Menu.Item key={i} active>{i + 1}</Menu.Item>
-                                    } else {
-                                        return <Link key={i} className="item" to={"/admin/images/" + i}>{i + 1}</Link>
-                                    }
-                                })
-                            }
-                        </Menu>
-                    </Segment>
+    return <EditImagesStateless {...{ownerName, loadingStatus, uploadStatus, errorMessage, images, pagination, uploadImage, deleteImage}}/>
+};
+
+export const EditImagesStateless = function ({ownerName, loadingStatus, uploadStatus, errorMessage, images, pagination, deleteImage, uploadImage}) {
+    return <Grid centered>
+        <Grid.Column width={16}>
+            <Segment basic>
+                <h1>Uploaded Images</h1>
+                <ImageUpload {...{uploadImage, uploadStatus, errorMessage}}/>
+                <Divider hidden={true}/>
+                <LoadingViewImages {...{loadingStatus, images, deleteImage}}/>
+                <Segment floated="right" compact basic>
+                    <Pagination {...pagination}/>
                 </Segment>
-            </Grid.Column>
-        </Grid>
-    }
+            </Segment>
+        </Grid.Column>
+    </Grid>
+};
 
-    componentDidMount() {
-        document.title = this.props.ownerName + ": Edit Images";
-    }
+export const LoadingViewImages = function ({loadingStatus, images, deleteImage}) {
 
-    _onChange(event) {
-
+    if (loadingStatus === undefined || loadingStatus === Loading.LOADING) {
+        return <Loader active inline={'centered'}>Loading</Loader>
+    } else {
+        return <ViewImages {...{images, deleteImage}}/>
     }
-}
+};
+
+export const ViewImages = function ({images, deleteImage}) {
+    return <Card.Group>
+        {images.map(image => <ViewImage key={image.id} {...image} deleteImage={deleteImage}/>)}
+    </Card.Group>
+};
+
+export const ViewImage = function ({src, description, id, uploadedDateTime, deleteImage}) {
+    checkTruthy(src, "Image src is not defined");
+    checkTruthy(id, "Image id is not defined");
+    return <Card className="width-fit">
+        <Image src={src} alt={description}/>
+        <Card.Content>
+            <Card.Description>
+                <Button size="small" floated="right" color="red"
+                        onClick={() => deleteImage(id)}>Delete</Button>
+                {description}
+            </Card.Description>
+        </Card.Content>
+        <Card.Content extra>
+            {formatDateTime(uploadedDateTime)}
+        </Card.Content>
+    </Card>
+};
+
+export const ImageUpload = function ({uploadStatus, errorMessage, uploadImage}) {
+    let [description, setDescription] = useState("");
+    let [fileSelected, selectFile] = useState();
+    let [isUploading, setUploading] = useState();
+    if (isUploading && uploadStatus === Uploading.UPLOADED) {
+        selectFile(null);
+    }
+    if (isUploading ^ uploadStatus === Uploading.UPLOADING) {
+        setUploading(uploadStatus === Uploading.UPLOADING);
+    }
+    let onUploadClick = () => {
+        setUploading(true);
+        uploadImage(description, fileSelected);
+    };
+    return <div>
+        <Form error={uploadStatus === Uploading.ERROR} success={uploadStatus === Uploading.UPLOADED}>
+            <SuccessMessage message="Image successfully uploaded"/>
+            <ErrorMessage message={errorMessage}/>
+            <Form.Input label="Description"
+                        placeholder="A description of the image"
+                        value={description}
+                        onChange={(_, newData) => setDescription(newData.value)}/>
+            <Container textAlign={'center'}>
+                {
+                    fileSelected
+                        ? <ImageUploadPreview file={fileSelected}/>
+                        : <ImageUploader
+                            withIcon={true}
+                            withPreview={true}
+                            buttonText="Choose Images"
+                            singleImage={true}
+                            onChange={f => selectFile(f[0])}/>
+                }
+                <Button.Group>
+                    <Form.Button primary onClick={() => onUploadClick()}>Upload</Form.Button>
+                    {fileSelected && [<Button.Or key="UploadOr"/>,
+                        <Button negative key="UploadCancel" onClick={() => selectFile(null)}>Cancel</Button>]}
+                </Button.Group>
+            </Container>
+        </Form>
+    </div>
+};
+
+export const ImageUploadPreview = function ({file}) {
+    let [dataUrl, setDataUrl] = useState();
+    if (!file) {
+        return null;
+    }
+    let reader = new FileReader();
+    reader.onload = () => setDataUrl(reader.result);
+    reader.readAsDataURL(file);
+    return (dataUrl && <Image className="image-upload-preview" src={dataUrl} alt="Image upload preview"/>) || null;
+};

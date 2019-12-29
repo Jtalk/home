@@ -4,7 +4,7 @@ import EditBio from "./edit-bio";
 import EditBlog from "./edit-blog";
 import EditBlogArticle from "./edit-blog-article";
 import EditProjects from "./edit-projects";
-import EditImages from "./edit-images";
+import {EditImages} from "./edit-images";
 import EditFooter from "./edit-footer";
 
 export default class AdminRouter extends React.Component {
