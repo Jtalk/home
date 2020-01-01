@@ -7,13 +7,16 @@ import * as serviceWorker from './serviceWorker';
 import {createAppStore} from "./data/redux";
 import {Provider} from "react-redux";
 import {AjaxProvider} from "./context/ajax-context";
+import {FileConverterProvider} from "./utils/file-converter-context";
 
 const store = createAppStore();
 
 ReactDOM.render(
     <Provider store={store}>
         <AjaxProvider>
-            <App/>
+            <FileConverterProvider>
+                <App/>
+            </FileConverterProvider>
         </AjaxProvider>
     </Provider>,
     document.getElementById('root'));

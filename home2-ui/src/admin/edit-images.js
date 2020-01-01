@@ -12,6 +12,7 @@ import {ErrorMessage, SuccessMessage} from "../form/form-message";
 import {useDispatch} from "react-redux";
 import "./edit-images.css";
 import {Loading} from "../data/reduce/global/loading";
+import {useDataUrl} from "../utils/file-converter-context";
 
 export const EditImages = function ({ownerName}) {
     useEffect(() => {
@@ -93,10 +94,15 @@ export const ImageUpload = function ({uploadStatus, errorMessage, uploadImage}) 
     if (isUploading ^ uploadStatus === Uploading.UPLOADING) {
         setUploading(uploadStatus === Uploading.UPLOADING);
     }
+    let previewDataUrl = useDataUrl(fileSelected);
     let onUploadClick = () => {
         setUploading(true);
         uploadImage(description, fileSelected);
     };
+    return <ImageUploadStateless {...{uploadStatus, errorMessage, description, setDescription, previewDataUrl, selectFile, onUploadClick}}/>
+};
+
+export const ImageUploadStateless = function ({uploadStatus, errorMessage, description, setDescription, previewDataUrl, selectFile, onUploadClick}) {
     return <div>
         <Form error={uploadStatus === Uploading.ERROR} success={uploadStatus === Uploading.UPLOADED}>
             <SuccessMessage message="Image successfully uploaded"/>
@@ -106,33 +112,32 @@ export const ImageUpload = function ({uploadStatus, errorMessage, uploadImage}) 
                         value={description}
                         onChange={(_, newData) => setDescription(newData.value)}/>
             <Container textAlign={'center'}>
-                {
-                    fileSelected
-                        ? <ImageUploadPreview file={fileSelected}/>
-                        : <ImageUploader
-                            withIcon={true}
-                            withPreview={true}
-                            buttonText="Choose Images"
-                            singleImage={true}
-                            onChange={f => selectFile(f[0])}/>
-                }
+                <ImageUploaderWithPreview previewDataUrl={previewDataUrl} onFileSelected={selectFile}/>
                 <Button.Group>
-                    <Form.Button primary onClick={() => onUploadClick()}>Upload</Form.Button>
-                    {fileSelected && [<Button.Or key="UploadOr"/>,
-                        <Button negative key="UploadCancel" onClick={() => selectFile(null)}>Cancel</Button>]}
+                    <Button primary onClick={() => onUploadClick()}>Upload</Button>
+                    {previewDataUrl && [
+                        <Button.Or key="UploadOr"/>,
+                        <Button negative key="UploadCancel" onClick={() => selectFile(null)}>Cancel</Button>
+                    ]}
                 </Button.Group>
             </Container>
         </Form>
     </div>
 };
 
-export const ImageUploadPreview = function ({file}) {
-    let [dataUrl, setDataUrl] = useState();
-    if (!file) {
-        return null;
+export const ImageUploaderWithPreview = function ({previewDataUrl, onFileSelected}) {
+    if (previewDataUrl) {
+        return <ImageUploadPreview previewDataUrl={previewDataUrl}/>
+    } else {
+        return <ImageUploader
+            withIcon={true}
+            withPreview={true}
+            buttonText="Choose Images"
+            singleImage={true}
+            onChange={f => onFileSelected(f[0])}/>
     }
-    let reader = new FileReader();
-    reader.onload = () => setDataUrl(reader.result);
-    reader.readAsDataURL(file);
-    return (dataUrl && <Image className="image-upload-preview" src={dataUrl} alt="Image upload preview"/>) || null;
+};
+
+export const ImageUploadPreview = function ({previewDataUrl}) {
+    return (previewDataUrl && <Image className="image-upload-preview" src={previewDataUrl} alt="Image upload preview"/>) || null;
 };
