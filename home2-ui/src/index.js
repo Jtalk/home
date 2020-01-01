@@ -5,20 +5,20 @@ import 'semantic-ui-css/semantic.css';
 import {App} from './App';
 import * as serviceWorker from './serviceWorker';
 import {createAppStore} from "./data/redux";
-import {Provider} from "react-redux";
+import {Provider as ReduxProvider} from "react-redux";
 import {AjaxProvider} from "./context/ajax-context";
 import {FileConverterProvider} from "./utils/file-converter-context";
 
 const store = createAppStore();
 
 ReactDOM.render(
-    <Provider store={store}>
+    <ReduxProvider store={store}>
         <AjaxProvider>
             <FileConverterProvider>
                 <App/>
             </FileConverterProvider>
         </AjaxProvider>
-    </Provider>,
+    </ReduxProvider>,
     document.getElementById('root'));
 
 // If you want your app to work offline and load faster, you can change

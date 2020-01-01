@@ -12,7 +12,7 @@ let defaultOwner = fromJS({
     bio: ""
 });
 
-let Action = {
+export const Action = {
     LOAD: Symbol("load"),
     LOADED: Symbol("loaded"),
     LOAD_ERROR: Symbol("load error"),

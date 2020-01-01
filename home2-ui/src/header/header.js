@@ -7,8 +7,14 @@ import {HeaderSearch} from "./header-search";
 import assert from "assert";
 import {Titled} from "react-titled";
 import {title} from "../utils/title-utils";
+import {useImmutableSelector} from "../utils/redux-store";
 
-export const Header = function ({ownerName, links, activeLink}) {
+export const Header = function ({links, activeLink}) {
+    let ownerName = useImmutableSelector("owner", ["data", "name"]);
+    return <HeaderStateless {...{ownerName, links, activeLink}}/>
+};
+
+export const HeaderStateless = function({ownerName, links, activeLink}) {
     return <Titled title={prev => title(prev, activeLink)}>
         <Menu secondary pointing>
             <HeaderOwner ownerName={ownerName}/>

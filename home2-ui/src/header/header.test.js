@@ -2,13 +2,18 @@ import React from 'react';
 import * as Enzyme from "enzyme";
 import {mount, shallow} from "enzyme";
 import Adapter from 'enzyme-adapter-react-16';
-import {Header, buildLink, buildSubmenuLinks} from "./header";
+import {Header, buildLink, buildSubmenuLinks, HeaderStateless} from "./header";
 import {HeaderOwner} from "./header-owner";
 import {Menu} from "semantic-ui-react";
 import {HeaderSearch} from "./header-search";
 import {HeaderMenuDropdownItem} from "./header-menu-dropdown-item";
 import {MemoryRouter} from "react-router";
 import {HeaderMenuItem} from "./header-menu-item";
+import {Provider as ReduxProvider} from "react-redux";
+import {createTestStore} from "../data/redux";
+import {owner, Action} from "../data/reduce/owner";
+import {newState} from "../data/reduce/global/action"
+import * as immutable from "immutable";
 
 Enzyme.configure({ adapter: new Adapter() });
 
@@ -28,19 +33,19 @@ describe("<Header/>", () => {
     ]),
   ];
   it('renders menu with owner', () => {
-    let result = shallow(<Header ownerName="Test Owner" links={links}/>);
+    let result = shallow(<HeaderStateless ownerName="Test Owner" links={links}/>);
     result = result.find(Menu).find(HeaderOwner);
 
     expect(result.props()).toMatchObject({ownerName: "Test Owner"});
   });
   it('renders menu with search', () => {
-    let result = shallow(<Header ownerName="Test Owner" links={links}/>);
+    let result = shallow(<HeaderStateless ownerName="Test Owner" links={links}/>);
     result = result.find(Menu.Menu, {right: true}).find(HeaderSearch);
 
     expect(result).toBeDefined();
   });
   it('renders menu with links', () => {
-    let result = shallow(<Header ownerName="Test Owner" activeLink="Item2" links={links}/>);
+    let result = shallow(<HeaderStateless ownerName="Test Owner" activeLink="Item2" links={links}/>);
     result = result.find(HeaderMenuItem);
 
     expect(result.at(0).props()).toMatchObject({link: links[0], active: false});
@@ -48,7 +53,7 @@ describe("<Header/>", () => {
     expect(result.at(2).props()).toMatchObject({link: links[3], active: false});
   });
   it('renders menu with dropdown', () => {
-    let result = shallow(<Header ownerName="Test Owner" activeLink="Item2" links={links}/>);
+    let result = shallow(<HeaderStateless ownerName="Test Owner" activeLink="Item2" links={links}/>);
     result = result.find(HeaderMenuDropdownItem);
 
     expect(result.at(0).props()).toMatchObject({title: "Item3", items: links[2].submenu});
@@ -56,7 +61,20 @@ describe("<Header/>", () => {
   });
   it('passes arguments to children properly', () => {
     mount(<MemoryRouter>
-      <Header ownerName="Test Owner" activeLink="About" links={links}/>
+      <HeaderStateless ownerName="Test Owner" activeLink="About" links={links}/>
     </MemoryRouter>);
+  });
+  it('retrieves owner info properly', () => {
+    let ownerName = "New Owner";
+    const store = createTestStore("owner", owner);
+    store.dispatch(newState(Action.LOADED, immutable.Map({name: ownerName})));
+    let result = mount(
+      <ReduxProvider store={store}>
+        <MemoryRouter>
+          <Header links={links} activeLink={"Item2"}/>
+        </MemoryRouter>
+      </ReduxProvider>
+    );
+    expect(result.find(HeaderOwner).prop("ownerName")).toEqual(ownerName);
   });
 });

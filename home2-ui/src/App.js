@@ -117,7 +117,7 @@ function error(location) {
 
 function page(ownerName, activeLink, mainComponent) {
     return <div>
-        <Header ownerName={ownerName} activeLink={activeLink} links={mainRoutes().map(r => r.menu)}/>
+        <Header activeLink={activeLink} links={mainRoutes().map(r => r.menu)}/>
         {mainComponent}
     </div>
 }
