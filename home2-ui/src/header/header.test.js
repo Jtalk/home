@@ -2,29 +2,29 @@ import React from 'react';
 import * as Enzyme from "enzyme";
 import {mount, shallow} from "enzyme";
 import Adapter from 'enzyme-adapter-react-16';
-import Header from "./header";
-import HeaderOwner from "./header-owner";
+import {Header, buildLink, buildSubmenuLinks} from "./header";
+import {HeaderOwner} from "./header-owner";
 import {Menu} from "semantic-ui-react";
-import HeaderSearch from "./header-search";
-import HeaderMenuDropdownItem from "./header-menu-dropdown-item";
+import {HeaderSearch} from "./header-search";
+import {HeaderMenuDropdownItem} from "./header-menu-dropdown-item";
 import {MemoryRouter} from "react-router";
-import HeaderMenuItem from "./header-menu-item";
+import {HeaderMenuItem} from "./header-menu-item";
 
 Enzyme.configure({ adapter: new Adapter() });
 
 describe("<Header/>", () => {
   let links = [
-    Header.buildLink("Item1", "/item1-link"),
-    Header.buildLink("Item2", "/item2-link"),
-    Header.buildSubmenuLinks("Item3", [
-      Header.buildLink("item3.1", "/item31-link"),
-      Header.buildLink("item3.2", "/item32-link"),
-      Header.buildLink("item3.3", "/item33-link"),
+    buildLink("Item1", "/item1-link"),
+    buildLink("Item2", "/item2-link"),
+    buildSubmenuLinks("Item3", [
+      buildLink("item3.1", "/item31-link"),
+      buildLink("item3.2", "/item32-link"),
+      buildLink("item3.3", "/item33-link"),
     ]),
-    Header.buildLink("Item4", "/item4-link"),
-    Header.buildSubmenuLinks("Item5", [
-      Header.buildLink("item5.1", "/item51-link"),
-      Header.buildLink("item5.2", "/item52-link"),
+    buildLink("Item4", "/item4-link"),
+    buildSubmenuLinks("Item5", [
+      buildLink("item5.1", "/item51-link"),
+      buildLink("item5.2", "/item52-link"),
     ]),
   ];
   it('renders menu with owner', () => {
@@ -43,9 +43,9 @@ describe("<Header/>", () => {
     let result = shallow(<Header ownerName="Test Owner" activeLink="Item2" links={links}/>);
     result = result.find(HeaderMenuItem);
 
-    expect(result.at(0).props()).toMatchObject({link: links[0], activeLink: "Item2"});
-    expect(result.at(1).props()).toMatchObject({link: links[1], activeLink: "Item2"});
-    expect(result.at(2).props()).toMatchObject({link: links[3], activeLink: "Item2"});
+    expect(result.at(0).props()).toMatchObject({link: links[0], active: false});
+    expect(result.at(1).props()).toMatchObject({link: links[1], active: true});
+    expect(result.at(2).props()).toMatchObject({link: links[3], active: false});
   });
   it('renders menu with dropdown', () => {
     let result = shallow(<Header ownerName="Test Owner" activeLink="Item2" links={links}/>);

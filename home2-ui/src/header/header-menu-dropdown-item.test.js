@@ -1,5 +1,6 @@
 import React from 'react';
-import HeaderMenuDropdownItem from "./header-menu-dropdown-item";
+import {HeaderMenuDropdownItem} from "./header-menu-dropdown-item";
+import {buildLink} from "./header-menu-item";
 import * as Enzyme from "enzyme";
 import {shallow} from "enzyme";
 import Adapter from 'enzyme-adapter-react-16';
@@ -12,9 +13,9 @@ Enzyme.configure({ adapter: new Adapter() });
 describe("<HeaderMenuDropdownItem/>", () => {
   it('renders menu with links', () => {
     let result = shallow(<HeaderMenuDropdownItem title="TopLevel" items={[
-      HeaderMenuItem.buildLink("Sublevel1", "/sublevel1-link", () => <div id="sublevel1-id"/>),
-      HeaderMenuItem.buildLink("Sublevel2", "/sublevel2-link", () => <div id="sublevel2-id"/>),
-      HeaderMenuItem.buildLink("Sublevel3", "/sublevel3-link", () => <div id="sublevel3-id"/>)
+      buildLink("Sublevel1", "/sublevel1-link", () => <div id="sublevel1-id"/>),
+      buildLink("Sublevel2", "/sublevel2-link", () => <div id="sublevel2-id"/>),
+      buildLink("Sublevel3", "/sublevel3-link", () => <div id="sublevel3-id"/>)
     ]}/>);
     result = result.find(Link);
 
@@ -24,9 +25,9 @@ describe("<HeaderMenuDropdownItem/>", () => {
   });
   it('renders menu with active link disabled', () => {
     let result = shallow(<HeaderMenuDropdownItem title="TopLevel" activeLink="Sublevel2" items={[
-      HeaderMenuItem.buildLink("Sublevel1", "/sublevel1-link", () => <div id="sublevel1-id"/>),
-      HeaderMenuItem.buildLink("Sublevel2", "/sublevel2-link", () => <div id="sublevel2-id"/>),
-      HeaderMenuItem.buildLink("Sublevel3", "/sublevel3-link", () => <div id="sublevel3-id"/>)
+      buildLink("Sublevel1", "/sublevel1-link", () => <div id="sublevel1-id"/>),
+      buildLink("Sublevel2", "/sublevel2-link", () => <div id="sublevel2-id"/>),
+      buildLink("Sublevel3", "/sublevel3-link", () => <div id="sublevel3-id"/>)
     ]}/>);
     expect(result.find(".active.item").props()).toMatchObject({children: "Sublevel2"});
   });

@@ -1,6 +1,6 @@
 import React from 'react';
 import './App.css';
-import Header from './header/header';
+import {Header, buildLink, buildSubmenuLinks} from './header/header';
 import About from "./home/about";
 import {Container} from "semantic-ui-react";
 import {BrowserRouter as Router, Switch} from "react-router-dom";
@@ -97,7 +97,7 @@ function createNavigation(title, href, renderer, exact) {
 function createComplexNavigation(title, href, routePath, renderer, exact) {
     let render = params => page("V", title, renderer(params));
     return {
-        menu: Header.buildLink(title, href),
+        menu: buildLink(title, href),
         route: createRoutingConfig(routePath, render, exact)
     };
 }
@@ -106,7 +106,7 @@ function createNestedNavigation(title, navigations) {
     let submenu = navigations.map(n => n.menu);
     let routes = navigations.map(n => n.route);
     return {
-        menu: Header.buildSubmenuLinks(title, submenu),
+        menu: buildSubmenuLinks(title, submenu),
         route: createMultiRoutingConfig(routes)
     };
 }
