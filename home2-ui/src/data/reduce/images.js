@@ -151,7 +151,7 @@ function toInternalImageData(image) {
     let result = Object.assign({}, image);
     result.src = asImgSrc(image.id);
     result.uploadedDateTime = image.uploaded["$date"];
-    result.description = image.metadata.description;
+    result.description = image.metadata && image.metadata.description;
     delete result.metadata;
     console.log("uploaded", image);
     return result;
