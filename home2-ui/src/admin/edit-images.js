@@ -70,12 +70,12 @@ export const ViewImage = function ({src, description, id, uploadedDateTime, dele
     checkTruthy(src, "Image src is not defined");
     checkTruthy(id, "Image id is not defined");
     return <Card className="width-fit">
-        <Image src={src} alt={description}/>
+        <Image src={src} alt={description || "No description"}/>
         <Card.Content>
             <Card.Description>
                 <Button size="small" floated="right" color="red"
                         onClick={() => deleteImage(id)}>Delete</Button>
-                {description}
+                {description || null}
             </Card.Description>
         </Card.Content>
         <Card.Content extra>
