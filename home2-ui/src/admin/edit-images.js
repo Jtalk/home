@@ -35,7 +35,7 @@ export const EditImages = function ({ownerName}) {
     return <EditImagesStateless {...{ownerName, loadingStatus, uploadStatus, errorMessage, images, pagination, uploadImage, deleteImage}}/>
 };
 
-export const EditImagesStateless = function ({ownerName, loadingStatus, uploadStatus, errorMessage, images, pagination, deleteImage, uploadImage}) {
+export const EditImagesStateless = function ({loadingStatus, uploadStatus, errorMessage, images, pagination, deleteImage, uploadImage}) {
     return <Grid centered>
         <Grid.Column width={16}>
             <Segment basic>
