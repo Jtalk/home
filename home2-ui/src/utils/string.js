@@ -1,4 +1,4 @@
-import * as replaceString from "replace-string";
+import replaceString from "replace-string";
 import * as what from "what.js";
 
 export function format(template, ...args) {
