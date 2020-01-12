@@ -1,129 +1,118 @@
-import React from "react";
+import React, {useState} from "react";
 import {Button, Divider, Form, Grid, Image, Input, Segment, TextArea} from "semantic-ui-react";
 import {ErrorMessage, SuccessMessage} from "../form/form-message";
 import {imageUrl} from "../utils/image";
-import {Logger} from "../utils/logger";
-import {connect} from "react-redux";
-import {fromJS} from "immutable";
-import * as owner from "../data/reduce/owner";
+import {useDispatch} from "react-redux";
+import {update as updateOwner} from "../data/reduce/owner";
+import {useAjax} from "../context/ajax-context";
+import {useImmutableSelector} from "../utils/redux-store";
+import {Loading, Updating} from "../data/reduce/global/enums";
+import _ from "lodash";
 
-class EditBio extends React.Component {
+export const EditBio = function () {
+    let ajax = useAjax();
+    let dispatch = useDispatch();
+    let owner = useImmutableSelector("owner", ["data"]);
+    let loadingStatus = useImmutableSelector("owner", ["loading"]);
+    let updateStatus = useImmutableSelector("owner", ["updating"]);
+    let errorMessage = useImmutableSelector("owner", ["errorMessage"]);
 
-    constructor(props) {
-        super(props);
-        this.log = Logger.of(this.constructor.name);
-        this.state = {
-            data: {
-                name: "",
-                photoId: "",
-                nickname: "",
-                description: "",
-                email: "",
-                bio: ""
-            },
-            edited: false
-        }
-    }
-
-    render() {
-        let owner = this.state.data;
-        return <Grid centered>
-            <Grid.Column width={11}>
-                <Segment raised>
-                    <h2>Edit bio</h2>
-                    <Form onSubmit={this._onSubmit} loading={this.props.loading} error={!!this.props.errorMessage} success={this.props.updated && !this.props.errorMessage}>
-                        <Divider/>
-                        <Grid stackable>
-                            <Grid.Row>
-                                <Grid.Column width={11}>
-                                    <Form.Input label="Owner Name" placeholder="Name" value={owner.name} name="name" onChange={this._onChange}/>
-                                    <Form.Input label="Owner Nickname" placeholder="Nickname" value={owner.nickname} name="nickname" onChange={this._onChange}/>
-                                    <Form.Input label="Owner E-Mail" placeholder="E-Mail" value={owner.email} name="email" onChange={this._onChange}/>
-                                    <Form.Input label="Owner Short Bio" placeholder="Description" value={owner.description} name="description" onChange={this._onChange}/>
-                                    <SuccessMessage message="Changes successfully saved"/>
-                                    <ErrorMessage message={this.props.errorMessage}/>
-                                </Grid.Column>
-                                <Grid.Column width={5}>
-                                    <Form.Field>
-                                        <label>Photo</label>
-                                        <div className="image">
-                                            { owner.photoId && <Image src={imageUrl(owner.photoId)} alt="Owner photo"/>}
-                                        </div>
-                                        <Input type="file" accept="image/*" onChange={this._photoSelected}/>
-                                    </Form.Field>
-                                    <Button primary type="submit">Save</Button>
-                                </Grid.Column>
-                            </Grid.Row>
-                            <Grid.Row>
-                                <Grid.Column width={16}>
-                                    <TextArea autoHeight label="Bio" placeholder="Something about me..." value={owner.bio} name="bio" onChange={this._onChange}/>
-                                </Grid.Column>
-                            </Grid.Row>
-                        </Grid>
-                    </Form>
-                </Segment>
-            </Grid.Column>
-        </Grid>
-    }
-
-    static getDerivedStateFromProps(newProps, oldState) {
-        let newState = Object.assign({}, oldState);
-        if (!oldState.edited) {
-            newState = Object.assign(newState, { data: newProps.data });
-        }
-        return newState;
-    }
-
-    _onSubmit = () => {
-        let owner = fromJS(this.state.data);
-        owner = this._toContactCollection(owner);
-        this.props.update(owner, this.state.photoToUpload);
-        this.setState(Object.assign({}, this.state, { edited: false }))
+    let onUpdate = (owner, newPhoto) => {
+        dispatch(updateOwner(ajax, owner, newPhoto));
     };
 
-    _onChange = (e, { name, value }) => {
-        this.log.debug(`Changing ${name} to ${value} in ${JSON.stringify(this.state.data)}`);
-        let newState = Object.assign({}, this.state);
-        newState.data = Object.assign({}, newState.data);
-        newState.data[name] = value;
-        newState.edited = true;
-        this.setState(newState)
-    };
+    return <EditBioStateless existingOwner={owner} doUpdate={onUpdate} {...{loadingStatus, updateStatus, errorMessage}}/>
+};
 
-    _photoSelected = (e) => {
+export const EditBioStateless = function ({existingOwner, loadingStatus, updateStatus, errorMessage, doUpdate}) {
+    let [owner, setOwner] = useState(existingOwner);
+    let [edited, setEdited] = useState(false);
+    let [photoToUpload, setPhotoToUpload] = useState(null);
+    let [updating, setUpdating] = useState(false);
+
+    let hasError = loadingStatus === Loading.ERROR || updateStatus === Updating.ERROR;
+    let reportOperationSuccess = updateStatus === Updating.UPDATED;
+    let operationIsInProgress = loadingStatus === Loading.LOADING || updateStatus === Updating.UPDATING;
+
+    if ([Updating.UPDATED, Updating.ERROR].includes(updateStatus) && updating) {
+        setUpdating(false);
+        if (updateStatus === Updating.UPDATED) {
+            setEdited(false);
+            setPhotoToUpload(null);
+            setOwner(existingOwner);
+        }
+    } else if (!edited && !_.isEqual(owner, existingOwner)) {
+        setOwner(existingOwner);
+    }
+
+    let onSubmit = (e) => {
+        if (!edited) {
+            console.error(`No changes to submit: edited=${edited}, photo=${photoToUpload}`, owner, existingOwner);
+            throw Error("No changes to submit");
+        }
+        setUpdating(true);
+        doUpdate(owner, photoToUpload);
+    };
+    let onChange = (e, {name, value}) => {
+        console.debug(`Changing ${name} to`, value, "in", owner);
+        let updated = Object.assign({}, owner);
+        updated[name] = value;
+        setEdited(true);
+        setOwner(updated);
+    };
+    let onContactChange = (e, {name, value}) => {
+        let contactType = name;
+        console.debug(`Changing contact ${contactType} to ${value} in`, owner);
+        let updatedContacts = Object.assign({}, owner.contacts);
+        let toUpdate = updatedContacts[contactType] || {};
+        toUpdate.value = value;
+        updatedContacts[contactType] = toUpdate;
+        onChange(null, {name: "contacts", value: updatedContacts});
+    };
+    let onPhotoSelected = (e) => {
         let file = e.target.files[0];
-        let newState = Object.assign({}, this.state, { photoToUpload: file });
-        this.setState(newState);
+        setEdited(true);
+        setPhotoToUpload(file);
     };
 
-    _toContactCollection(owner) {
-        let email = owner.get("email");
-        if (email) {
-            owner = owner.set("contacts", fromJS([{contactType: "EMAIL", value: email}]));
-        }
-        return owner.remove("email");
-    }
-}
-
-function mapToProps(state) {
-    let owner = state.owner.toJS();
-    toFlatContacts(owner.data);
-    return owner;
-}
-
-function update(update, photo) {
-    return owner.update(update, photo)
-}
-
-function toFlatContacts(owner) {
-    let emailEntry = owner.contacts.find(c => c.contactType === "EMAIL");
-    owner.contacts = undefined;
-    if (emailEntry) {
-        owner.email = emailEntry.value
-    } else {
-        owner.email = ""
-    }
-    return owner;
-}
-
-export default connect(mapToProps, { update })(EditBio);
+    return <Grid centered>
+        <Grid.Column width={11}>
+            <Segment raised>
+                <h2>Edit bio</h2>
+                <Form onSubmit={onSubmit}
+                      loading={operationIsInProgress}
+                      error={hasError}
+                      success={reportOperationSuccess}>
+                    <Divider/>
+                    <Grid stackable>
+                        <Grid.Row>
+                            <Grid.Column width={11}>
+                                <Form.Input label="Owner Name" placeholder="Name" value={owner.name || ""} name="name" onChange={onChange}/>
+                                <Form.Input label="Owner Nickname" placeholder="Nickname" value={owner.nickname || ""} name="nickname" onChange={onChange}/>
+                                <Form.Input label="Owner E-Mail" placeholder="E-Mail" value={_.get(owner, "contacts.email.value", "")} name="email" onChange={onContactChange}/>
+                                <Form.Input label="Owner Short Bio" placeholder="Description" value={owner.description || ""} name="description" onChange={onChange}/>
+                                <SuccessMessage message="Changes successfully saved"/>
+                                <ErrorMessage message={errorMessage}/>
+                            </Grid.Column>
+                            <Grid.Column width={5}>
+                                <Form.Field>
+                                    <label>Photo</label>
+                                    <div className="image">
+                                        { owner.photoId && <Image src={imageUrl(owner.photoId)} alt="Owner photo"/>}
+                                    </div>
+                                    <Input type="file" accept="image/*" onChange={onPhotoSelected}/>
+                                </Form.Field>
+                                <Button primary type="submit" active={edited}>Save</Button>
+                            </Grid.Column>
+                        </Grid.Row>
+                        <Grid.Row>
+                            <Grid.Column width={16}>
+                                <TextArea label="Bio" placeholder="Something about me..." value={owner.bio || ""} name="bio" onChange={onChange}/>
+                            </Grid.Column>
+                        </Grid.Row>
+                    </Grid>
+                </Form>
+            </Segment>
+        </Grid.Column>
+    </Grid>
+};

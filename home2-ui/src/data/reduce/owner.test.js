@@ -1,5 +1,6 @@
 import {createTestStore} from "../redux";
 import * as owner from "./owner";
+import {Loading} from "./global/enums";
 
 const mockOwner = {
     name: "Vasya Pupkin",
@@ -31,7 +32,7 @@ describe('Redux(owner)', () => {
                 name: "",
                 contacts: [],
             },
-            loading: true
+            loading: Loading.LOADING
         })
     });
     test('the loaded owner is provided after load', async () => {
@@ -40,9 +41,7 @@ describe('Redux(owner)', () => {
         await owner.load(ajax)(store.dispatch.bind(store));
         expect(currentState).toMatchObject({
             data: mockOwner,
-            loading: false,
-            loaded: true,
-            errorMessage: undefined,
+            loading: Loading.READY,
         })
     });
 });

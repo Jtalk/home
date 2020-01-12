@@ -6,6 +6,7 @@ import "../bbcode/tags";
 import {formatMarkup} from "../utils/text-markup";
 import {ContentPlaceholderOr} from "../utils/placeholder";
 import {connect} from "react-redux";
+import {Loading} from "../data/reduce/global/enums";
 
 
 class About extends React.Component {
@@ -14,7 +15,7 @@ class About extends React.Component {
         return <Grid stackable centered>
             <Grid.Row>
                 <Grid.Column width={10} as="main">
-                    <ContentPlaceholderOr header lines={30} loading={this.props.loading}>
+                    <ContentPlaceholderOr header lines={30} loading={this.props.loading === Loading.LOADING}>
                         {formatMarkup(this.props.text)}
                     </ContentPlaceholderOr>
                 </Grid.Column>

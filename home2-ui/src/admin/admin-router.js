@@ -1,6 +1,6 @@
 import React from "react";
 import {Route, Switch} from "react-router";
-import EditBio from "./edit-bio";
+import {EditBio} from "./edit-bio";
 import EditBlog from "./edit-blog";
 import EditBlogArticle from "./edit-blog-article";
 import EditProjects from "./edit-projects";
