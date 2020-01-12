@@ -31,7 +31,7 @@ export const EditBioStateless = function ({existingOwner, loadingStatus, updateS
     let [updating, setUpdating] = useState(false);
 
     let hasError = loadingStatus === Loading.ERROR || updateStatus === Updating.ERROR;
-    let reportOperationSuccess = updateStatus === Updating.UPDATED;
+    let reportSuccess = updateStatus === Updating.UPDATED;
     let operationIsInProgress = loadingStatus === Loading.LOADING || updateStatus === Updating.UPDATING;
 
     if ([Updating.UPDATED, Updating.ERROR].includes(updateStatus) && updating) {
@@ -75,14 +75,21 @@ export const EditBioStateless = function ({existingOwner, loadingStatus, updateS
         setPhotoToUpload(file);
     };
 
+    return <EditBioForm {...{onSubmit, onChange, onContactChange, onPhotoSelected, reportSuccess, owner, edited}}
+                        errorMessage={hasError && errorMessage}
+                        loading={operationIsInProgress}/>
+};
+
+export const EditBioForm = function ({onSubmit, onChange, onContactChange, onPhotoSelected, reportSuccess, errorMessage, loading, owner, edited}) {
+
     return <Grid centered>
         <Grid.Column width={11}>
             <Segment raised>
                 <h2>Edit bio</h2>
                 <Form onSubmit={onSubmit}
-                      loading={operationIsInProgress}
-                      error={hasError}
-                      success={reportOperationSuccess}>
+                      loading={loading}
+                      error={!!errorMessage}
+                      success={reportSuccess}>
                     <Divider/>
                     <Grid stackable>
                         <Grid.Row>
@@ -95,19 +102,13 @@ export const EditBioStateless = function ({existingOwner, loadingStatus, updateS
                                 <ErrorMessage message={errorMessage}/>
                             </Grid.Column>
                             <Grid.Column width={5}>
-                                <Form.Field>
-                                    <label>Photo</label>
-                                    <div className="image">
-                                        { owner.photoId && <Image src={imageUrl(owner.photoId)} alt="Owner photo"/>}
-                                    </div>
-                                    <Input type="file" accept="image/*" onChange={onPhotoSelected}/>
-                                </Form.Field>
+                                <PhotoUpload existingPhotoId={owner.photoId} onPhotoSelected={onPhotoSelected}/>
                                 <Button primary type="submit" active={edited}>Save</Button>
                             </Grid.Column>
                         </Grid.Row>
                         <Grid.Row>
                             <Grid.Column width={16}>
-                                <TextArea label="Bio" placeholder="Something about me..." value={owner.bio || ""} name="bio" onChange={onChange}/>
+                                <BioTextArea bio={owner.bio} onBioChange={(e, {value}) => onChange(e, {name: "bio", value})}/>
                             </Grid.Column>
                         </Grid.Row>
                     </Grid>
@@ -115,4 +116,18 @@ export const EditBioStateless = function ({existingOwner, loadingStatus, updateS
             </Segment>
         </Grid.Column>
     </Grid>
+};
+
+export const PhotoUpload = function ({existingPhotoId, onPhotoSelected}) {
+    return <Form.Field>
+        <label>Photo</label>
+        <div className="image">
+            { existingPhotoId && <Image src={imageUrl(existingPhotoId)} alt="Owner photo"/>}
+        </div>
+        <Input type="file" accept="image/*" onChange={onPhotoSelected}/>
+    </Form.Field>
+};
+
+export const BioTextArea = function ({bio, onBioChange}) {
+    return <TextArea label="Bio" placeholder="Something about me..." value={bio || ""} name="bio" onChange={onBioChange}/>
 };
