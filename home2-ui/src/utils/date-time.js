@@ -1,7 +1,4 @@
 import what from "what.js"
-import {Logger} from "./logger";
-
-const log = Logger.of("date-time");
 
 export function formatDateTime(date) {
     switch (what(date)) {
@@ -14,7 +11,6 @@ export function formatDateTime(date) {
         case "null":
             return date;
         default:
-            log.error(`Unknown date: ${date}`, new Error());
-            return undefined;
+            throw Error(`Unknown date: ${date}`);
     }
 }

@@ -1,8 +1,5 @@
 import {fromJS, Map} from "immutable";
-import {Logger} from "../../utils/logger";
-import {Loading} from "./global/loading";
-
-let log = Logger.of("data.reduce.footer");
+import {Loading} from "./global/enums";
 
 let defaultFooter = fromJS({
     links: [],
@@ -55,7 +52,7 @@ export function load(ajax) {
             let footer = await ajax.footer.load();
             dispatch(newState(Action.LOADED, fromJS(footer)));
         } catch (e) {
-            log.error("Cannot load footer info", e);
+            console.error("Cannot load footer info", e);
             dispatch(error(Action.LOAD_ERROR, e.toLocaleString()));
         }
     }

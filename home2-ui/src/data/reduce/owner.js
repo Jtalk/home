@@ -1,7 +1,7 @@
 import {fromJS, Map} from "immutable";
-import {Logger} from "../../utils/logger";
-
-let log = Logger.of("data.reduce.owner");
+import {Loading, Updating} from "./global/enums";
+import {action, error, newState} from "./global/actions";
+import _ from "lodash";
 
 let defaultOwner = fromJS({
     name: "",

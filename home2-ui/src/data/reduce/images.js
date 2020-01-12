@@ -1,12 +1,7 @@
 import {fromJS} from "immutable";
-import {Logger} from "../../utils/logger";
-import {Loading} from "./global/loading";
-import {action, error, newState} from "./global/action";
-import {Uploading} from "./global/uploading";
+import {action, error, newState} from "./global/actions";
 import config from 'react-global-configuration';
-import {Deleting} from "./global/deleting";
-
-const log = Logger.of("data.reduce.image");
+import {Deleting, Loading, Uploading} from "./global/enums";
 
 // let testimages = [
 //     {
@@ -95,7 +90,7 @@ function reload(ajax, page) {
             imagesData = toInternalImagesData(imagesData);
             dispatch(newState(Action.LOADED, fromJS(imagesData)));
         } catch (e) {
-            log.error("Cannot load images list", e);
+            console.error("Cannot load images list", e);
             dispatch(error(Action.LOAD_ERROR, e.toLocaleString()));
         }
     }
@@ -113,7 +108,7 @@ export function upload(ajax, description, file, currentPage) {
                 reload(ajax, currentPage)(dispatch);
             }
         } catch (e) {
-            log.error(`Cannot upload image "${description}"`, e);
+            console.error(`Cannot upload image "${description}"`, e);
             dispatch(error(Action.UPLOAD_ERROR, e.toLocaleString()));
         }
     }
@@ -129,7 +124,7 @@ export function delete_(ajax, id, currentState) {
                 dispatch(reload(ajax, currentState.pagination.current));
             }
         } catch (e) {
-            log.error(`Cannot delete image ${id}`, e);
+            console.error(`Cannot delete image ${id}`, e);
             dispatch(error(Action.DELETE_ERROR, e.toLocaleString()));
         }
     }

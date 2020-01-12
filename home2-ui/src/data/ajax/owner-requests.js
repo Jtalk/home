@@ -1,9 +1,6 @@
 import * as request from "superagent";
 import api from "../../utils/superagent-api";
 import {apiDelay} from "../../utils/test-api-delay";
-import {Logger} from "../../utils/logger";
-
-let log = Logger.of("data.ajax.owner");
 
 export class OwnerRequests {
 
@@ -21,7 +18,7 @@ export class OwnerRequests {
         }
         let response = await request.post("/owner", update)
             .use(api);
-        log.info(`Owner updated with ${response.status}: ${response.text}`);
+        console.info(`Owner updated with ${response.status}: ${response.text}`);
         return update;
     }
 
@@ -36,12 +33,12 @@ export class OwnerRequests {
 
             let body = response.body;
             if (body.status !== "ok") {
-                log.error(`Unexpected response from API upon photo upload: ${JSON.stringify(body)}`);
+                console.error(`Unexpected response from API upon photo upload: ${JSON.stringify(body)}`);
                 throw Error("API error while uploading photo");
             }
             return body.id;
         } catch (e) {
-            log.error("Exception while uploading a new photo", e);
+            console.error("Exception while uploading a new photo", e);
             throw Error("Cannot upload a new photo")
         }
     }

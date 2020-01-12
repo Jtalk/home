@@ -16,10 +16,9 @@ import {MemoryRouter} from "react-router"
 import ImageUploader from "react-images-upload";
 import {Pagination} from "../shared/pagination";
 import {formatDateTime} from "../utils/date-time";
-import {Loading} from "../data/reduce/global/loading";
 import {FileConverterProvider} from "../utils/file-converter-context";
-import {Uploading} from "../data/reduce/global/uploading";
 import {ErrorMessage} from "../form/form-message";
+import {Loading, Uploading} from "../data/reduce/global/enums";
 
 const ownerName = "Test Owner";
 const images = [

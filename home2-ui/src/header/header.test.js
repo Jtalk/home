@@ -12,7 +12,7 @@ import {HeaderMenuItem} from "./header-menu-item";
 import {Provider as ReduxProvider} from "react-redux";
 import {createTestStore} from "../data/redux";
 import {owner, Action} from "../data/reduce/owner";
-import {newState} from "../data/reduce/global/action"
+import {newState} from "../data/reduce/global/actions"
 import * as immutable from "immutable";
 
 Enzyme.configure({ adapter: new Adapter() });

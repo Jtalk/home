@@ -7,12 +7,11 @@ import {formatDateTime} from "../utils/date-time";
 import ImageUploader from "react-images-upload";
 import {useAjax, useAjaxLoader} from "../context/ajax-context";
 import * as image_redux from "../data/reduce/images";
-import {Uploading} from "../data/reduce/global/uploading";
 import {ErrorMessage, SuccessMessage} from "../form/form-message";
 import {useDispatch} from "react-redux";
 import "./edit-images.css";
-import {Loading} from "../data/reduce/global/loading";
 import {useDataUrl} from "../utils/file-converter-context";
+import {Loading, Uploading} from "../data/reduce/global/enums";
 
 export const EditImages = function ({ownerName}) {
     useEffect(() => {
