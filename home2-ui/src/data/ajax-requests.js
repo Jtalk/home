@@ -5,8 +5,8 @@ import {ImagesRequests} from "./ajax/images-requests";
 export class Ajax {
 
     constructor() {
-        this.owner = new OwnerRequests();
         this.footer = new FooterRequests();
         this.images = new ImagesRequests();
+        this.owner = new OwnerRequests(this.images);
     }
 }

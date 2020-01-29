@@ -4,6 +4,10 @@ import {apiDelay} from "../../utils/test-api-delay";
 
 export class OwnerRequests {
 
+    constructor(images) {
+        this.images = images;
+    }
+
     async load() {
         let response = await request.get("/owner")
             .use(api);
@@ -12,30 +16,21 @@ export class OwnerRequests {
     }
 
     async update(update, photo) {
-        let photoId = await this.updatePhoto(photo);
-        if (photoId) {
-            update = update.set("photoId", photoId);
+        if (photo) {
+            update.photoId = await this.updatePhoto(photo);
         }
         let response = await request.post("/owner", update)
             .use(api);
         console.info(`Owner updated with ${response.status}: ${response.text}`);
-        return update;
+        return Object.assign({}, response.body);
     }
 
     async updatePhoto(photo) {
-        if (!photo) {
-            return null;
-        }
+        console.debug("Uploading photo", photo);
         try {
-            let response = await request.post("/images")
-                .attach("img", photo)
-                .use(api);
-
+            let response = await this.images.upload("owner photo", photo);
             let body = response.body;
-            if (body.status !== "ok") {
-                console.error(`Unexpected response from API upon photo upload: ${JSON.stringify(body)}`);
-                throw Error("API error while uploading photo");
-            }
+            console.debug(`Photo updated, new photo ID is ${body.id}`);
             return body.id;
         } catch (e) {
             console.error("Exception while uploading a new photo", e);

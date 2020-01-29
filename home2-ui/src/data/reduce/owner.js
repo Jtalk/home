@@ -24,7 +24,7 @@ export const Action = {
 export function owner(state = Map({loading: Loading.LOADING, data: defaultOwner}), action) {
     switch (action.type) {
         case Action.LOAD:
-            return Map({loading: Loading.LOADING, data: defaultOwner});
+            return Map({loading: Loading.LOADING, errorMessage: undefined, uploading: undefined, data: defaultOwner});
         case Action.LOADED:
             return Map({loading: Loading.READY, errorMessage: undefined, data: action.data});
         case Action.LOAD_ERROR:
