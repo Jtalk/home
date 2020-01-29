@@ -30,13 +30,14 @@ class Database @Inject()(cc: ControllerComponents, val reactiveMongoApi: Reactiv
   def findSingle[T](implicit ec: ExecutionContext, mt: ModelType[T], reads: Reads[T]): Future[Option[T]] = findSingleJs
     .map(JsonUtils.asObj[T])
 
-  def updateSingle[T](entity: T)(implicit ec: ExecutionContext, mt: ModelType[T], writes: Writes[T]): Future[Unit] = {
+  def updateSingle[T](entity: T)(implicit ec: ExecutionContext, mt: ModelType[T], reads: Reads[T], writes: Writes[T]): Future[T] = {
     val obj = Json.toJson(entity).asInstanceOf[JsObject]
-    val id = findExistingSingleId.map(_.getOrElse(JsString("-1")))
-    val result = id.flatMap({ id =>
-      collection.flatMap(_.update(false).one(JsObject(Seq("_id" -> id)), obj, upsert = true))
-    })
-    result.flatMap(asFuture)
+    findExistingSingleId.map(_.getOrElse(JsString("-1")))
+      .flatMap(id => collection.flatMap(_.update(false).one(JsObject(Seq("_id" -> id)), obj, upsert = true)))
+      .flatMap(asFuture)
+      .flatMap(_ => findSingle[T])
+      .flatMap(o => o.map(v => Future(v))
+        .getOrElse(Future.failed[T](new RuntimeException("We have just upserted the entry and now it does not exist..."))))
   }
 
   private def findAllQuery[T](implicit ec: ExecutionContext, mt: ModelType[T]) = collection.map(_.find(Json.obj(), None))
