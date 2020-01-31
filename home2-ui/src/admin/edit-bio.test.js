@@ -8,18 +8,13 @@ import config from "react-global-configuration";
 describe("<BioTextArea/>", () => {
     it("shows existing bio", () => {
         let bio = "some text...";
-        let result = shallow(<BioTextArea bio={bio} onBioChange={() => {}}/>);
+        let result = shallow(<BioTextArea bio={bio} onChange={() => {}}/>);
         expect(result.find(TextArea).prop("value")).toEqual(bio);
-    });
-    it("shows empty text if no bio", () => {
-        let bio = undefined;
-        let result = shallow(<BioTextArea bio={bio} onBioChange={() => {}}/>);
-        expect(result.find(TextArea).prop("value")).toEqual("");
     });
     it("reports input if already set", () => {
         let onChange = jest.fn((e, {name, value}) => {});
         let bio = "some text...";
-        let result = shallow(<BioTextArea bio={bio} onBioChange={onChange}/>);
+        let result = shallow(<BioTextArea bio={bio} onChange={onChange}/>);
         let event = {};
         let payload = {name: "mybio", value: "some new text..."};
         result.find(TextArea).prop("onChange")(event, payload);
@@ -28,7 +23,7 @@ describe("<BioTextArea/>", () => {
     it("reports input if not already set", () => {
         let onChange = jest.fn((e, {name, value}) => {});
         let bio = undefined;
-        let result = shallow(<BioTextArea bio={bio} onBioChange={onChange}/>);
+        let result = shallow(<BioTextArea bio={bio} onChange={onChange}/>);
         let event = {};
         let payload = {name: "mybio", value: "some new text..."};
         result.find(TextArea).prop("onChange")(event, payload);
