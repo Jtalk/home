@@ -4,15 +4,16 @@ import {Updating} from "../../data/reduce/global/enums";
 
 const FILES_PATH = "__files";
 
-export function useForm({init, updateStatus}) {
-    const [updating, setUpdating] = useState();
+export function useForm({init, updateStatus} = {}) {
+    const [submitting, setSubmitting] = useState(false);
     const [data, setData] = useState(init || {});
     const [edited, setEdited] = useState(false);
-    if (updating && updateStatus === Updating.UPDATED) {
-        setUpdating(false);
+    if (submitting && updateStatus === Updating.UPDATED) {
+        setSubmitting(false);
+        setEdited(false);
         setData(init);
-    } else if (updating && updateStatus === Updating.ERROR) {
-        setUpdating(false);
+    } else if (submitting && updateStatus === Updating.ERROR) {
+        setSubmitting(false);
     }
     const onSubmit = (onSubmit) => {
         return (e) => {
@@ -22,16 +23,13 @@ export function useForm({init, updateStatus}) {
             console.debug("Submitting form", data);
             let update = Object.assign({}, data);
             delete update[FILES_PATH];
-            if (onSubmit(update, data[FILES_PATH] || {})) {
-                console.debug("Form submit success");
-                setUpdating(true);
-            } else {
-                console.debug("Could not submit form");
-            }
+            onSubmit(update, data[FILES_PATH] || {});
+            console.debug("Form submit success");
+            setSubmitting(true);
         };
     };
     const updater = new Updater(data, setData, setEdited);
-    return {onSubmit, data, updater, edited};
+    return {onSubmit, data, updater, edited, submitting, canSubmit: edited && !submitting};
 }
 
 class Updater {
