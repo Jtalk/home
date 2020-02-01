@@ -19,6 +19,10 @@ import {FileConverterProvider} from "../utils/file-converter-context";
 import {ErrorMessage} from "../form/form-message";
 import {Loading, Uploading} from "../data/reduce/global/enums";
 import {ImageUploadPreview} from "./common/image-upload-preview";
+import {useDataUrl} from "../utils/file-converter-context";
+
+jest.mock("../utils/file-converter-context");
+useDataUrl.mockImplementation(v => v.dataUrl);
 
 const ownerName = "Test Owner";
 const images = [
@@ -177,9 +181,9 @@ describe("<ViewImage/>", () => {
 
 describe("<ImageUploaderWithPreview/>", () => {
     it('shows preview when file is selected', () => {
-        let previewDataUrl = 'file-data-url';
-        let result = shallow(<ImageUploaderWithPreview previewDataUrl={previewDataUrl} onFileSelected={() => {}}/>);
-        expect(result.find(ImageUploadPreview).props()).toMatchObject({src: previewDataUrl});
+        let selectedFile = {dataUrl: "some-selected-file-data-url", name: "test file"};
+        let result = shallow(<ImageUploaderWithPreview selectedFile={selectedFile} onFileSelected={() => {}}/>);
+        expect(result.find(ImageUploadPreview).props()).toMatchObject({src: selectedFile});
         expect(result.find(ImageUploader).exists()).toBe(false);
     });
     it('shows file uploader when file is not selected', () => {
@@ -206,61 +210,61 @@ describe("<ImageUploadStateless/>", () => {
     let errorMessage = undefined;
     let description = "";
     let setDescription = () => {};
-    let previewDataUrl = undefined;
+    let selectedFile = undefined;
     let selectFile = () => {};
     let onUploadClick = () => {};
 
     it('renders upload form by default', () => {
-        let result = shallow(<ImageUploadStateless {...{uploadStatus, errorMessage, description, setDescription, previewDataUrl, selectFile, onUploadClick}}/>);
+        let result = shallow(<ImageUploadStateless {...{uploadStatus, errorMessage, description, setDescription, selectedFile, selectFile, onUploadClick}}/>);
         expect(result.find(Form).prop("success")).toBeFalsy();
         expect(result.find(Form).prop("error")).toBeFalsy();
         expect(result.find(Form.Input).find({label: "Description", value: description}).exists()).toBe(true);
-        expect(result.find(ImageUploaderWithPreview).props()).toMatchObject({previewDataUrl, onFileSelected: selectFile});
+        expect(result.find(ImageUploaderWithPreview).props()).toMatchObject({selectedFile, onFileSelected: selectFile});
         expect(result.find(Button).find({children: "Upload", primary: true}).exists()).toBe(true);
         expect(result.find(Button.Or).findWhere(n => n.key() === "UploadOr").exists()).toBe(false);
         expect(result.find(Button).find({children: "Cancel", negative: true}).exists()).toBe(false);
     });
     it('renders preview with a cancellation button when file is selected', () => {
-        previewDataUrl = "some-data-url";
-        let result = shallow(<ImageUploadStateless {...{uploadStatus, errorMessage, description, setDescription, previewDataUrl, selectFile, onUploadClick}}/>);
+        selectedFile = {dataUrl: "some-data-url", name: "test file"};
+        let result = shallow(<ImageUploadStateless {...{uploadStatus, errorMessage, description, setDescription, selectedFile, selectFile, onUploadClick}}/>);
         expect(result.find(Form).prop("success")).toBeFalsy();
         expect(result.find(Form).prop("error")).toBeFalsy();
         expect(result.find(Form.Input).find({label: "Description", value: description}).exists()).toBe(true);
-        expect(result.find(ImageUploaderWithPreview).props()).toMatchObject({previewDataUrl, onFileSelected: selectFile});
+        expect(result.find(ImageUploaderWithPreview).props()).toMatchObject({selectedFile, onFileSelected: selectFile});
         expect(result.find(Button).find({children: "Upload", primary: true}).exists()).toBe(true);
         expect(result.find(Button.Or).findWhere(n => n.key() === "UploadOr").exists()).toBe(true);
         expect(result.find(Button).find({children: "Cancel", negative: true}).exists()).toBe(true);
     });
     it('renders description', () => {
         description = "some-description";
-        let result = shallow(<ImageUploadStateless {...{uploadStatus, errorMessage, description, setDescription, previewDataUrl, selectFile, onUploadClick}}/>);
+        let result = shallow(<ImageUploadStateless {...{uploadStatus, errorMessage, description, setDescription, selectedFile, selectFile, onUploadClick}}/>);
         expect(result.find(Form.Input).find({label: "Description"}).prop("value")).toEqual("some-description");
     });
     it('fires description update after input change', () => {
         description = "old-description";
         setDescription = jest.fn(desc => {});
-        let result = shallow(<ImageUploadStateless {...{uploadStatus, errorMessage, description, setDescription, previewDataUrl, selectFile, onUploadClick}}/>);
+        let result = shallow(<ImageUploadStateless {...{uploadStatus, errorMessage, description, setDescription, selectedFile, selectFile, onUploadClick}}/>);
         result.find(Form.Input).find({label: "Description", value: description}).prop("onChange")({}, { value: "new-description" });
         expect(setDescription).toHaveBeenCalledWith("new-description");
     });
     it('fires file selection event after file gets selected', () => {
         selectFile = jest.fn(file => {});
         let newFile = "some-file";
-        previewDataUrl = "some-selected-file-data-url";
-        let result = shallow(<ImageUploadStateless {...{uploadStatus, errorMessage, description, setDescription, previewDataUrl, selectFile, onUploadClick}}/>);
+        selectedFile = {dataUrl: "some-selected-file-data-url", name: "test file"};
+        let result = shallow(<ImageUploadStateless {...{uploadStatus, errorMessage, description, setDescription, selectedFile, selectFile, onUploadClick}}/>);
         result.find(ImageUploaderWithPreview).prop("onFileSelected")(newFile);
         expect(selectFile).toHaveBeenCalledWith(newFile);
     });
     it('fires upload after button click', () => {
         onUploadClick = jest.fn(() => {});
-        let result = shallow(<ImageUploadStateless {...{uploadStatus, errorMessage, description, setDescription, previewDataUrl, selectFile, onUploadClick}}/>);
+        let result = shallow(<ImageUploadStateless {...{uploadStatus, errorMessage, description, setDescription, selectedFile, selectFile, onUploadClick}}/>);
         result.find(Button).find({children: "Upload"}).prop("onClick")();
         expect(onUploadClick).toHaveBeenCalledTimes(1);
     });
     it('cancels file selection after cancel button click', () => {
         selectFile = jest.fn(file => {});
-        previewDataUrl = "some-selected-file-data-url";
-        let result = shallow(<ImageUploadStateless {...{uploadStatus, errorMessage, description, setDescription, previewDataUrl, selectFile, onUploadClick}}/>);
+        selectedFile = {dataUrl: "some-selected-file-data-url", name: "test file"};
+        let result = shallow(<ImageUploadStateless {...{uploadStatus, errorMessage, description, setDescription, selectedFile, selectFile, onUploadClick}}/>);
         result.find(Button).find({children: "Cancel"}).prop("onClick")();
         expect(selectFile).toHaveBeenCalledWith(null);
     });
@@ -296,12 +300,6 @@ describe("<ImageUpload/>", () => {
         expect(result.find(ErrorMessage).prop("message")).toEqual(errorMessage);
     };
 
-    const mockConverter = {
-        async fileToDataUrl(fileMock) {
-            return Promise.resolve(fileMock.dataUrl);
-        }
-    };
-
     it('renders upload form by default', () => {
         let result = mount(<ImageUpload uploadStatus={undefined} errorMessage={undefined} uploadImage={() => {}}/>);
         expectNonSubmittedForm(result);
@@ -309,11 +307,7 @@ describe("<ImageUpload/>", () => {
     });
     it('switches to preview when image is selected, then reverts when cancelled', async () => {
 
-        let result = mount(
-            <ImageUpload uploadStatus={undefined} errorMessage={undefined} uploadImage={() => {}}/>, {
-                wrappingComponent: FileConverterProvider,
-                wrappingComponentProps: {fileConverter: mockConverter}
-            });
+        let result = mount(<ImageUpload uploadStatus={undefined} errorMessage={undefined} uploadImage={() => {}}/>);
         let fileSelected = {name: "some-file", dataUrl: "some-data-url"};
         await act(async () => {
             result.find(ImageUploader).prop("onChange")([fileSelected]);
@@ -321,7 +315,7 @@ describe("<ImageUpload/>", () => {
         result.update();
 
         expectNonSubmittedForm(result);
-        expectToBeInImageSelectedState(result, fileSelected.dataUrl);
+        expectToBeInImageSelectedState(result, fileSelected);
 
         await act(async () => {
             result.find(Button).find({children: "Cancel"}).simulate('click');
@@ -334,11 +328,7 @@ describe("<ImageUpload/>", () => {
     it('switches to preview when image is selected, then triggers upload when confirmed, then resets fields when uploaded', async () => {
 
         let uploadImage = jest.fn((description, image) => {});
-        let result = mount(
-            <ImageUpload uploadStatus={undefined} errorMessage={undefined} uploadImage={uploadImage}/>, {
-                wrappingComponent: FileConverterProvider,
-                wrappingComponentProps: {fileConverter: mockConverter}
-            });
+        let result = mount(<ImageUpload uploadStatus={undefined} errorMessage={undefined} uploadImage={uploadImage}/>);
         let selectedFile = {name: "some-file", dataUrl: "some-data-url"};
         let description = "some-description";
         await act(async () => {
@@ -348,7 +338,7 @@ describe("<ImageUpload/>", () => {
         result.update();
 
         expectNonSubmittedForm(result);
-        expectToBeInImageSelectedState(result, selectedFile.dataUrl, description);
+        expectToBeInImageSelectedState(result, selectedFile, description);
 
         await act(async () => {
             result.find(Button).find({children: "Upload"}).simulate('click');
@@ -369,11 +359,7 @@ describe("<ImageUpload/>", () => {
     it('switches to preview when image is selected, then triggers upload when confirmed, then fields remain when upload failed', async () => {
 
         let uploadImage = jest.fn((description, image) => {});
-        let result = mount(
-            <ImageUpload uploadStatus={undefined} errorMessage={undefined} uploadImage={uploadImage}/>, {
-                wrappingComponent: FileConverterProvider,
-                wrappingComponentProps: {fileConverter: mockConverter}
-            });
+        let result = mount(<ImageUpload uploadStatus={undefined} errorMessage={undefined} uploadImage={uploadImage}/>);
         let selectedFile = {name: "some-file", dataUrl: "some-data-url"};
         let description = "some-description";
         await act(async () => {
@@ -383,7 +369,7 @@ describe("<ImageUpload/>", () => {
         result.update();
 
         expectNonSubmittedForm(result);
-        expectToBeInImageSelectedState(result, selectedFile.dataUrl, description);
+        expectToBeInImageSelectedState(result, selectedFile, description);
 
         await act(async () => {
             result.find(Button).find({children: "Upload"}).simulate('click');
@@ -397,6 +383,6 @@ describe("<ImageUpload/>", () => {
         result.setProps({uploadStatus: Uploading.ERROR, errorMessage: uploadErrorMessage});
 
         expectFailedUploadForm(result, uploadErrorMessage);
-        expectToBeInImageSelectedState(result, selectedFile.dataUrl, description);
+        expectToBeInImageSelectedState(result, selectedFile, description);
     });
 });

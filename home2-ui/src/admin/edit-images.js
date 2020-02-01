@@ -86,7 +86,7 @@ export const ViewImage = function ({src, description, id, uploadedDateTime, dele
 
 export const ImageUpload = function ({uploadStatus, errorMessage, uploadImage}) {
     let [description, setDescription] = useState("");
-    let [fileSelected, selectFile] = useState();
+    let [selectedFile, selectFile] = useState();
     let [isUploading, setUploading] = useState();
     if (isUploading && uploadStatus === Uploading.UPLOADED) {
         selectFile(null);
@@ -94,15 +94,14 @@ export const ImageUpload = function ({uploadStatus, errorMessage, uploadImage}) 
     if (isUploading ^ uploadStatus === Uploading.UPLOADING) {
         setUploading(uploadStatus === Uploading.UPLOADING);
     }
-    let previewDataUrl = useDataUrl(fileSelected);
     let onUploadClick = () => {
         setUploading(true);
-        uploadImage(description, fileSelected);
+        uploadImage(description, selectedFile);
     };
-    return <ImageUploadStateless {...{uploadStatus, errorMessage, description, setDescription, previewDataUrl, selectFile, onUploadClick}}/>
+    return <ImageUploadStateless {...{uploadStatus, errorMessage, description, setDescription, selectedFile, selectFile, onUploadClick}}/>
 };
 
-export const ImageUploadStateless = function ({uploadStatus, errorMessage, description, setDescription, previewDataUrl, selectFile, onUploadClick}) {
+export const ImageUploadStateless = function ({uploadStatus, errorMessage, description, setDescription, selectedFile, selectFile, onUploadClick}) {
     return <div>
         <Form error={uploadStatus === Uploading.ERROR} success={uploadStatus === Uploading.UPLOADED}>
             <SuccessMessage message="Image successfully uploaded"/>
@@ -112,10 +111,10 @@ export const ImageUploadStateless = function ({uploadStatus, errorMessage, descr
                         value={description}
                         onChange={(_, newData) => setDescription(newData.value)}/>
             <Container textAlign={'center'}>
-                <ImageUploaderWithPreview previewDataUrl={previewDataUrl} onFileSelected={selectFile}/>
+                <ImageUploaderWithPreview selectedFile={selectedFile} onFileSelected={selectFile}/>
                 <Button.Group>
                     <Button primary onClick={() => onUploadClick()}>Upload</Button>
-                    {previewDataUrl && [
+                    {selectedFile && [
                         <Button.Or key="UploadOr"/>,
                         <Button negative key="UploadCancel" onClick={() => selectFile(null)}>Cancel</Button>
                     ]}
@@ -125,9 +124,9 @@ export const ImageUploadStateless = function ({uploadStatus, errorMessage, descr
     </div>
 };
 
-export const ImageUploaderWithPreview = function ({previewDataUrl, onFileSelected}) {
-    if (previewDataUrl) {
-        return <ImageUploadPreview src={previewDataUrl} alt={"Image upload preview"} className={"image-upload-preview"}/>
+export const ImageUploaderWithPreview = function ({selectedFile, onFileSelected}) {
+    if (selectedFile) {
+        return <ImageUploadPreview src={selectedFile} alt={"Image upload preview"} className={"image-upload-preview"}/>
     } else {
         return <ImageUploader
             withIcon={true}

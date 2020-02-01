@@ -1,7 +1,11 @@
 import {shallow} from "enzyme";
 import {ImageUploadPreview} from "./image-upload-preview";
 import {Image} from "semantic-ui-react";
+import {useDataUrl} from "../../utils/file-converter-context";
 import React from "react";
+
+jest.mock("../../utils/file-converter-context");
+useDataUrl.mockImplementation(v => v);
 
 describe("<ImageUploadPreview/>", () => {
     it('renders null when preview data url is not available', () => {

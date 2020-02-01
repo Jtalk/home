@@ -29,7 +29,7 @@ describe("<EditBio/>", () => {
             }
         };
         fileConverter = {
-            fileToDataUrl: async file => ({dataUrl: true, file}),
+            toDataUrl: async file => ({dataUrl: true, file}),
         };
         owner = {
             name: "Test Owner",

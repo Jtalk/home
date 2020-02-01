@@ -27,7 +27,6 @@ export const EditBio = function () {
         init: owner,
         updateStatus
     });
-    let selectedPhotoDataUrl = useDataUrl(data.__files && data.__files.photo);
 
     if (loadingStatusChanged) {
         updater.reloaded(owner);
@@ -36,7 +35,7 @@ export const EditBio = function () {
         dispatch(updateOwner(ajax, owner, photo));
     };
 
-    return <EditBioStateless onSubmit={onSubmit(onUpdate)} {...{loadingStatus, updateStatus, errorMessage, updater, data, canSubmit, selectedPhotoDataUrl}}/>
+    return <EditBioStateless onSubmit={onSubmit(onUpdate)} {...{loadingStatus, updateStatus, errorMessage, updater, data, canSubmit}}/>
 };
 
 export const EditBioStateless = function ({data, onSubmit, updater, loadingStatus, updateStatus, errorMessage, canSubmit, selectedPhotoDataUrl}) {
@@ -74,7 +73,7 @@ export const EditBioStateless = function ({data, onSubmit, updater, loadingStatu
                             <Grid.Column width={5}>
                                 <PhotoUpload existingPhotoId={data.photoId}
                                              onPhotoSelected={updater.changeFile("photo")}
-                                             selectedPhotoDataUrl={selectedPhotoDataUrl}/>
+                                             selectedPhoto={data.__files && data.__files.photo}/>
                                 <Button primary type="submit" disabled={!canSubmit}>Save</Button>
                             </Grid.Column>
                         </Grid.Row>
@@ -91,14 +90,12 @@ export const EditBioStateless = function ({data, onSubmit, updater, loadingStatu
     </Grid>
 };
 
-export const PhotoUpload = function ({existingPhotoId, selectedPhotoDataUrl, onPhotoSelected}) {
-    if (!selectedPhotoDataUrl && existingPhotoId) {
-        selectedPhotoDataUrl = imageUrl(existingPhotoId);
-    }
+export const PhotoUpload = function ({existingPhotoId, selectedPhoto, onPhotoSelected}) {
+    selectedPhoto = selectedPhoto || imageUrl(existingPhotoId);
     return <Form.Field>
         <label>Photo</label>
         <div className="image">
-            <ImageUploadPreview src={selectedPhotoDataUrl} alt={"Owner photo"}/>
+            <ImageUploadPreview src={selectedPhoto} alt={"Owner photo"}/>
         </div>
         <Input type="file" accept="image/*" onChange={onPhotoSelected}/>
     </Form.Field>
