@@ -1,7 +1,6 @@
 import {fromJS, Map} from "immutable";
 import {Loading, Updating} from "./global/enums";
 import {action, error, newState} from "./global/actions";
-import _ from "lodash";
 
 let defaultOwner = fromJS({
     name: "",
@@ -40,39 +39,11 @@ export function owner(state = Map({loading: Loading.LOADING, data: defaultOwner}
     }
 }
 
-function fromApiDomain(apiDomainObject) {
-    function toContactsDictionary(contactsArray) {
-        return _.chain(contactsArray)
-            .groupBy(c => c.contactType)
-            .mapValues((cs, key) => {
-                if (cs.length > 1) {
-                    throw Error(`Duplicate contact type ${key}: ${cs}`);
-                }
-                return _.omit(cs[0], "contactType");
-            })
-            .mapKeys((_, k) => k.toLowerCase())
-            .value();
-    }
-    return Object.assign({}, apiDomainObject, {contacts: toContactsDictionary(apiDomainObject.contacts)});
-}
-
-function toApiDomain(uiObject) {
-    function toContactsArray(contactsDictionary) {
-        return _.chain(contactsDictionary)
-            .mapKeys((_, k) => k.toUpperCase())
-            .toPairs()
-            .map(([contactType, value]) => Object.assign({}, value, {contactType}))
-            .value();
-    }
-    return Object.assign({}, uiObject, {contacts: toContactsArray(uiObject.contacts)});
-}
-
 export function load(ajax) {
     return async dispatch => {
         dispatch(action(Action.LOAD));
         try {
             let owner = await ajax.owner.load();
-            owner = fromApiDomain(owner);
             dispatch(newState(Action.LOADED, fromJS(owner)));
         } catch (e) {
             console.error("Cannot load owner info", e);
@@ -85,9 +56,7 @@ export function update(ajax, update, photo) {
     return async dispatch => {
         dispatch(action(Action.UPDATE));
         try {
-            update = toApiDomain(update);
             let newOwner = await ajax.owner.update(update, photo);
-            newOwner = fromApiDomain(newOwner);
             dispatch(newState(Action.UPDATED, fromJS(newOwner)));
         } catch (e) {
             console.error(`Exception while updating owner bio for ${JSON.stringify(update)}`, e);

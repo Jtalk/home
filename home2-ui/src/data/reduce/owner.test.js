@@ -7,7 +7,7 @@ const mockOwner = {
     photoId: "",
     nickname: "pupkovas",
     description: "A bloke",
-    contacts: [{contactType: "EMAIL", value: ""}],
+    contacts: {email: {contactType: "email", value: ""}},
     bio: "Some lengthy bio"
 };
 
@@ -30,7 +30,7 @@ describe('Redux(owner)', () => {
         expect(ownerStates[0]).toMatchObject({
             data: {
                 name: "",
-                contacts: [],
+                contacts: {},
             },
             loading: Loading.LOADING
         })

@@ -10,10 +10,10 @@ db.owner.insert({
 	description: 'A very cool guy with his own website',
 	photoId: photoId,
 	bio: 'A very cool guy.\nHe has his very own website right here!',
-	contacts: [
-		{ contactType: 'EMAIL', value: 'pupkivas@example.com' },
-		{ contactType: 'SKYPE', value: 'pupkivas' },
-		{ contactType: 'TWITTER', value: '@pupkivas' }
-	]
+	contacts: {
+		email: { contactType: 'email', value: 'pupkivas@example.com' },
+		skype: { contactType: 'skype', value: 'pupkivas' },
+		twitter: { contactType: 'twitter', value: '@pupkivas' }
+	}
 });
 print('Created collection Owner');

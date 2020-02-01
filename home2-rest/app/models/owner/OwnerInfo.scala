@@ -11,7 +11,7 @@ import utils.WebUtils
 
 import scala.concurrent.ExecutionContext
 
-case class OwnerInfo(name: String, nickname: String, description: String, photoId: String, bio: String, contacts: List[Contact]) {
+case class OwnerInfo(name: String, nickname: String, description: String, photoId: String, bio: String, contacts: Map[String, Contact]) {
 }
 
 object OwnerInfo {
@@ -25,7 +25,7 @@ object OwnerInfo {
       (JsPath \ "description").read(minLength[String](1)) and
       (JsPath \ "photoId").read[String] and
       (JsPath \ "bio").read[String] and
-      (JsPath \ "contacts").read[List[Contact]])
+      (JsPath \ "contacts").read[Map[String, Contact]])
     .apply(OwnerInfo.apply _)
 
 
