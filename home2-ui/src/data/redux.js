@@ -23,7 +23,7 @@ export function createAppStore() {
 }
 
 export function createTestStore(submodule, reducer) {
-    return createStore((oldState, action) => { return {[`${submodule}`]: reducer(oldState, action) }}, middleware());
+    return createStore(combineReducers({[submodule]: reducer}), middleware());
 }
 
 function middleware() {
