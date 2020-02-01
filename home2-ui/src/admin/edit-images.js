@@ -12,6 +12,7 @@ import {useDispatch} from "react-redux";
 import "./edit-images.css";
 import {useDataUrl} from "../utils/file-converter-context";
 import {Loading, Uploading} from "../data/reduce/global/enums";
+import {ImageUploadPreview} from "./common/image-upload-preview";
 
 export const EditImages = function ({ownerName}) {
     useEffect(() => {
@@ -126,7 +127,7 @@ export const ImageUploadStateless = function ({uploadStatus, errorMessage, descr
 
 export const ImageUploaderWithPreview = function ({previewDataUrl, onFileSelected}) {
     if (previewDataUrl) {
-        return <ImageUploadPreview previewDataUrl={previewDataUrl}/>
+        return <ImageUploadPreview src={previewDataUrl} alt={"Image upload preview"} className={"image-upload-preview"}/>
     } else {
         return <ImageUploader
             withIcon={true}
@@ -135,8 +136,4 @@ export const ImageUploaderWithPreview = function ({previewDataUrl, onFileSelecte
             singleImage={true}
             onChange={f => onFileSelected(f[0])}/>
     }
-};
-
-export const ImageUploadPreview = function ({previewDataUrl}) {
-    return (previewDataUrl && <Image className="image-upload-preview" src={previewDataUrl} alt="Image upload preview"/>) || null;
 };

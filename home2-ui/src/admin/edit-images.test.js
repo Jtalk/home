@@ -6,7 +6,6 @@ import {
     EditImagesStateless,
     ImageUpload,
     ImageUploaderWithPreview,
-    ImageUploadPreview,
     ImageUploadStateless,
     LoadingViewImages,
     ViewImage,
@@ -19,6 +18,7 @@ import {formatDateTime} from "../utils/date-time";
 import {FileConverterProvider} from "../utils/file-converter-context";
 import {ErrorMessage} from "../form/form-message";
 import {Loading, Uploading} from "../data/reduce/global/enums";
+import {ImageUploadPreview} from "./common/image-upload-preview";
 
 const ownerName = "Test Owner";
 const images = [
@@ -179,7 +179,7 @@ describe("<ImageUploaderWithPreview/>", () => {
     it('shows preview when file is selected', () => {
         let previewDataUrl = 'file-data-url';
         let result = shallow(<ImageUploaderWithPreview previewDataUrl={previewDataUrl} onFileSelected={() => {}}/>);
-        expect(result.find(ImageUploadPreview).props()).toMatchObject({previewDataUrl});
+        expect(result.find(ImageUploadPreview).props()).toMatchObject({src: previewDataUrl});
         expect(result.find(ImageUploader).exists()).toBe(false);
     });
     it('shows file uploader when file is not selected', () => {
@@ -197,19 +197,6 @@ describe("<ImageUploaderWithPreview/>", () => {
         result.find(ImageUploader).prop('onChange')([fileToSelect]);
         expect(onSelect).toHaveBeenCalledTimes(1);
         expect(onSelect).toHaveBeenCalledWith(fileToSelect);
-    });
-});
-
-describe("<ImageUploadPreview/>", () => {
-    it('renders null when preview data url is not available', () => {
-        let previewDataUrl = undefined;
-        let result = shallow(<ImageUploadPreview previewDataUrl={previewDataUrl}/>);
-        expect(result.children()).toHaveLength(0);
-    });
-    it('renders preview when preview data url is available', () => {
-        let previewDataUrl = 'some-file-data-url';
-        let result = shallow(<ImageUploadPreview previewDataUrl={previewDataUrl}/>);
-        expect(result.find(Image).props()).toMatchObject({src: previewDataUrl, alt: "Image upload preview"})
     });
 });
 
@@ -291,7 +278,7 @@ describe("<ImageUpload/>", () => {
     const expectToBeInImageSelectedState = (result, selectedDataUrl, description = "") => {
         expect(result.find(Form.Field).find({label: "Description"}).prop("value")).toEqual(description);
         expect(result.find(ImageUploader).exists()).toBe(false);
-        expect(result.find(ImageUploadPreview).prop("previewDataUrl")).toEqual(selectedDataUrl);
+        expect(result.find(ImageUploadPreview).prop("src")).toEqual(selectedDataUrl);
         expect(result.find(Button).find({children: "Upload", primary: true}).exists()).toBe(true);
         expect(result.find(Button).find({children: "Cancel", negative: true}).exists()).toBe(true);
     };

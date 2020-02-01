@@ -1,16 +1,17 @@
 import React from "react";
-import {Button, Divider, Form, Grid, Image, Input, Segment, TextArea} from "semantic-ui-react";
-import {ErrorMessage, SuccessMessage} from "../form/form-message";
-import {imageUrl} from "../utils/image";
 import {useDispatch} from "react-redux";
-import {update as updateOwner} from "../data/reduce/owner";
+import {load, update as updateOwner} from "../data/reduce/owner";
 import {useAjax, useAjaxLoader} from "../context/ajax-context";
 import {useImmutableSelector} from "../utils/redux-store";
-import _ from "lodash";
 import {useForm} from "./common/use-form";
 import {Loading, Updating} from "../data/reduce/global/enums";
 import {useStateChange} from "../utils/state-change";
-import {load} from "../data/reduce/owner";
+import {useDataUrl} from "../utils/file-converter-context";
+import {Button, Divider, Form, Grid, Input, Segment, TextArea} from "semantic-ui-react";
+import _ from "lodash";
+import {ErrorMessage, SuccessMessage} from "../form/form-message";
+import {imageUrl} from "../utils/image";
+import {ImageUploadPreview} from "./common/image-upload-preview";
 
 export const EditBio = function () {
 
@@ -26,6 +27,7 @@ export const EditBio = function () {
         init: owner,
         updateStatus
     });
+    let selectedPhotoDataUrl = useDataUrl(data.__files && data.__files.photo);
 
     if (loadingStatusChanged) {
         updater.reloaded(owner);
@@ -34,10 +36,10 @@ export const EditBio = function () {
         dispatch(updateOwner(ajax, owner, photo));
     };
 
-    return <EditBioStateless onSubmit={onSubmit(onUpdate)} {...{loadingStatus, updateStatus, errorMessage, updater, data, canSubmit}}/>
+    return <EditBioStateless onSubmit={onSubmit(onUpdate)} {...{loadingStatus, updateStatus, errorMessage, updater, data, canSubmit, selectedPhotoDataUrl}}/>
 };
 
-export const EditBioStateless = function ({data, onSubmit, updater, loadingStatus, updateStatus, errorMessage, canSubmit}) {
+export const EditBioStateless = function ({data, onSubmit, updater, loadingStatus, updateStatus, errorMessage, canSubmit, selectedPhotoDataUrl}) {
     return <Grid centered>
         <Grid.Column width={11}>
             <Segment raised>
@@ -71,7 +73,8 @@ export const EditBioStateless = function ({data, onSubmit, updater, loadingStatu
                             </Grid.Column>
                             <Grid.Column width={5}>
                                 <PhotoUpload existingPhotoId={data.photoId}
-                                             onPhotoSelected={updater.changeFile("photo")}/>
+                                             onPhotoSelected={updater.changeFile("photo")}
+                                             selectedPhotoDataUrl={selectedPhotoDataUrl}/>
                                 <Button primary type="submit" disabled={!canSubmit}>Save</Button>
                             </Grid.Column>
                         </Grid.Row>
@@ -88,11 +91,14 @@ export const EditBioStateless = function ({data, onSubmit, updater, loadingStatu
     </Grid>
 };
 
-export const PhotoUpload = function ({existingPhotoId, onPhotoSelected}) {
+export const PhotoUpload = function ({existingPhotoId, selectedPhotoDataUrl, onPhotoSelected}) {
+    if (!selectedPhotoDataUrl && existingPhotoId) {
+        selectedPhotoDataUrl = imageUrl(existingPhotoId);
+    }
     return <Form.Field>
         <label>Photo</label>
         <div className="image">
-            { existingPhotoId && <Image src={imageUrl(existingPhotoId)} alt="Owner photo"/>}
+            <ImageUploadPreview src={selectedPhotoDataUrl} alt={"Owner photo"}/>
         </div>
         <Input type="file" accept="image/*" onChange={onPhotoSelected}/>
     </Form.Field>

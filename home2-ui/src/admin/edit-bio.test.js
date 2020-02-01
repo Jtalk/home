@@ -10,11 +10,14 @@ import {AjaxProvider} from "../context/ajax-context";
 import {Provider as ReduxProvider} from "react-redux";
 import {createTestStore} from "../data/redux";
 import {owner as ownerReducer} from "../data/reduce/owner";
+import {ImageUploadPreview} from "./common/image-upload-preview";
+import {FileConverterProvider} from "../utils/file-converter-context";
 
 describe("<EditBio/>", () => {
 
     let store;
     let ajaxMock;
+    let fileConverter;
     let owner;
 
     beforeEach(() => {
@@ -24,6 +27,9 @@ describe("<EditBio/>", () => {
                 load: jest.fn(() => owner),
                 update: jest.fn(updated => updated),
             }
+        };
+        fileConverter = {
+            fileToDataUrl: async file => ({dataUrl: true, file}),
         };
         owner = {
             name: "Test Owner",
@@ -46,7 +52,9 @@ describe("<EditBio/>", () => {
         let result = await mount(
             <AjaxProvider ajax={ajaxMock}>
                 <ReduxProvider store={store}>
-                    <EditBio/>
+                    <FileConverterProvider fileConverter={fileConverter}>
+                        <EditBio/>
+                    </FileConverterProvider>
                 </ReduxProvider>
             </AjaxProvider>
         );
@@ -84,7 +92,6 @@ describe("<EditBio/>", () => {
         });
         expect(ajaxMock.owner.update).toHaveBeenCalledWith(Object.assign({}, owner, {name: "New Owner", nickname: "Correct Nickname"}), undefined);
         expect(result.find(Form).props()).toMatchObject({success: true, error: false, loading: false});
-        // The incorrect value remained for easier edit
         expect(result.find(Form.Input).find({label: "Owner Nickname"}).at(0).prop("value")).toEqual("Correct Nickname");
     });
 });
@@ -126,21 +133,31 @@ describe("<PhotoUpload/>", () => {
         let existingPhotoId = "abc-def";
         let result = shallow(<PhotoUpload existingPhotoId={existingPhotoId} onPhotoSelected={() => {}}/>);
         expect(result.find(Input).find({type: "file"}).exists()).toBe(true);
-        expect(result.find(Image).props()).toMatchObject({src: imageUrl(existingPhotoId), alt: "Owner photo"});
+        expect(result.find(ImageUploadPreview).props()).toMatchObject({src: imageUrl(existingPhotoId), alt: "Owner photo"});
     });
-    it("upload with no prior photo triggers upload upon selection", () => {
+    it("upload with no existing photo triggers the hook upon selection", () => {
         let onSelected = jest.fn(e => {});
         let selectedFileHandle = {name: "test-file"};
-        let result = shallow(<PhotoUpload existingPhotoId={undefined} onPhotoSelected={onSelected}/>);
+        let result = shallow(<PhotoUpload existingPhotoId={undefined} selectedPhotoDataUrl={undefined} onPhotoSelected={onSelected}/>);
         let event = {target: {files: [selectedFileHandle]}};
         result.find(Input).find({type: "file"}).prop("onChange")(event);
         expect(onSelected).toHaveBeenCalledWith(event);
     });
-    it("upload with prior photo triggers upload upon selection", () => {
+    it("upload with existing photo triggers the hook upon selection", () => {
         let existingPhotoId = "abc-def";
         let onSelected = jest.fn(e => {});
         let selectedFileHandle = {name: "test-file"};
-        let result = shallow(<PhotoUpload existingPhotoId={existingPhotoId} onPhotoSelected={onSelected}/>);
+        let result = shallow(<PhotoUpload existingPhotoId={existingPhotoId} selectedPhotoDataUrl={undefined} onPhotoSelected={onSelected}/>);
+        let event = {target: {files: [selectedFileHandle]}};
+        result.find(Input).find({type: "file"}).prop("onChange")(event);
+        expect(onSelected).toHaveBeenCalledWith(event);
+    });
+    it("upload with already selected photo triggers the hook upon reselection", () => {
+        let selectedPhotoDataUrl = "data:url";
+        let existingPhotoId = "abc-def";
+        let onSelected = jest.fn(e => {});
+        let selectedFileHandle = {name: "test-file"};
+        let result = shallow(<PhotoUpload existingPhotoId={existingPhotoId} selectedPhotoDataUrl={selectedPhotoDataUrl} onPhotoSelected={onSelected}/>);
         let event = {target: {files: [selectedFileHandle]}};
         result.find(Input).find({type: "file"}).prop("onChange")(event);
         expect(onSelected).toHaveBeenCalledWith(event);
