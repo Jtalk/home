@@ -22,7 +22,7 @@ export const EditBio = function () {
     let [loadingStatusChanged, loadingStatus] = useStateChange("owner", ["loading"], {from: Loading.LOADING, to: Loading.READY});
     let updateStatus = useImmutableSelector("owner", ["updating"]);
     let errorMessage = useImmutableSelector("owner", ["errorMessage"]);
-    let {handleSubmit, data, updater, edited} = useForm({
+    let {onSubmit, data, updater, canSubmit} = useForm({
         init: owner,
         updateStatus
     });
@@ -32,13 +32,12 @@ export const EditBio = function () {
     }
     let onUpdate = (owner, {photo}) => {
         dispatch(updateOwner(ajax, owner, photo));
-        return true;
     };
 
-    return <EditBioStateless onSubmit={handleSubmit(onUpdate)} {...{loadingStatus, updateStatus, errorMessage, updater, data, edited}}/>
+    return <EditBioStateless onSubmit={onSubmit(onUpdate)} {...{loadingStatus, updateStatus, errorMessage, updater, data, canSubmit}}/>
 };
 
-export const EditBioStateless = function ({data, onSubmit, updater, loadingStatus, updateStatus, errorMessage, edited}) {
+export const EditBioStateless = function ({data, onSubmit, updater, loadingStatus, updateStatus, errorMessage, canSubmit}) {
     return <Grid centered>
         <Grid.Column width={11}>
             <Segment raised>
@@ -73,7 +72,7 @@ export const EditBioStateless = function ({data, onSubmit, updater, loadingStatu
                             <Grid.Column width={5}>
                                 <PhotoUpload existingPhotoId={data.photoId}
                                              onPhotoSelected={updater.changeFile("photo")}/>
-                                <Button primary type="submit" disabled={!edited}>Save</Button>
+                                <Button primary type="submit" disabled={!canSubmit}>Save</Button>
                             </Grid.Column>
                         </Grid.Row>
                         <Grid.Row>
