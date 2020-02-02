@@ -10,7 +10,6 @@ import * as image_redux from "../data/reduce/images";
 import {ErrorMessage, SuccessMessage} from "../form/form-message";
 import {useDispatch} from "react-redux";
 import "./edit-images.css";
-import {useDataUrl} from "../utils/file-converter-context";
 import {Loading, Uploading} from "../data/reduce/global/enums";
 import {ImageUploadPreview} from "./common/image-upload-preview";
 

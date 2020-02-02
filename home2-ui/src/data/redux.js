@@ -6,9 +6,11 @@ import thunk from "redux-thunk";
 import {createLogger} from "redux-logger";
 import promiseMiddleware from "redux-promise-middleware";
 import {images} from "./reduce/images";
+import {projects} from "./reduce/projects";
 
 export const reducers = {
     owner,
+    projects,
     footer,
     images,
 };

@@ -15,6 +15,9 @@ object Extension {
   implicit class SeqOpt[T](val seq: Seq[T]) extends AnyVal {
     def toOpt: Option[Seq[T]] = Some(seq).filter(_.nonEmpty)
   }
+  implicit class SeqFuture[T](val future: Future[Seq[T]]) extends AnyVal {
+    def fmap[R](f: T => R)(implicit ec: ExecutionContext): Future[Seq[R]] = future.map(_.map(f));
+  }
   implicit class JsArrayOpt[T](val array: JsArray) extends AnyVal {
     def toOpt: Option[JsArray] = Some(array).filter(_.value.nonEmpty)
   }

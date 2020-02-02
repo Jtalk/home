@@ -3,6 +3,7 @@ package db
 import javax.inject.{Inject, Singleton}
 import models.ModelType.ModelType
 import play.api.Logger
+import play.api.libs.json
 import play.api.libs.json._
 import play.api.mvc.{AbstractController, ControllerComponents}
 import play.modules.reactivemongo.MongoController.JsGridFS
@@ -22,10 +23,22 @@ class Database @Inject()(cc: ControllerComponents, val reactiveMongoApi: Reactiv
   extends AbstractController(cc) with MongoController with ReactiveMongoComponents {
 
   val log = Logger(this.getClass)
+  private val MAX_ALL_ITEMS = 1024;
 
   // Data processing
   def collection[T](implicit executionContext: ExecutionContext, mt: ModelType[T]): Future[JSONCollection]
     = database.map(_.collection[JSONCollection](mt.tableName))
+
+  def find[T](id: String)(implicit ec: ExecutionContext, mt: ModelType[T], reads: Reads[T]): Future[Option[T]] = findJs(id)
+    .map(JsonUtils.asObj[T])
+
+  def findAll[T](implicit ec: ExecutionContext, mt: ModelType[T], reads: Reads[T]): Future[Seq[T]] = findAllJs
+    .fmap((v: JsValue) => Json.fromJson[T](v)
+      .asEither
+      .left.map(errs => log.error("Cannot deserialise JSON" + errs))
+      .toOption
+      .get
+    )
 
   def findSingle[T](implicit ec: ExecutionContext, mt: ModelType[T], reads: Reads[T]): Future[Option[T]] = findSingleJs
     .map(JsonUtils.asObj[T])
@@ -40,7 +53,8 @@ class Database @Inject()(cc: ControllerComponents, val reactiveMongoApi: Reactiv
         .getOrElse(Future.failed[T](new RuntimeException("We have just upserted the entry and now it does not exist..."))))
   }
 
-  private def findAllQuery[T](implicit ec: ExecutionContext, mt: ModelType[T]) = collection.map(_.find(Json.obj(), None))
+  private def findAllJs[T](implicit ec: ExecutionContext, mt: ModelType[T]) = collection.flatMap(_.find(Json.obj(), None).cursor[JsObject]().collect[Seq](MAX_ALL_ITEMS, Cursor.FailOnError()))
+  private def findJs[T](id: String)(implicit ec: ExecutionContext, mt: ModelType[T]) = collection.flatMap(_.find(Json.obj("id" -> id), None).one[JsObject])
   private def findSingleJs[T](implicit ec: ExecutionContext, mt: ModelType[T]) = collection.flatMap(_.find(Json.obj(), None).one[JsObject])
   private def findExistingSingleId[T](implicit ec: ExecutionContext, mt: ModelType[T]) = findSingleJs[T].map(_.map(json => (json \ "_id").get))
   private def enrichSingleObjectId[T](to: JsObject)(implicit ec: ExecutionContext, mt: ModelType[T]): Future[JsObject] = findExistingSingleId[T].fomap(id => to + ("_id" -> id)).foget(to)

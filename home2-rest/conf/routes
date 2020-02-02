@@ -8,6 +8,9 @@ GET         /owner                     controllers.OwnerController.info
 POST        /owner                     controllers.OwnerController.update
 GET         /owner/bio                 controllers.OwnerController.bio
 
+GET         /projects                  controllers.ProjectController.all
+GET         /projects/:id              controllers.ProjectController.project(id)
+
 GET         /images                    controllers.ImageController.listFiles(page: Int = 0)
 GET         /images/:id                controllers.ImageController.serveFile(id)
 DELETE      /images/:id                controllers.ImageController.deleteFile(id)

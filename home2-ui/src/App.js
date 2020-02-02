@@ -6,7 +6,7 @@ import {Container} from "semantic-ui-react";
 import {BrowserRouter as Router, Switch} from "react-router-dom";
 import Blog from "./blog/blog";
 import {EditBio} from "./admin/edit-bio";
-import EditProjects from "./admin/edit-projects";
+import {EditProjects} from "./admin/edit-projects";
 import EditFooter from "./admin/edit-footer";
 import EditBlogRouter from "./admin/edit-blog-router";
 import {EditImages} from "./admin/edit-images";
