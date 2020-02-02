@@ -6,7 +6,6 @@ import {useImmutableSelector} from "../utils/redux-store";
 import {useForm} from "./common/use-form";
 import {Loading, Updating} from "../data/reduce/global/enums";
 import {useStateChange} from "../utils/state-change";
-import {useDataUrl} from "../utils/file-converter-context";
 import {Button, Divider, Form, Grid, Input, Segment, TextArea} from "semantic-ui-react";
 import _ from "lodash";
 import {ErrorMessage, SuccessMessage} from "../form/form-message";
@@ -74,7 +73,7 @@ export const EditBioStateless = function ({data, onSubmit, updater, loadingStatu
                                 <PhotoUpload existingPhotoId={data.photoId}
                                              onPhotoSelected={updater.changeFile("photo")}
                                              selectedPhoto={data.__files && data.__files.photo}/>
-                                <Button primary type="submit" disabled={!canSubmit}>Save</Button>
+                                <Button primary type="submit" loading={updateStatus === Updating.UPDATING} disabled={!canSubmit}>Save</Button>
                             </Grid.Column>
                         </Grid.Row>
                         <Grid.Row>
