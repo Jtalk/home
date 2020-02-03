@@ -5,6 +5,7 @@ import {ErrorMessage} from "../form/form-message";
 import {useAjax, useAjaxLoader} from "../context/ajax-context";
 import {load, update as updateProject} from "../data/reduce/projects";
 import {useDispatch} from "react-redux";
+import {useState} from "react";
 import {useImmutableSelector} from "../utils/redux-store";
 import {useStateChange} from "../utils/state-change";
 import {Loading, Updating} from "../data/reduce/global/enums";
@@ -126,42 +127,7 @@ export const EditProject = function ({project, errorMessage, updateStatus, force
                         <Form.Input label="Project Title" placeholder="Title" value={data.title || ''} onChange={updater.change("title")}/>
                         <Form.Input label="Internal ID" placeholder="(letters, digits, dashes)" value={data.id || ''} onChange={updater.change("id")}/>
                         <Form.Checkbox toggle label="This project is published" checked={!!data.published} onChange={updater.change("published")}/>
-                        <div className="field">
-                            <label>Project links <Icon name="plus"/></label>
-                            Edit and rearrange links shown at the left panel
-                            <List celled verticalAlign="middle" ordered>
-                                {
-                                    data.links.map((link, i, links) => {
-                                        return <List.Item key={link.name}>
-                                            <List.Content floated="right">
-                                                <Icon link name="edit"/>
-                                                {
-                                                    i === 0
-                                                        ? <Icon name="lock"/>
-                                                        : <Icon link name="angle up"
-                                                                onClick={reorderLink(updater.change("links"), links, i, i - 1)}/>
-                                                }
-                                                {
-                                                    i === links.length - 1
-                                                        ? <Icon link name="lock"/>
-                                                        : <Icon link name="angle down"
-                                                                onClick={reorderLink(updater.change("links"), links, i, i + 1)}/>
-                                                }
-                                                <Icon link name="remove"
-                                                      color="red"
-                                                      onClick={removeLink(updater.change("links"), links, i)}/>
-                                            </List.Content>
-                                            <List.Content>
-                                                <List.Header>{link.name}</List.Header>
-                                                <List.Description>
-                                                    <Link to={link.href}/>
-                                                </List.Description>
-                                            </List.Content>
-                                        </List.Item>
-                                    })
-                                }
-                            </List>
-                        </div>
+                        <ProjectLinks className="field" links={data.links} setLinks={links => updater.change("links")(null, {value: links})}/>
                         <ErrorMessage message={errorMessage}/>
                     </Grid.Column>
                     <Grid.Column width={5}>
@@ -186,21 +152,85 @@ export const EditProject = function ({project, errorMessage, updateStatus, force
     </div>
 };
 
-function removeLink(updater, links, index) {
+export const ProjectLinks = function ({links, setLinks, className}) {
+    return <div className={className}>
+        <label>Project links <Icon name="plus"/></label>
+        Edit and rearrange links shown at the left panel
+        <List celled verticalAlign="middle" ordered>
+            {
+                links.map((link, index, links) => {
+                    return <EditableProjectLink key={link.name} {...{link, links, setLinks, index}}/>
+                })
+            }
+        </List>
+    </div>
+};
+
+export const EditableProjectLink = function ({link, index, setLinks, links}) {
+
+    let [editing, setEditing] = useState();
+
+    let reorder = (direction) => reorderLink(setLinks, links, index, index + direction);
+    let remove = () => removeLink(setLinks, links, index);
+
+    if (editing) {
+        // TBD
+        setEditing(true);
+    } else {
+        return <ProjectLink link={link}
+                            remove={remove}
+                            reorder={reorder}
+                            canMoveUp={index !== 0}
+                            canMoveDown={index !== links.length - 1}/>
+    }
+};
+
+export const ProjectLink = function ({link, canMoveUp, canMoveDown, reorder, remove}) {
+    return <List.Item key={link.name}>
+        <List.Content floated="right">
+            <Icon link name="edit"/>
+            <LockableIcon locked={!canMoveUp}>
+                <Icon link name="angle up" onClick={reorder(-1)}/>
+            </LockableIcon>
+            <LockableIcon locked={!canMoveDown}>
+                <Icon link name="angle down" onClick={reorder(+1)}/>
+            </LockableIcon>
+            <Icon link name="remove"
+                  color="red"
+                  onClick={remove()}/>
+        </List.Content>
+        <List.Content>
+            <List.Header>{link.name}</List.Header>
+            <List.Description>
+                <a href={link.href}>{link.href}</a>
+            </List.Description>
+        </List.Content>
+    </List.Item>;
+};
+
+export const LockableIcon = function ({locked, children}) {
+    if (locked) {
+        return <Icon link name="lock"/>
+    } else {
+        return _.castArray(children);
+    }
+};
+
+function removeLink(setLinks, links, index) {
     return (e) => {
         let copy = [...links];
-        delete copy[index];
-        updater(e, {value: copy});
+        copy.splice(index, 1);
+        setLinks(copy);
     }
 }
 
-function reorderLink(updater, links, fromIndex, toIndex) {
+function reorderLink(setLinks, links, fromIndex, toIndex) {
     return (e) => {
         let copy = [...links];
         let item = copy[fromIndex];
-        delete copy[fromIndex];
+        copy.splice(fromIndex, 1);
         copy.splice(toIndex, 0, item);
-        updater(e, {value: copy});
+        setLinks(copy);
     };
 }
 
