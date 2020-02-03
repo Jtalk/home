@@ -1,8 +1,7 @@
-import React from "react";
+import React, {useState} from "react";
 import {Divider, Form, Grid, Icon, Image, Input, List, Menu, Segment} from "semantic-ui-react";
 import {Link} from "react-router-dom";
 import {ErrorMessage} from "../form/form-message";
-import {useEffect, useState} from "react";
 import {useAjax, useAjaxLoader} from "../context/ajax-context";
 import {load, update as updateProject} from "../data/reduce/projects";
 import {useDispatch} from "react-redux";
@@ -39,10 +38,7 @@ let projectsExampleToDeleteAfterBackendDone = [
     }
 ];
 
-export const EditProjects = function ({currentProjectId, ownerName}) {
-    useEffect(() => {
-        document.title = ownerName + ": Edit Projects";
-    });
+export const EditProjects = function ({currentProjectId}) {
 
     useAjaxLoader(load);
 
@@ -70,7 +66,7 @@ export const EditProjects = function ({currentProjectId, ownerName}) {
 
 export const EditProjectsStateless = function ({projects, errorMessage, updateStatus, currentProjectId, forceReload, submit}) {
 
-    let currentProject = projects[currentProjectId] || _.chain(projects).values().first().value();
+    let currentProject = _.find(projects, p => p.id === currentProjectId) || _.chain(projects).values().first().value();
 
     return <Grid centered>
         <Grid.Column width={13}>
@@ -118,7 +114,7 @@ export const EditProject = function ({project, errorMessage, updateStatus, force
         updateStatus
     });
 
-    if (forceReload) {
+    if (forceReload || project.id !== data.id) {
         updater.reloaded(project);
     }
 
@@ -174,7 +170,7 @@ export const EditProject = function ({project, errorMessage, updateStatus, force
                     </Grid.Column>
                     <Grid.Column width={5}>
                         <Form.Field>
-                            <Image src={imageUrl(data.logoId)} alt="Current project logo"/>
+                            {data.logoId && <Image src={imageUrl(data.logoId)} alt="Current project logo"/>}
                             <Input type="file" accept="image/jpeg, image/png, image/svg, image/gif" onChange={updater.changeFile("logo")}/>
                         </Form.Field>
                         <Form.Button primary disabled={!canSubmit}>Save</Form.Button>
