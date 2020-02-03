@@ -44,9 +44,9 @@ class Updater {
         return (e, {value}) => {
             let oldValue = _.get(this.data, path);
             if (_.isEqual(oldValue, value)) {
-                console.debug(`Not changing value, '${value}' is the same as '${oldValue}' at path:`, path);
+                console.debug(`Not changing value at path:`, path, oldValue, value);
             } else {
-                console.debug(`Changing value, '${value}' is different from '${oldValue}' at path:`, path);
+                console.debug(`Changing value at path:`, path, oldValue, value);
                 let newData = _.cloneDeep(this.data);
                 _.set(newData, path, value);
                 this.setData(newData);
