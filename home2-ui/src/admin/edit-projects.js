@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React from "react";
 import {Divider, Form, Grid, Icon, Image, Input, List, Menu, Segment} from "semantic-ui-react";
 import {Link} from "react-router-dom";
 import {ErrorMessage} from "../form/form-message";
@@ -48,20 +48,16 @@ export const EditProjects = function ({currentProjectId}) {
     let [loadingStatusChanged] = useStateChange("projects", ["loading"], {
         from: Loading.LOADING, to: Loading.READY
     });
-    let updateStatus = useImmutableSelector("owner", ["updating"]);
+    let [updateStatusChanged, updateStatus] = useStateChange("projects", ["updating"], {
+        from: Updating.UPDATING, to: Updating.UPDATED
+    });
     let errorMessage = useImmutableSelector("owner", ["errorMessage"]);
-    let [renderedProjectId, setRenderedProjectId] = useState(currentProjectId);
-
-    let projectSwitched = renderedProjectId !== currentProjectId;
-    if (projectSwitched) {
-        setRenderedProjectId(currentProjectId);
-    }
 
     let submit = (project, {logo}) => {
         dispatch(updateProject(ajax, project.id, project, logo));
     };
 
-    return <EditProjectsStateless {...{projects, errorMessage, updateStatus, currentProjectId, submit}} forceReload={loadingStatusChanged || projectSwitched}/>;
+    return <EditProjectsStateless {...{projects, errorMessage, updateStatus, currentProjectId, submit}} forceReload={loadingStatusChanged || updateStatusChanged}/>;
 };
 
 export const EditProjectsStateless = function ({projects, errorMessage, updateStatus, currentProjectId, forceReload, submit}) {
