@@ -168,7 +168,7 @@ export const EditProject = function ({project, errorMessage, updateStatus, force
 
 export const ProjectLinks = function ({links, setLinks, className}) {
     return <div className={className}>
-        <label>Project links <Icon name="plus"/></label>
+        <label>Project links <Icon link name="plus" onClick={() => setLinks([...links, emptyLink()])}/></label>
         Edit and rearrange links shown at the left panel
         <List celled verticalAlign="middle" ordered>
             {
@@ -183,6 +183,11 @@ export const ProjectLinks = function ({links, setLinks, className}) {
 export const EditableProjectLink = function ({link, index, setLinks, links}) {
 
     let [editing, setEditing] = useState();
+
+    if (!link.name && !editing) {
+        // Enforce editing for newly created empty links
+        setEditing(true);
+    }
 
     let edit = () => setEditing(true);
     let cancelEdit = () => setEditing(false);
@@ -314,6 +319,10 @@ function reorderLink(setLinks, links, fromIndex, toIndex) {
         copy.splice(toIndex, 0, item);
         setLinks(copy);
     };
+}
+
+function emptyLink() {
+    return {id: uuid(), name: '', href: ''};
 }
 
 function editHref(id) {
