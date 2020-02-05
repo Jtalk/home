@@ -73,4 +73,3 @@ export function update(ajax, projectId, update, photo) {
         }
     };
 }
-

@@ -1,17 +1,17 @@
-import React from "react";
-import {Divider, Form, Grid, Icon, Image, Input, List, Menu, Segment} from "semantic-ui-react";
+import React, {useState} from "react";
+import {Divider, Form, Grid, Icon, Image, Input, List, Menu, Message, Segment} from "semantic-ui-react";
 import {Link} from "react-router-dom";
 import {ErrorMessage} from "../form/form-message";
 import {useAjax, useAjaxLoader} from "../context/ajax-context";
 import {load, update as updateProject} from "../data/reduce/projects";
 import {useDispatch} from "react-redux";
-import {useState} from "react";
 import {useImmutableSelector} from "../utils/redux-store";
 import {useStateChange} from "../utils/state-change";
 import {Loading, Updating} from "../data/reduce/global/enums";
 import {useForm} from "./common/use-form";
 import {imageUrl} from "../utils/image";
 import _ from "lodash";
+import uuid from "uuid/v1";
 
 // eslint-disable-next-line no-unused-vars
 let projectsExampleToDeleteAfterBackendDone = [
@@ -91,7 +91,8 @@ export const EditProjectsStateless = function ({projects, errorMessage, updateSt
                         {
                             !currentProject
                                 ? <Segment raised><h2>No projects available</h2></Segment>
-                                : <EditProject project={currentProject}
+                                : <EditProject key={currentProject.id}
+                                               project={currentProject}
                                                errorMessage={errorMessage}
                                                updateStatus={updateStatus}
                                                forceReload={forceReload}
@@ -106,6 +107,19 @@ export const EditProjectsStateless = function ({projects, errorMessage, updateSt
 
 export const EditProject = function ({project, errorMessage, updateStatus, forceReload, submit}) {
 
+    let addLinkIds = (links) => {
+        return links.map(l => Object.assign({}, l, {id: uuid()}));
+    };
+    let dropLinkIds = (links) => {
+        return links.map(l => _.omit(l, "id"));
+    };
+
+    project = Object.assign({}, project, {links: addLinkIds(project.links)});
+    let submitRemovingLinkIds = (project, files) => {
+        project = Object.assign({}, project, {links: dropLinkIds(project.links)});
+        submit(project, files);
+    };
+
     let {onSubmit, data, updater, canSubmit} = useForm({
         init: project,
         updateStatus
@@ -117,7 +131,7 @@ export const EditProject = function ({project, errorMessage, updateStatus, force
 
     return <div>
         <h2>Edit project</h2>
-        <Form onSubmit={onSubmit(submit)}
+        <Form onSubmit={onSubmit(submitRemovingLinkIds)}
               error={!!errorMessage}
               success={updateStatus === Updating.UPDATED}>
             <Divider/>
@@ -159,7 +173,7 @@ export const ProjectLinks = function ({links, setLinks, className}) {
         <List celled verticalAlign="middle" ordered>
             {
                 links.map((link, index, links) => {
-                    return <EditableProjectLink key={link.name} {...{link, links, setLinks, index}}/>
+                    return <EditableProjectLink key={link.id} {...{link, links, setLinks, index}}/>
                 })
             }
         </List>
@@ -170,14 +184,24 @@ export const EditableProjectLink = function ({link, index, setLinks, links}) {
 
     let [editing, setEditing] = useState();
 
+    let edit = () => setEditing(true);
+    let cancelEdit = () => setEditing(false);
     let reorder = (direction) => reorderLink(setLinks, links, index, index + direction);
     let remove = () => removeLink(setLinks, links, index);
+    let update = (updatedLink) => {
+        let copy = [...links];
+        copy.splice(index, 1, updatedLink);
+        setLinks(copy);
+        setEditing(false);
+    };
 
     if (editing) {
-        // TBD
-        setEditing(true);
+        return <ProjectEditLink link={link}
+                                updateLink={update}
+                                cancelEdit={cancelEdit}/>
     } else {
         return <ProjectLink link={link}
+                            edit={edit}
                             remove={remove}
                             reorder={reorder}
                             canMoveUp={index !== 0}
@@ -185,10 +209,68 @@ export const EditableProjectLink = function ({link, index, setLinks, links}) {
     }
 };
 
-export const ProjectLink = function ({link, canMoveUp, canMoveDown, reorder, remove}) {
+export const ProjectEditLink = function ({link, updateLink, cancelEdit}) {
+
+    let [editedLink, setEditedLink] = useState(Object.assign({}, link));
+    let [errorMessage, setErrorMessage] = useState();
+    let [beingEdited, setBeingEdited] = useState(false);
+
+    if (!beingEdited) {
+        console.log("Editing started for link, reinitialising", link);
+        setEditedLink(link);
+        setErrorMessage(undefined);
+        setBeingEdited(true);
+    }
+
+    let changeLink = (e, {name, value}) => {
+        let newLink = Object.assign({}, editedLink, {[name]: value});
+        setEditedLink(newLink);
+    };
+    let applyEdit = () => {
+        let errorMessage = "";
+        if (!editedLink.name) {
+            errorMessage += "name must be defined";
+        }
+        if (!editedLink.href) {
+            errorMessage && (errorMessage += ", ");
+            errorMessage += "link target must be defined";
+        }
+        if (errorMessage) {
+            setErrorMessage(errorMessage);
+        } else {
+            updateLink(editedLink);
+            setBeingEdited(false);
+        }
+    };
+    let abortEdit = () => {
+        setEditedLink(link);
+        setBeingEdited(false);
+        cancelEdit();
+    };
+
     return <List.Item key={link.name}>
         <List.Content floated="right">
-            <Icon link name="edit"/>
+            <Icon link color="green" name="thumbs up outline" onClick={applyEdit}/>
+            <Icon link color="red" name="thumbs down outline" onClick={abortEdit}/>
+        </List.Content>
+        <List.Content>
+            <List.Header>
+                <Input transparent size="mini" name="name" placeholder="Link content" value={editedLink.name} onChange={changeLink}/>
+            </List.Header>
+            <List.Description>
+                <Input transparent size="mini" name="href" placeholder="Link target" value={editedLink.href} onChange={changeLink}/>
+                {errorMessage && <Message negative size="mini">
+                    {errorMessage}
+                </Message>}
+            </List.Description>
+        </List.Content>
+    </List.Item>;
+};
+
+export const ProjectLink = function ({link, canMoveUp, canMoveDown, edit, reorder, remove}) {
+    return <List.Item key={link.name}>
+        <List.Content floated="right">
+            <Icon link name="edit" onClick={edit}/>
             <LockableIcon locked={!canMoveUp}>
                 <Icon link name="angle up" onClick={reorder(-1)}/>
             </LockableIcon>
