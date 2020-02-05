@@ -1,5 +1,5 @@
 import React, {useState} from "react";
-import {Divider, Form, Grid, Icon, Image, Input, List, Menu, Message, Segment} from "semantic-ui-react";
+import {Button, Divider, Form, Grid, Icon, Image, Input, List, Menu, Message, Segment} from "semantic-ui-react";
 import {Link} from "react-router-dom";
 import {ErrorMessage} from "../form/form-message";
 import {useAjax, useAjaxLoader} from "../context/ajax-context";
@@ -131,8 +131,7 @@ export const EditProject = function ({project, errorMessage, updateStatus, force
 
     return <div>
         <h2>Edit project</h2>
-        <Form onSubmit={onSubmit(submitRemovingLinkIds)}
-              error={!!errorMessage}
+        <Form error={!!errorMessage}
               success={updateStatus === Updating.UPDATED}>
             <Divider/>
             <Grid stackable centered>
@@ -149,9 +148,9 @@ export const EditProject = function ({project, errorMessage, updateStatus, force
                             {data.logoId && <Image src={imageUrl(data.logoId)} alt="Current project logo"/>}
                             <Input type="file" accept="image/jpeg, image/png, image/svg, image/gif" onChange={updater.changeFile("logo")}/>
                         </Form.Field>
-                        <Form.Button primary disabled={!canSubmit}>Save</Form.Button>
-                        <Form.Button secondary>Clear</Form.Button>
-                        <Form.Button color="red">Delete</Form.Button>
+                        <Button primary disabled={!canSubmit} onClick={onSubmit(submitRemovingLinkIds)}>Save</Button>
+                        <Button secondary onClick={() => updater.reloaded(project)}>Clear</Button>
+                        <Button color="red">Delete</Button>
                     </Grid.Column>
                 </Grid.Row>
                 <Grid.Row>
