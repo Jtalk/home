@@ -3,6 +3,7 @@ package utils
 import play.api.libs.json.JsArray
 
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.{Success, Try}
 
 object Extension {
   implicit class FutureOption[T](val fo: Future[Option[T]]) extends AnyVal {

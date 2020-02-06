@@ -10,6 +10,8 @@ GET         /owner/bio                 controllers.OwnerController.bio
 
 GET         /projects                  controllers.ProjectController.all
 GET         /projects/:id              controllers.ProjectController.project(id)
+PUT         /projects/:id              controllers.ProjectController.update(id)
+DELETE      /projects/:id              controllers.ProjectController.delete(id)
 
 GET         /images                    controllers.ImageController.listFiles(page: Int = 0)
 GET         /images/:id                controllers.ImageController.serveFile(id)

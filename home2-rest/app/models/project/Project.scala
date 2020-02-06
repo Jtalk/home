@@ -2,6 +2,7 @@ package models.project
 
 import models.ModelType
 import models.ModelType.ModelType
+import models.common.Identifiable
 import play.api.http.Writeable
 import play.api.libs.functional.syntax._
 import play.api.libs.json.Reads._
@@ -11,7 +12,7 @@ import utils.WebUtils
 
 import scala.concurrent.ExecutionContext
 
-case class Project(title: String, id: String, description: String, logoId: String, published: Boolean, links: Seq[ProjectLink]) {
+case class Project(title: String, id: String, description: String, logoId: String, published: Boolean, links: Seq[ProjectLink]) extends Identifiable {
 }
 object Project {
 

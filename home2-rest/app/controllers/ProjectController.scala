@@ -2,6 +2,7 @@ package controllers
 
 import db.Database
 import javax.inject._
+import models.owner.OwnerInfo
 import models.project.Project
 import play.api.mvc._
 import play.api.libs.json._
@@ -25,5 +26,15 @@ class ProjectController @Inject()(cc: ControllerComponents, db: Database)
     db.findAll[Project]
       .map(Json.toJson(_))
       .map(Ok.apply(_))
+  }
+
+  def update(id: String) = Action.async(Project.jsonParser) { implicit request: Request[Project] =>
+    db.update(request.body)
+      .map(Ok.apply[Project])
+  }
+
+  def delete(id: String) = Action.async { implicit request: Request[AnyContent] =>
+    db.delete[Project](id)
+      .map(_ => Ok(""))
   }
 }

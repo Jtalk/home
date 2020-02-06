@@ -27,7 +27,7 @@ export function projects(state = Map({loading: Loading.LOADING, data: []}), acti
         case Action.UPDATE:
             return state.merge({updating: Updating.UPDATING, errorMessage: undefined});
         case Action.UPDATED:
-            return state.merge({updating: Updating.UPDATED, errorMessage: undefined, data: updateState(state, action.data)});
+            return state.merge({updating: Updating.UPDATED, errorMessage: undefined, data: updateState(state.get("data"), action.data)});
         case Action.UPDATE_ERROR:
             return state.merge({updating: Updating.ERROR, errorMessage: action.errorMessage});
         case Action.DELETE:
@@ -55,16 +55,14 @@ export function load(ajax) {
 }
 
 function updateState(currentState, update) {
-    console.debug("Data is", currentState, update);
+    console.debug("Data is", currentState.toJS(), update);
     _.forOwn(update, (value, key) => {
-        currentState = currentState.updateIn(["data"], list => {
-            let found = _.findIndex(list, v => v.id === key);
-            if (found === -1) {
-                return list.push(update);
-            } else {
-                return list.fill(found, 1, update);
-            }
-        });
+        let found = currentState.findIndex(v => v.get("id") === key);
+        if (found === -1) {
+            currentState = currentState.push(value);
+        } else {
+            currentState = currentState.splice(found, 1, value);
+        }
     });
     console.debug("New current state", currentState);
     return currentState;
@@ -75,7 +73,7 @@ export function update(ajax, projectId, update, photo) {
         dispatch(action(Action.UPDATE));
         try {
             let newProject = await ajax.projects.update(projectId, update, photo);
-            dispatch(newState(Action.UPDATED, {[newProject.id]: fromJS(newProject)}));
+            dispatch(newState(Action.UPDATED, {[newProject.id]: newProject}));
         } catch (e) {
             console.error(`Exception while updating project ${projectId}`, update, e);
             dispatch(error(Action.UPDATE_ERROR, e.toLocaleString()));

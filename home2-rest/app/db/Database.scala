@@ -2,6 +2,7 @@ package db
 
 import javax.inject.{Inject, Singleton}
 import models.ModelType.ModelType
+import models.common.Identifiable
 import play.api.Logger
 import play.api.libs.json
 import play.api.libs.json._
@@ -43,15 +44,29 @@ class Database @Inject()(cc: ControllerComponents, val reactiveMongoApi: Reactiv
   def findSingle[T](implicit ec: ExecutionContext, mt: ModelType[T], reads: Reads[T]): Future[Option[T]] = findSingleJs
     .map(JsonUtils.asObj[T])
 
+  def update[T <: Identifiable](entity: T)(implicit ec: ExecutionContext, mt: ModelType[T], reads: Reads[T], writes: Writes[T]) = {
+    val obj = Json.toJson(entity).asInstanceOf[JsObject]
+    collection.map(_.update(false))
+      .flatMap(_.one(Json.obj("id" -> entity.id), obj, upsert = true))
+      .flatMap(asFuture)
+      .flatMap(_ => find[T](entity.id))
+      .flatMap(o => o.map(v => Future(v))
+        .getOrElse(Future.failed[T](new RuntimeException("We have just upserted the entry and now it does not exist..."))))
+  }
+
   def updateSingle[T](entity: T)(implicit ec: ExecutionContext, mt: ModelType[T], reads: Reads[T], writes: Writes[T]): Future[T] = {
     val obj = Json.toJson(entity).asInstanceOf[JsObject]
     findExistingSingleId.map(_.getOrElse(JsString("-1")))
-      .flatMap(id => collection.flatMap(_.update(false).one(JsObject(Seq("_id" -> id)), obj, upsert = true)))
+      .flatMap(id => collection.flatMap(_.update(false).one(Json.obj("_id" -> id), obj, upsert = true)))
       .flatMap(asFuture)
       .flatMap(_ => findSingle[T])
       .flatMap(o => o.map(v => Future(v))
         .getOrElse(Future.failed[T](new RuntimeException("We have just upserted the entry and now it does not exist..."))))
   }
+
+  def delete[T](id: String)(implicit ec: ExecutionContext, mt: ModelType[T]) = collection.map(_.delete())
+    .flatMap(_.one(Json.obj("id" -> id)))
+    .flatMap(asFuture)
 
   private def findAllJs[T](implicit ec: ExecutionContext, mt: ModelType[T]) = collection.flatMap(_.find(Json.obj(), None).cursor[JsObject]().collect[Seq](MAX_ALL_ITEMS, Cursor.FailOnError()))
   private def findJs[T](id: String)(implicit ec: ExecutionContext, mt: ModelType[T]) = collection.flatMap(_.find(Json.obj("id" -> id), None).one[JsObject])
