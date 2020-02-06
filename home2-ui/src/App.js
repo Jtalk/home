@@ -59,8 +59,7 @@ function mainRoutes(ownerName) {
                 "Edit Projects",
                 "/admin/projects",
                 "/admin/projects/:projectId?",
-                params => <EditProjects currentProjectId={params.match.params.projectId}
-                                        ownerName={ownerName}/>,
+                params => <EditProjects currentProjectId={params.match.params.projectId}/>,
                 true),
             createComplexNavigation(
                 "Edit Blog",

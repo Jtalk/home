@@ -37,4 +37,10 @@ export class ProjectsRequests {
             throw Error("Cannot upload a new logo")
         }
     }
+
+    async remove(id) {
+        await request.delete(`/projects/${id}`)
+            .use(api);
+        await apiDelay();
+    }
 }

@@ -1,13 +1,13 @@
 import React, {useState} from "react";
 import {Button, Divider, Form, Grid, Icon, Image, Input, List, Menu, Message, Segment} from "semantic-ui-react";
-import {Link} from "react-router-dom";
+import {Link, Redirect} from "react-router-dom";
 import {ErrorMessage} from "../form/form-message";
 import {useAjax, useAjaxLoader} from "../context/ajax-context";
-import {load, update as updateProject} from "../data/reduce/projects";
+import {load, remove as removeProject, update as updateProject} from "../data/reduce/projects";
 import {useDispatch} from "react-redux";
 import {useImmutableSelector} from "../utils/redux-store";
 import {useStateChange} from "../utils/state-change";
-import {Loading, Updating} from "../data/reduce/global/enums";
+import {Deleting, Loading, Updating} from "../data/reduce/global/enums";
 import {useForm} from "./common/use-form";
 import {imageUrl} from "../utils/image";
 import _ from "lodash";
@@ -39,6 +39,8 @@ let projectsExampleToDeleteAfterBackendDone = [
     }
 ];
 
+const BASE_HREF = "/admin/projects";
+
 export const EditProjects = function ({currentProjectId}) {
 
     useAjaxLoader(load);
@@ -52,16 +54,27 @@ export const EditProjects = function ({currentProjectId}) {
     let [updateStatusChanged, updateStatus] = useStateChange("projects", ["updating"], {
         from: Updating.UPDATING, to: Updating.UPDATED
     });
+    let [deleteStatusChanged, deleteStatus] = useStateChange("projects", ["deleting"], {
+        from: Deleting.DELETING, to: Deleting.DELETED
+    });
     let errorMessage = useImmutableSelector("owner", ["errorMessage"]);
 
     let submit = (project, {logo}) => {
         dispatch(updateProject(ajax, project.id, project, logo));
     };
+    let remove = (projectId) => {
+        dispatch(removeProject(ajax, projectId));
+    };
 
-    return <EditProjectsStateless {...{projects, errorMessage, updateStatus, currentProjectId, submit}} forceReload={loadingStatusChanged || updateStatusChanged}/>;
+    if (deleteStatusChanged) {
+        return <Redirect to={BASE_HREF}/>
+    }
+
+    return <EditProjectsStateless {...{projects, errorMessage, updateStatus, deleteStatus, currentProjectId, submit, remove}}
+                                  forceReload={loadingStatusChanged || updateStatusChanged || deleteStatusChanged}/>;
 };
 
-export const EditProjectsStateless = function ({projects, errorMessage, updateStatus, currentProjectId, forceReload, submit}) {
+export const EditProjectsStateless = function ({projects, errorMessage, updateStatus, deleteStatus, currentProjectId, forceReload, submit, remove}) {
 
     let currentProject = _.find(projects, p => p.id === currentProjectId) || _.chain(projects).values().first().value();
 
@@ -95,8 +108,10 @@ export const EditProjectsStateless = function ({projects, errorMessage, updateSt
                                                project={currentProject}
                                                errorMessage={errorMessage}
                                                updateStatus={updateStatus}
+                                               deleteStatus={deleteStatus}
                                                forceReload={forceReload}
-                                               submit={submit}/>
+                                               submit={submit}
+                                               remove={remove}/>
                         }
                     </Grid.Column>
                 </Grid>
@@ -105,7 +120,7 @@ export const EditProjectsStateless = function ({projects, errorMessage, updateSt
     </Grid>
 };
 
-export const EditProject = function ({project, errorMessage, updateStatus, forceReload, submit}) {
+export const EditProject = function ({project, errorMessage, updateStatus, deleteStatus, forceReload, submit, remove}) {
 
     let addLinkIds = (links) => {
         return links.map(l => Object.assign({}, l, {id: uuid()}));
@@ -150,7 +165,7 @@ export const EditProject = function ({project, errorMessage, updateStatus, force
                         </Form.Field>
                         <Button primary disabled={!canSubmit} onClick={onSubmit(submitRemovingLinkIds)}>Save</Button>
                         <Button secondary onClick={() => updater.reloaded(project)}>Clear</Button>
-                        <Button color="red">Delete</Button>
+                        <Link className="ui red button" to={BASE_HREF} onClick={() => remove(project.id)}>Delete</Link>
                     </Grid.Column>
                 </Grid.Row>
                 <Grid.Row>
@@ -325,5 +340,5 @@ function emptyLink() {
 }
 
 function editHref(id) {
-    return `/admin/projects/${id}`
+    return `${BASE_HREF}/${id}`;
 }
