@@ -163,9 +163,9 @@ export const EditProject = function ({project, errorMessage, updateStatus, delet
                             {data.logoId && <Image src={imageUrl(data.logoId)} alt="Current project logo"/>}
                             <Input type="file" accept="image/jpeg, image/png, image/svg, image/gif" onChange={updater.changeFile("logo")}/>
                         </Form.Field>
-                        <Button primary disabled={!canSubmit} onClick={onSubmit(submitRemovingLinkIds)}>Save</Button>
+                        <Button primary loading={updateStatus === Updating.UPDATING} disabled={!canSubmit} onClick={onSubmit(submitRemovingLinkIds)}>Save</Button>
                         <Button secondary onClick={() => updater.reloaded(project)}>Clear</Button>
-                        <Link className="ui red button" to={BASE_HREF} onClick={() => remove(project.id)}>Delete</Link>
+                        <Button color="red" loading={deleteStatus === Deleting.DELETING} onClick={() => remove(project.id)}>Delete</Button>
                     </Grid.Column>
                 </Grid.Row>
                 <Grid.Row>
