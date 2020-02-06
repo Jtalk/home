@@ -83,7 +83,7 @@ export const EditProjectsStateless = function ({projects, errorMessage, updateSt
             <Segment raised>
                 <Menu tabular>
                     {
-                        projects.map(project => project.id === currentProjectId
+                        projects.map(project => project.id === currentProject.id
                             ? <Menu.Item active key={project.id}>{project.title}</Menu.Item>
                             : <Link className="item" to={editHref(project.id)} key={project.id}>{project.title}</Link>)
                     }
