@@ -64,6 +64,9 @@ function updateState(currentState, update) {
             currentState = currentState.push(immutableValue);
         } else {
             currentState = currentState.splice(found, 1, immutableValue);
+            if (currentState.get(found).get("order") !== update.order) {
+                currentState = currentState.sortBy(v => v.get("order"));
+            }
         }
     });
     console.debug("New current state", currentState);

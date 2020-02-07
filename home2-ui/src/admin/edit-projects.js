@@ -15,11 +15,12 @@ import uuid from "uuid/v1";
 
 const BASE_HREF = "/admin/projects";
 const NEW_PROJECT_ID = "new";
-const MAKE_NEW_PROJECT = () => ({
+const MAKE_NEW_PROJECT = (order) => ({
     id: NEW_PROJECT_ID,
     title: "New Project",
     logoId: "",
     published: false,
+    order: order,
     description: "",
     links: [],
 });
@@ -42,7 +43,7 @@ export const EditProjects = function ({currentProjectId}) {
     });
     let errorMessage = useImmutableSelector("owner", ["errorMessage"]);
 
-    let submit = (currentId, project, {logo}) => {
+    let submit = (currentId, project, {logo} = {}) => {
         dispatch(updateProject(ajax, currentId, project, logo));
     };
     let remove = (projectId) => {
@@ -68,8 +69,28 @@ export const EditProjectsStateless = function ({projects, errorMessage, updateSt
     let currentProject = _.find(projects, p => p.id === currentProjectId) || _.chain(projects).values().first().value();
 
     let add = () => {
-        let newProject = MAKE_NEW_PROJECT();
+        let maxOrderProject = _.chain(projects).sortBy("order").last().value();
+        let maxOrder = (maxOrderProject && maxOrderProject.order) || -1;
+        let newProject = MAKE_NEW_PROJECT(maxOrder + 1);
         submit(newProject.id, newProject, {});
+    };
+    let move = (shift) => {
+        return () => {
+            let currentProjectIndex = _.findIndex(projects, p => p.id === currentProject.id);
+            if (currentProjectIndex === 0) {
+                throw Error("Attempting to move a non-existent project id " + currentProject.id);
+            }
+            let targetIndex = currentProjectIndex + shift;
+            if (targetIndex < 0 || targetIndex >= projects.length) {
+                console.debug(`Cannot move project ${currentProject.id} with ${shift}: already on the edge`, projects);
+                return;
+            }
+            let tmp = projects[targetIndex].order;
+            projects[targetIndex].order = projects[currentProjectIndex].order;
+            projects[currentProjectIndex].order = tmp;
+            submit(projects[targetIndex].id, projects[targetIndex]);
+            submit(currentProject.id, currentProject);
+        };
     };
 
     return <Grid centered>
@@ -84,14 +105,14 @@ export const EditProjectsStateless = function ({projects, errorMessage, updateSt
                     <Menu.Item>
                         <Icon link name="plus" disabled={currentProjectId === NEW_PROJECT_ID} onClick={add}/>
                     </Menu.Item>
-                    <Menu.Menu position="right">
+                    { currentProject && <Menu.Menu position="right">
                         <Menu.Item>
-                            <Icon name="left arrow"/>
+                            <Icon link name="left arrow" onClick={move(-1)}/>
                         </Menu.Item>
                         <Menu.Item>
-                            <Icon name="right arrow"/>
+                            <Icon link name="right arrow" onClick={move(1)}/>
                         </Menu.Item>
-                    </Menu.Menu>
+                    </Menu.Menu> }
                 </Menu>
                 <Grid centered>
                     <Grid.Column width={15} layout="block">
@@ -129,13 +150,17 @@ export const EditProject = function ({project, errorMessage, updateStatus, delet
         submit(project.id, editedProject, files);
     };
 
-    let {onSubmit, data, updater, canSubmit} = useForm({
+    let {onSubmit, data, updater, canSubmit, edited} = useForm({
         init: project,
         updateStatus
     });
 
     if (forceReload) {
-        updater.reloaded(project);
+        if (data.order === project.order || !edited) {
+            updater.reloaded(project);
+        } else {
+            updater.change("order")(null, {value: project.order});
+        }
     }
 
     return <div>
