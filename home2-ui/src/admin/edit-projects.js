@@ -13,32 +13,6 @@ import {imageUrl} from "../utils/image";
 import _ from "lodash";
 import uuid from "uuid/v1";
 
-// eslint-disable-next-line no-unused-vars
-let projectsExampleToDeleteAfterBackendDone = [
-    {
-        title: "Project 1",
-        id: "project-1",
-        logoId: "avatar.png",
-        description: "[h1]Header 1 [abbr title=\"Lenghty explanation\"]LE[/abbr][/h1]" +
-            " [p]Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium," +
-            " totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae" +
-            " dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit," +
-            " sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt.",
-        links: [{name: "BitBucket", href: "/example"}, {name: "Demo", href: "/example"}]
-    },
-    {
-        title: "Project 2",
-        id: "project-2",
-        logoId: "avatar.png",
-        description: "[h1]Header 2 [abbr title=\"Lenghty explanation\"]LE[/abbr][/h1]" +
-            " [p]Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium," +
-            " totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae" +
-            " dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit," +
-            " sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt.",
-        links: [{name: "BitBucket", href: "/example"}, {name: "Demo", href: "/example"}]
-    }
-];
-
 const BASE_HREF = "/admin/projects";
 
 export const EditProjects = function ({currentProjectId}) {
