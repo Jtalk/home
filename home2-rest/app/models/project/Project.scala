@@ -12,7 +12,7 @@ import utils.WebUtils
 
 import scala.concurrent.ExecutionContext
 
-case class Project(title: String, id: String, description: String, logoId: String, published: Boolean, links: Seq[ProjectLink]) extends Identifiable {
+case class Project(title: String, id: String, order: Int, description: String, logoId: String, published: Boolean, links: Seq[ProjectLink]) extends Identifiable {
 }
 object Project {
 
@@ -22,6 +22,7 @@ object Project {
   implicit val jsonReader: Reads[Project] = (
     (JsPath \ "title").read(minLength[String](1)) and
       (JsPath \ "id").read(minLength[String](1)) and
+      (JsPath \ "order").read[Int] and
       (JsPath \ "description").read[String] and
       (JsPath \ "logoId").read[String] and
       (JsPath \ "published").read[Boolean] and

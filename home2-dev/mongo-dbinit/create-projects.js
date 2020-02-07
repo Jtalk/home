@@ -7,6 +7,7 @@ print('Using GridFS object as the project\'s photo: ' + logoId);
 db.projects.insert({
 	title: 'Test Project 1',
 	id: 'test-project',
+	order: 0,
 	description: 'A very cool test project',
 	logoId: logoId,
 	published: true,
@@ -19,6 +20,7 @@ db.projects.insert({
 db.projects.insert({
 	title: 'Test Project 2',
 	id: 'another-test-project',
+	order: 1,
 	description: 'Another very cool test project',
 	logoId: '',
 	published: false,

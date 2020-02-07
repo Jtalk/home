@@ -46,6 +46,7 @@ export function load(ajax) {
         dispatch(action(Action.LOAD));
         try {
             let projects = await ajax.projects.load();
+            projects = _.sortBy(projects, "order");
             dispatch(newState(Action.LOADED, projects));
         } catch (e) {
             console.error("Cannot load project info", e);
