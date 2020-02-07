@@ -17,7 +17,7 @@ export class ProjectsRequests {
 
     async update(id, update, logo) {
         if (logo) {
-            update.photoId = await this.uploadLogo(id, logo);
+            update.logoId = await this.uploadLogo(id, logo);
         }
         let response = await request.put(`/projects/${id}`, update)
             .use(api);
