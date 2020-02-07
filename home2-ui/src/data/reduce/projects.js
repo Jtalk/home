@@ -73,7 +73,7 @@ export function update(ajax, projectId, update, photo) {
         dispatch(action(Action.UPDATE));
         try {
             let newProject = await ajax.projects.update(projectId, update, photo);
-            dispatch(newState(Action.UPDATED, {[newProject.id]: newProject}));
+            dispatch(newState(Action.UPDATED, {[projectId]: newProject}));
         } catch (e) {
             console.error(`Exception while updating project ${projectId}`, update, e);
             dispatch(error(Action.UPDATE_ERROR, e.toLocaleString()));

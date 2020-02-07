@@ -4,7 +4,6 @@ import javax.inject.{Inject, Singleton}
 import models.ModelType.ModelType
 import models.common.Identifiable
 import play.api.Logger
-import play.api.libs.json
 import play.api.libs.json._
 import play.api.mvc.{AbstractController, ControllerComponents}
 import play.modules.reactivemongo.MongoController.JsGridFS
@@ -44,10 +43,10 @@ class Database @Inject()(cc: ControllerComponents, val reactiveMongoApi: Reactiv
   def findSingle[T](implicit ec: ExecutionContext, mt: ModelType[T], reads: Reads[T]): Future[Option[T]] = findSingleJs
     .map(JsonUtils.asObj[T])
 
-  def update[T <: Identifiable](entity: T)(implicit ec: ExecutionContext, mt: ModelType[T], reads: Reads[T], writes: Writes[T]) = {
+  def update[T <: Identifiable](id: String, entity: T)(implicit ec: ExecutionContext, mt: ModelType[T], reads: Reads[T], writes: Writes[T]) = {
     val obj = Json.toJson(entity).asInstanceOf[JsObject]
     collection.map(_.update(false))
-      .flatMap(_.one(Json.obj("id" -> entity.id), obj, upsert = true))
+      .flatMap(_.one(Json.obj("id" -> id), obj, upsert = true))
       .flatMap(asFuture)
       .flatMap(_ => find[T](entity.id))
       .flatMap(o => o.map(v => Future(v))

@@ -2,10 +2,9 @@ package controllers
 
 import db.Database
 import javax.inject._
-import models.owner.OwnerInfo
 import models.project.Project
-import play.api.mvc._
 import play.api.libs.json._
+import play.api.mvc._
 import utils.WebUtils
 
 import scala.concurrent.ExecutionContext
@@ -29,7 +28,7 @@ class ProjectController @Inject()(cc: ControllerComponents, db: Database)
   }
 
   def update(id: String) = Action.async(Project.jsonParser) { implicit request: Request[Project] =>
-    db.update(request.body)
+    db.update(id, request.body)
       .map(Ok.apply[Project])
   }
 
