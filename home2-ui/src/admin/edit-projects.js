@@ -14,6 +14,15 @@ import _ from "lodash";
 import uuid from "uuid/v1";
 
 const BASE_HREF = "/admin/projects";
+const NEW_PROJECT_ID = "new";
+const MAKE_NEW_PROJECT = () => ({
+    id: NEW_PROJECT_ID,
+    title: "New Project",
+    logoId: "",
+    published: false,
+    description: "",
+    links: [],
+});
 
 export const EditProjects = function ({currentProjectId}) {
 
@@ -33,8 +42,8 @@ export const EditProjects = function ({currentProjectId}) {
     });
     let errorMessage = useImmutableSelector("owner", ["errorMessage"]);
 
-    let submit = (project, {logo}) => {
-        dispatch(updateProject(ajax, project.id, project, logo));
+    let submit = (currentId, project, {logo}) => {
+        dispatch(updateProject(ajax, currentId, project, logo));
     };
     let remove = (projectId) => {
         dispatch(removeProject(ajax, projectId));
@@ -42,6 +51,12 @@ export const EditProjects = function ({currentProjectId}) {
 
     if (deleteStatusChanged) {
         return <Redirect to={BASE_HREF}/>
+    }
+    // Force redirect to the new project if present.
+    // This way we can avoid complicated state management
+    // and just force the user to edit the project first.
+    if (hasNewProject(projects) && currentProjectId !== NEW_PROJECT_ID) {
+        return <Redirect to={editHref(NEW_PROJECT_ID)}/>
     }
 
     return <EditProjectsStateless {...{projects, errorMessage, updateStatus, deleteStatus, currentProjectId, submit, remove}}
@@ -51,6 +66,11 @@ export const EditProjects = function ({currentProjectId}) {
 export const EditProjectsStateless = function ({projects, errorMessage, updateStatus, deleteStatus, currentProjectId, forceReload, submit, remove}) {
 
     let currentProject = _.find(projects, p => p.id === currentProjectId) || _.chain(projects).values().first().value();
+
+    let add = () => {
+        let newProject = MAKE_NEW_PROJECT();
+        submit(newProject.id, newProject, {});
+    };
 
     return <Grid centered>
         <Grid.Column width={13}>
@@ -62,7 +82,7 @@ export const EditProjectsStateless = function ({projects, errorMessage, updateSt
                             : <Link className="item" to={editHref(project.id)} key={project.id}>{project.title}</Link>)
                     }
                     <Menu.Item>
-                        <Icon name="plus"/>
+                        <Icon link name="plus" disabled={currentProjectId === NEW_PROJECT_ID} onClick={add}/>
                     </Menu.Item>
                     <Menu.Menu position="right">
                         <Menu.Item>
@@ -104,9 +124,9 @@ export const EditProject = function ({project, errorMessage, updateStatus, delet
     };
 
     project = Object.assign({}, project, {links: addLinkIds(project.links)});
-    let submitRemovingLinkIds = (project, files) => {
-        project = Object.assign({}, project, {links: dropLinkIds(project.links)});
-        submit(project, files);
+    let submitClear = (editedProject, files) => {
+        editedProject = Object.assign({}, editedProject, {links: dropLinkIds(editedProject.links)});
+        submit(project.id, editedProject, files);
     };
 
     let {onSubmit, data, updater, canSubmit} = useForm({
@@ -114,7 +134,7 @@ export const EditProject = function ({project, errorMessage, updateStatus, delet
         updateStatus
     });
 
-    if (forceReload || project.id !== data.id) {
+    if (forceReload) {
         updater.reloaded(project);
     }
 
@@ -137,7 +157,7 @@ export const EditProject = function ({project, errorMessage, updateStatus, delet
                             {data.logoId && <Image src={imageUrl(data.logoId)} alt="Current project logo"/>}
                             <Input type="file" accept="image/jpeg, image/png, image/svg, image/gif" onChange={updater.changeFile("logo")}/>
                         </Form.Field>
-                        <Button primary loading={updateStatus === Updating.UPDATING} disabled={!canSubmit} onClick={onSubmit(submitRemovingLinkIds)}>Save</Button>
+                        <Button primary loading={updateStatus === Updating.UPDATING} disabled={!canSubmit} onClick={onSubmit(submitClear)}>Save</Button>
                         <Button secondary onClick={() => updater.reloaded(project)}>Clear</Button>
                         <Button color="red" loading={deleteStatus === Deleting.DELETING} onClick={() => remove(project.id)}>Delete</Button>
                     </Grid.Column>
@@ -307,6 +327,10 @@ function reorderLink(setLinks, links, fromIndex, toIndex) {
         copy.splice(toIndex, 0, item);
         setLinks(copy);
     };
+}
+
+function hasNewProject(projects) {
+    return _.find(projects, v => v.id === NEW_PROJECT_ID);
 }
 
 function emptyLink() {

@@ -22,7 +22,7 @@ object Project {
   implicit val jsonReader: Reads[Project] = (
     (JsPath \ "title").read(minLength[String](1)) and
       (JsPath \ "id").read(minLength[String](1)) and
-      (JsPath \ "description").read(minLength[String](1)) and
+      (JsPath \ "description").read[String] and
       (JsPath \ "logoId").read[String] and
       (JsPath \ "published").read[Boolean] and
       (JsPath \ "links").read[Seq[ProjectLink]])
