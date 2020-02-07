@@ -58,10 +58,11 @@ function updateState(currentState, update) {
     console.debug("Data is", currentState.toJS(), update);
     _.forOwn(update, (value, key) => {
         let found = currentState.findIndex(v => v.get("id") === key);
+        let immutableValue = fromJS(value);
         if (found === -1) {
-            currentState = currentState.push(value);
+            currentState = currentState.push(immutableValue);
         } else {
-            currentState = currentState.splice(found, 1, value);
+            currentState = currentState.splice(found, 1, immutableValue);
         }
     });
     console.debug("New current state", currentState);
