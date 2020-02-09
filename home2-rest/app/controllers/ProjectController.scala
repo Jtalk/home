@@ -29,7 +29,7 @@ class ProjectController @Inject()(cc: ControllerComponents, db: Database)
 
   def update(id: String) = Action.async(Project.jsonParser) { implicit request: Request[Project] =>
     db.update(id, request.body)
-      .map(Ok.apply[Project])
+      .map(Ok[Project])
   }
 
   def delete(id: String) = Action.async { implicit request: Request[AnyContent] =>

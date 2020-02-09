@@ -17,7 +17,7 @@ case class OwnerInfo(name: String, nickname: String, description: String, photoI
 object OwnerInfo {
 
   implicit val model: ModelType[OwnerInfo] = ModelType.OWNER
-  implicit val jsonWriter: Writes[OwnerInfo] = Json.writes[OwnerInfo]
+  implicit val jsonWriter: OWrites[OwnerInfo] = Json.writes[OwnerInfo]
   implicit val jsonWriteable: Writeable[OwnerInfo] = Writeable.writeableOf_JsValue.map[OwnerInfo](Json.toJson _)
   implicit val jsonReader: Reads[OwnerInfo] = (
     (JsPath \ "name").read(minLength[String](1)) and

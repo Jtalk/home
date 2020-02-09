@@ -19,7 +19,7 @@ case class Article(title: String, id: String, published: Boolean, created: Zoned
 object Article {
 
   implicit val model: ModelType[Article] = ModelType.ARTICLE
-  implicit val jsonWriter: Writes[Article] = Json.writes[Article]
+  implicit val jsonWriter: OWrites[Article] = Json.writes[Article]
   implicit val jsonWriteable: Writeable[Article] = Writeable.writeableOf_JsValue.map[Article](Json.toJson _)
   implicit val jsonReader: Reads[Article] = (
     (JsPath \ "title").read(minLength[String](1)) and

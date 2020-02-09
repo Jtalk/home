@@ -17,7 +17,7 @@ case class Project(title: String, id: String, order: Int, description: String, l
 object Project {
 
   implicit val model: ModelType[Project] = ModelType.PROJECT
-  implicit val jsonWriter: Writes[Project] = Json.writes[Project]
+  implicit val jsonWriter: OWrites[Project] = Json.writes[Project]
   implicit val jsonWriteable: Writeable[Project] = Writeable.writeableOf_JsValue.map[Project](Json.toJson _)
   implicit val jsonReader: Reads[Project] = (
     (JsPath \ "title").read(minLength[String](1)) and

@@ -36,6 +36,6 @@ class OwnerController @Inject()(cc: ControllerComponents, db: Database)
 
   def update() = Action.async(OwnerInfo.jsonParser) { implicit request: Request[OwnerInfo] =>
     db.updateSingle(request.body)
-      .map(Ok.apply[OwnerInfo])
+      .map(Ok[OwnerInfo])
   }
 }

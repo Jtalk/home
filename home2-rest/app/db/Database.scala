@@ -25,75 +25,67 @@ import scala.concurrent.{ExecutionContext, Future}
 class Database @Inject()(cc: ControllerComponents, val reactiveMongoApi: ReactiveMongoApi)
   extends AbstractController(cc) with MongoController with ReactiveMongoComponents {
 
-  val log = Logger(this.getClass)
+  final val log = Logger(this.getClass)
   private val MAX_ALL_ITEMS = 1024;
 
   // Data processing
   def collection[T](implicit executionContext: ExecutionContext, mt: ModelType[T]): Future[JSONCollection]
     = database.map(_.collection[JSONCollection](mt.tableName))
 
-  def find[T](id: String)(implicit ec: ExecutionContext, mt: ModelType[T], reads: Reads[T]): Future[Option[T]] = findJs(id)
-    .fomap(JsonUtils.asObj[T])
-    .map(_.liftTry)
-    .consumeTry
+  def find[T](id: String)(implicit ec: ExecutionContext, mt: ModelType[T], reads: Reads[T]): Future[Option[T]] = collection
+    .flatMap(_.find(obj("id" -> id), None).one[T])
 
-  def findAll[T](implicit ec: ExecutionContext, mt: ModelType[T], reads: Reads[T]): Future[Seq[T]] = findAllJs
-    .fmap(JsonUtils.asObj[T])
-    .map(_.liftTry)
-    .consumeTry
+  def findAll[T](implicit ec: ExecutionContext, mt: ModelType[T], reads: Reads[T]): Future[Seq[T]] =  collection
+    .flatMap(_.find(obj(), None)
+      .cursor[T]()
+      .collect[Seq](MAX_ALL_ITEMS, Cursor.FailOnError()))
 
-  def findPage[T](page: Int, pageSize: Int)(implicit ec: ExecutionContext, mt: ModelType[T], reads: Reads[T]): Future[PaginatedResult[T]] = findPageJs(page, pageSize)
-    .fmap(JsonUtils.asObj[T])
-    .map(_.liftTry)
-    .consumeTry
+  def findPage[T](page: Int, pageSize: Int)(implicit ec: ExecutionContext, mt: ModelType[T], reads: Reads[T]): Future[PaginatedResult[T]] = collection
+    .flatMap(_.find(obj(), None)
+      .skip(page * pageSize)
+      .cursor[T]()
+      .collect[Seq](pageSize, Cursor.FailOnError()))
     .zip(count)
     .map((pair => PaginatedResult(fromTotalCount(pair._2, pageSize, page), pair._1)))
 
-  def findSingle[T](implicit ec: ExecutionContext, mt: ModelType[T], reads: Reads[T]): Future[Option[T]] = findSingleJs
-    .map(JsonUtils.asObj[T])
+  def findSingle[T](implicit ec: ExecutionContext, mt: ModelType[T], reads: Reads[T]): Future[Option[T]] = collection
+    .flatMap(_.find(obj(), None).one[T])
 
-  def update[T <: Identifiable](id: String, entity: T)(implicit ec: ExecutionContext, mt: ModelType[T], reads: Reads[T], writes: Writes[T]): Future[T] = {
-    val obj = Json.toJson(entity).asInstanceOf[JsObject]
-    collection.map(_.update(false))
-      .flatMap(_.one(Json.obj("id" -> id), obj, upsert = true))
-      .flatMap(asFuture)
-      .flatMap(_ => find[T](entity.id))
-      .flatMap(o => o.map(v => Future(v))
-        .getOrElse(Future.failed[T](new RuntimeException("We have just upserted the entry and now it does not exist..."))))
-  }
+  def update[T <: Identifiable](id: String, entity: T)(implicit ec: ExecutionContext,
+                                                       mt: ModelType[T],
+                                                       reads: Reads[T],
+                                                       writes: OWrites[T]): Future[T] = updateAndLoad(id, entity.id, entity)
 
-  def updateSingle[T](entity: T)(implicit ec: ExecutionContext, mt: ModelType[T], reads: Reads[T], writes: Writes[T]): Future[T] = {
-    val obj = Json.toJson(entity).asInstanceOf[JsObject]
-    findExistingSingleId.map(_.getOrElse(JsString("-1")))
-      .flatMap(id => collection.flatMap(_.update(false).one(Json.obj("_id" -> id), obj, upsert = true)))
-      .flatMap(asFuture)
-      .flatMap(_ => findSingle[T])
-      .flatMap(o => o.map(v => Future(v))
-        .getOrElse(Future.failed[T](new RuntimeException("We have just upserted the entry and now it does not exist..."))))
-  }
+  def updateSingle[T](entity: T)(implicit ec: ExecutionContext, mt: ModelType[T], reads: Reads[T], writes: OWrites[T]): Future[T] = findExistingSingleId
+    .map(_.get)
+    .flatMap(id => updateAndLoad[T](id, id, entity))
 
   def delete[T](id: String)(implicit ec: ExecutionContext, mt: ModelType[T]): Future[Unit] = collection.map(_.delete())
     .flatMap(_.one(obj("id" -> id)))
     .flatMap(asFuture)
 
-  def count[T](implicit ec: ExecutionContext, mt: ModelType[T]) = collection
+  def count[T](implicit ec: ExecutionContext, mt: ModelType[T]): Future[Long] = collection
     .flatMap(_.count(None, None, 0, None, ReadConcern.Majority))
 
-  private def findAllJs[T](implicit ec: ExecutionContext, mt: ModelType[T]) = collection.flatMap(_.find(obj(), None).cursor[JsObject]().collect[Seq](MAX_ALL_ITEMS, Cursor.FailOnError()))
-  private def findPageJs[T](page: Int, pageSize: Int)(implicit ec: ExecutionContext, mt: ModelType[T]) = collection
-    .flatMap(_.find(obj(), None)
-      .skip(page * pageSize)
-      .cursor[JsObject]()
-      .collect[Seq](pageSize, Cursor.FailOnError()))
-  private def findJs[T](id: String)(implicit ec: ExecutionContext, mt: ModelType[T]) = collection.flatMap(_.find(obj("id" -> id), None).one[JsObject])
-  private def findSingleJs[T](implicit ec: ExecutionContext, mt: ModelType[T]) = collection.flatMap(_.find(obj(), None).one[JsObject])
-  private def findExistingSingleId[T](implicit ec: ExecutionContext, mt: ModelType[T]) = findSingleJs[T].map(_.map(json => (json \ "_id").get))
+  private def findExistingSingleId[T](implicit ec: ExecutionContext, mt: ModelType[T]) = collection
+    .flatMap(_.find(obj(), Some(obj("_id" -> ""))).one[String])
   private def asFuture(result: WriteResult): Future[Unit] = Some(result)
     .filter(!_.ok)
     .map(WriteResult.Message.unapply)
     .map(m => GenericDatabaseException(m.getOrElse("unknown"), None))
     .map(Future.failed)
     .getOrElse(Future.unit)
+  private def updateAndLoad[T](idToSave: String, idToLoad: String, entity: T)(implicit ec: ExecutionContext,
+                                                                              mt: ModelType[T],
+                                                                              reads: Reads[T],
+                                                                              writes: OWrites[T]) = collection
+    .map(_.update(false))
+    .flatMap(_.one(Json.obj("id" -> idToSave), entity, upsert = true))
+    .flatMap(asFuture)
+    .flatMap(_ => find[T](idToLoad))
+    .flatMap(o => o.map(v => Future(v))
+      .getOrElse(Future.failed[T](new RuntimeException("We have just upserted the entry and now it does not exist..."))))
+
 
   // File processing
   def findFilesMetadataPage(page: Int, pageSize: Int)(implicit ec: ExecutionContext): Future[PaginatedResult[JsObject]] = reactiveMongoApi.asyncGridFS
