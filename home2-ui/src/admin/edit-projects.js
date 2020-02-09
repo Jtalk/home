@@ -77,7 +77,7 @@ export const EditProjectsStateless = function ({projects, errorMessage, updateSt
     let move = (shift) => {
         return () => {
             let currentProjectIndex = _.findIndex(projects, p => p.id === currentProject.id);
-            if (currentProjectIndex === 0) {
+            if (currentProjectIndex === -1) {
                 throw Error("Attempting to move a non-existent project id " + currentProject.id);
             }
             let targetIndex = currentProjectIndex + shift;
