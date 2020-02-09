@@ -2,8 +2,9 @@ package utils
 
 import play.api.libs.json.JsArray
 
+import scala.annotation.tailrec
 import scala.concurrent.{ExecutionContext, Future}
-import scala.util.{Success, Try}
+import scala.util.{Failure, Success, Try}
 
 object Extension {
   implicit class FutureOption[T](val fo: Future[Option[T]]) extends AnyVal {
@@ -21,6 +22,38 @@ object Extension {
   }
   implicit class JsArrayOpt[T](val array: JsArray) extends AnyVal {
     def toOpt: Option[JsArray] = Some(array).filter(_.value.nonEmpty)
+  }
+  implicit class ErrorOptionOpt[T](val v: Either[Exception, T]) extends AnyVal {
+    def asTry: Try[T] = v match {
+      case Right(r) => Success(r)
+      case Left(e) => Failure(e)
+    }
+  }
+  implicit class OptionTryOpt[T](val v: Option[Try[T]]) extends AnyVal {
+    def liftTry: Try[Option[T]] = v match {
+      case None => Success(None)
+      case Some(Success(v)) => Success(Some(v))
+      case Some(Failure(e)) => Failure(e)
+    }
+  }
+  implicit class SeqTryOpt[T](val v: Seq[Try[T]]) extends AnyVal {
+    def liftTry: Try[Seq[T]] = liftTryWith(v, Success(Seq()))
+
+    @tailrec
+    private def liftTryWith(seq: Seq[Try[T]], result: Try[Seq[T]]): Try[Seq[T]] = (seq, result) match {
+      case (Seq(), result) => result
+      case (Success(v) :: rest, Failure(e)) => liftTryWith(rest, Failure(e))
+      case (Failure(e2) :: rest, Failure(e)) => liftTryWith(rest, Failure(mergeExceptions(e, e2)))
+      case (Success(v) :: rest, Success(vs)) => liftTryWith(rest, Success(vs :+ v))
+      case (Failure(e) :: rest, Success(_)) => liftTryWith(rest, Failure(e))
+    }
+    private def mergeExceptions[E <: Throwable](e1: E, e2: Throwable): E = e1.addSuppressed(e2) |> (_ => e1)
+  }
+  implicit class FutureTryOpt[T](val v: Future[Try[T]] ) extends AnyVal {
+    def consumeTry(implicit ec: ExecutionContext): Future[T] = v.flatMap {
+      case Success(v) => Future.successful(v)
+      case Failure(e) => Future.failed(e)
+    }
   }
   implicit class PipeOp[T](val v: T) extends AnyVal {
     def |>[R](f: T => R): R = f(v)
