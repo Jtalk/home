@@ -1,18 +1,11 @@
 import React from "react";
 import EditBlogArticle from "./edit-blog-article";
-import EditBlog from "./edit-blog";
+import {EditBlog} from "./edit-blog";
 
-export default class EditBlogRouter extends React.Component {
-
-    render() {
-        if (!this.props.articleId) {
-            return <EditBlog/>
-        } else {
-            return <EditBlogArticle articleId={this.props.articleId}/>
-        }
+export const EditBlogRouter = function({articleId}) {
+    if (!articleId) {
+        return <EditBlog/>
+    } else {
+        return <EditBlogArticle articleId={articleId}/>
     }
-
-    componentDidMount() {
-        document.title = this.props.ownerName + ": Edit Blog";
-    }
-}
+};

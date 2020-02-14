@@ -7,10 +7,12 @@ import {createLogger} from "redux-logger";
 import promiseMiddleware from "redux-promise-middleware";
 import {images} from "./reduce/images";
 import {projects} from "./reduce/projects";
+import {articles} from "./reduce/articles";
 
 export const reducers = {
     owner,
     projects,
+    articles,
     footer,
     images,
 };

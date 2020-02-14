@@ -15,7 +15,7 @@ class ArticleController @Inject()(cc: ControllerComponents, db: Database)
   extends AbstractController(cc) {
 
   private final val log = Logger(this.getClass)
-  private final val MAX_PAGE_SIZE = 100;
+  private final val MAX_PAGE_SIZE = 200;
 
   implicit private def ec: ExecutionContext = cc.executionContext
   implicit private def parsers: PlayBodyParsers = controllerComponents.parsers

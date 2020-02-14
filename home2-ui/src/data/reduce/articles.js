@@ -1,7 +1,9 @@
 import {fromJS, Map} from "immutable";
 import {Deleting, Loading, Updating} from "./global/enums";
 import {action, error, newState} from "./global/actions";
-import _ from "lodash";
+
+export const DEFAULT_PAGE_SIZE = 20;
+const MAX_PAGE_SIZE = 100;
 
 export const Action = {
     LOAD: Symbol("load"),
@@ -15,10 +17,21 @@ export const Action = {
     DELETE_ERROR: Symbol("delete error"),
 };
 
-export function projects(state = Map({loading: Loading.LOADING, data: []}), action) {
+const DEFAULT_PAGINATION = {
+    page: 0,
+    pageSize: 0,
+    total: 0
+};
+
+const DEFAULT_DATA = {
+    pagination: DEFAULT_PAGINATION,
+    articles: []
+};
+
+export function articles(state = fromJS({loading: Loading.LOADING, data: DEFAULT_DATA}), action) {
     switch (action.type) {
         case Action.LOAD:
-            return Map({loading: Loading.LOADING, errorMessage: undefined, uploading: undefined, data: []});
+            return fromJS({loading: Loading.LOADING, errorMessage: undefined, uploading: undefined, deleting: undefined, data: DEFAULT_DATA});
         case Action.LOADED:
             return Map({loading: Loading.READY, errorMessage: undefined, data: fromJS(action.data)});
         case Action.LOAD_ERROR:
@@ -26,13 +39,13 @@ export function projects(state = Map({loading: Loading.LOADING, data: []}), acti
         case Action.UPDATE:
             return state.merge({updating: Updating.UPDATING, errorMessage: undefined});
         case Action.UPDATED:
-            return state.merge({updating: Updating.UPDATED, errorMessage: undefined, data: updateState(state.get("data"), action.data)});
+            return state.merge({updating: Updating.UPDATED, errorMessage: undefined, data: fromJS(action.data)});
         case Action.UPDATE_ERROR:
             return state.merge({updating: Updating.ERROR, errorMessage: action.errorMessage});
         case Action.DELETE:
             return state.merge({deleting: Deleting.DELETING, errorMessage: undefined});
         case Action.DELETED:
-            return state.merge({deleting: Deleting.DELETED, data: fromJS(action.data)});
+            return state.merge({deleting: Deleting.DELETED, errorMessage: undefined, data: fromJS(action.data)});
         case Action.DELETE_ERROR:
             return state.merge({deleting: Deleting.DELETE_ERROR, errorMessage: action.data});
         default:
@@ -40,60 +53,45 @@ export function projects(state = Map({loading: Loading.LOADING, data: []}), acti
     }
 }
 
-export function load(ajax) {
+export function loadPage(ajax, page, pageSize = DEFAULT_PAGE_SIZE) {
+    if (pageSize > MAX_PAGE_SIZE) {
+        throw Error(`The requested page size ${pageSize} exceeds max ${MAX_PAGE_SIZE}`);
+    }
     return async dispatch => {
         dispatch(action(Action.LOAD));
         try {
-            let projects = await ajax.projects.load();
-            projects = _.sortBy(projects, "order");
-            dispatch(newState(Action.LOADED, projects));
+            let articlesResult = await ajax.articles.load(page, pageSize);
+            dispatch(newState(Action.LOADED, articlesResult));
         } catch (e) {
-            console.error("Cannot load project info", e);
+            console.error("Cannot load article info", e);
             dispatch(error(Action.LOAD_ERROR, e.toLocaleString()));
         }
     }
 }
 
-function updateState(currentState, update) {
-    console.debug("Data is", currentState.toJS(), update);
-    _.forOwn(update, (value, key) => {
-        let found = currentState.findIndex(v => v.get("id") === key);
-        let immutableValue = fromJS(value);
-        if (found === -1) {
-            currentState = currentState.push(immutableValue);
-        } else {
-            let needSort = currentState.get(found).get("order") !== value.order;
-            currentState = currentState.splice(found, 1, immutableValue);
-            if (needSort) {
-                currentState = currentState.sortBy(v => v.get("order"));
-            }
-        }
-    });
-    return currentState;
-}
-
-export function update(ajax, projectId, update, photo) {
+export function update(ajax, articleId, update, currentPage, currentPageSize) {
     return async dispatch => {
         dispatch(action(Action.UPDATE));
         try {
-            let newProject = await ajax.projects.update(projectId, update, photo);
-            dispatch(newState(Action.UPDATED, {[projectId]: newProject}));
+            await ajax.articles.update(articleId, update);
+            let updatedPage = await ajax.articles.load(currentPage, currentPageSize);
+            dispatch(newState(Action.UPDATED, updatedPage));
         } catch (e) {
-            console.error(`Exception while updating project ${projectId}`, update, e);
+            console.error(`Exception while updating article ${articleId}`, update, e);
             dispatch(error(Action.UPDATE_ERROR, e.toLocaleString()));
         }
     };
 }
 
-export function remove(ajax, projectId) {
+export function remove(ajax, articleId, page, pageSize) {
     return async dispatch => {
         dispatch(action(Action.DELETE));
         try {
-            await ajax.projects.remove(projectId);
-            let updatedList = await ajax.projects.load();
+            await ajax.articles.remove(articleId);
+            let updatedList = await ajax.articles.load(page, pageSize);
             dispatch(newState(Action.DELETED, updatedList));
         } catch (e) {
-            console.error(`Exception while deleting project ${projectId}`, e);
+            console.error(`Exception while deleting article ${articleId}`, e);
             dispatch(error(Action.DELETE_ERROR, e.toLocaleString()));
         }
     };
