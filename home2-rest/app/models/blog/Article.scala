@@ -1,6 +1,6 @@
 package models.blog
 
-import java.time.ZonedDateTime
+import java.time.{LocalDateTime, ZoneId, ZonedDateTime}
 
 import models.ModelType
 import models.ModelType.ModelType
@@ -14,7 +14,7 @@ import utils.WebUtils
 
 import scala.concurrent.ExecutionContext
 
-case class Article(title: String, id: String, published: Boolean, created: ZonedDateTime, content: String, tags: Set[String]) extends Identifiable {
+case class Article(title: String, id: String, published: Boolean, created: LocalDateTime, content: String, tags: Set[String]) extends Identifiable {
 }
 object Article {
 
@@ -24,10 +24,10 @@ object Article {
   implicit val jsonReader: Reads[Article] = (
     (JsPath \ "title").read(minLength[String](1)) and
       (JsPath \ "id").read(minLength[String](1)) and
-      (JsPath \ "published").read[Boolean] and
-      (JsPath \ "created").read[ZonedDateTime] and
-      (JsPath \ "content").read[String] and
-      (JsPath \ "tags").read[Set[String]])
+      (JsPath \ "published").readWithDefault[Boolean](false) and
+      (JsPath \ "created").readWithDefault[LocalDateTime](LocalDateTime.now(ZoneId.of("UTC"))) and
+      (JsPath \ "content").readWithDefault[String]("")and
+      (JsPath \ "tags").readWithDefault[Set[String]](Set[String]()))
     .apply(Article.apply _)
 
 
