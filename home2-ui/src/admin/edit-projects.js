@@ -173,7 +173,7 @@ export const EditProject = function ({project, errorMessage, updateStatus, delet
                     <Grid.Column width={11}>
                         <Form.Input label="Project Title" placeholder="Title" value={data.title || ''} onChange={updater.change("title")}/>
                         <Form.Input label="Internal ID" placeholder="(letters, digits, dashes)" value={data.id || ''} onChange={updater.change("id")}/>
-                        <Form.Checkbox toggle label="This project is published" checked={!!data.published} onChange={updater.change("published")}/>
+                        <Form.Checkbox toggle label="This project is published" checked={!!data.published} onChange={updater.changeToggle("published")}/>
                         <ProjectLinks className="field" links={data.links} setLinks={links => updater.change("links")(null, {value: links})}/>
                         <ErrorMessage message={errorMessage}/>
                     </Grid.Column>
