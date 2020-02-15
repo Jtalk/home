@@ -3,6 +3,7 @@ import {FooterRequests} from "./ajax/footer-requests";
 import {ImagesRequests} from "./ajax/images-requests";
 import {ProjectsRequests} from "./ajax/projects-requests";
 import {ArticlesRequests} from "./ajax/articles-requests";
+import {TagsRequests} from "./ajax/tags-requests";
 
 export class Ajax {
 
@@ -12,5 +13,6 @@ export class Ajax {
         this.owner = new OwnerRequests(this.images);
         this.projects = new ProjectsRequests(this.images);
         this.articles = new ArticlesRequests();
+        this.tags = new TagsRequests();
     }
 }

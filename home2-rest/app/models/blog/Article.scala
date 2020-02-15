@@ -14,7 +14,7 @@ import utils.WebUtils
 
 import scala.concurrent.ExecutionContext
 
-case class Article(title: String, id: String, published: Boolean, created: ZonedDateTime, content: String, tags: Seq[String]) extends Identifiable {
+case class Article(title: String, id: String, published: Boolean, created: ZonedDateTime, content: String, tags: Set[String]) extends Identifiable {
 }
 object Article {
 
@@ -27,7 +27,7 @@ object Article {
       (JsPath \ "published").read[Boolean] and
       (JsPath \ "created").read[ZonedDateTime] and
       (JsPath \ "content").read[String] and
-      (JsPath \ "tags").read[Seq[String]])
+      (JsPath \ "tags").read[Set[String]])
     .apply(Article.apply _)
 
 

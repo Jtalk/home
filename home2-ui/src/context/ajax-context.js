@@ -29,5 +29,7 @@ export function useLoader(loader, ...args) {
     if (!_.isEqual(prevArgs, args)) {
         setArgs(args);
     }
-    return useEffect(() => {dispatch(loader(...prevArgs))}, [loader, prevArgs, dispatch]);
+    return useEffect(() => {
+        dispatch(loader(...prevArgs))
+    }, [loader, prevArgs, dispatch]);
 }

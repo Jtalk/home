@@ -1,57 +1,34 @@
-import React, {useState} from "react";
+import React from "react";
 import {Button, Dropdown, Form, Grid, Segment, TextArea} from "semantic-ui-react";
 import {ErrorMessage, SuccessMessage} from "../form/form-message";
-import {useAjax, useLoader} from "../context/ajax-context";
+import {useAjax, useAjaxLoader, useLoader} from "../context/ajax-context";
 import {load, update} from "../data/reduce/article";
+import {load as loadTags} from "../data/reduce/tags";
 import {useDispatch} from "react-redux";
 import {useImmutableSelector} from "../utils/redux-store";
 import {useForm} from "./common/use-form";
 import {Loading, Updating} from "../data/reduce/global/enums";
 import {useStateChange} from "../utils/state-change";
 import {DatePicker} from "./common/date-picker";
-import {Redirect} from "react-router";
-
-// eslint-disable-next-line
-let tempArticle = {
-    article: {
-        id: "blog-entry-1",
-        title: "Blog Entry 1",
-        tags: ["Java", "React"],
-        content: "[h1]Header [abbr title=\"Lenghty explanation\"]LE[/abbr][/h1]" +
-            " [p]Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium," +
-            " totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae" +
-            " dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit," +
-            " sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt.",
-        published: true,
-        created: new Date(2017, 11, 15, 12, 30)
-    },
-    knownTags: [
-        {key: "CSS", text: "CSS", value: "CSS"},
-        {key: "React", text: "React", value: "React"},
-        {key: "Java", text: "Java", value: "Java"},
-        {key: "Scala", text: "Scala", value: "Scala"}
-    ]
-};
+import {useHistory} from "react-router-dom";
+import _ from "lodash";
 
 export const EditBlogArticle = function ({articleId}) {
 
     let ajax = useAjax();
     let dispatch = useDispatch();
+    let history = useHistory();
 
     useLoader(load, ajax, articleId);
+    useAjaxLoader(loadTags);
 
-    let article = useImmutableSelector("article", ["data"]);
-    let knownTags = [
-        {key: "CSS", text: "CSS", value: "CSS"},
-        {key: "React", text: "React", value: "React"},
-        {key: "Java", text: "Java", value: "Java"},
-        {key: "Scala", text: "Scala", value: "Scala"}
-    ];
+    let article = useImmutableSelector("article", "data");
+    let knownTags = useImmutableSelector("tags");
     let errorMessage = useImmutableSelector("article", ["errorMessage"]);
     let [loaded, loadingStatus] = useStateChange("article", ["loading"], {from: Loading.LOADING, to: Loading.READY});
     let [updated, updateStatus] = useStateChange("article", ["updating"], {from: Updating.UPDATING, to: Updating.UPDATED});
 
-    let {data, updater, onSubmit} = useForm({init: article, updateStatus});
+    let {data, updater, onSubmit, canSubmit} = useForm({init: article, updateStatus});
 
     let forceReload = loaded || updated;
     if (forceReload) {
@@ -69,13 +46,16 @@ export const EditBlogArticle = function ({articleId}) {
         return <Redirect to={editHref(article.id)}/>
     }
 
-    return <EditBlogArticleStateless article={data} submit={onSubmit(submit)} {...{knownTags, reset, updater, loadingStatus, updateStatus, errorMessage}}/>
+    return <EditBlogArticleStateless article={data} submit={onSubmit(submit)} {...{knownTags, reset, updater, canSubmit, loadingStatus, updateStatus, errorMessage}}/>
 };
 
-export const EditBlogArticleStateless = function ({article, knownTags, submit, reset, updater, loadingStatus, updateStatus, errorMessage}) {
-
-    let changeDateTime = (e, {value}) => {
-        updater.change("created")(null, {value});
+export const EditBlogArticleStateless = function ({article, knownTags = [], submit, reset, updater, canSubmit, loadingStatus, updateStatus, errorMessage}) {
+    knownTags = _.uniq([...knownTags, ...(article.tags || [])]);
+    let applyTags = (e, {options, value}) => {
+        updater.change("tags")(e, {value: _.uniq(asDropdownText(value, options))});
+    };
+    let addTag = (e, {value}) => {
+        updater.change("tags")(e, {value: _.uniq([...article.tags, value])});
     };
     return <Grid centered>
         <Grid.Column width={13}>
@@ -96,20 +76,25 @@ export const EditBlogArticleStateless = function ({article, knownTags, submit, r
                                 <Form.Group>
                                     <Form.Field>
                                         <label>Creation Time</label>
-                                        <DatePicker value={article.created || new Date()} onChange={changeDateTime}/>
+                                        <DatePicker value={article.created || new Date()} onChange={updater.change("created")}/>
                                     </Form.Field>
                                 </Form.Group>
                                 {/*There was a JS function on this field, onClick*/}
                                 <Form.Field>
                                     <label>Tags</label>
-                                    <Dropdown fluid multiple selection options={knownTags} value={article.tags || []} onChange={updater.change("tags")}/>
+                                    <Dropdown fluid multiple search selection
+                                              allowAdditions
+                                              options={asDropdownOptions(knownTags)}
+                                              value={(article.tags || []).map(_.toLower)}
+                                              onAddItem={addTag}
+                                              onChange={applyTags}/>
                                 </Form.Field>
                                 <SuccessMessage message="Changes successfully saved"/>
                                 <ErrorMessage message={errorMessage}/>
                             </Grid.Column>
                             <Grid.Column verticalAlign="middle" width={4}>
                                 <Button.Group>
-                                    <Button primary onClick={submit}>Save</Button>
+                                    <Button primary disabled={!canSubmit} loading={updateStatus === Updating.UPDATING} onClick={submit}>Save</Button>
                                     <Button.Or/>
                                     <Button secondary onClick={reset}>Cancel</Button>
                                 </Button.Group>
@@ -131,4 +116,19 @@ export const EditBlogArticleStateless = function ({article, knownTags, submit, r
 
 export function editHref(articleId) {
     return `/admin/blog/articles/${articleId}`;
+}
+
+function asDropdownOptions(tags) {
+    return _.chain(tags)
+        .map(t => ({text: t, value: _.toLower(t)}))
+        .uniqBy("value")
+        .value();
+}
+
+function asDropdownText(values, options) {
+    let dict = _.keyBy(options, "value");
+    return values.map(v => {
+        let found = dict[v];
+        return (found && found.text) || v;
+    });
 }

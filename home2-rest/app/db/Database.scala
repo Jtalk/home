@@ -14,11 +14,11 @@ import reactivemongo.api.collections.GenericCollection
 import reactivemongo.api.commands.WriteResult
 import reactivemongo.api.{Cursor, ReadConcern}
 import reactivemongo.core.errors.GenericDatabaseException
-import reactivemongo.play.json.{JSONSerializationPack, JsObjectDocumentWriter}
 import reactivemongo.play.json.collection.JSONCollection
-import utils.Extension._
-import utils.JsonUtils
+import reactivemongo.play.json.{JSONSerializationPack, JsObjectDocumentWriter}
 
+import scala.collection.TraversableLike
+import scala.collection.generic.CanBuildFrom
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -50,6 +50,17 @@ class Database @Inject()(cc: ControllerComponents, val reactiveMongoApi: Reactiv
 
   def findSingle[T](implicit ec: ExecutionContext, mt: ModelType[T], reads: Reads[T]): Future[Option[T]] = collection
     .flatMap(_.find(obj(), None).one[T])
+
+  def findMerged[T, R <: TraversableLike[V, R], V](fetcher: T => R)
+                                                         (implicit ec: ExecutionContext,
+                                                          mt: ModelType[T],
+                                                          readsT: Reads[T],
+                                                          readsR: Reads[R],
+                                                          canBuildFrom: CanBuildFrom[R, V, R]
+                                                         ): Future[R] = collection
+    .flatMap(_.find(obj(), None)
+      .cursor[T]()
+      .fold(canBuildFrom.apply().result())(_ ++ fetcher(_)))
 
   def update[T <: Identifiable](id: String, entity: T)(implicit ec: ExecutionContext,
                                                        mt: ModelType[T],
@@ -85,7 +96,6 @@ class Database @Inject()(cc: ControllerComponents, val reactiveMongoApi: Reactiv
     .flatMap(_ => find[T](idToLoad))
     .flatMap(o => o.map(v => Future(v))
       .getOrElse(Future.failed[T](new RuntimeException("We have just upserted the entry and now it does not exist..."))))
-
 
   // File processing
   def findFilesMetadataPage(page: Int, pageSize: Int)(implicit ec: ExecutionContext): Future[PaginatedResult[JsObject]] = reactiveMongoApi.asyncGridFS

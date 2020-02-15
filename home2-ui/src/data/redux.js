@@ -9,12 +9,14 @@ import {images} from "./reduce/images";
 import {projects} from "./reduce/projects";
 import {articles} from "./reduce/articles";
 import {article} from "./reduce/article";
+import {tags} from "./reduce/tags";
 
 export const reducers = {
     owner,
     projects,
     articles,
     article,
+    tags,
     footer,
     images,
 };
