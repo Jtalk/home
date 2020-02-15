@@ -43,6 +43,7 @@ export const EditBlogArticle = function ({articleId}) {
     };
 
     if (updated && article && article.id && article.id !== articleId) {
+        // avoiding change-state-from-within-render error from React
         setTimeout(() => history.push(editHref(article.id)), 0);
     }
 
