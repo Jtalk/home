@@ -8,11 +8,13 @@ import promiseMiddleware from "redux-promise-middleware";
 import {images} from "./reduce/images";
 import {projects} from "./reduce/projects";
 import {articles} from "./reduce/articles";
+import {article} from "./reduce/article";
 
 export const reducers = {
     owner,
     projects,
     articles,
+    article,
     footer,
     images,
 };

@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useState} from "react";
 import {Button, Card, Container, Divider, Form, Grid, Image, Loader, Segment} from "semantic-ui-react";
 import {useImmutableSelector} from "../utils/redux-store";
 import {Pagination} from "../shared/pagination";
@@ -13,11 +13,10 @@ import "./edit-images.css";
 import {Loading, Uploading} from "../data/reduce/global/enums";
 import {ImageUploadPreview} from "./common/image-upload-preview";
 
-export const EditImages = function ({ownerName}) {
-    useEffect(() => {
-        document.title = ownerName + ": Edit Images";
-    }, [ownerName]);
+export const EditImages = function () {
+
     useAjaxLoader(image_redux.load);
+
     let ajax = useAjax();
     let dispatch = useDispatch();
 
@@ -31,7 +30,7 @@ export const EditImages = function ({ownerName}) {
     let deleteImage = (id) => dispatch(image_redux.delete_(ajax, id, currentState));
     let uploadImage = (desc, file) => dispatch(image_redux.upload(ajax, desc, file));
 
-    return <EditImagesStateless {...{ownerName, loadingStatus, uploadStatus, errorMessage, images, pagination, uploadImage, deleteImage}}/>
+    return <EditImagesStateless {...{loadingStatus, uploadStatus, errorMessage, images, pagination, uploadImage, deleteImage}}/>
 };
 
 export const EditImagesStateless = function ({loadingStatus, uploadStatus, errorMessage, images, pagination, deleteImage, uploadImage}) {

@@ -53,7 +53,7 @@ function mainRoutes(ownerName) {
             createNavigation(
                 "Edit Bio",
                 "/admin/bio",
-                () => <EditBio ownerName={ownerName}/>,
+                () => <EditBio/>,
                 true),
             createComplexNavigation(
                 "Edit Projects",
@@ -65,14 +65,13 @@ function mainRoutes(ownerName) {
                 "Edit Blog",
                 "/admin/blog/articles",
                 "/admin/blog/articles/:articleId?",
-                params => <EditBlogRouter ownerName={ownerName}
-                                          articleId={params.match.params.articleId}/>,
+                params => <EditBlogRouter articleId={params.match.params.articleId}/>,
                 true),
             createComplexNavigation(
                 "Edit Images",
                 "/admin/images",
                 "/admin/images/:idx?",
-                params => <EditImages currentPageIdx={params.match.params.idx} ownerName={ownerName}/>,
+                params => <EditImages currentPageIdx={params.match.params.idx}/>,
                 true),
             createNavigation(
                 "Edit Footer",

@@ -55,6 +55,12 @@ class Updater {
         };
     };
 
+    changeToggle = (...path) => {
+        return (e, {checked, value, ...rest}) => {
+            return this.change(path)(e, {value: checked, ...rest});
+        }
+    };
+
     changeFile = (name) => {
         return (e) => {
             let file = e.target.files[0];

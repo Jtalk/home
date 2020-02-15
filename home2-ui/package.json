@@ -5,6 +5,7 @@
   "dependencies": {
     "assert": "^1.5.0",
     "bbcode-to-react": "^0.2.9",
+    "dayjs": "^1.8.20",
     "duration-js": "^4.0.0",
     "immutable": "^4.0.0-rc.12",
     "lodash": "^4.17.15",
@@ -23,7 +24,6 @@
     "redux-promise-middleware": "^6.1.2",
     "redux-thunk": "^2.3.0",
     "replace-string": "^2.0.0",
-    "semantic-ui-calendar-react": "^0.15.3",
     "semantic-ui-css": "^2.4.1",
     "semantic-ui-react": "^0.88.2",
     "sleepjs": "^3.0.1",

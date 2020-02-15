@@ -9,14 +9,24 @@ export class ArticlesRequests {
         let response = await request.get(`/blog/articles?page=${page}&pageSize=${pageSize}`)
             .use(api);
         await apiDelay();
-        return _.mapKeys(response.body, (v, k) => k === "data" ? "articles" : k);
+        let result = _.mapKeys(response.body, (v, k) => k === "data" ? "articles" : k);
+        result.articles = result.articles.map(datesFromRest);
+        return result;
+    }
+
+    async loadOne(articleId) {
+        let response = await request.get(`/blog/articles/${articleId}`)
+            .use(api);
+        await apiDelay();
+        return datesFromRest(response.body);
     }
 
     async update(id, update) {
+        update = datesToRest(update);
         let response = await request.put(`/blog/articles/${id}`, update)
             .use(api);
         console.info(`Article ${id} updated with ${response.status}: ${response.text}`);
-        return response.body;
+        return datesFromRest(response.body);
     }
 
     async remove(id) {
@@ -24,4 +34,22 @@ export class ArticlesRequests {
             .use(api);
         await apiDelay();
     }
+}
+
+function asDate(restDate) {
+    return new Date(restDate);
+}
+
+function asString(date) {
+    return date.toISOString();
+}
+
+function datesFromRest(obj) {
+    obj.created = obj.created && asDate(obj.created);
+    return obj;
+}
+
+function datesToRest(obj) {
+    obj.created = obj.created && asString(obj.created);
+    return obj;
 }

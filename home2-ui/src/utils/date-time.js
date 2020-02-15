@@ -1,4 +1,5 @@
 import what from "what.js"
+import moment from "moment";
 
 export function formatDateTime(date) {
     switch (what(date)) {
@@ -13,4 +14,9 @@ export function formatDateTime(date) {
         default:
             throw Error(`Unknown date: ${date}`);
     }
+}
+
+export function normaliseFormat(date) {
+    console.log("Date is", date);
+    return date;
 }

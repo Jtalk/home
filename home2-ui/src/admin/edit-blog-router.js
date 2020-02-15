@@ -1,5 +1,5 @@
 import React from "react";
-import EditBlogArticle from "./edit-blog-article";
+import {EditBlogArticle} from "./edit-blog-article";
 import {EditBlog} from "./edit-blog";
 
 export const EditBlogRouter = function({articleId}) {
