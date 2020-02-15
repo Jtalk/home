@@ -42,8 +42,8 @@ export const EditBlogArticle = function ({articleId}) {
         updater.reloaded(article);
     };
 
-    if (article && article.id && article.id !== articleId) {
-        return <Redirect to={editHref(article.id)}/>
+    if (updated && article && article.id && article.id !== articleId) {
+        setTimeout(() => history.push(editHref(article.id)), 0);
     }
 
     return <EditBlogArticleStateless article={data} submit={onSubmit(submit)} {...{knownTags, reset, updater, canSubmit, loadingStatus, updateStatus, errorMessage}}/>
