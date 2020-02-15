@@ -1,6 +1,10 @@
 import {useSelector} from "react-redux";
 
-export function useImmutableSelector(storeSegment, path) {
+export function useImmutableSelector(storeSegment, ...path) {
+    // Support deprecated use with supplying an array as path
+    if (path.length === 1 && path[0].length !== undefined && typeof path[0] !== "string") {
+        path = path[0];
+    }
     let result = useSelector(store => {
         return store && loadAsObj(store[storeSegment], path)
     });
