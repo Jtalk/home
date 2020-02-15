@@ -19,13 +19,3 @@ export class SuccessMessage extends React.Component {
         </Message>
     }
 }
-
-export function formStateClass(executed, errors) {
-    if (!!errors) {
-        return "error";
-    } else if (executed) {
-        return "success";
-    } else {
-        return "";
-    }
-}

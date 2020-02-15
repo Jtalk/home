@@ -1,50 +1,54 @@
 import React from "react";
 import {Button, Form, Icon, Modal} from "semantic-ui-react";
-import {ErrorMessage, formStateClass} from "../form/form-message";
+import {ErrorMessage} from "../form/form-message";
+import {useDispatch} from "react-redux";
+import {update} from "../data/reduce/article";
+import {useAjax} from "../context/ajax-context";
+import {useForm} from "./common/use-form";
+import {useImmutableSelector} from "../utils/redux-store";
+import {Updating} from "../data/reduce/global/enums";
+import {useStateChange} from "../utils/state-change";
+import {useHistory} from "react-router";
 
-export default class AddBlogArticleModal extends React.Component {
+const INITIAL = () => ({title: '', id: '', });
 
-    constructor(props) {
-        super(props);
-        this.state = {
-            success: undefined,
-            errorMessage: undefined
-        };
+export const AddBlogArticleModal = function () {
+
+    let ajax = useAjax();
+    let dispatch = useDispatch();
+    let history = useHistory();
+
+    let errorMessage = useImmutableSelector("article", "errorMessage");
+    let [updated] = useStateChange("article", ["updating"], {from: Updating.UPDATING, to: Updating.UPDATED});
+
+    let {data, updater, onSubmit, canSubmit} = useForm({init: INITIAL()});
+
+    let submit = (article) => {
+        dispatch(update(ajax, article.id, article));
+    };
+    let clear = () => {
+        updater.reloaded(INITIAL());
+    };
+
+    if (updated) {
+        setTimeout(() => history.push(`/admin/blog/articles/${data.id}`), 1);
     }
 
-
-    render() {
-        return <Modal size="small" onClose={this._clear} trigger={<Button><Icon name="plus"/>Add entry</Button>}>
-            <Icon name="close"/>
-            <Modal.Header>Add entry</Modal.Header>
-            <Modal.Content>
-                <Form className={formStateClass(this.state.success, this.state.errorMessage)}>
-                    <Form.Field>
-                        <label>Blog entry title</label>
-                        <input placeholder="Title" onChange={this._onChange}/>
-                    </Form.Field>
-                    <Form.Field>
-                        <label>Short name for navigation</label>
-                        <input placeholder="(letters, numbers, dashes)" onChange={this._onChange}/>
-                    </Form.Field>
-                    <ErrorMessage errorMessage={this.state.errorMessage}/>
-                    <Button positive onClick={this._createBlogArticle}>
-                        Create
-                    </Button>
-                </Form>
-            </Modal.Content>
-        </Modal>
-    }
-
-    _onChange(event) {
-
-    }
-
-    _createBlogArticle(event) {
-
-    }
-
-    _clear() {
-
-    }
-}
+    return <Modal size="small" closeIcon onClose={clear} trigger={<Button><Icon name="plus"/>Add entry</Button>}>
+        <Modal.Header>Add entry</Modal.Header>
+        <Modal.Content>
+            <Form error={!!errorMessage}>
+                <Form.Field>
+                    <label>Blog entry title</label>
+                    <Form.Input placeholder="Title" value={data.title} onChange={updater.change("title")}/>
+                </Form.Field>
+                <Form.Field>
+                    <label>Short name for navigation</label>
+                    <Form.Input placeholder="(letters, numbers, dashes)" value={data.id} onChange={updater.change("id")}/>
+                </Form.Field>
+                <ErrorMessage errorMessage={errorMessage}/>
+                <Button positive disabled={!canSubmit} onClick={onSubmit(submit)}>Create</Button>
+            </Form>
+        </Modal.Content>
+    </Modal>
+};

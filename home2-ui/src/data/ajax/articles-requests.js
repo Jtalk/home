@@ -37,7 +37,11 @@ export class ArticlesRequests {
 }
 
 function asDate(restDate) {
-    return new Date(restDate);
+    let result = Date.parse(restDate);
+    if (isNaN(result)) {
+        throw Error(`Cannot parse ${restDate} as date`);
+    }
+    return new Date(result);
 }
 
 function asString(date) {

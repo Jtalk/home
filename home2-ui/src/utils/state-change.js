@@ -3,7 +3,7 @@ import {useState} from "react";
 import _ from "lodash";
 
 export function useStateChange(storeSegment, statePath, {from, to}) {
-    let status = useImmutableSelector(storeSegment, statePath);
+    let status = useImmutableSelector(storeSegment, ...statePath);
     let [currentStatus, setCurrentStatus] = useState(status);
     from = from && _.castArray(from);
     to = to && _.castArray(to);

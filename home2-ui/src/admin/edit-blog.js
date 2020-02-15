@@ -2,7 +2,7 @@ import React from "react";
 import {Button, Grid, Icon, List, Segment} from "semantic-ui-react";
 import {formatDateTime} from "../utils/date-time";
 import {Link} from "react-router-dom";
-import AddBlogArticleModal from "./add-blog-article-modal";
+import {AddBlogArticleModal} from "./add-blog-article-modal";
 import {useAjax, useLoader} from "../context/ajax-context";
 import {loadPage as articlesLoader, remove} from "../data/reduce/articles";
 import {useDispatch} from "react-redux";
