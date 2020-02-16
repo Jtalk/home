@@ -61,6 +61,48 @@ class Updater {
         }
     };
 
+    reorder = (fromIndex, toIndex, ...path) => {
+        return (e) => {
+            let collection = _.get(this.data, path) || [];
+            if (fromIndex < 0 || fromIndex >= collection.length) {
+                throw Error(`Cannot move from an invalid index ${fromIndex}, collection ${collection.length}`);
+            }
+            if (toIndex < 0 || toIndex >= collection.length) {
+                console.error(`Cannot move from ${fromIndex} to an invalid index ${toIndex}, collection ${collection.length}`);
+                return;
+            }
+            let copy = [...collection];
+            let item = copy[fromIndex];
+            copy.splice(fromIndex, 1);
+            copy.splice(toIndex, 0, item);
+            this.change(path)(e, {value: copy});
+        };
+    };
+
+    changeItem = (index, ...path) => {
+        return (e, {value}) => {
+            let collection = _.get(this.data, path);
+            if (index < 0 || index >= collection.length) {
+                throw Error(`Cannot replace an item at invalid index ${index}, collection ${collection.length}`);
+            }
+            let copy = [...collection];
+            copy.splice(index, 1, value);
+            this.change(path)(e, {value: copy});
+        };
+    };
+
+    removeItem = (index, ...path) => {
+        return (e) => {
+            let collection = _.get(this.data, path) || [];
+            if (index < 0 || index >= collection.length) {
+                throw Error(`Cannot remove item from an invalid index ${index}, collection ${collection.length}`);
+            }
+            let copy = [...collection];
+            copy.splice(index, 1);
+            this.change(path)(e, {value: copy});
+        };
+    };
+
     changeFile = (name) => {
         return (e) => {
             let file = e.target.files[0];

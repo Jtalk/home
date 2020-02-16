@@ -150,6 +150,10 @@ export const EditProject = function ({project, errorMessage, updateStatus, delet
         submit(project.id, editedProject, files);
     };
 
+    let reorderLink = (index, direction) => updater.reorder(index, index + direction, "links");
+    let updateLink = (index) => updater.changeItem(index, "links");
+    let removeLink = (index) => updater.removeItem(index, "links");
+
     let {onSubmit, data, updater, canSubmit, edited} = useForm({
         init: project,
         updateStatus
@@ -174,7 +178,7 @@ export const EditProject = function ({project, errorMessage, updateStatus, delet
                         <Form.Input label="Project Title" placeholder="Title" value={data.title || ''} onChange={updater.change("title")}/>
                         <Form.Input label="Internal ID" placeholder="(letters, digits, dashes)" value={data.id || ''} onChange={updater.change("id")}/>
                         <Form.Checkbox toggle label="This project is published" checked={!!data.published} onChange={updater.changeToggle("published")}/>
-                        <ProjectLinks className="field" links={data.links} setLinks={links => updater.change("links")(null, {value: links})}/>
+                        <ProjectLinks className="field" links={data.links} reorder={reorderLink} update={updateLink} remove={removeLink}/>
                         <ErrorMessage message={errorMessage}/>
                     </Grid.Column>
                     <Grid.Column width={5}>
@@ -199,21 +203,21 @@ export const EditProject = function ({project, errorMessage, updateStatus, delet
     </div>
 };
 
-export const ProjectLinks = function ({links, setLinks, className}) {
+export const ProjectLinks = function ({links, setLinks, className, reorder, update, remove}) {
     return <div className={className}>
         <label>Project links <Icon link name="plus" onClick={() => setLinks([...links, emptyLink()])}/></label>
         Edit and rearrange links shown at the left panel
         <List celled verticalAlign="middle" ordered>
             {
                 links.map((link, index, links) => {
-                    return <EditableProjectLink key={link.id} {...{link, links, setLinks, index}}/>
+                    return <EditableProjectLink key={link.id} {...{link, links, index, reorder, update, remove}}/>
                 })
             }
         </List>
     </div>
 };
 
-export const EditableProjectLink = function ({link, index, setLinks, links}) {
+export const EditableProjectLink = function ({link, index, links, reorder, update, remove}) {
 
     let [editing, setEditing] = useState();
 
@@ -224,24 +228,20 @@ export const EditableProjectLink = function ({link, index, setLinks, links}) {
 
     let edit = () => setEditing(true);
     let cancelEdit = () => setEditing(false);
-    let reorder = (direction) => reorderLink(setLinks, links, index, index + direction);
-    let remove = () => removeLink(setLinks, links, index);
-    let update = (updatedLink) => {
-        let copy = [...links];
-        copy.splice(index, 1, updatedLink);
-        setLinks(copy);
+    let updateLink = (e, {value}) => {
+        update(index)(e, {value});
         setEditing(false);
     };
 
     if (editing) {
         return <ProjectEditLink link={link}
-                                updateLink={update}
+                                updateLink={updateLink}
                                 cancelEdit={cancelEdit}/>
     } else {
         return <ProjectLink link={link}
                             edit={edit}
-                            remove={remove}
-                            reorder={reorder}
+                            remove={remove(index)}
+                            reorder={direction => reorder(index, direction)}
                             canMoveUp={index !== 0}
                             canMoveDown={index !== links.length - 1}/>
     }
@@ -264,7 +264,7 @@ export const ProjectEditLink = function ({link, updateLink, cancelEdit}) {
         let newLink = Object.assign({}, editedLink, {[name]: value});
         setEditedLink(newLink);
     };
-    let applyEdit = () => {
+    let applyEdit = (e) => {
         let errorMessage = "";
         if (!editedLink.name) {
             errorMessage += "name must be defined";
@@ -276,7 +276,7 @@ export const ProjectEditLink = function ({link, updateLink, cancelEdit}) {
         if (errorMessage) {
             setErrorMessage(errorMessage);
         } else {
-            updateLink(editedLink);
+            updateLink(e, {value: editedLink});
             setBeingEdited(false);
         }
     };
@@ -317,7 +317,7 @@ export const ProjectLink = function ({link, canMoveUp, canMoveDown, edit, reorde
             </LockableIcon>
             <Icon link name="remove"
                   color="red"
-                  onClick={remove()}/>
+                  onClick={remove}/>
         </List.Content>
         <List.Content>
             <List.Header>{link.name}</List.Header>
@@ -335,24 +335,6 @@ export const LockableIcon = function ({locked, children}) {
         return _.castArray(children);
     }
 };
-
-function removeLink(setLinks, links, index) {
-    return (e) => {
-        let copy = [...links];
-        copy.splice(index, 1);
-        setLinks(copy);
-    }
-}
-
-function reorderLink(setLinks, links, fromIndex, toIndex) {
-    return (e) => {
-        let copy = [...links];
-        let item = copy[fromIndex];
-        copy.splice(fromIndex, 1);
-        copy.splice(toIndex, 0, item);
-        setLinks(copy);
-    };
-}
 
 function hasNewProject(projects) {
     return _.find(projects, v => v.id === NEW_PROJECT_ID);
