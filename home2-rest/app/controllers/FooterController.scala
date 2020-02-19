@@ -36,4 +36,9 @@ class FooterController @Inject()(cc: ControllerComponents, db: Database)
       .fomap(Json.toJson[Seq[FooterLogo]])
       .map(WebUtils.asHttp(_))
   }
+
+  def update(): Action[Footer] = Action.async(Footer.jsonParser) { implicit request: Request[Footer] =>
+    db.updateSingle[Footer](request.body)
+      .map(Ok[Footer])
+  }
 }

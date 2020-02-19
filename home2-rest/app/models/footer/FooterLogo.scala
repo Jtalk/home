@@ -19,7 +19,7 @@ object FooterLogo {
   implicit val jsonReader: Reads[FooterLogo] = (
     (JsPath \ "name").read(minLength[String](1)) and
       (JsPath \ "src").read(minLength[String](1)) and
-      (JsPath \ "href").read(optionNoError[String]))
+      (JsPath \ "href").read(optionWithNull[String]))
     .apply(FooterLogo.apply _)
 
 

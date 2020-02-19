@@ -28,6 +28,7 @@ POST        /images                    controllers.ImageController.upload(descri
 GET         /footer                    controllers.FooterController.loadFooter
 GET         /footer/links              controllers.FooterController.loadFooterLinks
 GET         /footer/logos              controllers.FooterController.loadFooterLogos
+PUT         /footer                    controllers.FooterController.update
 
 POST        /logs                      controllers.LoggerController.post
 

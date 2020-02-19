@@ -5,7 +5,7 @@ import models.ModelType.ModelType
 import play.api.http.Writeable
 import play.api.libs.functional.syntax._
 import play.api.libs.json.Reads._
-import play.api.libs.json.{JsPath, Json, Reads, Writes}
+import play.api.libs.json.{JsPath, Json, OWrites, Reads}
 import play.api.mvc.PlayBodyParsers
 import utils.WebUtils
 
@@ -17,7 +17,7 @@ case class Footer(links: Seq[FooterLink], logos: Seq[FooterLogo]) {
 object Footer {
 
   implicit val model: ModelType[Footer] = ModelType.FOOTER
-  implicit val jsonWriter: Writes[Footer] = Json.writes[Footer]
+  implicit val jsonWriter: OWrites[Footer] = Json.writes[Footer]
   implicit val jsonWriteable: Writeable[Footer] = Writeable.writeableOf_JsValue.map[Footer](Json.toJson _)
   implicit val jsonReader: Reads[Footer] = (
     (JsPath \ "links").read[Seq[FooterLink]] and
