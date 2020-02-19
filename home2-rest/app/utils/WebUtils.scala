@@ -17,7 +17,7 @@ object WebUtils {
   }
 
   def bodyParser[T](implicit reads: Reads[T], bodyParsers: PlayBodyParsers, ec: ExecutionContext): BodyParser[T] = bodyParsers.json
-    .map(asObject(_)(reads))
+    .map(asObject(_))
     .validate(_.left.map(BadRequest.apply[JsValue]))
 
   private def asEither[T](js: JsResult[T]) = js.asEither.left.map(JsError.toJson)
