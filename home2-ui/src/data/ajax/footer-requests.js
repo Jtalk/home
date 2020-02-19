@@ -11,4 +11,10 @@ export class FooterRequests {
         return response.body
     }
 
+    async update(footer) {
+        let response = await request.put("/footer", footer)
+            .use(api);
+        await apiDelay();
+        return response.body;
+    }
 }

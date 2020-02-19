@@ -4,7 +4,7 @@ import {Updating} from "../../data/reduce/global/enums";
 
 const FILES_PATH = "__files";
 
-export function useForm({init, updateStatus} = {}) {
+export function useForm({init, updateStatus, autoSubmit} = {}) {
     const [submitting, setSubmitting] = useState(false);
     const [data, setData] = useState(init || {});
     const [edited, setEdited] = useState(false);
@@ -15,29 +15,37 @@ export function useForm({init, updateStatus} = {}) {
     } else if (submitting && updateStatus === Updating.ERROR) {
         setSubmitting(false);
     }
+    const submit = (onSubmit, update) => {
+        console.debug("Submitting form", update);
+        let copy = Object.assign({}, update);
+        delete copy[FILES_PATH];
+        onSubmit(copy, update[FILES_PATH] || {});
+        console.debug("Form submit success");
+        setSubmitting(true);
+    };
     const onSubmit = (onSubmit) => {
         return (e) => {
             if (!edited) {
                 throw Error("The form is being submitted without any preceding edits, likely a submit button enable/disable screwup");
             }
-            console.debug("Submitting form", data);
-            let update = Object.assign({}, data);
-            delete update[FILES_PATH];
-            onSubmit(update, data[FILES_PATH] || {});
-            console.debug("Form submit success");
-            setSubmitting(true);
+            submit(onSubmit, data);
         };
     };
-    const updater = new Updater(data, setData, setEdited);
+    let autoSubmitter = () => {};
+    if (autoSubmit) {
+        autoSubmitter = (data) => submit(autoSubmit, data);
+    }
+    const updater = new Updater(data, setData, setEdited, autoSubmitter);
     return {onSubmit, data, updater, edited, submitting, canSubmit: edited && !submitting};
 }
 
 class Updater {
 
-    constructor(data, setData, setEdited) {
+    constructor(data, setData, setEdited, autoSubmit) {
         this.data = data;
         this.setData = setData;
         this.setEdited = setEdited;
+        this.autoSubmit = autoSubmit;
     }
 
     change = (...path) => {
@@ -51,6 +59,7 @@ class Updater {
                 _.set(newData, path, value);
                 this.setData(newData);
                 this.setEdited(true);
+                this.autoSubmit(newData);
             }
         };
     };
