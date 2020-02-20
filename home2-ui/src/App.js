@@ -12,13 +12,13 @@ import {EditBlogRouter} from "./admin/edit-blog-router";
 import {EditImages} from "./admin/edit-images";
 import NotFound from "./error/not-found";
 import {createMultiRoutingConfig, createRoutes, createRoutingConfig} from "./utils/routing";
-import ProjectsLoader from "./projects/projects-loader";
 import {Footer} from "./footer/footer";
 import "./utils/config";
 import {Titled} from "react-titled";
 import * as owner from "./data/reduce/owner";
 import {useAjaxLoader} from "./context/ajax-context";
 import {useImmutableSelector} from "./utils/redux-store";
+import {ProjectsRouter} from "./projects/projects-router";
 
 export const App = function () {
     let ownerName = useImmutableSelector("owner", ["data", "name"]);
@@ -43,12 +43,11 @@ function buildRoutes(navigation) {
     });
 }
 
-function mainRoutes(ownerName) {
+function mainRoutes() {
     return [
-        createNavigation("About", "/", () => <About ownerName={ownerName}/>, true),
-        createNavigation("Projects", "/projects", () => <ProjectsLoader
-            ownerName={ownerName}/>, false),
-        createNavigation("Blog", "/blog/articles", () => <Blog ownerName={ownerName}/>, false),
+        createNavigation("About", "/", () => <About/>, true),
+        createNavigation("Projects", "/projects", () => <ProjectsRouter/>, false),
+        createNavigation("Blog", "/blog/articles", () => <Blog/>, false),
         createNestedNavigation("Admin", [
             createNavigation(
                 "Edit Bio",
@@ -76,7 +75,7 @@ function mainRoutes(ownerName) {
             createNavigation(
                 "Edit Footer",
                 "/admin/footer",
-                () => <EditFooter ownerName={ownerName}/>,
+                () => <EditFooter/>,
                 true)
         ])
     ]
