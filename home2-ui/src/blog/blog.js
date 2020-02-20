@@ -1,7 +1,7 @@
 import React from "react";
 import BlogArticle from "./blog-article";
 import {Grid, Menu, Segment} from "semantic-ui-react";
-import OwnerCard from "../home/owner-card";
+import {OwnerCard} from "../home/owner-card";
 import LatestPosts from "../home/latest-posts";
 import {Link, Route} from "react-router-dom";
 import BlogArticleLoader from "./blog-article-loader";

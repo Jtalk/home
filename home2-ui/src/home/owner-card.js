@@ -5,36 +5,32 @@ import {imageUrl} from "../utils/image";
 import {connect} from "react-redux";
 import {Loading} from "../data/reduce/global/enums";
 import _ from "lodash";
+import {useImmutableSelector} from "../utils/redux-store";
+import {useAjaxLoader} from "../context/ajax-context";
+import {load} from "../data/reduce/owner";
 
-class OwnerCard extends React.Component {
+export const OwnerCard = function () {
 
-    render() {
-        return <Card>
-            <ImagePlaceholderOr square loading={this.props.loading === Loading.LOADING}>
-                {this.props.owner.photoId && <Image wrapped src={imageUrl(this.props.owner.photoId)}/>}
-            </ImagePlaceholderOr>
-            <Card.Content>
-                <ContentPlaceholderOr header loading={this.props.loading === Loading.LOADING} lines={3}>
-                    <Card.Header>{this.props.owner.name}</Card.Header>
-                    <Card.Meta>{this.props.owner.nickname}</Card.Meta>
-                    <Card.Description>{this.props.owner.description}</Card.Description>
-                </ContentPlaceholderOr>
-            </Card.Content>
-            <Card.Content extra icon="user">
-                <LinePlaceholderOr length="short" loading={this.props.loading === Loading.LOADING}>
-                    {_.get(this.props.owner, "contacts.email.value", null)}
-                </LinePlaceholderOr>
-            </Card.Content>
-        </Card>
-    }
-}
+    useAjaxLoader(load);
 
-function mapToProps(state) {
-    let data = state.owner.toJS();
-    return {
-        loading: data.loading,
-        owner: data.data
-    };
-}
+    let owner = useImmutableSelector("owner", "data");
+    let loading = useImmutableSelector("owner", "loading");
 
-export default connect(mapToProps, null)(OwnerCard);
+    return <Card>
+        <ImagePlaceholderOr square loading={loading === Loading.LOADING}>
+            {owner.photoId && <Image wrapped src={imageUrl(owner.photoId)}/>}
+        </ImagePlaceholderOr>
+        <Card.Content>
+            <ContentPlaceholderOr header loading={loading === Loading.LOADING} lines={3}>
+                <Card.Header>{owner.name}</Card.Header>
+                <Card.Meta>{owner.nickname}</Card.Meta>
+                <Card.Description>{owner.description}</Card.Description>
+            </ContentPlaceholderOr>
+        </Card.Content>
+        <Card.Content extra icon="user">
+            <LinePlaceholderOr length="short" loading={loading === Loading.LOADING}>
+                {_.get(owner, "contacts.email.value", null)}
+            </LinePlaceholderOr>
+        </Card.Content>
+    </Card>
+};

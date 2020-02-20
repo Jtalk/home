@@ -1,7 +1,7 @@
 import React from 'react';
 import './App.css';
 import {Header, buildLink, buildSubmenuLinks} from './header/header';
-import About from "./home/about";
+import {About} from "./home/about";
 import {Container} from "semantic-ui-react";
 import {BrowserRouter as Router, Switch} from "react-router-dom";
 import Blog from "./blog/blog";
