@@ -3,6 +3,7 @@ package controllers
 import db.Database
 import javax.inject._
 import models.project.Project
+import play.api.Logger
 import play.api.libs.json._
 import play.api.mvc._
 import utils.WebUtils
@@ -21,8 +22,10 @@ class ProjectController @Inject()(cc: ControllerComponents, db: Database)
       .map(WebUtils.asHttp(_))
   }
 
-  def all() = Action.async { implicit request: Request[AnyContent] =>
-    db.findAll[Project]
+  def all(published: Boolean) = Action.async { implicit request: Request[AnyContent] =>
+    Logger("Wtf").error(s"Published is ${published}");
+    val filter = if (published) Json.obj("published" -> true) else Json.obj();
+    db.findAll[Project](filter)
       .map(Json.toJson(_))
       .map(Ok.apply(_))
   }

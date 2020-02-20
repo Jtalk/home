@@ -8,7 +8,7 @@ GET         /owner                     controllers.OwnerController.info
 POST        /owner                     controllers.OwnerController.update
 GET         /owner/bio                 controllers.OwnerController.bio
 
-GET         /projects                  controllers.ProjectController.all
+GET         /projects                  controllers.ProjectController.all(published: Boolean ?= true)
 GET         /projects/:id              controllers.ProjectController.project(id)
 PUT         /projects/:id              controllers.ProjectController.update(id)
 DELETE      /projects/:id              controllers.ProjectController.delete(id)

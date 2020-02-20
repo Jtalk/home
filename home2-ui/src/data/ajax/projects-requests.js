@@ -8,8 +8,9 @@ export class ProjectsRequests {
         this.images = images;
     }
 
-    async load() {
+    async load(publishedOnly) {
         let response = await request.get("/projects")
+            .query({published: publishedOnly})
             .use(api);
         await apiDelay();
         return response.body

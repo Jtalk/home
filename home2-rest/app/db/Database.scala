@@ -35,8 +35,8 @@ class Database @Inject()(cc: ControllerComponents, val reactiveMongoApi: Reactiv
 
   def find[T](id: String)(implicit ec: ExecutionContext, mt: ModelType[T], reads: Reads[T]): Future[Option[T]] = findWith(obj("id" -> id))
 
-  def findAll[T](implicit ec: ExecutionContext, mt: ModelType[T], reads: Reads[T]): Future[Seq[T]] =  collection
-    .flatMap(_.find(obj(), None)
+  def findAll[T](filter: JsObject = obj())(implicit ec: ExecutionContext, mt: ModelType[T], reads: Reads[T]): Future[Seq[T]] =  collection
+    .flatMap(_.find(filter, None)
       .cursor[T]()
       .collect[Seq](MAX_ALL_ITEMS, Cursor.FailOnError()))
 

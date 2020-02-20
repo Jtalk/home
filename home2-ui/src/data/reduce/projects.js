@@ -40,11 +40,11 @@ export function projects(state = Map({loading: Loading.LOADING, data: []}), acti
     }
 }
 
-export function load(ajax) {
+export function load(ajax, publishedOnly=false) {
     return async dispatch => {
         dispatch(action(Action.LOAD));
         try {
-            let projects = await ajax.projects.load();
+            let projects = await ajax.projects.load(publishedOnly);
             projects = _.sortBy(projects, "order");
             dispatch(newState(Action.LOADED, projects));
         } catch (e) {
@@ -52,6 +52,10 @@ export function load(ajax) {
             dispatch(error(Action.LOAD_ERROR, e.toLocaleString()));
         }
     }
+}
+
+export function loadPublished(ajax) {
+    return load(ajax, true);
 }
 
 function updateState(currentState, update) {
