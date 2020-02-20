@@ -1,18 +1,13 @@
 import React from "react";
 import "../bbcode/tags";
 import {Container} from "semantic-ui-react";
+import {Titled} from "react-titled";
 
-class WebError extends React.Component {
+export const WebError = function ({httpCode, message}) {
 
-    render() {
-        return <Container text textAlign="center">
-            {this.props.httpCode}: {this.props.message}
+    return <Titled title={() => httpCode}>
+        <Container text textAlign="center">
+            {httpCode}: {message}
         </Container>
-    }
-
-    componentDidMount() {
-        document.title = this.props.httpCode;
-    }
-}
-
-export default WebError;
+    </Titled>
+};

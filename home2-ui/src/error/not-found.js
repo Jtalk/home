@@ -1,11 +1,9 @@
 import React from "react";
 import "../bbcode/tags";
-import WebError from "./web-error";
+import {WebError} from "./web-error";
 
-export default class NotFound extends React.Component {
+export const NotFound = function ({location}) {
 
-    render() {
-        console.log("Page not found: " + this.props.location);
-        return <WebError httpCode={404} message="Not Found"/>
-    }
-}
+    console.log("Page not found: " + location);
+    return <WebError httpCode={404} message="Not Found"/>
+};

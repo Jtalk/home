@@ -10,7 +10,7 @@ import {EditProjects} from "./admin/edit-projects";
 import {EditFooter} from "./admin/edit-footer";
 import {EditBlogRouter} from "./admin/edit-blog-router";
 import {EditImages} from "./admin/edit-images";
-import NotFound from "./error/not-found";
+import {NotFound} from "./error/not-found";
 import {createMultiRoutingConfig, createRoutes, createRoutingConfig} from "./utils/routing";
 import {Footer} from "./footer/footer";
 import "./utils/config";
