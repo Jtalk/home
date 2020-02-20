@@ -15,7 +15,7 @@ export const Action = {
 };
 
 const DEFAULT_PAGINATION = {
-    page: 0,
+    current: 0,
     pageSize: 0,
     total: 0
 };

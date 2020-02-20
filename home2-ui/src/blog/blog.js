@@ -1,84 +1,67 @@
 import React from "react";
-import BlogArticle from "./blog-article";
+import {BlogArticle} from "./blog-article";
 import {Grid, Menu, Segment} from "semantic-ui-react";
 import {OwnerCard} from "../home/owner-card";
 import LatestPosts from "../home/latest-posts";
 import {Link, Route} from "react-router-dom";
-import BlogArticleLoader from "./blog-article-loader";
+import {useImmutableSelector} from "../utils/redux-store";
+import {useAjax, useLoader} from "../context/ajax-context";
+import {loadPage} from "../data/reduce/articles";
+import {useDispatch} from "react-redux";
+import _ from "lodash";
 
-export default class Blog extends React.Component {
+export const Blog = function ({page = 1}) {
 
-    constructor(props) {
-        super(props);
+    let ajax = useAjax();
+    let dispatch = useDispatch();
 
-        this.state = {
-            articles: [
+    useLoader(loadPage, ajax, page - 1);
+
+    let articles = useImmutableSelector("articles", "data", "articles");
+    let pagination = useImmutableSelector("articles", "data", "pagination");
+
+    return <Grid centered stackable columns={2}>
+        <Grid.Row>
+            <Grid.Column width={11}>
                 {
-                    title: "Blog Entry 1",
-                    href: "/blog/articles/blog-entry-1",
-                    tags: [{name: "Hello"}, {name: "Tags!"}],
-                    content: "[h1]Header [abbr title=\"Lenghty explanation\"]LE[/abbr][/h1]" +
-                        " [p]Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium," +
-                        " totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae" +
-                        " dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit," +
-                        " sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt.",
-                    comments: [],
-                    createTime: new Date(2017, 11, 15, 12, 30)
-                },
-                {
-                    title: "Blog Entry 2",
-                    href: "/blog/articles/blog-entry-2",
-                    tags: [{name: "Hello"}, {name: "Other"}, {name: "Tags!"}],
-                    content: "[h1]Header [abbr title=\"Lenghty explanation\"]LE[/abbr][/h1]" +
-                        " [p]Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium," +
-                        " totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae" +
-                        " dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit," +
-                        " sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt.",
-                    comments: [],
-                    createTime: new Date(2018, 5, 3, 11, 13)
+                    blogRouting(
+                        () => articles.map(article => <BlogArticle preview key={article.title} id={article.id} href={`/blog/articles/${article.id}`} article={article} />),
+                        articleId => {
+                            let article = _.find(articles, a => a.id === articleId);
+                            return <BlogArticle href={`/blog/articles/${articleId}`} id={articleId} article={article}/>
+                        })
                 }
-            ]
-        };
-    }
+            </Grid.Column>
+            <Grid.Column width={3}>
+                <OwnerCard/>
+                <LatestPosts/>
+            </Grid.Column>
+        </Grid.Row>
+        {
+            blogRouting(
+            () =>
+                <Grid.Row>
+                    <Segment floated="right" basic compact>
+                        <Pagination pagination={pagination}/>
+                    </Segment>
+                </Grid.Row>,
+            () => null
+        )}
+    </Grid>
+};
 
-    render() {
-        return <Grid centered stackable columns={2}>
-            <Grid.Row>
-                <Grid.Column width={11}>
-                    {
-                        this.blogRouting(() => this.state.articles.map(
-                            article => <BlogArticle key={article.title} {...article} />),
-                            articleId => <BlogArticleLoader articleId={articleId}/>)
-                    }
-                </Grid.Column>
-                <Grid.Column width={3}>
-                    <OwnerCard/>
-                    <LatestPosts/>
-                </Grid.Column>
-            </Grid.Row>
-            {this.blogRouting(
-                () =>
-                    <Grid.Row>
-                        <Segment floated="right" basic compact>
-                            <Menu pagination>
-                                <Link to={"/Hello"} className="ui menu item">{1}</Link>
-                            </Menu>
-                        </Segment>
-                    </Grid.Row>,
-                () => null
-            )}
-        </Grid>
-    }
+export const Pagination = function ({pagination}) {
+    return <Menu pagination>
+        {
+            Array(pagination.total).fill().map((_, i) => <Link key={i} to={"/blog/articles?page=" + (i + 1)} className="ui menu item">{i + 1}</Link>)
+        }
+    </Menu>
+};
 
-    componentDidMount() {
-        document.title = this.props.ownerName + ": Blog";
-    }
-
-    blogRouting(indexRender, articleRender) {
-        return [
-            <Route exact key="blog" path="/blog/articles" render={() => indexRender()}/>,
-            <Route exact key="article" path="/blog/articles/:articleId"
-                   render={param => articleRender(param.match.params.articleId)}/>
-        ]
-    }
+function blogRouting(indexRender, articleRender) {
+    return [
+        <Route exact key="blog" path="/blog/articles" render={() => indexRender()}/>,
+        <Route exact key="article" path="/blog/articles/:articleId"
+               render={param => articleRender(param.match.params.articleId)}/>
+    ]
 }

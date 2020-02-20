@@ -1,41 +1,60 @@
 import React from "react";
 import "../bbcode/tags";
 import {Link} from "react-router-dom";
-import {Button, Divider, Icon, Item, Segment} from "semantic-ui-react";
+import {Button, Divider, Item, Segment} from "semantic-ui-react";
 import {formatMarkup} from "../utils/text-markup";
 import {formatDateTime} from "../utils/date-time";
+import {ContentPlaceholderOr} from "../utils/placeholder";
+import {Loading} from "../data/reduce/global/enums";
+import {useAjax, useLoader} from "../context/ajax-context";
+import _ from "lodash";
+import {load} from "../data/reduce/article";
+import {useImmutableSelector} from "../utils/redux-store";
 
-class BlogArticle extends React.Component {
+export const BlogArticle = function ({id, article = {}, href, preview}) {
 
-    render() {
-        return <Segment className="items">
-            <Item>
-                <Item.Content>
+    let ajax = useAjax();
+
+    useLoader(load, ajax, id);
+
+    let loadedArticle = useImmutableSelector("article", "data");
+    let loading = useImmutableSelector("article", "loading");
+
+    if (loading === Loading.READY && loadedArticle && loadedArticle.id === id) {
+        article = loadedArticle;
+    }
+
+    let articleLoading = _.isEmpty(article) && loading !== Loading.READY;
+
+    return <Segment className="items">
+        <Item>
+            <Item.Content>
+                <ContentPlaceholderOr loading={articleLoading} lines={20}>
                     <Item.Header>
-                        <Link to={this.props.href}>
-                            <h1>{this.props.title}</h1>
+                        <Link to={href}>
+                            <h1>{article.title}</h1>
                         </Link>
                     </Item.Header>
                     <Divider/>
                     <Item.Meta>
                         <Button.Group size="mini" compact>
-                            {this.props.tags.map(tag => <Button key={tag.name}>{tag.name}</Button>)}
+                            {(article.tags || []).map(tag => <Button key={tag}>{tag}</Button>)}
                         </Button.Group>
                     </Item.Meta>
                     <Item.Description>
-                        {formatMarkup(this.props.content)}
-                        <Link to={this.props.href} className="ui button">
+                        {formatMarkup(article.content || '')}
+                        {preview && <p/>}
+                        {preview && <Link to={href} className="ui compact basic small button">
                             Read further
-                        </Link>
+                        </Link>}
                     </Item.Description>
                     <Item.Extra>
-                        <Icon name="comment outline"/>
-                        {this.props.comments.length} comments | Created {formatDateTime(this.props.createTime)}
+                        {/*<Icon name="comment outline"/>*/}
+                        {/*{this.props.comments.length} comments | */}
+                        Created {formatDateTime(article.created)}
                     </Item.Extra>
-                </Item.Content>
-            </Item>
-        </Segment>
-    }
-}
-
-export default BlogArticle;
+                </ContentPlaceholderOr>
+            </Item.Content>
+        </Item>
+    </Segment>
+};
