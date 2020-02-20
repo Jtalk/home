@@ -1,7 +1,7 @@
 import React from "react";
 import {Grid} from "semantic-ui-react";
 import {OwnerCard} from "./owner-card";
-import LatestPosts from "./latest-posts";
+import {LatestPosts} from "./latest-posts";
 import "../bbcode/tags";
 import {formatMarkup} from "../utils/text-markup";
 import {ContentPlaceholderOr} from "../utils/placeholder";

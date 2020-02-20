@@ -1,52 +1,52 @@
 import React from "react";
 import {Card, Divider, List} from "semantic-ui-react";
 import {formatDateTime} from "../utils/date-time";
+import {useAjax, useLoader} from "../context/ajax-context";
+import {load} from "../data/reduce/latest-articles";
+import {useImmutableSelector} from "../utils/redux-store";
+import {ContentPlaceholderOr} from "../utils/placeholder";
+import {Loading} from "../data/reduce/global/enums";
+import {Link} from "react-router-dom";
+import "./latest-posts.css";
 
+const PREVIEW_SIZE = 3;
 
-class LatestPosts extends React.Component {
+export const LatestPosts = function () {
 
-    constructor(props) {
-        super(props);
-        this.state = {
-            posts: [
-                {url: "/post3", title: "Test Post 3", createTime: new Date(2018, 11, 5)},
-                {url: "/post2", title: "Test Post 2", createTime: new Date(2018, 11, 2, 11, 45,12)},
-                {url: "/post1", title: "Test Post 1", createTime: new Date(2017, 12, 2)},
-            ]
-        }
-    }
+    let ajax = useAjax();
 
+    useLoader(load, ajax, PREVIEW_SIZE);
 
-    render() {
-        let latestPostElements = this.state.posts.map(post =>
-            LatestPosts.createPostItem(post)
-        );
-        return <Card>
-            <Card.Content>
-                <Card.Header>Latest Posts</Card.Header>
-                <Card.Description>
-                    <Divider/>
+    let posts = useImmutableSelector("latest-articles", "data");
+    let loading = useImmutableSelector("latest-articles", "loading");
+
+    let latestPostElements = posts.map(post =>
+        createPostItem(post)
+    );
+    return <Card>
+        <Card.Content>
+            <Card.Header>Latest Posts</Card.Header>
+            <Card.Description>
+                <Divider/>
+                <ContentPlaceholderOr loading={loading === Loading.LOADING} lines={6}>
                     <List>
                         {latestPostElements}
                     </List>
-                </Card.Description>
-            </Card.Content>
-        </Card>
-    }
+                </ContentPlaceholderOr>
+            </Card.Description>
+        </Card.Content>
+    </Card>
+};
 
-    static createPostItem(post) {
-        return <List.Item key={post.title}>
-            <List.Content>
-                <List.Header as="h4">
-                    {/*TODO: React link*/}
-                    <a href={post.url}>{post.title}</a>
-                </List.Header>
-                <List.Description>
-                    {formatDateTime(post.createTime)}
-                </List.Description>
-            </List.Content>
-        </List.Item>
-    }
+function createPostItem(post) {
+    return <List.Item key={post.title}>
+        <List.Content>
+            <List.Header as="h4">
+                <Link to={`/blog/articles/${post.id}`}>{post.title}</Link>
+            </List.Header>
+            <List.Description>
+                <div className="datetime">{formatDateTime(post.created)}</div>
+            </List.Description>
+        </List.Content>
+    </List.Item>
 }
-
-export default LatestPosts;

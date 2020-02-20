@@ -2,7 +2,6 @@ import React from "react";
 import {Card, Image} from "semantic-ui-react";
 import {ContentPlaceholderOr, ImagePlaceholderOr, LinePlaceholderOr} from "../utils/placeholder";
 import {imageUrl} from "../utils/image";
-import {connect} from "react-redux";
 import {Loading} from "../data/reduce/global/enums";
 import _ from "lodash";
 import {useImmutableSelector} from "../utils/redux-store";
