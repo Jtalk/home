@@ -1,7 +1,19 @@
 import config from "react-global-configuration";
 import {format} from "./string";
 
-export function imageUrl(id) {
-    let template = config.get("image.url.template");
-    return format(template, id);
+const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-5][0-9a-f]{3}-[089ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+
+export function imageUrl(url) {
+    url = url.trim();
+    if (url.startsWith("/")) {
+        // Relative path, append API endpoint prefix
+        let api = config.get("api");
+        return `${api}${url}`;
+    } else if (UUID_REGEX.test(url)) {
+        // Image ID
+        let template = config.get("image.url.template");
+        return format(template, url);
+    } else {
+        return url;
+    }
 }

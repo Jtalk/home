@@ -47,7 +47,7 @@ const Action = {
 export function images(state = initialState, action) {
     switch (action.type) {
         case Action.INIT:
-            return state.merge(fromJS({loading: undefined, uploding: undefined, deletion: undefined}));
+            return state.merge(fromJS({loading: undefined, uploading: undefined, deletion: undefined}));
         case Action.LOADING:
             return state.merge(fromJS({loading: {status: Loading.LOADING}, data: defaultImages}));
         case Action.LOADED:
