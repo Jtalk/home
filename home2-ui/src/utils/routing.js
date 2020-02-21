@@ -1,9 +1,9 @@
-import {Route} from "react-router";
+import {Route, useLocation} from "react-router";
 import React from "react";
 import assert from "assert";
 
 export function createRoutingConfig(path, render, exact = false) {
-    return {path: path, render: render, exact: exact};
+    return {path, render, exact};
 }
 
 export function createMultiRoutingConfig(routingConfigs) {
@@ -18,6 +18,16 @@ export function createRoutes(routingConfig) {
     } else {
         return [createSingleRoute(routingConfig)];
     }
+}
+
+export function useQuery() {
+    let search = useLocation().search;
+    return new URLSearchParams(search);
+}
+
+export function useQueryParam(name, defaultValue) {
+    let q = useQuery();
+    return q.get(name) || defaultValue;
 }
 
 function createSingleRoute(routingConfig) {

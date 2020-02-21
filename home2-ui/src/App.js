@@ -92,7 +92,7 @@ function createNavigation(title, href, renderer, exact) {
 }
 
 function createComplexNavigation(title, href, routePath, renderer, exact) {
-    let render = params => page("V", title, renderer(params));
+    let render = params => page(title, renderer(params));
     return {
         menu: buildLink(title, href),
         route: createRoutingConfig(routePath, render, exact)
@@ -109,10 +109,10 @@ function createNestedNavigation(title, navigations) {
 }
 
 function error(location) {
-    return page(null, <NotFound location={location}/>);
+    return page(<NotFound location={location}/>);
 }
 
-function page(ownerName, activeLink, mainComponent) {
+function page(activeLink, mainComponent) {
     return <div>
         <Header activeLink={activeLink} links={mainRoutes().map(r => r.menu)}/>
         {mainComponent}

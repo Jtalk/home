@@ -1,6 +1,14 @@
 
 print('Creating collection Articles');
 
+function asIso(prefix, suffix, hour) {
+	let hourString = '' + (hour + 1);
+	if (hourString.length === 1) {
+		hourString = '0' + hourString;
+	}
+	return prefix + hourString + suffix;
+}
+
 db.articles.insert({
 	title: 'Test Article 1',
 	id: 'test-article',
@@ -12,6 +20,24 @@ db.articles.insert({
 db.articles.insert({
 	title: 'Test Article 2',
 	id: 'another-test-article',
+	published: false,
+	created: '2020-01-22T14:00:01Z',
+	content: 'Another very cool test article',
+	tags: []
+});
+Array(20).fill().forEach((_, i) => {
+	db.articles.insert({
+		title: 'Test Article ' + (i + 3),
+		id: 'test-article-' + (i + 3),
+		published: true,
+		created: asIso('2020-01-20T', ':00:01Z', (i + 1)),
+		content: 'A very cool test article',
+		tags: ["Java", "Scala"]
+	});
+});
+db.articles.insert({
+	title: 'Last Test Article',
+	id: 'last-test-article',
 	published: false,
 	created: '2020-01-22T14:00:01Z',
 	content: 'Another very cool test article',

@@ -8,28 +8,34 @@ import {useImmutableSelector} from "../utils/redux-store";
 import {useAjax, useLoader} from "../context/ajax-context";
 import {loadPagePublished} from "../data/reduce/articles";
 import _ from "lodash";
+import {useQueryParam} from "../utils/routing";
+import {ContentPlaceholderOr} from "../utils/placeholder";
+import {Loading} from "../data/reduce/global/enums";
 
-export const Blog = function ({page = 1}) {
+export const Blog = function () {
 
+    let page = useQueryParam("page", 1);
     let ajax = useAjax();
-    // let dispatch = useDispatch();
 
     useLoader(loadPagePublished, ajax, page - 1);
 
     let articles = useImmutableSelector("articles", "data", "articles");
     let pagination = useImmutableSelector("articles", "data", "pagination");
+    let loading = useImmutableSelector("articles", "loading");
 
     return <Grid centered stackable columns={2}>
         <Grid.Row>
             <Grid.Column width={11}>
-                {
-                    blogRouting(
-                        () => articles.map(article => <BlogArticle preview key={article.title} id={article.id} href={`/blog/articles/${article.id}`} article={article} />),
-                        articleId => {
-                            let article = _.find(articles, a => a.id === articleId);
-                            return <BlogArticle href={`/blog/articles/${articleId}`} id={articleId} article={article}/>
-                        })
-                }
+                <ContentPlaceholderOr loading={loading === Loading.LOADING} lines={30}>
+                    {
+                        blogRouting(
+                            () => articles.map(article => <BlogArticle preview key={article.title} id={article.id} href={`/blog/articles/${article.id}`} article={article} />),
+                            articleId => {
+                                let article = _.find(articles, a => a.id === articleId);
+                                return <BlogArticle href={`/blog/articles/${articleId}`} id={articleId} article={article}/>
+                            })
+                    }
+                </ContentPlaceholderOr>
             </Grid.Column>
             <Grid.Column width={3}>
                 <OwnerCard/>
