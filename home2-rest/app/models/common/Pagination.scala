@@ -8,7 +8,7 @@ case class Pagination(total: Int, current: Int, pageSize: Int) {
 
 object Pagination {
   def fromTotalCount(totalCount: Long, pageSize: Int, currentPage: Int): Pagination = Pagination(
-    total = Math.ceil(totalCount / pageSize).toInt,
+    total = Math.ceil(totalCount.toDouble / pageSize).toInt,
     current = currentPage,
     pageSize = pageSize)
 

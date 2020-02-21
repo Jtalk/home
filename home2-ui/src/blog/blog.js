@@ -41,7 +41,7 @@ export const Blog = function ({page = 1}) {
             () =>
                 <Grid.Row>
                     <Segment floated="right" basic compact>
-                        <Pagination pagination={pagination}/>
+                        <Pagination pagination={pagination} page={page}/>
                     </Segment>
                 </Grid.Row>,
             () => null
@@ -49,10 +49,17 @@ export const Blog = function ({page = 1}) {
     </Grid>
 };
 
-export const Pagination = function ({pagination}) {
+export const Pagination = function ({pagination, page}) {
+    let currentIndex = page - 1;
     return <Menu pagination>
         {
-            Array(pagination.total).fill().map((_, i) => <Link key={i} to={"/blog/articles?page=" + (i + 1)} className="ui menu item">{i + 1}</Link>)
+            Array(pagination.total || 1).fill().map((_, i) => {
+                if (currentIndex === i) {
+                    return <Menu.Item key={i}>{i + 1}</Menu.Item>
+                } else {
+                    return <Link key={i} to={"/blog/articles?page=" + (i + 1)} className="ui menu item">{i + 1}</Link>
+                }
+            })
         }
     </Menu>
 };
