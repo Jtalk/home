@@ -13,14 +13,14 @@ GET         /projects/:id              controllers.ProjectController.project(id)
 PUT         /projects/:id              controllers.ProjectController.update(id)
 DELETE      /projects/:id              controllers.ProjectController.delete(id)
 
-GET         /blog/articles             controllers.ArticleController.all(page: Int = 0, pageSize: Int = 10)
+GET         /blog/articles             controllers.ArticleController.all(page: Int ?= 0, pageSize: Int ?= 10)
 GET         /blog/articles/:id         controllers.ArticleController.article(id)
 PUT         /blog/articles/:id         controllers.ArticleController.update(id)
 DELETE      /blog/articles/:id         controllers.ArticleController.delete(id)
 
 GET         /blog/tags                 controllers.TagsController.all
 
-GET         /images                    controllers.ImageController.listFiles(page: Int = 0)
+GET         /images                    controllers.ImageController.listFiles(page: Int ?= 0)
 GET         /images/:id                controllers.ImageController.serveFile(id)
 DELETE      /images/:id                controllers.ImageController.deleteFile(id)
 POST        /images                    controllers.ImageController.upload(description: String)

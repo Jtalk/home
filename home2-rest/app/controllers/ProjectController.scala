@@ -23,7 +23,6 @@ class ProjectController @Inject()(cc: ControllerComponents, db: Database)
   }
 
   def all(published: Boolean) = Action.async { implicit request: Request[AnyContent] =>
-    Logger("Wtf").error(s"Published is ${published}");
     val filter = if (published) Json.obj("published" -> true) else Json.obj();
     db.findAll[Project](filter)
       .map(Json.toJson(_))
