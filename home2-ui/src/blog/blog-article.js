@@ -36,11 +36,11 @@ export const BlogArticle = function ({id, article = {}, href, preview}) {
                         </Link>
                     </Item.Header>
                     <Divider/>
-                    <Item.Meta>
-                        <Button.Group size="mini" compact>
-                            {(article.tags || []).map(tag => <Button key={tag}>{tag}</Button>)}
-                        </Button.Group>
-                    </Item.Meta>
+                    {article.tags && article.tags.length > 0 && <Item.Meta>
+                        {/*<Button.Group size="mini" compact>*/}
+                            {article.tags.map(tag => <Button compact key={tag} size="mini">{tag}</Button>)}
+                        {/*</Button.Group>*/}
+                    </Item.Meta>}
                     <Item.Description>
                         {formatMarkup(article.content || '')}
                         {preview && <p/>}

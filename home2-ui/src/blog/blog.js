@@ -3,7 +3,7 @@ import {BlogArticle} from "./blog-article";
 import {Grid, Menu, Segment} from "semantic-ui-react";
 import {OwnerCard} from "../home/owner-card";
 import {LatestPosts} from "../home/latest-posts";
-import {Link, Route, useHistory} from "react-router-dom";
+import {Route, useHistory} from "react-router-dom";
 import {useImmutableSelector} from "../utils/redux-store";
 import {useAjax, useLoader} from "../context/ajax-context";
 import {loadPagePublished} from "../data/reduce/articles";
@@ -66,7 +66,7 @@ export const Pagination = function ({pagination, page, navigate}) {
     return <Menu pagination>
         {
             Array(pagination.total || 1).fill().map((_, i) => {
-                return <Menu.Item key={i} name={i + 1} active={currentIndex === i} onClick={() => navigate(i + 1)}/>
+                return <Menu.Item key={i} name={`${i + 1}`} active={currentIndex === i} onClick={() => navigate(i + 1)}/>
             })
         }
     </Menu>
