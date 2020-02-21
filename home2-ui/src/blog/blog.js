@@ -3,7 +3,7 @@ import {BlogArticle} from "./blog-article";
 import {Grid, Menu, Segment} from "semantic-ui-react";
 import {OwnerCard} from "../home/owner-card";
 import {LatestPosts} from "../home/latest-posts";
-import {Link, Route} from "react-router-dom";
+import {Link, Route, useHistory} from "react-router-dom";
 import {useImmutableSelector} from "../utils/redux-store";
 import {useAjax, useLoader} from "../context/ajax-context";
 import {loadPagePublished} from "../data/reduce/articles";
@@ -14,14 +14,20 @@ import {Loading} from "../data/reduce/global/enums";
 
 export const Blog = function () {
 
-    let page = useQueryParam("page", 1);
     let ajax = useAjax();
+    let history = useHistory();
+
+    let page = useQueryParam("page", 1);
 
     useLoader(loadPagePublished, ajax, page - 1);
 
     let articles = useImmutableSelector("articles", "data", "articles");
     let pagination = useImmutableSelector("articles", "data", "pagination");
     let loading = useImmutableSelector("articles", "loading");
+
+    let navigateToPage = (page) => {
+        history.push(`/blog/articles?page=${page}`)
+    };
 
     return <Grid centered stackable columns={2}>
         <Grid.Row>
@@ -47,7 +53,7 @@ export const Blog = function () {
             () =>
                 <Grid.Row>
                     <Segment floated="right" basic compact>
-                        <Pagination pagination={pagination} page={page}/>
+                        <Pagination pagination={pagination} page={page} navigate={navigateToPage}/>
                     </Segment>
                 </Grid.Row>,
             () => null
@@ -55,16 +61,12 @@ export const Blog = function () {
     </Grid>
 };
 
-export const Pagination = function ({pagination, page}) {
+export const Pagination = function ({pagination, page, navigate}) {
     let currentIndex = page - 1;
     return <Menu pagination>
         {
             Array(pagination.total || 1).fill().map((_, i) => {
-                if (currentIndex === i) {
-                    return <Menu.Item key={i}>{i + 1}</Menu.Item>
-                } else {
-                    return <Link key={i} to={"/blog/articles?page=" + (i + 1)} className="ui menu item">{i + 1}</Link>
-                }
+                return <Menu.Item key={i} name={i + 1} active={currentIndex === i} onClick={() => navigate(i + 1)}/>
             })
         }
     </Menu>
