@@ -30,7 +30,7 @@ export function load(ajax, previewSize) {
     return async dispatch => {
         dispatch(action(Action.LOAD));
         try {
-            let {articles} = await ajax.articles.load(0, previewSize);
+            let {articles} = await ajax.articles.load(0, previewSize, true);
             dispatch(newState(Action.LOADED, articles));
         } catch (e) {
             console.error(`Cannot load ${previewSize} latest articles `, e);

@@ -13,7 +13,7 @@ GET         /projects/:id              controllers.ProjectController.project(id)
 PUT         /projects/:id              controllers.ProjectController.update(id)
 DELETE      /projects/:id              controllers.ProjectController.delete(id)
 
-GET         /blog/articles             controllers.ArticleController.all(page: Int ?= 0, pageSize: Int ?= 10)
+GET         /blog/articles             controllers.ArticleController.all(page: Int ?= 0, pageSize: Int ?= 10, published: Boolean ?= true)
 GET         /blog/articles/:id         controllers.ArticleController.article(id)
 PUT         /blog/articles/:id         controllers.ArticleController.update(id)
 DELETE      /blog/articles/:id         controllers.ArticleController.delete(id)

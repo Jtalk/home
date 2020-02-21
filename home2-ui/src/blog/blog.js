@@ -6,7 +6,7 @@ import {LatestPosts} from "../home/latest-posts";
 import {Link, Route} from "react-router-dom";
 import {useImmutableSelector} from "../utils/redux-store";
 import {useAjax, useLoader} from "../context/ajax-context";
-import {loadPage} from "../data/reduce/articles";
+import {loadPagePublished} from "../data/reduce/articles";
 import _ from "lodash";
 
 export const Blog = function ({page = 1}) {
@@ -14,7 +14,7 @@ export const Blog = function ({page = 1}) {
     let ajax = useAjax();
     // let dispatch = useDispatch();
 
-    useLoader(loadPage, ajax, page - 1);
+    useLoader(loadPagePublished, ajax, page - 1);
 
     let articles = useImmutableSelector("articles", "data", "articles");
     let pagination = useImmutableSelector("articles", "data", "pagination");

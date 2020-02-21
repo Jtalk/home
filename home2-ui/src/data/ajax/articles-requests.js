@@ -5,8 +5,8 @@ import _ from "lodash";
 
 export class ArticlesRequests {
 
-    async load(page, pageSize) {
-        let response = await request.get(`/blog/articles?page=${page}&pageSize=${pageSize}`)
+    async load(page, pageSize, publishedOnly = false) {
+        let response = await request.get(`/blog/articles?page=${page}&pageSize=${pageSize}&published=${publishedOnly}`)
             .use(api);
         await apiDelay();
         let result = _.mapKeys(response.body, (v, k) => k === "data" ? "articles" : k);

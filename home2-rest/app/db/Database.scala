@@ -40,8 +40,8 @@ class Database @Inject()(cc: ControllerComponents, val reactiveMongoApi: Reactiv
       .cursor[T]()
       .collect[Seq](MAX_ALL_ITEMS, Cursor.FailOnError()))
 
-  def findPage[T](page: Int, pageSize: Int)(implicit ec: ExecutionContext, mt: ModelType[T], reads: Reads[T]): Future[PaginatedResult[T]] = collection
-    .flatMap(_.find(obj(), None)
+  def findPage[T](page: Int, pageSize: Int, filter: JsObject = obj())(implicit ec: ExecutionContext, mt: ModelType[T], reads: Reads[T]): Future[PaginatedResult[T]] = collection
+    .flatMap(_.find(filter, None)
       .skip(page * pageSize)
       .cursor[T]()
       .collect[Seq](pageSize, Cursor.FailOnError()))

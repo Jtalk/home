@@ -44,20 +44,24 @@ export function articles(state = fromJS({loading: Loading.LOADING, data: DEFAULT
     }
 }
 
-export function loadPage(ajax, page, pageSize = DEFAULT_PAGE_SIZE) {
+export function loadPage(ajax, page, pageSize = DEFAULT_PAGE_SIZE, publishedOnly = false) {
     if (pageSize > MAX_PAGE_SIZE) {
         throw Error(`The requested page size ${pageSize} exceeds max ${MAX_PAGE_SIZE}`);
     }
     return async dispatch => {
         dispatch(action(Action.LOAD));
         try {
-            let articlesResult = await ajax.articles.load(page, pageSize);
+            let articlesResult = await ajax.articles.load(page, pageSize, publishedOnly);
             dispatch(newState(Action.LOADED, articlesResult));
         } catch (e) {
             console.error(`Cannot load article info page = ${page}, page size = ${pageSize}`, e);
             dispatch(error(Action.LOAD_ERROR, e.toLocaleString()));
         }
     }
+}
+
+export function loadPagePublished(ajax, page, pageSize = DEFAULT_PAGE_SIZE) {
+    return loadPage(ajax, page, pageSize, true);
 }
 
 export function remove(ajax, articleId, page, pageSize = DEFAULT_PAGE_SIZE) {

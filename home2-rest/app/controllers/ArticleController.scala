@@ -5,6 +5,7 @@ import db.Database
 import javax.inject._
 import models.blog.Article
 import play.api.Logger
+import play.api.libs.json.Json
 import play.api.mvc._
 import utils.WebUtils
 
@@ -25,12 +26,13 @@ class ArticleController @Inject()(cc: ControllerComponents, db: Database)
       .map(WebUtils.asHttp(_))
   }
 
-  def all(page: Int, requestedPageSize: Int) = Action.async { implicit request: Request[AnyContent] =>
+  def all(page: Int, requestedPageSize: Int, published: Boolean) = Action.async { implicit request: Request[AnyContent] =>
     val pageSize = Math.min(requestedPageSize, MAX_PAGE_SIZE)
     if (pageSize != requestedPageSize) {
       log.error(s"The requested page size is too big: ${requestedPageSize} with max set to ${MAX_PAGE_SIZE}, overriding")
     }
-    db.findPage[Article](page, pageSize)
+    val filter = if (published) Json.obj("published" -> true) else Json.obj()
+    db.findPage[Article](page, pageSize, filter)
       .map(Ok[PaginatedResult[Article]])
   }
 
