@@ -14,6 +14,11 @@ import scala.concurrent.Future.successful
 import scala.concurrent.duration.Duration
 import scala.concurrent.{ExecutionContext, Future}
 
+/**
+  * We don't want to use Play's Security interfaces because we want to pre-validate
+  * our session data through MongoDB, which requires a future-driven wrapper,
+  * i.e. {{{RequestHeader => Future[Option[A]]}}} instead of {{{RequestHeader => Option[A]}}} in Security.Authenticated
+  */
 trait Authenticating extends BaseController {
 
   implicit private val ec: ExecutionContext = controllerComponents.executionContext
@@ -26,15 +31,15 @@ trait Authenticating extends BaseController {
 
   object AuthenticatedAction {
 
-    def apply(block: (Session, Request[AnyContent]) => Result): Action[AnyContent] = async((s, r) => successful(block(s, r)))
-    def apply[A](bp: BodyParser[A])(block: (Session, Request[A]) => Result): Action[A] = async[A](bp)((s, r) => successful(block(s, r)))
-    def async(block: (Session, Request[AnyContent]) => Future[Result]): Action[AnyContent] = async[AnyContent](Action.parser)(block)
-    def async[A](bp: BodyParser[A])(block: (Session, Request[A]) => Future[Result]): Action[A]
+    def apply(block: Session => Request[AnyContent] => Result): Action[AnyContent] = async(s => r => successful(block(s)(r)))
+    def apply[A](bp: BodyParser[A])(block: Session => Request[A] => Result): Action[A] = async[A](bp)(s => r => successful(block(s)(r)))
+    def async(block: Session => Request[AnyContent] => Future[Result]): Action[AnyContent] = async[AnyContent](Action.parser)(block)
+    def async[A](bp: BodyParser[A])(block: Session => Request[A] => Future[Result]): Action[A]
     = Action.async(bp)(implicit req => loadSession(req)
       .fomap(refresh)
       .flatMap(_.liftFuture)
       .map(_.flatten)
-      .fomap(s => block(s, req).map(_.addingToSession(s)))
+      .fomap(s => block(s)(req).map(_.addingToSession(s)))
       .flatMap(_ getOrElse unauthorisedResponse))
   }
 

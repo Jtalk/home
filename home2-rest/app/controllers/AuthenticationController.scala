@@ -55,17 +55,19 @@ class AuthenticationController @Inject()(cc: ControllerComponents,
       })
   }
 
-  def refresh(): Action[AnyContent] = AuthenticatedAction.async { (session, request) =>
-    success(session)(request) |> successful
+  /**
+    * Refresh the token when user is active on UI side without backend interaction (i.e. using cached resources)
+    */
+  def refresh(): Action[AnyContent] = AuthenticatedAction { implicit session => implicit request =>
+    success(session)(request)
   }
 
-  def logout(): Action[AnyContent] = AuthenticatedAction.async { (session, _) =>
+  def logout(): Action[AnyContent] = AuthenticatedAction.async { implicit session => implicit request =>
     db.delete[Session](session.id)
       .map(_ => Ok)
   }
 
-  def changeUser(userLogin: String): Action[AnyContent] = Action.async { req: Request[AnyContent] => //AuthenticatedAction.async { (_, req) =>
-    implicit val request: Request[AnyContent] = req
+  def changeUser(userLogin: String): Action[AnyContent] = AuthenticatedAction.async { implicit session => implicit request =>
     changeUserForm.bindFromRequest.fold(
       hasErrors => {
         log.error(s"Error parsing change user form ${hasErrors.errors}")
@@ -115,7 +117,6 @@ case class Response private(status: ResponseStatus, errors: Seq[String]) {
 object Response {
 
   def apply(status: ResponseStatus, errors: Seq[FormError])(implicit messages: Messages) = new Response(status, errors.map(_.format))
-
   def apply(status: ResponseStatus) = new Response(status, Seq())
 
   implicit val jsonWrites: OWrites[Response] = Json.writes[Response]
