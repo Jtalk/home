@@ -3,6 +3,11 @@
 # https://www.playframework.com/documentation/latest/ScalaRouting
 # ~~~~
 
+POST        /login                     controllers.AuthenticationController.login
+POST        /refresh                   controllers.AuthenticationController.refresh
+PUT         /user/:login               controllers.AuthenticationController.changeUser(login)
+POST        /logout                    controllers.AuthenticationController.logout
+
 GET         /owner/name                controllers.OwnerController.name
 GET         /owner                     controllers.OwnerController.info
 POST        /owner                     controllers.OwnerController.update

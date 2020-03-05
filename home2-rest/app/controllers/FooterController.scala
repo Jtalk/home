@@ -1,9 +1,13 @@
 package controllers
 
+import java.time.Clock
+
+import controllers.common.Authenticating
 import db.Database
 import javax.inject._
 import models.footer.FooterLink._
 import models.footer._
+import play.api.Configuration
 import play.api.libs.json._
 import play.api.mvc._
 import utils.Extension.FutureOption
@@ -12,8 +16,11 @@ import utils.WebUtils
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class FooterController @Inject()(cc: ControllerComponents, db: Database)
-  extends AbstractController(cc) {
+class FooterController @Inject()(cc: ControllerComponents,
+                                 implicit val db: Database,
+                                 implicit val clock: Clock,
+                                 implicit val config: Configuration)
+  extends AbstractController(cc) with Authenticating {
 
   implicit private def ec: ExecutionContext = cc.executionContext
   implicit private def parsers: PlayBodyParsers = controllerComponents.parsers
@@ -37,7 +44,7 @@ class FooterController @Inject()(cc: ControllerComponents, db: Database)
       .map(WebUtils.asHttp(_))
   }
 
-  def update(): Action[Footer] = Action.async(Footer.jsonParser) { implicit request: Request[Footer] =>
+  def update(): Action[Footer] = AuthenticatedAction.async(Footer.jsonParser) { (_, request: Request[Footer]) =>
     db.updateSingle[Footer](request.body)
       .map(Ok[Footer])
   }

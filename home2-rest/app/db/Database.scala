@@ -35,6 +35,9 @@ class Database @Inject()(cc: ControllerComponents, val reactiveMongoApi: Reactiv
 
   def find[T](id: String)(implicit ec: ExecutionContext, mt: ModelType[T], reads: Reads[T]): Future[Option[T]] = findWith(obj("id" -> id))
 
+  def findWith[T](selector: JsObject)(implicit ec: ExecutionContext, mt: ModelType[T], reads: Reads[T]): Future[Option[T]] = collection
+    .flatMap(_.find(selector, None).one)
+
   def findAll[T](filter: JsObject = obj())(implicit ec: ExecutionContext, mt: ModelType[T], reads: Reads[T]): Future[Seq[T]] =  collection
     .flatMap(_.find(filter, None)
       .cursor[T]()
@@ -62,6 +65,10 @@ class Database @Inject()(cc: ControllerComponents, val reactiveMongoApi: Reactiv
       .cursor[T]()
       .fold(canBuildFrom.apply().result())(_ ++ fetcher(_)))
 
+  def update[T <: Identifiable](entity: T)(implicit ec: ExecutionContext,
+                                                       mt: ModelType[T],
+                                                       reads: Reads[T],
+                                                       writes: OWrites[T]): Future[T] = update[T](entity.id, entity)
   def update[T <: Identifiable](id: String, entity: T)(implicit ec: ExecutionContext,
                                                        mt: ModelType[T],
                                                        reads: Reads[T],
@@ -88,8 +95,6 @@ class Database @Inject()(cc: ControllerComponents, val reactiveMongoApi: Reactiv
     .map(m => GenericDatabaseException(m.getOrElse("unknown"), None))
     .map(Future.failed)
     .getOrElse(Future.unit)
-  def findWith[T](selector: JsObject)(implicit ec: ExecutionContext, mt: ModelType[T], reads: Reads[T]): Future[Option[T]] = collection
-    .flatMap(_.find(selector, None).one)
   private def updateAndLoad[T](updateSelector: JsObject, loadSelector: JsObject, entity: T)(implicit ec: ExecutionContext,
                                                                               mt: ModelType[T],
                                                                               reads: Reads[T],
@@ -109,7 +114,7 @@ class Database @Inject()(cc: ControllerComponents, val reactiveMongoApi: Reactiv
   def findFileMetadata(id: JsValue)(implicit ec: ExecutionContext): Future[Option[JsObject]] = reactiveMongoApi.asyncGridFS
     .flatMap(_.files
       .find(obj("_id" -> id), None)
-      .one)
+      .one[JsObject])
   def countFiles()(implicit ec: ExecutionContext): Future[Long] = reactiveMongoApi.asyncGridFS
     .flatMap(_.files.count(None, None, 0, None, ReadConcern.Majority))
 
