@@ -1,6 +1,6 @@
 package controllers
 
-import java.time.Clock
+import java.time.{Clock, Instant}
 import java.util.UUID
 
 import controllers.ResponseStatus.{error, ok}
@@ -100,8 +100,8 @@ class AuthenticationController @Inject()(cc: ControllerComponents,
 
   private def findAuth(login: String) = db.findWith[Authentication](obj("login.login" -> login, "type" -> AuthenticationType.Login))
   private def createSession(login: String): Future[Session] = Session(login, newToken(), expiry) |> db.update[Session]
-  private def success[T](s: Session)(implicit r: Request[T]) = Ok(Response(ok)).addingToSession(browserLogin -> s.login, browserToken -> s.id)
-  private def badRequest = BadRequest(Response(error, Seq("Incorrect login/password")))
+  private def success[T](s: Session)(implicit r: Request[T]) = Ok(Response(ok, s.expiry)).addingToSession(browserLogin -> s.login, browserToken -> s.id)
+  private def badRequest = BadRequest(Response(error, None, Seq("Incorrect login/password")))
 }
 
 object ResponseStatus extends Enumeration {
@@ -111,13 +111,13 @@ object ResponseStatus extends Enumeration {
 
 import controllers.ResponseStatus._
 
-case class Response private(status: ResponseStatus, errors: Seq[String]) {
+case class Response private(status: ResponseStatus, expiry: Option[Instant], errors: Seq[String]) {
 }
 
 object Response {
 
-  def apply(status: ResponseStatus, errors: Seq[FormError])(implicit messages: Messages) = new Response(status, errors.map(_.format))
-  def apply(status: ResponseStatus) = new Response(status, Seq())
+  def apply(status: ResponseStatus, errors: Seq[FormError])(implicit messages: Messages) = new Response(status, None, errors.map(_.format))
+  def apply(status: ResponseStatus, expiry: Instant) = new Response(status, Some(expiry), Seq())
 
   implicit val jsonWrites: OWrites[Response] = Json.writes[Response]
   implicit val jsonWriteable: Writeable[Response] = Writeable.writeableOf_JsValue.map[Response](Json.toJson _)
