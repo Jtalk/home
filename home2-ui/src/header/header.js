@@ -1,13 +1,16 @@
 import React from "react";
 import {HeaderOwner} from "./header-owner";
-import {Menu} from "semantic-ui-react";
-import {HeaderMenuItem, buildLink as headerMenuBuildLink} from "./header-menu-item";
+import {Icon, Menu} from "semantic-ui-react";
+import {buildLink as headerMenuBuildLink, HeaderMenuItem} from "./header-menu-item";
 import {HeaderMenuDropdownItem} from "./header-menu-dropdown-item";
 import {HeaderSearch} from "./header-search";
 import assert from "assert";
 import {Titled} from "react-titled";
 import {title} from "../utils/title-utils";
 import {useImmutableSelector} from "../utils/redux-store";
+import {Login, logout} from "../data/reduce/authentication";
+import {useDispatch} from "react-redux";
+import {useAjax} from "../context/ajax-context";
 
 export const Header = function ({links, activeLink}) {
     let ownerName = useImmutableSelector("owner", ["data", "name"]);
@@ -21,9 +24,26 @@ export const HeaderStateless = function({ownerName, links, activeLink}) {
             {items(links, activeLink)}
             <Menu.Menu position="right">
                 <HeaderSearch/>
+                <LogoutButton/>
             </Menu.Menu>
         </Menu>
     </Titled>
+};
+
+export const LogoutButton = function () {
+    let ajax = useAjax();
+    let dispatch = useDispatch();
+    let loggedIn = useImmutableSelector("authentication", "login") === Login.LOGGED_IN;
+    let onClick = () => {
+        loggedIn && dispatch(logout(ajax));
+    };
+    if (loggedIn) {
+        return <Menu.Item onClick={onClick} tooltip="Logout">
+            <Icon name="sign-out"/>
+        </Menu.Item>
+    } else {
+        return <div/>;
+    }
 };
 
 function items(links, activeLink) {

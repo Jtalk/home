@@ -4,3 +4,7 @@ export function ifMount(target, closure) {
         closure();
     }
 }
+
+export function execAsync(f) {
+    setTimeout(f, 0);
+}

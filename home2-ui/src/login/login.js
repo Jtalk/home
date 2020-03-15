@@ -1,6 +1,6 @@
 import React from "react";
 import {useState} from "react";
-import {Button, Form, Modal} from "semantic-ui-react";
+import {Button, Form, Icon, Modal} from "semantic-ui-react";
 import {useForm} from "../admin/common/use-form";
 import {useAjax} from "../context/ajax-context";
 import {useDispatch} from "react-redux";
@@ -8,67 +8,68 @@ import _ from "lodash";
 import {Updating} from "../data/reduce/global/enums";
 import {useHistory, useLocation} from "react-router";
 import {ErrorMessage} from "../form/form-message";
-import {loggedIn} from "../data/reduce/authentication";
+import {Login, login} from "../data/reduce/authentication";
+import {useImmutableSelector} from "../utils/redux-store";
+import {useStateChange} from "../utils/state-change";
+import {execAsync} from "../utils/async";
 
 const EMPTY_FORM = () => ({login: '', password: ''});
 
-export const LoginModal = function({enabled, onClose}) {
+export const LoginModal = function ({enabled, onClose}) {
 
     let ajax = useAjax();
     let dispatch = useDispatch();
     let history = useHistory();
     let location = useLocation();
+    let [justLoggedIn, loginStatus] = useStateChange("authentication", ["login"], {
+        from: Login.LOGGING_IN, to: Login.LOGGED_IN
+    });
+    let errorMessage = useImmutableSelector("authentication", "errorMessage");
 
-    let [updateStatus, setUpdateStatus] = useState();
-    let [ajaxError, setAjaxError] = useState();
-    let {updater, onSubmit, submitting, data, edited} = useForm({init: EMPTY_FORM(), updateStatus});
-    let [error, setError] = useState({});
-
-    let handleClose = e => {
-        updater.reloaded(EMPTY_FORM());
-        setAjaxError();
-        setUpdateStatus();
-        setError({});
-        onClose(e);
+    let submitLogin = form => {
+        dispatch(login(ajax, form));
     };
-    let submit = async form => {
+    if (justLoggedIn) {
+        console.debug("Login complete, closing modal");
+        onClose();
+        execAsync(() => history.push(location));
+    }
+
+    return <LoginModalStateless {...{enabled, onClose, submitLogin, loginStatus, errorMessage}}/>
+};
+
+export const LoginModalStateless = function ({enabled, onClose, loginStatus, errorMessage, submitLogin}) {
+
+    let [error, setError] = useState({});
+    let {updater, onSubmit, submitting, data, edited} = useForm({
+        init: EMPTY_FORM(), updateStatus: asUpdateStatus(loginStatus)
+    });
+
+    errorMessage = errorMessage || ((error.login || error.password) && "Invalid field");
+
+    let submit = form => {
         let errors = checkError(form, "login", "password");
         if (!_.isEmpty(errors)) {
             setError(errors);
-            return;
-        }
-        setUpdateStatus(Updating.UPDATING);
-        try {
-            let success = await ajax.authentication.login(form);
-            if (!success) {
-                setUpdateStatus(Updating.ERROR);
-                setAjaxError("Invalid credentials");
-                console.warn("Login failure: invalid credentials");
-            } else {
-                console.info("Login success");
-                dispatch(loggedIn());
-                onClose();
-                history.push(location);
-            }
-        } catch (e) {
-            console.error("Login failure", e);
-            setUpdateStatus(Updating.ERROR);
-            setAjaxError(e.message);
+        } else {
+            submitLogin(form);
         }
     };
 
-    return <Modal closeIcon basic={false} open={enabled} onClose={handleClose} >
+    return <Modal closeIcon basic={false} open={enabled} onClose={onClose}>
         <Modal.Header>Login</Modal.Header>
         <Modal.Content>
-            <Form loading={submitting} error={!!ajaxError}>
-                <Form.Input label="Login" value={data.login} onChange={updater.change("login")} error={error.login}/>
-                <Form.Input label="Password" value={data.password} onChange={updater.change("password")} error={error.password}/>
-                <ErrorMessage message={ajaxError}/>
+            <Form loading={submitting} error={!!errorMessage}>
+                <Form.Input label="Login" autoComplete="username" value={data.login} onChange={updater.change("login")}
+                            error={error.login}/>
+                <Form.Input label="Password" type="password" autoComplete="current-password" value={data.password}
+                            onChange={updater.change("password")} error={error.password}/>
+                <ErrorMessage message={errorMessage}/>
             </Form>
         </Modal.Content>
         <Modal.Actions>
-            <Button primary disabled={!edited} onClick={onSubmit(submit)}>Login</Button>
-            <Button color="red" onClick={handleClose}>Cancel</Button>
+            <Button primary disabled={!edited} onClick={onSubmit(submit)}>Login &nbsp; <Icon name="sign in"/></Button>
+            <Button color="red" onClick={onClose}>Cancel</Button>
         </Modal.Actions>
     </Modal>
 };
@@ -78,4 +79,17 @@ function checkError(form, ...fields) {
         .filter(f => !form[f])
         .zipObject(true)
         .value();
+}
+
+function asUpdateStatus(loginStatus) {
+    switch (loginStatus) {
+        case Login.LOGGED_IN:
+            return Updating.UPDATED;
+        case Login.ERROR:
+            return Updating.ERROR;
+        case Login.LOGGING_IN:
+            return Updating.UPDATING;
+        default:
+            return undefined;
+    }
 }

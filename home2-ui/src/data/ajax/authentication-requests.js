@@ -7,6 +7,11 @@ export class AuthenticationRequests {
             .type("form")
             .send(form)
             .use(api);
-        return response.ok;
+        return response.ok && response.body;
+    }
+
+    async logout() {
+        return await request.post("/logout")
+            .use(api);
     }
 }

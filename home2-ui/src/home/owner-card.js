@@ -9,6 +9,7 @@ import {useImmutableSelector} from "../utils/redux-store";
 import {useAjaxLoader} from "../context/ajax-context";
 import {load} from "../data/reduce/owner";
 import {LoginModal} from "../login/login";
+import {Login} from "../data/reduce/authentication";
 
 export const OwnerCard = function () {
 
@@ -16,12 +17,12 @@ export const OwnerCard = function () {
 
     let owner = useImmutableSelector("owner", "data");
     let loading = useImmutableSelector("owner", "loading");
-    let loggedIn = useImmutableSelector("authentication", "loggedIn");
+    let loginState = useImmutableSelector("authentication", "login");
 
     let [loggingIn, setLoggingIn] = useState(false);
 
     let showLogin = e => {
-        loggedIn || setLoggingIn(true);
+        loginState === Login.LOGGED_IN || setLoggingIn(true);
     };
 
     return <React.Fragment>

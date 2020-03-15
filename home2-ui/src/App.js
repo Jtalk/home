@@ -19,10 +19,12 @@ import * as owner from "./data/reduce/owner";
 import {useAjaxLoader} from "./context/ajax-context";
 import {useImmutableSelector} from "./utils/redux-store";
 import {ProjectsRouter} from "./projects/projects-router";
+import {useAuthenticationInit} from "./data/reduce/authentication";
 
 export const App = function () {
-    let ownerName = useImmutableSelector("owner", ["data", "name"]);
+    useAuthenticationInit();
     useAjaxLoader(owner.load);
+    let ownerName = useImmutableSelector("owner", ["data", "name"]);
     return <div className="main-content-pushable">
         <Container className="main-content-pusher framed">
             <Titled title={() => ownerName}>

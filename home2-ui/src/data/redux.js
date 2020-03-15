@@ -11,8 +11,10 @@ import {articles} from "./reduce/articles";
 import {article} from "./reduce/article";
 import {tags} from "./reduce/tags";
 import {latestArticles} from "./reduce/latest-articles";
+import {authentication} from "./reduce/authentication";
 
 export const reducers = {
+    authentication,
     owner,
     projects,
     articles,
