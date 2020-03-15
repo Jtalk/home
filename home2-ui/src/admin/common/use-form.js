@@ -19,9 +19,15 @@ export function useForm({init, updateStatus, autoSubmit} = {}) {
         console.debug("Submitting form", update);
         let copy = Object.assign({}, update);
         delete copy[FILES_PATH];
-        onSubmit(copy, update[FILES_PATH] || {});
-        console.debug("Form submit success");
         setSubmitting(true);
+        Promise.resolve(onSubmit(copy, update[FILES_PATH] || {}))
+            .then(
+                () => {
+                    console.debug("Form submit success");
+                },
+                error => {
+                    console.debug("Form submit error", error);
+                });
     };
     const onSubmit = (onSubmit) => {
         return (e) => {
