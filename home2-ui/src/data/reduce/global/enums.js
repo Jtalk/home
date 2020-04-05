@@ -9,6 +9,7 @@ export const Updating = {
     ERROR: Symbol('update_error'),
 };
 export const Loading = {
+    INITIAL: Symbol("initial"),
     LOADING: Symbol('loading'),
     READY: Symbol('data_ready'),
     ERROR: Symbol('data_error'),

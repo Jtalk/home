@@ -2,8 +2,12 @@ import {useImmutableSelector} from "./redux-store";
 import {useState} from "react";
 import _ from "lodash";
 
-export function useStateChange(storeSegment, statePath, {from, to}) {
+export function useStateChange(storeSegment, statePath, change) {
     let status = useImmutableSelector(storeSegment, ...statePath);
+    return [useLoadedStateChange(status, change), status];
+}
+
+export function useLoadedStateChange(status, {from, to}) {
     let [currentStatus, setCurrentStatus] = useState(status);
     from = from && _.castArray(from);
     to = to && _.castArray(to);
@@ -15,7 +19,7 @@ export function useStateChange(storeSegment, statePath, {from, to}) {
     }
     let match = status !== currentStatus && from.includes(currentStatus) && to.includes(status);
     if (match) {
-        console.debug("State change detected", currentStatus, status, [storeSegment, ...statePath]);
+        console.debug("State change detected", currentStatus, status);
     }
-    return [match, status];
+    return match;
 }

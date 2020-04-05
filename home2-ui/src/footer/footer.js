@@ -1,21 +1,11 @@
-import React, {useEffect} from "react";
+import React from "react";
 import {Container, Segment} from "semantic-ui-react";
 import FlatLinksList from "./flat-links-list";
 import FlatLogoList from "./flat-logo-list";
-import * as footer from "../data/reduce/footer";
-import {useDispatch} from "react-redux";
-import {useImmutableSelector} from "../utils/redux-store";
-import {useAjax} from "../context/ajax-context";
+import {useFooter} from "../data/reduce/footer";
 
-export const Footer = function ({footerLoader}) {
-
-    let links = useImmutableSelector("footer", ["data", "links"]) || [];
-    let logos = useImmutableSelector("footer", ["data", "logos"]) || [];
-    let dispatch = useDispatch();
-    let ajax = useAjax();
-
-    useEffect(() => { dispatch(footer.load(ajax)); }, [ajax, footerLoader, dispatch]);
-
+export const Footer = function () {
+    let {links, logos} = useFooter();
     return <StatelessFooter {...{links, logos}}/>
 };
 

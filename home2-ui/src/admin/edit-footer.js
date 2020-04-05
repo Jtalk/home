@@ -1,13 +1,16 @@
 import React from "react";
 import {Divider, Form, Grid, Icon, Image, List, Segment} from "semantic-ui-react";
 import {ErrorMessage} from "../form/form-message";
-import {useAjax, useAjaxLoader} from "../context/ajax-context";
-import {load, update} from "../data/reduce/footer";
-import {useDispatch} from "react-redux";
-import {useImmutableSelector} from "../utils/redux-store";
+import {
+    useFooter,
+    useFooterError,
+    useFooterLoading,
+    useFooterUpdater,
+    useFooterUpdating
+} from "../data/reduce/footer";
 import {useForm} from "./common/use-form";
 import {Loading, Updating} from "../data/reduce/global/enums";
-import {useStateChange} from "../utils/state-change";
+import {useLoadedStateChange} from "../utils/state-change";
 import {imageUrl} from "../utils/image";
 import {Titled} from "react-titled";
 
@@ -16,19 +19,15 @@ let EMPTY_LOGO = () => ({name: '', src: ''});
 
 export const EditFooter = function () {
 
-    useAjaxLoader(load);
+    let footer = useFooter();
+    let errorMessage = useFooterError();
+    let loading = useFooterLoading();
+    let updateStatus = useFooterUpdating();
 
-    let ajax = useAjax();
-    let dispatch = useDispatch();
+    let loaded = useLoadedStateChange(loading, {from: Loading.LOADING, to: Loading.READY});
+    let updated = useLoadedStateChange(updateStatus, {from: Updating.UPDATING, to: Updating.UPDATED});
 
-    let footer = useImmutableSelector("footer", "data");
-    let errorMessage = useImmutableSelector("footer", "errorMessage");
-    let [loaded] = useStateChange("footer", ["loading"], {from: Loading.LOADING, to: Loading.READY});
-    let [updated, updateStatus] = useStateChange("footer", ["updating"], {from: Updating.UPDATING, to: Updating.UPDATED});
-
-    let submit = (updated) => {
-        dispatch(update(ajax, updated));
-    };
+    let submit = useFooterUpdater();
 
     let {updater, data} = useForm({init: footer, autoSubmit: submit, updateStatus});
 
@@ -43,9 +42,9 @@ export const EditFooter = function () {
         <Titled title={t => "Edit Footer | " + t}/>
         <Grid.Column width={13}>
             <Segment raised>
-                <EditLinks footer={data} {...{submit, loaded, updater, updated, linkAdded, errorMessage, updateStatus}}/>
+                <EditLinks footer={data} {...{submit, updater, updated, linkAdded, errorMessage, updateStatus}}/>
                 <Divider/>
-                <EditLogos footer={data} {...{submit, loaded, updater, updated, logoAdded, errorMessage, updateStatus}}/>
+                <EditLogos footer={data} {...{submit, updater, updated, logoAdded, errorMessage, updateStatus}}/>
             </Segment>
         </Grid.Column>
     </Grid>

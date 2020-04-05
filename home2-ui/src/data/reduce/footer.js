@@ -1,6 +1,7 @@
 import {fromJS, Map} from "immutable";
 import {Loading, Updating} from "./global/enums";
 import {action, error, newState} from "./global/actions";
+import {useData, useLastError, useLoading, useUpdater, useUpdating} from "./global/hook-barebone";
 
 let defaultFooter = fromJS({
     links: [],
@@ -16,7 +17,7 @@ let Action = {
     UPDATE_ERROR: Symbol("footer update error"),
 };
 
-export function footer(state = Map({dataState: Loading.LOADING, data: defaultFooter}), action) {
+export function footer(state = Map({loading: Loading.INITIAL, data: defaultFooter}), action) {
     switch (action.type) {
         case Action.LOAD:
             return state.merge({loading: Loading.LOADING});
@@ -35,7 +36,27 @@ export function footer(state = Map({dataState: Loading.LOADING, data: defaultFoo
     }
 }
 
-export function load(ajax) {
+export function useFooter() {
+    return useData(load, "footer");
+}
+
+export function useFooterError() {
+    return useLastError("footer");
+}
+
+export function useFooterLoading() {
+    return useLoading("footer");
+}
+
+export function useFooterUpdating() {
+    return useUpdating("footer");
+}
+
+export function useFooterUpdater() {
+    return useUpdater(update);
+}
+
+function load(ajax) {
     return async dispatch => {
         dispatch(action(Action.LOAD));
         try {
@@ -48,7 +69,7 @@ export function load(ajax) {
     }
 }
 
-export function update(ajax, footer) {
+function update(ajax, footer) {
     return async dispatch => {
         dispatch(action(Action.UPDATE));
         try {
