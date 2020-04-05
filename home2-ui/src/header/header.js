@@ -3,9 +3,7 @@ import {HeaderOwner} from "./header-owner";
 import {Icon, Menu} from "semantic-ui-react";
 import {HeaderSearch} from "./header-search";
 import {useImmutableSelector} from "../utils/redux-store";
-import {Login, logout} from "../data/reduce/authentication";
-import {useDispatch} from "react-redux";
-import {useAjax} from "../context/ajax-context";
+import {useLoggedIn, useLogoutHandler} from "../data/reduce/authentication";
 
 export const Header = function ({children}) {
     let ownerName = useImmutableSelector("owner", ["data", "name"]);
@@ -24,11 +22,10 @@ export const HeaderStateless = function ({ownerName, children}) {
 };
 
 export const LogoutButton = function () {
-    let ajax = useAjax();
-    let dispatch = useDispatch();
-    let loggedIn = useImmutableSelector("authentication", "login") === Login.LOGGED_IN;
+    let loggedIn = useLoggedIn();
+    let logoutHandler = useLogoutHandler();
     let onClick = () => {
-        loggedIn && dispatch(logout(ajax));
+        loggedIn && logoutHandler();
     };
     if (loggedIn) {
         return <Menu.Item onClick={onClick} tooltip="Logout">

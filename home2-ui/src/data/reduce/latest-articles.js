@@ -1,6 +1,7 @@
 import {fromJS, Map} from "immutable";
 import {Loading} from "./global/enums";
 import {action, error, newState} from "./global/actions";
+import {useData, useLastError, useLoading} from "./global/hook-barebone";
 
 const MAX_PAGE_SIZE = 100;
 
@@ -10,7 +11,7 @@ export const Action = {
     LOAD_ERROR: Symbol("latest articles load error"),
 };
 
-export function latestArticles(state = fromJS({loading: Loading.LOADING, data: []}), action) {
+export function latestArticles(state = fromJS({loading: Loading.INITIAL, data: []}), action) {
     switch (action.type) {
         case Action.LOAD:
             return fromJS({loading: Loading.LOADING, errorMessage: undefined, uploading: undefined, data: []});
@@ -23,7 +24,19 @@ export function latestArticles(state = fromJS({loading: Loading.LOADING, data: [
     }
 }
 
-export function load(ajax, previewSize) {
+export function useLatestArticles(PREVIEW_SIZE) {
+    return useData(ajax => load(ajax, PREVIEW_SIZE), "latest-articles");
+}
+
+export function useLatestArticlesLoading() {
+    return useLoading("latest-articles");
+}
+
+export function useLatestArticlesError() {
+    return useLastError("latest-articles");
+}
+
+function load(ajax, previewSize) {
     if (previewSize > MAX_PAGE_SIZE) {
         throw Error(`The requested preview size ${previewSize} exceeds max ${MAX_PAGE_SIZE}`);
     }

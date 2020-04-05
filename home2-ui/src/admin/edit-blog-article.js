@@ -1,9 +1,9 @@
 import React from "react";
 import {Button, Dropdown, Form, Grid, Segment, TextArea} from "semantic-ui-react";
 import {ErrorMessage, SuccessMessage} from "../form/form-message";
-import {useAjax, useAjaxLoader, useLoader} from "../context/ajax-context";
+import {useAjax, useLoader} from "../context/ajax-context";
 import {load, update} from "../data/reduce/article";
-import {load as loadTags} from "../data/reduce/tags";
+import {useAvailableTags} from "../data/reduce/tags";
 import {useDispatch} from "react-redux";
 import {useImmutableSelector} from "../utils/redux-store";
 import {useForm} from "./common/use-form";
@@ -20,10 +20,9 @@ export const EditBlogArticle = function ({articleId}) {
     let history = useHistory();
 
     useLoader(load, ajax, articleId);
-    useAjaxLoader(loadTags);
 
     let article = useImmutableSelector("article", "data");
-    let knownTags = useImmutableSelector("tags");
+    let knownTags = useAvailableTags();
     let errorMessage = useImmutableSelector("article", ["errorMessage"]);
     let [loaded, loadingStatus] = useStateChange("article", ["loading"], {from: Loading.LOADING, to: Loading.READY});
     let [updated, updateStatus] = useStateChange("article", ["updating"], {from: Updating.UPDATING, to: Updating.UPDATED});

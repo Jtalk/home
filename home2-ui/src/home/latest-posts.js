@@ -1,9 +1,7 @@
 import React from "react";
 import {Card, Divider, List} from "semantic-ui-react";
 import {formatDateTime} from "../utils/date-time";
-import {useAjax, useLoader} from "../context/ajax-context";
-import {load} from "../data/reduce/latest-articles";
-import {useImmutableSelector} from "../utils/redux-store";
+import {useLatestArticles, useLatestArticlesLoading} from "../data/reduce/latest-articles";
 import {ContentPlaceholderOr} from "../utils/placeholder";
 import {Loading} from "../data/reduce/global/enums";
 import {Link} from "react-router-dom";
@@ -13,12 +11,8 @@ const PREVIEW_SIZE = 3;
 
 export const LatestPosts = function () {
 
-    let ajax = useAjax();
-
-    useLoader(load, ajax, PREVIEW_SIZE);
-
-    let posts = useImmutableSelector("latest-articles", "data");
-    let loading = useImmutableSelector("latest-articles", "loading");
+    let posts = useLatestArticles(PREVIEW_SIZE);
+    let loading = useLatestArticlesLoading();
 
     let latestPostElements = posts.map(post =>
         createPostItem(post)

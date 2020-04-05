@@ -4,6 +4,7 @@ import dayjs from "dayjs";
 import {useEffect} from "react";
 import {useDispatch} from "react-redux";
 import {useImmutableSelector} from "../../utils/redux-store";
+import {useLastError, useUpdater} from "./global/hook-barebone";
 
 let Action = {
     INIT: Symbol("authentication init"),
@@ -61,11 +62,27 @@ export function useAuthenticationInit() {
     });
 }
 
-export function useLoggedIn() {
-    return useImmutableSelector("authentication", "login") === Login.LOGGED_IN;
+export function useLoginStatus() {
+    return useImmutableSelector("authentication", "login");
 }
 
-export function login(ajax, form) {
+export function useLoggedIn() {
+    return useLoginStatus() === Login.LOGGED_IN;
+}
+
+export function useLoginError() {
+    return useLastError("login");
+}
+
+export function useLoginHandler() {
+    return useUpdater(login);
+}
+
+export function useLogoutHandler() {
+    return useUpdater(logout);
+}
+
+function login(ajax, form) {
     return async dispatch => {
         dispatch(action(Action.LOGGING_IN));
         try {
@@ -82,7 +99,7 @@ export function login(ajax, form) {
     }
 }
 
-export function logout(ajax) {
+function logout(ajax) {
     return async dispatch => {
         try {
             await ajax.authentication.logout();

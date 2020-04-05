@@ -23,8 +23,8 @@ export function useData(loader, segment, path = ["data"], loadingPath = ["loadin
 export function useUpdater(update) {
     let dispatch = useDispatch();
     let ajax = useAjax();
-    return newFooter => {
-        dispatch(update(ajax, newFooter));
+    return newValue => {
+        dispatch(update(ajax, newValue));
     }
 }
 

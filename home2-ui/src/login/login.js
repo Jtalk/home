@@ -1,34 +1,27 @@
-import React from "react";
-import {useState} from "react";
+import React, {useState} from "react";
 import {Button, Form, Icon, Modal} from "semantic-ui-react";
 import {useForm} from "../admin/common/use-form";
-import {useAjax} from "../context/ajax-context";
-import {useDispatch} from "react-redux";
 import _ from "lodash";
 import {Updating} from "../data/reduce/global/enums";
 import {useHistory, useLocation} from "react-router";
 import {ErrorMessage} from "../form/form-message";
-import {Login, login} from "../data/reduce/authentication";
-import {useImmutableSelector} from "../utils/redux-store";
-import {useStateChange} from "../utils/state-change";
+import {Login, login, useLoginError, useLoginHandler, useLoginStatus} from "../data/reduce/authentication";
+import {useLoadedStateChange} from "../utils/state-change";
 import {execAsync} from "../utils/async";
 
 const EMPTY_FORM = () => ({login: '', password: ''});
 
 export const LoginModal = function ({enabled, onClose}) {
 
-    let ajax = useAjax();
-    let dispatch = useDispatch();
     let history = useHistory();
     let location = useLocation();
-    let [justLoggedIn, loginStatus] = useStateChange("authentication", ["login"], {
+    let errorMessage = useLoginError();
+    let loginStatus = useLoginStatus();
+    let justLoggedIn = useLoadedStateChange(loginStatus, {
         from: Login.LOGGING_IN, to: Login.LOGGED_IN
     });
-    let errorMessage = useImmutableSelector("authentication", "errorMessage");
 
-    let submitLogin = form => {
-        dispatch(login(ajax, form));
-    };
+    let submitLogin = useLoginHandler();
     if (justLoggedIn) {
         console.debug("Login complete, closing modal");
         onClose();
