@@ -1,6 +1,6 @@
 import React, {useState} from "react";
 import {Button, Divider, Form, Grid, Icon, Image, Input, List, Menu, Message, Segment} from "semantic-ui-react";
-import {Link, Redirect} from "react-router-dom";
+import {Link, Redirect, useParams} from "react-router-dom";
 import {ErrorMessage} from "../form/form-message";
 import {useAjax, useAjaxLoader} from "../context/ajax-context";
 import {load, remove as removeProject, update as updateProject} from "../data/reduce/projects";
@@ -12,6 +12,7 @@ import {useForm} from "./common/use-form";
 import {imageUrl} from "../utils/image";
 import _ from "lodash";
 import uuid from "uuid/v1";
+import {PartialRoute} from "../navigation/route";
 
 const BASE_HREF = "/admin/projects";
 const NEW_PROJECT_ID = "new";
@@ -24,6 +25,22 @@ const MAKE_NEW_PROJECT = (order) => ({
     description: "",
     links: [],
 });
+
+export const EditProjectsRouter = function () {
+    return <React.Fragment>
+        <PartialRoute exact path="/">
+            <EditProjectsRoute/>
+        </PartialRoute>
+        <PartialRoute path="/:projectId">
+            <EditProjectsRoute/>
+        </PartialRoute>
+    </React.Fragment>
+};
+
+export const EditProjectsRoute = function () {
+    let projectId = useParams().projectId;
+    return <EditProjects currentProjectId={projectId}/>
+};
 
 export const EditProjects = function ({currentProjectId}) {
 
