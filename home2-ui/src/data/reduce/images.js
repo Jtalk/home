@@ -33,15 +33,15 @@ const initialState = fromJS({
 });
 
 const Action = {
-    INIT: Symbol("init"),
-    LOADING: Symbol("loading"),
-    LOADED: Symbol("loaded"),
-    LOAD_ERROR: Symbol("load error"),
-    UPLOADING: Symbol("uploading"),
-    UPLOADED: Symbol("uploaded"),
-    UPLOAD_ERROR: Symbol("upload error"),
-    DELETED: Symbol("deleted"),
-    DELETE_ERROR: Symbol("delete error"),
+    INIT: Symbol("images init"),
+    LOADING: Symbol("images loading"),
+    LOADED: Symbol("images loaded"),
+    LOAD_ERROR: Symbol("images load error"),
+    UPLOADING: Symbol("images uploading"),
+    UPLOADED: Symbol("images uploaded"),
+    UPLOAD_ERROR: Symbol("images upload error"),
+    DELETED: Symbol("images deleted"),
+    DELETE_ERROR: Symbol("images delete error"),
 };
 
 export function images(state = initialState, action) {

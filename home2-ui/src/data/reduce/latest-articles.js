@@ -5,9 +5,9 @@ import {action, error, newState} from "./global/actions";
 const MAX_PAGE_SIZE = 100;
 
 export const Action = {
-    LOAD: Symbol("load"),
-    LOADED: Symbol("loaded"),
-    LOAD_ERROR: Symbol("load error"),
+    LOAD: Symbol("latest articles load"),
+    LOADED: Symbol("latest articles loaded"),
+    LOAD_ERROR: Symbol("latest articles load error"),
 };
 
 export function latestArticles(state = fromJS({loading: Loading.LOADING, data: []}), action) {

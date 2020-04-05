@@ -8,12 +8,12 @@ let defaultFooter = fromJS({
 });
 
 let Action = {
-    LOAD: Symbol("load"),
-    LOADED: Symbol("loaded"),
-    LOAD_ERROR: Symbol("load error"),
-    UPDATE: Symbol("update"),
-    UPDATED: Symbol("updated"),
-    UPDATE_ERROR: Symbol("update error"),
+    LOAD: Symbol("footer load"),
+    LOADED: Symbol("footer loaded"),
+    LOAD_ERROR: Symbol("footer load error"),
+    UPDATE: Symbol("footer update"),
+    UPDATED: Symbol("footer updated"),
+    UPDATE_ERROR: Symbol("footer update error"),
 };
 
 export function footer(state = Map({dataState: Loading.LOADING, data: defaultFooter}), action) {

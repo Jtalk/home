@@ -6,12 +6,12 @@ export const DEFAULT_PAGE_SIZE = 20;
 const MAX_PAGE_SIZE = 100;
 
 export const Action = {
-    LOAD: Symbol("load"),
-    LOADED: Symbol("loaded"),
-    LOAD_ERROR: Symbol("load error"),
-    DELETE: Symbol("delete"),
-    DELETED: Symbol("deleted"),
-    DELETE_ERROR: Symbol("delete error"),
+    LOAD: Symbol("articles load"),
+    LOADED: Symbol("articles loaded"),
+    LOAD_ERROR: Symbol("articles load error"),
+    DELETE: Symbol("articles delete"),
+    DELETED: Symbol("articles deleted"),
+    DELETE_ERROR: Symbol("articles delete error"),
 };
 
 const DEFAULT_PAGINATION = {

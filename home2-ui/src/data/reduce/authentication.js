@@ -6,11 +6,11 @@ import {useDispatch} from "react-redux";
 import {useImmutableSelector} from "../../utils/redux-store";
 
 let Action = {
-    INIT: Symbol("init"),
-    LOGGING_IN: Symbol("logging_in"),
-    LOGIN: Symbol("login"),
-    LOGOUT: Symbol("logout"),
-    ERROR: Symbol("error"),
+    INIT: Symbol("authentication init"),
+    LOGGING_IN: Symbol( "authentication logging_in"),
+    LOGIN: Symbol("authentication login"),
+    LOGOUT: Symbol("authentication logout"),
+    ERROR: Symbol("authentication error"),
 };
 
 export const Login = {

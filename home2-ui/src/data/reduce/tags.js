@@ -2,7 +2,7 @@ import {Set} from "immutable";
 import {newState} from "./global/actions";
 
 export const Action = {
-    LOADED: Symbol("loaded"),
+    LOADED: Symbol("tags loaded"),
 };
 
 export function tags(state = Set(), action) {

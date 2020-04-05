@@ -12,12 +12,12 @@ let defaultOwner = fromJS({
 });
 
 export const Action = {
-    LOAD: Symbol("load"),
-    LOADED: Symbol("loaded"),
-    LOAD_ERROR: Symbol("load error"),
-    UPDATE: Symbol("update"),
-    UPDATED: Symbol("updated"),
-    UPDATE_ERROR: Symbol("update error"),
+    LOAD: Symbol("owner load"),
+    LOADED: Symbol("owner loaded"),
+    LOAD_ERROR: Symbol("owner load error"),
+    UPDATE: Symbol("owner update"),
+    UPDATED: Symbol("owner updated"),
+    UPDATE_ERROR: Symbol("owner update error"),
 };
 
 export function owner(state = Map({loading: Loading.LOADING, data: defaultOwner}), action) {

@@ -4,15 +4,15 @@ import {action, error, newState} from "./global/actions";
 import _ from "lodash";
 
 export const Action = {
-    LOAD: Symbol("load"),
-    LOADED: Symbol("loaded"),
-    LOAD_ERROR: Symbol("load error"),
-    UPDATE: Symbol("update"),
-    UPDATED: Symbol("updated"),
-    UPDATE_ERROR: Symbol("update error"),
-    DELETE: Symbol("delete"),
-    DELETED: Symbol("deleted"),
-    DELETE_ERROR: Symbol("delete error"),
+    LOAD: Symbol("projects load"),
+    LOADED: Symbol("projects loaded"),
+    LOAD_ERROR: Symbol("projects load error"),
+    UPDATE: Symbol("projects update"),
+    UPDATED: Symbol("projects updated"),
+    UPDATE_ERROR: Symbol("projects update error"),
+    DELETE: Symbol("projects delete"),
+    DELETED: Symbol("projects deleted"),
+    DELETE_ERROR: Symbol("projects delete error"),
 };
 
 export function projects(state = Map({loading: Loading.LOADING, data: []}), action) {

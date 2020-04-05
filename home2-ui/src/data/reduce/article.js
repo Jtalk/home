@@ -3,12 +3,12 @@ import {Loading, Updating} from "./global/enums";
 import {action, error, newState} from "./global/actions";
 
 export const Action = {
-    LOAD: Symbol("load"),
-    LOADED: Symbol("loaded"),
-    LOAD_ERROR: Symbol("load error"),
-    UPDATE: Symbol("update"),
-    UPDATED: Symbol("updated"),
-    UPDATE_ERROR: Symbol("update error"),
+    LOAD: Symbol("article load"),
+    LOADED: Symbol("article loaded"),
+    LOAD_ERROR: Symbol("article load error"),
+    UPDATE: Symbol("article update"),
+    UPDATED: Symbol("article updated"),
+    UPDATE_ERROR: Symbol("article update error"),
 };
 
 export function article(state = fromJS({loading: Loading.LOADING, data: {}}), action) {
