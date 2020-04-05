@@ -8,7 +8,6 @@ import {HeaderMenuDropdownItem} from "../header/header-menu-dropdown-item";
 export const PartialRoute = function (props) {
     let currentRoute = useActiveRoute(props.path);
     let newProps = Object.assign({}, props, {path: currentRoute});
-    console.error("wtf part route", props.path, currentRoute, newProps);
     return <ActiveRouteProvider routeSoFar={newProps.path}>
         <Route {...newProps}/>
     </ActiveRouteProvider>
@@ -46,7 +45,6 @@ export const NavigationDropdown = function ({title, path, children}) {
                 </HeaderMenuDropdownItem>
             </ActiveRouteProvider>;
         case RenderMode.ROUTER:
-            console.error("wtf dropdown", path);
             return <PartialRoute path={path}>
                 {/*It's / because this partial switch doesn't contribute toward any PART of the actual route*/}
                 <PartialSwitch path="/">
@@ -65,7 +63,6 @@ export const PartialSwitch = function ({path, children}) {
 
     let subpath = dropPathPrefix(location.pathname, routeSoFar);
     let sublocation = Object.assign({}, location, {pathname: subpath});
-    console.error("wtf", location.pathname, routeSoFar, path, sublocation);
     return <Switch location={sublocation}>
         {children}
     </Switch>

@@ -4,7 +4,6 @@ import {useRouteMatch} from "react-router-dom";
 const ActiveRouteContext = createContext();
 
 export const ActiveRouteProvider = function ({routeSoFar, children}) {
-    console.error("wtf routesofar", routeSoFar);
     return <ActiveRouteContext.Provider value={routeSoFar}>
         {children}
     </ActiveRouteContext.Provider>
