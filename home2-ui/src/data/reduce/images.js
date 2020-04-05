@@ -2,7 +2,7 @@ import {fromJS} from "immutable";
 import {action, error, newState} from "./global/actions";
 import config from 'react-global-configuration';
 import {Deleting, Loading, Uploading} from "./global/enums";
-import {useData, useDeleter, useUpdater} from "./global/hook-barebone";
+import {useData, useDeleter, useLastError, useLoading, useUpdater, useUpdating} from "./global/hook-barebone";
 import {useImmutableSelector} from "../../utils/redux-store";
 
 // let testimages = [
@@ -84,6 +84,18 @@ export function useImagesPagination() {
     return useImmutableSelector("images", "data", "pagination");
 }
 
+export function useImagesLoading() {
+    return useLoading("images", ["loading", "status"]);
+}
+
+export function useImagesUploading() {
+    return useUpdating("images", ["uploading", "status"]);
+}
+
+export function useImagesUploadingError() {
+    return useLastError("images", ["uploading", "error", "message"]);
+}
+
 export function useImageUploader() {
     let {current} = useImagesPagination() || {};
     return useUpdater((ajax, {file, description}) => upload(ajax, description, file, current));
@@ -135,7 +147,7 @@ function upload(ajax, description, file, currentPage) {
     }
 }
 
-export function delete_(ajax, id, currentImages, pagination) {
+function delete_(ajax, id, currentImages, pagination) {
     return async dispatch => {
         try {
             let wasLoaded = !!currentImages.find(i => i.id === id);

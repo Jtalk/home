@@ -1,11 +1,18 @@
 import React, {useState} from "react";
 import {Button, Card, Container, Divider, Form, Grid, Image, Loader, Segment} from "semantic-ui-react";
-import {useImmutableSelector} from "../utils/redux-store";
 import {Pagination} from "../shared/pagination";
 import {checkTruthy} from "../utils/validation";
 import {formatDateTime} from "../utils/date-time";
 import ImageUploader from "react-images-upload";
-import {useImageDeleter, useImages, useImagesPagination, useImageUploader} from "../data/reduce/images";
+import {
+    useImageDeleter,
+    useImages,
+    useImagesLoading,
+    useImagesPagination,
+    useImagesUploading,
+    useImagesUploadingError,
+    useImageUploader
+} from "../data/reduce/images";
 import {ErrorMessage, SuccessMessage} from "../form/form-message";
 import "./edit-images.css";
 import {Loading, Uploading} from "../data/reduce/global/enums";
@@ -20,9 +27,9 @@ export const EditImagesRouter = function () {
 
 export const EditImages = function ({page}) {
 
-    let loadingStatus = useImmutableSelector("images", ["loading", "status"]);
-    let uploadStatus = useImmutableSelector("images", ["uploading", "status"]);
-    let errorMessage = useImmutableSelector("images", ["uploading", "error", "message"]);
+    let loadingStatus = useImagesLoading();
+    let uploadStatus = useImagesUploading();
+    let errorMessage = useImagesUploadingError();
     let images = useImages(page);
     let pagination = useImagesPagination();
 
