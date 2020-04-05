@@ -4,7 +4,7 @@ import {ProjectsRouter} from "../projects/projects-router";
 import {EditBio} from "../admin/edit-bio";
 import {EditProjectsRouter} from "../admin/edit-projects";
 import {EditBlogRouter} from "../admin/edit-blog-router";
-import {EditImages} from "../admin/edit-images";
+import {EditImagesRouter} from "../admin/edit-images";
 import {EditFooter} from "../admin/edit-footer";
 import {NotFound} from "../error/not-found";
 import {Switch} from "react-router-dom";
@@ -37,7 +37,7 @@ export const Navigation = function ({renderMode}) {
                     <EditBlogRouter/>
                 </NavigationRoute>
                 <NavigationRoute authenticated title="Edit Images" path="/images">
-                    <EditImages/>
+                    <EditImagesRouter/>
                 </NavigationRoute>
                 <NavigationRoute authenticated exact title="Edit Footer" path="/footer">
                     <EditFooter/>

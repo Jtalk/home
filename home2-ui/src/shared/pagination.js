@@ -13,7 +13,7 @@ export const Pagination = function ({current, total}) {
                 if (current === i) {
                     return <Menu.Item key={i} active>{i + 1}</Menu.Item>
                 } else {
-                    return <Link key={i} className="item" to={"/admin/images/" + i}>{i + 1}</Link>
+                    return <Link key={i} className="item" to={"/admin/images/?page=" + i}>{i + 1}</Link>
                 }
             })
         }

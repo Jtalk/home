@@ -2,6 +2,8 @@ import {fromJS} from "immutable";
 import {action, error, newState} from "./global/actions";
 import config from 'react-global-configuration';
 import {Deleting, Loading, Uploading} from "./global/enums";
+import {useData, useDeleter, useUpdater} from "./global/hook-barebone";
+import {useImmutableSelector} from "../../utils/redux-store";
 
 // let testimages = [
 //     {
@@ -74,7 +76,26 @@ export function images(state = initialState, action) {
     }
 }
 
-export function load(ajax, page) {
+export function useImages(page = 0) {
+    return useData(load, [page], "images", ["data", "images"]);
+}
+
+export function useImagesPagination() {
+    return useImmutableSelector("images", "data", "pagination");
+}
+
+export function useImageUploader() {
+    let {current} = useImagesPagination() || {};
+    return useUpdater((ajax, {file, description}) => upload(ajax, description, file, current));
+}
+
+export function useImageDeleter() {
+    let images = useImmutableSelector("images", "data", "images");
+    let pagination = useImagesPagination();
+    return useDeleter((ajax, id) => delete_(ajax, id, images, pagination));
+}
+
+function load(ajax, page) {
     page = page || 0;
     return async dispatch => {
         dispatch(action(Action.INIT));
@@ -96,7 +117,7 @@ function reload(ajax, page) {
     }
 }
 
-export function upload(ajax, description, file, currentPage) {
+function upload(ajax, description, file, currentPage) {
     return async dispatch => {
         dispatch(action(Action.UPLOADING));
         try {
@@ -114,14 +135,14 @@ export function upload(ajax, description, file, currentPage) {
     }
 }
 
-export function delete_(ajax, id, currentState) {
+export function delete_(ajax, id, currentImages, pagination) {
     return async dispatch => {
         try {
-            let wasLoaded = !!currentState.images.find(i => i.id === id);
+            let wasLoaded = !!currentImages.find(i => i.id === id);
             await ajax.images.delete(id);
             dispatch(newState(Action.DELETED, id));
             if (wasLoaded) {
-                dispatch(reload(ajax, currentState.pagination.current));
+                dispatch(reload(ajax, pagination.current));
             }
         } catch (e) {
             console.error(`Cannot delete image ${id}`, e);

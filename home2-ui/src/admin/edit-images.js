@@ -5,31 +5,29 @@ import {Pagination} from "../shared/pagination";
 import {checkTruthy} from "../utils/validation";
 import {formatDateTime} from "../utils/date-time";
 import ImageUploader from "react-images-upload";
-import {useAjax, useAjaxLoader} from "../context/ajax-context";
-import * as image_redux from "../data/reduce/images";
+import {useImageDeleter, useImages, useImagesPagination, useImageUploader} from "../data/reduce/images";
 import {ErrorMessage, SuccessMessage} from "../form/form-message";
-import {useDispatch} from "react-redux";
 import "./edit-images.css";
 import {Loading, Uploading} from "../data/reduce/global/enums";
 import {ImageUploadPreview} from "./common/image-upload-preview";
 import {Titled} from "react-titled";
+import {useQueryParam} from "../utils/routing";
 
-export const EditImages = function () {
+export const EditImagesRouter = function () {
+    let page = useQueryParam("page", 0);
+    return <EditImages page={page}/>
+};
 
-    useAjaxLoader(image_redux.load);
-
-    let ajax = useAjax();
-    let dispatch = useDispatch();
+export const EditImages = function ({page}) {
 
     let loadingStatus = useImmutableSelector("images", ["loading", "status"]);
     let uploadStatus = useImmutableSelector("images", ["uploading", "status"]);
     let errorMessage = useImmutableSelector("images", ["uploading", "error", "message"]);
-    let currentState = useImmutableSelector("images", ["data"]);
-    let images = currentState.images;
-    let pagination = currentState.pagination;
+    let images = useImages(page);
+    let pagination = useImagesPagination();
 
-    let deleteImage = (id) => dispatch(image_redux.delete_(ajax, id, currentState));
-    let uploadImage = (desc, file) => dispatch(image_redux.upload(ajax, desc, file));
+    let uploadImage = useImageUploader();
+    let deleteImage = useImageDeleter();
 
     return <EditImagesStateless {...{loadingStatus, uploadStatus, errorMessage, images, pagination, uploadImage, deleteImage}}/>
 };
@@ -96,7 +94,7 @@ export const ImageUpload = function ({uploadStatus, errorMessage, uploadImage}) 
     }
     let onUploadClick = () => {
         setUploading(true);
-        uploadImage(description, selectedFile);
+        uploadImage({description, file: selectedFile});
     };
     return <ImageUploadStateless {...{uploadStatus, errorMessage, description, setDescription, selectedFile, selectFile, onUploadClick}}/>
 };
