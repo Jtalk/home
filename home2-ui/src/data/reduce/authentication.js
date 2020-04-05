@@ -3,6 +3,7 @@ import {action, newState} from "./global/actions";
 import dayjs from "dayjs";
 import {useEffect} from "react";
 import {useDispatch} from "react-redux";
+import {useImmutableSelector} from "../../utils/redux-store";
 
 let Action = {
     INIT: Symbol("init"),
@@ -58,6 +59,10 @@ export function useAuthenticationInit() {
     useEffect(() => {
         dispatch(action(Action.INIT));
     });
+}
+
+export function useLoggedIn() {
+    return useImmutableSelector("authentication", "login") === Login.LOGGED_IN;
 }
 
 export function login(ajax, form) {

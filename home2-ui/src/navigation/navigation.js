@@ -26,20 +26,20 @@ export const Navigation = function ({renderMode}) {
             <NavigationRoute title="Blog" path="/blog/articles">
                 <Blog/>
             </NavigationRoute>
-            <NavigationDropdown title="Admin" path="/admin">
-                <NavigationRoute exact title="Edit Bio" path="/bio">
+            <NavigationDropdown authenticated title="Admin" path="/admin">
+                <NavigationRoute authenticated exact title="Edit Bio" path="/bio">
                     <EditBio/>
                 </NavigationRoute>
-                <NavigationRoute title="Edit Projects" path="/projects">
+                <NavigationRoute authenticated title="Edit Projects" path="/projects">
                     <EditProjectsRouter/>
                 </NavigationRoute>
-                <NavigationRoute title="Edit Blog" path="/blog/articles">
+                <NavigationRoute authenticated title="Edit Blog" path="/blog/articles">
                     <EditBlogRouter/>
                 </NavigationRoute>
-                <NavigationRoute title="Edit Images" path="/images">
+                <NavigationRoute authenticated title="Edit Images" path="/images">
                     <EditImages/>
                 </NavigationRoute>
-                <NavigationRoute exact title="Edit Footer" path="/footer">
+                <NavigationRoute authenticated exact title="Edit Footer" path="/footer">
                     <EditFooter/>
                 </NavigationRoute>
             </NavigationDropdown>

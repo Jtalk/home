@@ -4,6 +4,7 @@ import {HeaderMenuItem} from "../header/header-menu-item";
 import {ActiveRouteProvider, useActiveRoute, useCurrentRouteMatch} from "./active-route-context";
 import {RenderMode, useRenderMode} from "./render-context";
 import {HeaderMenuDropdownItem} from "../header/header-menu-dropdown-item";
+import {useLoggedIn} from "../data/reduce/authentication";
 
 export const PartialRoute = function (props) {
     let currentRoute = useActiveRoute(props.path);
@@ -17,11 +18,16 @@ export const NavigationRoute = function (props) {
     return <ComplexRoute {...props} href={props.path}/>
 };
 
-export const ComplexRoute = function ({exact, title, href, path, children}) {
+export const ComplexRoute = function ({exact, title, href, path, authenticated, children}) {
     let renderMode = useRenderMode();
     let fullHref = useActiveRoute(href);
     let fullPath = useActiveRoute(path);
     let active = useCurrentRouteMatch(fullPath, exact);
+    let isLoggedIn = useLoggedIn();
+    if (authenticated && !isLoggedIn) {
+        // Skip authorised-only endpoints altogether.
+        return null;
+    }
     switch (renderMode) {
         case RenderMode.MENU:
             return <HeaderMenuItem active={active} title={title} href={fullHref}/>;
@@ -34,9 +40,14 @@ export const ComplexRoute = function ({exact, title, href, path, children}) {
     }
 };
 
-export const NavigationDropdown = function ({title, path, children}) {
+export const NavigationDropdown = function ({title, path, authenticated, children}) {
     let renderMode = useRenderMode();
     let routeSoFar = useActiveRoute(path);
+    let loggedIn = useLoggedIn();
+    if (authenticated && !loggedIn) {
+        // Skip authorised-only endpoints altogether.
+        return null;
+    }
     switch (renderMode) {
         case RenderMode.MENU:
             return <ActiveRouteProvider routeSoFar={routeSoFar}>
