@@ -12,11 +12,14 @@ export const ActiveRouteProvider = function ({routeSoFar, children}) {
 export function useActiveRoute(currentSegment = "") {
     let routeSoFar = useContext(ActiveRouteContext) || "/";
     let path = currentSegment || "";
-    let routePath = routeSoFar + path;
-    return routePath.replace("//", "/");
+    return routeConcat(routeSoFar, path);
 }
 
 export function useCurrentRouteMatch(currentRoute, exact) {
     let match = useRouteMatch(currentRoute);
     return match && (!exact || match.isExact)
+}
+
+export function routeConcat(...parts) {
+    return parts.join("/").replace(/\/[/]+/g, "/");
 }
