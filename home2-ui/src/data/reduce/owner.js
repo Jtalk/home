@@ -1,6 +1,7 @@
 import {fromJS, Map} from "immutable";
 import {Loading, Updating} from "./global/enums";
 import {action, error, newState} from "./global/actions";
+import {useData, useLastError, useLoading, useUpdater, useUpdating} from "./global/hook-barebone";
 
 let defaultOwner = fromJS({
     name: "",
@@ -39,7 +40,27 @@ export function owner(state = Map({loading: Loading.LOADING, data: defaultOwner}
     }
 }
 
-export function load(ajax) {
+export function useOwner() {
+    return useData(load, [], "owner");
+}
+
+export function useOwnerLoading() {
+    return useLoading("owner");
+}
+
+export function useOwnerUpdating() {
+    return useUpdating("owner");
+}
+
+export function useOwnerError() {
+    return useLastError("owner");
+}
+
+export function useOwnerUpdater() {
+    return useUpdater(update);
+}
+
+function load(ajax) {
     return async dispatch => {
         dispatch(action(Action.LOAD));
         try {
@@ -52,7 +73,7 @@ export function load(ajax) {
     }
 }
 
-export function update(ajax, update, photo) {
+function update(ajax, update, {photo}) {
     return async dispatch => {
         dispatch(action(Action.UPDATE));
         try {

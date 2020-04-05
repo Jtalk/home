@@ -2,17 +2,17 @@ import React from "react";
 import {HeaderOwner} from "./header-owner";
 import {Icon, Menu} from "semantic-ui-react";
 import {HeaderSearch} from "./header-search";
-import {useImmutableSelector} from "../utils/redux-store";
 import {useLoggedIn, useLogoutHandler} from "../data/reduce/authentication";
 
 export const Header = function ({children}) {
-    let ownerName = useImmutableSelector("owner", ["data", "name"]);
-    return <HeaderStateless {...{ownerName, children}}/>
+    return <HeaderStateless>
+        {children}
+    </HeaderStateless>
 };
 
-export const HeaderStateless = function ({ownerName, children}) {
+export const HeaderStateless = function ({children}) {
     return <Menu secondary pointing>
-        <HeaderOwner ownerName={ownerName}/>
+        <HeaderOwner/>
         {children}
         <Menu.Menu position="right">
             <HeaderSearch/>

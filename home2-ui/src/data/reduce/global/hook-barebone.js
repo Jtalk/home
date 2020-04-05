@@ -23,8 +23,9 @@ export function useData(loader, loaderArgs, segment, path = ["data"], loadingPat
 export function useUpdater(update) {
     let dispatch = useDispatch();
     let ajax = useAjax();
-    return newValue => {
-        dispatch(update(ajax, newValue));
+    // Extras are here for the useForm hook, that provides uploads as a second argument.
+    return (newValue, extras) => {
+        dispatch(update(ajax, newValue, extras));
     }
 }
 

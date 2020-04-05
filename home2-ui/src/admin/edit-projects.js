@@ -60,7 +60,7 @@ export const EditProjects = function ({currentProjectId}) {
     let [deleteStatusChanged, deleteStatus] = useStateChange("projects", ["deleting"], {
         from: Deleting.DELETING, to: Deleting.DELETED
     });
-    let errorMessage = useImmutableSelector("owner", ["errorMessage"]);
+    let errorMessage = useImmutableSelector("projects", ["errorMessage"]);
 
     let submit = (currentId, project, {logo} = {}) => {
         dispatch(updateProject(ajax, currentId, project, logo));

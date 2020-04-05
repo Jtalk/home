@@ -6,17 +6,13 @@ import "../bbcode/tags";
 import {formatMarkup} from "../utils/text-markup";
 import {ContentPlaceholderOr} from "../utils/placeholder";
 import {Loading} from "../data/reduce/global/enums";
-import {useImmutableSelector} from "../utils/redux-store";
-import {useAjaxLoader} from "../context/ajax-context";
-import {load} from "../data/reduce/owner";
+import {useOwner, useOwnerLoading} from "../data/reduce/owner";
 import {Titled} from "react-titled";
 
 export const About = function () {
 
-    useAjaxLoader(load);
-
-    let bio = useImmutableSelector("owner", "data", "bio");
-    let loading = useImmutableSelector("owner", "loading");
+    let {bio} = useOwner();
+    let loading = useOwnerLoading();
 
     return <Grid stackable centered>
         <Titled title={t => "About | " + t}/>

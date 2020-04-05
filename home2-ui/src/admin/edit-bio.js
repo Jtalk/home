@@ -1,11 +1,10 @@
 import React from "react";
 import {useDispatch} from "react-redux";
-import {load, update as updateOwner} from "../data/reduce/owner";
-import {useAjax, useAjaxLoader} from "../context/ajax-context";
-import {useImmutableSelector} from "../utils/redux-store";
+import {useOwner, useOwnerError, useOwnerLoading, useOwnerUpdater, useOwnerUpdating} from "../data/reduce/owner";
+import {useAjax} from "../context/ajax-context";
 import {useForm} from "./common/use-form";
 import {Loading, Updating} from "../data/reduce/global/enums";
-import {useStateChange} from "../utils/state-change";
+import {useLoadedStateChange} from "../utils/state-change";
 import {Button, Divider, Form, Grid, Input, Segment, TextArea} from "semantic-ui-react";
 import _ from "lodash";
 import {ErrorMessage, SuccessMessage} from "../form/form-message";
@@ -15,14 +14,16 @@ import {Titled} from "react-titled";
 
 export const EditBio = function () {
 
-    useAjaxLoader(load);
-
     let ajax = useAjax();
     let dispatch = useDispatch();
-    let owner = useImmutableSelector("owner", ["data"]);
-    let [loadingStatusChanged, loadingStatus] = useStateChange("owner", ["loading"], {from: Loading.LOADING, to: Loading.READY});
-    let updateStatus = useImmutableSelector("owner", ["updating"]);
-    let errorMessage = useImmutableSelector("owner", ["errorMessage"]);
+    let owner = useOwner();
+    let loading = useOwnerLoading();
+    let loadingStatusChanged = useLoadedStateChange(loading, {from: Loading.LOADING, to: Loading.READY});
+    let updateStatus = useOwnerUpdating();
+    let errorMessage = useOwnerError();
+
+    let onUpdate = useOwnerUpdater();
+
     let {onSubmit, data, updater, canSubmit} = useForm({
         init: owner,
         updateStatus
@@ -31,23 +32,20 @@ export const EditBio = function () {
     if (loadingStatusChanged) {
         updater.reloaded(owner);
     }
-    let onUpdate = (owner, {photo}) => {
-        dispatch(updateOwner(ajax, owner, photo));
-    };
 
-    return <EditBioStateless onSubmit={onSubmit(onUpdate)} {...{loadingStatus, updateStatus, errorMessage, updater, data, canSubmit}}/>
+    return <EditBioStateless onSubmit={onSubmit(onUpdate)} {...{loading, updateStatus, errorMessage, updater, data, canSubmit}}/>
 };
 
-export const EditBioStateless = function ({data, onSubmit, updater, loadingStatus, updateStatus, errorMessage, canSubmit, selectedPhotoDataUrl}) {
+export const EditBioStateless = function ({data, onSubmit, updater, loading, updateStatus, errorMessage, canSubmit, selectedPhotoDataUrl}) {
     return <Grid centered>
         <Titled title={t => "Edit Bio | " + t}/>
         <Grid.Column width={11}>
             <Segment raised>
                 <h2>Edit bio</h2>
                 <Form onSubmit={onSubmit}
-                      loading={loadingStatus === Loading.LOADING}
+                      loading={loading === Loading.LOADING}
                       success={updateStatus === Updating.UPDATED}
-                      error={updateStatus === Updating.ERROR || loadingStatus === Loading.ERROR}>
+                      error={updateStatus === Updating.ERROR || loading === Loading.ERROR}>
                     <Divider/>
                     <Grid stackable>
                         <Grid.Row>

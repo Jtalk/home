@@ -4,18 +4,14 @@ import {ContentPlaceholderOr, ImagePlaceholderOr, LinePlaceholderOr} from "../ut
 import {imageUrl} from "../utils/image";
 import {Loading} from "../data/reduce/global/enums";
 import _ from "lodash";
-import {useImmutableSelector} from "../utils/redux-store";
-import {useAjaxLoader} from "../context/ajax-context";
-import {load} from "../data/reduce/owner";
+import {useOwner, useOwnerLoading} from "../data/reduce/owner";
 import {LoginModal} from "../login/login";
 import {useLoggedIn} from "../data/reduce/authentication";
 
 export const OwnerCard = function () {
 
-    useAjaxLoader(load);
-
-    let owner = useImmutableSelector("owner", "data");
-    let loading = useImmutableSelector("owner", "loading");
+    let owner = useOwner();
+    let loading = useOwnerLoading();
     let loggedIn = useLoggedIn();
 
     let [loggingIn, setLoggingIn] = useState(false);
