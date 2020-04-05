@@ -55,11 +55,15 @@ export const LoginModalStateless = function ({enabled, onClose, loginStatus, err
             submitLogin(form);
         }
     };
+    let cleanAndClose = function (e) {
+        updater.reloaded(EMPTY_FORM());
+        onClose(e);
+    };
 
-    return <Modal closeIcon basic={false} open={enabled} onClose={onClose}>
+    return <Modal closeIcon basic={false} open={enabled} onClose={cleanAndClose}>
         <Modal.Header>Login</Modal.Header>
         <Modal.Content>
-            <Form loading={submitting} error={!!errorMessage}>
+            <Form loading={submitting} error={!!errorMessage} onSubmit={onSubmit(submit)}>
                 <Form.Input label="Login" autoComplete="username" value={data.login} onChange={updater.change("login")}
                             error={error.login}/>
                 <Form.Input label="Password" type="password" autoComplete="current-password" value={data.password}
@@ -69,7 +73,7 @@ export const LoginModalStateless = function ({enabled, onClose, loginStatus, err
         </Modal.Content>
         <Modal.Actions>
             <Button primary disabled={!edited} onClick={onSubmit(submit)}>Login &nbsp; <Icon name="sign in"/></Button>
-            <Button color="red" onClick={onClose}>Cancel</Button>
+            <Button color="red" onClick={cleanAndClose}>Cancel</Button>
         </Modal.Actions>
     </Modal>
 };
