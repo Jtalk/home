@@ -44,7 +44,7 @@ class FooterController @Inject()(cc: ControllerComponents,
       .map(WebUtils.asHttp(_))
   }
 
-  def update(): Action[Footer] = AuthenticatedAction.async(Footer.jsonParser) { (_, request: Request[Footer]) =>
+  def update(): Action[Footer] = AuthenticatedAction.async(Footer.jsonParser) { _ => implicit request: Request[Footer] =>
     db.updateSingle[Footer](request.body)
       .map(Ok[Footer])
   }

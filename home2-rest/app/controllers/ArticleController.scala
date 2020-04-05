@@ -1,19 +1,25 @@
 package controllers
 
-import controllers.common.PaginatedResult
+import java.time.Clock
+
+import controllers.common.{Authenticating, PaginatedResult}
 import db.Database
 import javax.inject._
+import models.authentication
 import models.blog.Article
-import play.api.Logger
 import play.api.libs.json.Json
 import play.api.mvc._
+import play.api.{Configuration, Logger}
 import utils.WebUtils
 
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class ArticleController @Inject()(cc: ControllerComponents, db: Database)
-  extends AbstractController(cc) {
+class ArticleController @Inject()(cc: ControllerComponents,
+                                  val db: Database,
+                                  val clock: Clock,
+                                  val config: Configuration)
+  extends AbstractController(cc) with Authenticating {
 
   private final val log = Logger(this.getClass)
   private final val MAX_PAGE_SIZE = 200;
@@ -36,12 +42,12 @@ class ArticleController @Inject()(cc: ControllerComponents, db: Database)
       .map(Ok[PaginatedResult[Article]])
   }
 
-  def update(id: String) = Action.async(Article.jsonParser) { implicit request: Request[Article] =>
+  def update(id: String) = AuthenticatedAction.async(Article.jsonParser) { _ => request: Request[Article] =>
     db.update(id, request.body)
       .map(Ok[Article])
   }
 
-  def delete(id: String) = Action.async { implicit request: Request[AnyContent] =>
+  def delete(id: String) = AuthenticatedAction.async(Article.jsonParser) { _ => _ =>
     db.delete[Article](id)
       .map(_ => Ok(""))
   }
