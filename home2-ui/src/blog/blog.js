@@ -11,6 +11,7 @@ import _ from "lodash";
 import {useQueryParam} from "../utils/routing";
 import {ContentPlaceholderOr} from "../utils/placeholder";
 import {Loading} from "../data/reduce/global/enums";
+import {Titled} from "react-titled";
 
 export const Blog = function () {
 
@@ -30,6 +31,7 @@ export const Blog = function () {
     };
 
     return <Grid centered stackable columns={2}>
+        <Titled title={t => "Blog | " + t}/>
         <Grid.Row>
             <Grid.Column width={11}>
                 <ContentPlaceholderOr loading={loading === Loading.LOADING} lines={30}>

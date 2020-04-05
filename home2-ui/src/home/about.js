@@ -9,6 +9,7 @@ import {Loading} from "../data/reduce/global/enums";
 import {useImmutableSelector} from "../utils/redux-store";
 import {useAjaxLoader} from "../context/ajax-context";
 import {load} from "../data/reduce/owner";
+import {Titled} from "react-titled";
 
 export const About = function () {
 
@@ -18,6 +19,7 @@ export const About = function () {
     let loading = useImmutableSelector("owner", "loading");
 
     return <Grid stackable centered>
+        <Titled title={t => "About | " + t}/>
         <Grid.Row>
             <Grid.Column width={10} as="main">
                 <ContentPlaceholderOr header lines={30} loading={loading === Loading.LOADING}>

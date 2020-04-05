@@ -13,6 +13,7 @@ import {imageUrl} from "../utils/image";
 import _ from "lodash";
 import uuid from "uuid/v1";
 import {PartialRoute} from "../navigation/route";
+import {Titled} from "react-titled";
 
 const BASE_HREF = "/admin/projects";
 const NEW_PROJECT_ID = "new";
@@ -28,6 +29,7 @@ const MAKE_NEW_PROJECT = (order) => ({
 
 export const EditProjectsRouter = function () {
     return <React.Fragment>
+        <Titled title={t => "Edit Projects | " + t}/>
         <PartialRoute exact path="/">
             <EditProjectsRoute/>
         </PartialRoute>

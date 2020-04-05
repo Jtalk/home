@@ -12,6 +12,7 @@ import {useDispatch} from "react-redux";
 import "./edit-images.css";
 import {Loading, Uploading} from "../data/reduce/global/enums";
 import {ImageUploadPreview} from "./common/image-upload-preview";
+import {Titled} from "react-titled";
 
 export const EditImages = function () {
 
@@ -35,6 +36,7 @@ export const EditImages = function () {
 
 export const EditImagesStateless = function ({loadingStatus, uploadStatus, errorMessage, images, pagination, deleteImage, uploadImage}) {
     return <Grid centered>
+        <Titled title={t => "Edit Images | " + t}/>
         <Grid.Column width={16}>
             <Segment basic>
                 <h1>Uploaded Images</h1>

@@ -11,6 +11,7 @@ import _ from "lodash";
 import {ErrorMessage, SuccessMessage} from "../form/form-message";
 import {imageUrl} from "../utils/image";
 import {ImageUploadPreview} from "./common/image-upload-preview";
+import {Titled} from "react-titled";
 
 export const EditBio = function () {
 
@@ -39,6 +40,7 @@ export const EditBio = function () {
 
 export const EditBioStateless = function ({data, onSubmit, updater, loadingStatus, updateStatus, errorMessage, canSubmit, selectedPhotoDataUrl}) {
     return <Grid centered>
+        <Titled title={t => "Edit Bio | " + t}/>
         <Grid.Column width={11}>
             <Segment raised>
                 <h2>Edit bio</h2>

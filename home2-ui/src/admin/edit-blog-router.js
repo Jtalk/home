@@ -3,9 +3,11 @@ import {EditBlogArticle} from "./edit-blog-article";
 import {EditBlog} from "./edit-blog";
 import {PartialRoute} from "../navigation/route";
 import {useParams} from "react-router";
+import {Titled} from "react-titled";
 
 export const EditBlogRouter = function () {
     return <React.Fragment>
+        <Titled title={t => "Edit Blog | " + t}/>
         <PartialRoute exact path="/">
             <EditBlog/>
         </PartialRoute>

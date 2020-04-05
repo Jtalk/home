@@ -9,6 +9,7 @@ import {useForm} from "./common/use-form";
 import {Loading, Updating} from "../data/reduce/global/enums";
 import {useStateChange} from "../utils/state-change";
 import {imageUrl} from "../utils/image";
+import {Titled} from "react-titled";
 
 let EMPTY_LINK = () => ({caption: '', href: ''});
 let EMPTY_LOGO = () => ({name: '', src: ''});
@@ -39,6 +40,7 @@ export const EditFooter = function () {
     }
 
     return <Grid centered>
+        <Titled title={t => "Edit Footer | " + t}/>
         <Grid.Column width={13}>
             <Segment raised>
                 <EditLinks footer={data} {...{submit, loaded, updater, updated, linkAdded, errorMessage, updateStatus}}/>
