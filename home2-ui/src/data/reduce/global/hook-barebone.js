@@ -24,16 +24,16 @@ export function useUpdater(update) {
     let dispatch = useDispatch();
     let ajax = useAjax();
     // Extras are here for the useForm hook, that provides uploads as a second argument.
-    return (newValue, extras) => {
-        dispatch(update(ajax, newValue, extras));
+    return (...args) => {
+        dispatch(update(ajax, ...args));
     }
 }
 
 export function useDeleter(delete_) {
     let dispatch = useDispatch();
     let ajax = useAjax();
-    return id => {
-        dispatch(delete_(ajax, id));
+    return (...args) => {
+        dispatch(delete_(ajax, ...args));
     }
 }
 

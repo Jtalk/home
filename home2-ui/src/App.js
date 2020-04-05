@@ -7,7 +7,7 @@ import {useAuthenticationInit} from "./data/reduce/authentication";
 import {Navigation} from "./navigation/navigation"
 import {BrowserRouter as Router} from "react-router-dom";
 import {RenderMode} from "./navigation/render-context";
-import {OwnerTitled} from "./home/OwnerTitled";
+import {OwnerTitled} from "./home/owner-titled";
 
 export const App = function () {
     useAuthenticationInit();

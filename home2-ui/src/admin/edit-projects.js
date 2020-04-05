@@ -2,11 +2,16 @@ import React, {useState} from "react";
 import {Button, Divider, Form, Grid, Icon, Image, Input, List, Menu, Message, Segment} from "semantic-ui-react";
 import {Link, Redirect, useParams} from "react-router-dom";
 import {ErrorMessage} from "../form/form-message";
-import {useAjax, useAjaxLoader} from "../context/ajax-context";
-import {load, remove as removeProject, update as updateProject} from "../data/reduce/projects";
-import {useDispatch} from "react-redux";
-import {useImmutableSelector} from "../utils/redux-store";
-import {useStateChange} from "../utils/state-change";
+import {
+    useProjectDeleter,
+    useProjectDeleting,
+    useProjectError,
+    useProjectLoading,
+    useProjects,
+    useProjectUpdater,
+    useProjectUpdating
+} from "../data/reduce/projects";
+import {useLoadedStateChange} from "../utils/state-change";
 import {Deleting, Loading, Updating} from "../data/reduce/global/enums";
 import {useForm} from "./common/use-form";
 import {imageUrl} from "../utils/image";
@@ -46,28 +51,24 @@ export const EditProjectsRoute = function () {
 
 export const EditProjects = function ({currentProjectId}) {
 
-    useAjaxLoader(load);
+    let projects = useProjects(false);
+    let loading = useProjectLoading();
+    let updating = useProjectUpdating();
+    let deleting = useProjectDeleting();
+    let errorMessage = useProjectError();
 
-    let ajax = useAjax();
-    let dispatch = useDispatch();
-    let projects = useImmutableSelector("projects", ["data"]);
-    let [loadingStatusChanged] = useStateChange("projects", ["loading"], {
+    let loadingStatusChanged = useLoadedStateChange(loading, {
         from: Loading.LOADING, to: Loading.READY
     });
-    let [updateStatusChanged, updateStatus] = useStateChange("projects", ["updating"], {
+    let updateStatusChanged = useLoadedStateChange(updating, {
         from: Updating.UPDATING, to: Updating.UPDATED
     });
-    let [deleteStatusChanged, deleteStatus] = useStateChange("projects", ["deleting"], {
+    let deleteStatusChanged = useLoadedStateChange(deleting, {
         from: Deleting.DELETING, to: Deleting.DELETED
     });
-    let errorMessage = useImmutableSelector("projects", ["errorMessage"]);
 
-    let submit = (currentId, project, {logo} = {}) => {
-        dispatch(updateProject(ajax, currentId, project, logo));
-    };
-    let remove = (projectId) => {
-        dispatch(removeProject(ajax, projectId));
-    };
+    let submit = useProjectUpdater();
+    let remove = useProjectDeleter();
 
     if (deleteStatusChanged) {
         return <Redirect to={BASE_HREF}/>
@@ -79,11 +80,11 @@ export const EditProjects = function ({currentProjectId}) {
         return <Redirect to={editHref(NEW_PROJECT_ID)}/>
     }
 
-    return <EditProjectsStateless {...{projects, errorMessage, updateStatus, deleteStatus, currentProjectId, submit, remove}}
+    return <EditProjectsStateless {...{projects, errorMessage, updating, deleting, currentProjectId, submit, remove}}
                                   forceReload={loadingStatusChanged || updateStatusChanged || deleteStatusChanged}/>;
 };
 
-export const EditProjectsStateless = function ({projects, errorMessage, updateStatus, deleteStatus, currentProjectId, forceReload, submit, remove}) {
+export const EditProjectsStateless = function ({projects, errorMessage, updating, deleting, currentProjectId, forceReload, submit, remove}) {
 
     let currentProject = _.find(projects, p => p.id === currentProjectId) || _.chain(projects).values().first().value();
 
@@ -141,8 +142,8 @@ export const EditProjectsStateless = function ({projects, errorMessage, updateSt
                                 : <EditProject key={currentProject.id}
                                                project={currentProject}
                                                errorMessage={errorMessage}
-                                               updateStatus={updateStatus}
-                                               deleteStatus={deleteStatus}
+                                               updating={updating}
+                                               deleting={deleting}
                                                forceReload={forceReload}
                                                submit={submit}
                                                remove={remove}/>
@@ -154,7 +155,7 @@ export const EditProjectsStateless = function ({projects, errorMessage, updateSt
     </Grid>
 };
 
-export const EditProject = function ({project, errorMessage, updateStatus, deleteStatus, forceReload, submit, remove}) {
+export const EditProject = function ({project, errorMessage, updating, deleting, forceReload, submit, remove}) {
 
     let addLinkIds = (links) => {
         return links.map(l => Object.assign({}, l, {id: uuid()}));
@@ -175,7 +176,7 @@ export const EditProject = function ({project, errorMessage, updateStatus, delet
 
     let {onSubmit, data, updater, canSubmit, edited} = useForm({
         init: project,
-        updateStatus
+        updateStatus: updating
     });
 
     if (forceReload) {
@@ -189,7 +190,7 @@ export const EditProject = function ({project, errorMessage, updateStatus, delet
     return <div>
         <h2>Edit project</h2>
         <Form error={!!errorMessage}
-              success={updateStatus === Updating.UPDATED}>
+              success={updating === Updating.UPDATED}>
             <Divider/>
             <Grid stackable centered>
                 <Grid.Row>
@@ -205,9 +206,9 @@ export const EditProject = function ({project, errorMessage, updateStatus, delet
                             {data.logoId && <Image src={imageUrl(data.logoId)} alt="Current project logo"/>}
                             <Input type="file" accept="image/jpeg, image/png, image/svg, image/gif" onChange={updater.changeFile("logo")}/>
                         </Form.Field>
-                        <Button primary loading={updateStatus === Updating.UPDATING} disabled={!canSubmit} onClick={onSubmit(submitClear)}>Save</Button>
+                        <Button primary loading={updating === Updating.UPDATING} disabled={!canSubmit} onClick={onSubmit(submitClear)}>Save</Button>
                         <Button secondary onClick={() => updater.reloaded(project)}>Clear</Button>
-                        <Button color="red" loading={deleteStatus === Deleting.DELETING} onClick={() => remove(project.id)}>Delete</Button>
+                        <Button color="red" loading={deleting === Deleting.DELETING} onClick={() => remove(project.id)}>Delete</Button>
                     </Grid.Column>
                 </Grid.Row>
                 <Grid.Row>

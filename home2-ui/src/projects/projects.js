@@ -1,16 +1,12 @@
 import React from "react";
 import {ProjectsMenu} from "./projects-menu";
 import {ProjectDescription} from "./project-description";
-import {useAjaxLoader} from "../context/ajax-context";
-import {loadPublished} from "../data/reduce/projects";
-import {useImmutableSelector} from "../utils/redux-store";
+import {useProjects} from "../data/reduce/projects";
 import _ from "lodash";
 
 export const Projects = function ({selectedProjectId}) {
 
-    useAjaxLoader(loadPublished);
-
-    let projects = useImmutableSelector("projects", "data");
+    let projects = useProjects();
     let selectedProject = _.find(projects, p => p.id === selectedProjectId) || projects[0];
 
     return <div>

@@ -2,6 +2,15 @@ import {fromJS, Map} from "immutable";
 import {Deleting, Loading, Updating} from "./global/enums";
 import {action, error, newState} from "./global/actions";
 import _ from "lodash";
+import {
+    useData,
+    useDeleter,
+    useDeleting,
+    useLastError,
+    useLoading,
+    useUpdater,
+    useUpdating
+} from "./global/hook-barebone";
 
 export const Action = {
     LOAD: Symbol("projects load"),
@@ -40,7 +49,35 @@ export function projects(state = Map({loading: Loading.LOADING, data: []}), acti
     }
 }
 
-export function load(ajax, publishedOnly=false) {
+export function useProjects(publishedOnly = true) {
+    return useData(load, [publishedOnly], "projects");
+}
+
+export function useProjectLoading() {
+    return useLoading("projects");
+}
+
+export function useProjectUpdating() {
+    return useUpdating("projects");
+}
+
+export function useProjectDeleting() {
+    return useDeleting("projects");
+}
+
+export function useProjectError() {
+    return useLastError("projects");
+}
+
+export function useProjectUpdater() {
+    return useUpdater(update);
+}
+
+export function useProjectDeleter() {
+    return useDeleter(remove);
+}
+
+function load(ajax, publishedOnly=false) {
     return async dispatch => {
         dispatch(action(Action.LOAD));
         try {
@@ -52,10 +89,6 @@ export function load(ajax, publishedOnly=false) {
             dispatch(error(Action.LOAD_ERROR, e.toLocaleString()));
         }
     }
-}
-
-export function loadPublished(ajax) {
-    return load(ajax, true);
 }
 
 function updateState(currentState, update) {
@@ -76,11 +109,11 @@ function updateState(currentState, update) {
     return currentState;
 }
 
-export function update(ajax, projectId, update, photo) {
+function update(ajax, projectId, update, {logo}) {
     return async dispatch => {
         dispatch(action(Action.UPDATE));
         try {
-            let newProject = await ajax.projects.update(projectId, update, photo);
+            let newProject = await ajax.projects.update(projectId, update, logo);
             dispatch(newState(Action.UPDATED, {[projectId]: newProject}));
         } catch (e) {
             console.error(`Exception while updating project ${projectId}`, update, e);
