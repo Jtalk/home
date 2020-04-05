@@ -1,7 +1,6 @@
 import React from "react";
 import {About} from "../home/about";
 import {ProjectsRouter} from "../projects/projects-router";
-import {Blog} from "../blog/blog";
 import {EditBio} from "../admin/edit-bio";
 import {EditProjectsRouter} from "../admin/edit-projects";
 import {EditBlogRouter} from "../admin/edit-blog-router";
@@ -12,6 +11,7 @@ import {Switch} from "react-router-dom";
 import {Header} from "../header/header";
 import {NavigationDropdown, NavigationRoute, RouteOnly} from "./route";
 import {RenderMode, RenderModeProvider, useRenderMode} from "./render-context";
+import {BlogRouter} from "../blog/blog-router";
 
 export const Navigation = function ({renderMode}) {
     return <RenderModeProvider renderMode={renderMode}>
@@ -24,7 +24,7 @@ export const Navigation = function ({renderMode}) {
                 <ProjectsRouter/>
             </NavigationRoute>
             <NavigationRoute title="Blog" path="/blog/articles">
-                <Blog/>
+                <BlogRouter/>
             </NavigationRoute>
             <NavigationDropdown authenticated title="Admin" path="/admin">
                 <NavigationRoute authenticated exact title="Edit Bio" path="/bio">

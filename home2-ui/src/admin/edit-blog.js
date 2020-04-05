@@ -8,7 +8,6 @@ import {loadPage as articlesLoader, remove} from "../data/reduce/articles";
 import {useDispatch} from "react-redux";
 import {useImmutableSelector} from "../utils/redux-store";
 import {editHref} from "./edit-blog-article";
-import {Titled} from "react-titled";
 
 const DEFAULT_PAGE_SIZE = 100;
 

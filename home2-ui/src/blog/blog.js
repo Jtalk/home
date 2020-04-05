@@ -3,15 +3,15 @@ import {BlogArticle} from "./blog-article";
 import {Grid, Menu, Segment} from "semantic-ui-react";
 import {OwnerCard} from "../home/owner-card";
 import {LatestPosts} from "../home/latest-posts";
-import {Route, useHistory} from "react-router-dom";
+import {useHistory} from "react-router-dom";
 import {useImmutableSelector} from "../utils/redux-store";
 import {useAjax, useLoader} from "../context/ajax-context";
 import {loadPagePublished} from "../data/reduce/articles";
-import _ from "lodash";
 import {useQueryParam} from "../utils/routing";
 import {ContentPlaceholderOr} from "../utils/placeholder";
 import {Loading} from "../data/reduce/global/enums";
 import {Titled} from "react-titled";
+import {routeConcat, useActiveRoute} from "../navigation/active-route-context";
 
 export const Blog = function () {
 
@@ -19,6 +19,7 @@ export const Blog = function () {
     let history = useHistory();
 
     let page = useQueryParam("page", 1);
+    let path = useActiveRoute();
 
     useLoader(loadPagePublished, ajax, page - 1);
 
@@ -27,7 +28,7 @@ export const Blog = function () {
     let loading = useImmutableSelector("articles", "loading");
 
     let navigateToPage = (page) => {
-        history.push(`/blog/articles?page=${page}`)
+        history.push(path + `?page=${page}`)
     };
 
     return <Grid centered stackable columns={2}>
@@ -35,14 +36,7 @@ export const Blog = function () {
         <Grid.Row>
             <Grid.Column width={11}>
                 <ContentPlaceholderOr loading={loading === Loading.LOADING} lines={30}>
-                    {
-                        blogRouting(
-                            () => articles.map(article => <BlogArticle preview key={article.title} id={article.id} href={`/blog/articles/${article.id}`} article={article} />),
-                            articleId => {
-                                let article = _.find(articles, a => a.id === articleId);
-                                return <BlogArticle href={`/blog/articles/${articleId}`} id={articleId} article={article}/>
-                            })
-                    }
+                    {articles.map(article => <BlogArticle preview key={article.id} id={article.id} href={routeConcat(path, article.id)} article={article} />)}
                 </ContentPlaceholderOr>
             </Grid.Column>
             <Grid.Column width={3}>
@@ -50,16 +44,11 @@ export const Blog = function () {
                 <LatestPosts/>
             </Grid.Column>
         </Grid.Row>
-        {
-            blogRouting(
-            () =>
-                <Grid.Row>
-                    <Segment floated="right" basic compact>
-                        <Pagination pagination={pagination} page={page} navigate={navigateToPage}/>
-                    </Segment>
-                </Grid.Row>,
-            () => null
-        )}
+            <Grid.Row>
+                <Segment floated="right" basic compact>
+                    <Pagination pagination={pagination} page={page} navigate={navigateToPage}/>
+                </Segment>
+            </Grid.Row>
     </Grid>
 };
 
@@ -73,11 +62,3 @@ export const Pagination = function ({pagination, page, navigate}) {
         }
     </Menu>
 };
-
-function blogRouting(indexRender, articleRender) {
-    return [
-        <Route exact key="blog" path="/blog/articles" render={() => indexRender()}/>,
-        <Route exact key="article" path="/blog/articles/:articleId"
-               render={param => articleRender(param.match.params.articleId)}/>
-    ]
-}
