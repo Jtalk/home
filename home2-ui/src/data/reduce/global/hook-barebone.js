@@ -1,21 +1,21 @@
 import {useDispatch} from "react-redux";
 import {useAjax} from "../../../context/ajax-context";
 import {useImmutableSelector} from "../../../utils/redux-store";
-import {Loading} from "./enums";
 import {useEffect} from "react";
 
-export function useData(loader, segment, path = ["data"], loadingPath = ["loading"]) {
+export function useData(loader, loaderArgs, segment, path = ["data"], loadingPath = ["loading"]) {
 
     let dispatch = useDispatch();
     let ajax = useAjax();
     let result = useImmutableSelector(segment, path);
-    let loading = useLoading(segment, loadingPath);
+
+    loaderArgs = [ajax, ...loaderArgs];
 
     useEffect(() => {
-        if (loading === Loading.INITIAL) {
-            dispatch(loader(ajax));
-        }
-    }, [loader, dispatch, ajax, loading]);
+        dispatch(loader.apply(this, loaderArgs));
+        // Trust me, i'm an engineer
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [loader, dispatch, ...loaderArgs]);
 
     return result;
 }
@@ -25,6 +25,14 @@ export function useUpdater(update) {
     let ajax = useAjax();
     return newValue => {
         dispatch(update(ajax, newValue));
+    }
+}
+
+export function useDeleter(delete_) {
+    let dispatch = useDispatch();
+    let ajax = useAjax();
+    return id => {
+        dispatch(delete_(ajax, id));
     }
 }
 

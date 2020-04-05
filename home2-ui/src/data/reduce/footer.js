@@ -37,7 +37,7 @@ export function footer(state = Map({loading: Loading.INITIAL, data: defaultFoote
 }
 
 export function useFooter() {
-    return useData(load, "footer");
+    return useData(load, [], "footer");
 }
 
 export function useFooterError() {

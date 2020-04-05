@@ -5,7 +5,7 @@ import _ from "lodash";
 import {Updating} from "../data/reduce/global/enums";
 import {useHistory, useLocation} from "react-router";
 import {ErrorMessage} from "../form/form-message";
-import {Login, login, useLoginError, useLoginHandler, useLoginStatus} from "../data/reduce/authentication";
+import {Login, useLoginError, useLoginHandler, useLoginStatus} from "../data/reduce/authentication";
 import {useLoadedStateChange} from "../utils/state-change";
 import {execAsync} from "../utils/async";
 

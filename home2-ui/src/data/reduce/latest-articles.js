@@ -25,7 +25,7 @@ export function latestArticles(state = fromJS({loading: Loading.INITIAL, data: [
 }
 
 export function useLatestArticles(PREVIEW_SIZE) {
-    return useData(ajax => load(ajax, PREVIEW_SIZE), "latest-articles");
+    return useData(load, [PREVIEW_SIZE], "latest-articles");
 }
 
 export function useLatestArticlesLoading() {

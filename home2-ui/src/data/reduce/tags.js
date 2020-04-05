@@ -23,7 +23,7 @@ export function tags(state = Map({loading: Loading.INITIAL, data: Set()}), actio
 }
 
 export function useAvailableTags() {
-    return useData(load, "tags");
+    return useData(load, [], "tags");
 }
 
 function load(ajax) {
