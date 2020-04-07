@@ -1,10 +1,10 @@
 import {Map} from "immutable";
-import {action, newState} from "./global/actions";
+import {action, error} from "./global/actions";
 import dayjs from "dayjs";
-import {useEffect} from "react";
-import {useDispatch} from "react-redux";
 import {useImmutableSelector} from "../../utils/redux-store";
-import {useLastError, useUpdater} from "./global/hook-barebone";
+import {useLastError, useUpdater2} from "./global/hook-barebone";
+import {call, put, takeEvery} from "redux-saga/effects";
+import {fetchAjax} from "./ajax";
 
 let Action = {
     INIT: Symbol("authentication init"),
@@ -54,12 +54,15 @@ export function authentication(state = DEFAULT, action) {
     }
 }
 
+export function* watchAuthentication() {
+    yield initAuthentication();
+    yield takeEvery(Action.LOGGING_IN, ({data}) => login(data.update));
+    yield takeEvery(Action.LOGOUT, logout);
+}
+
 // Pre-load possible authentication state from the local store.
-export function useAuthenticationInit() {
-    let dispatch = useDispatch();
-    useEffect(() => {
-        dispatch(action(Action.INIT));
-    });
+export function* initAuthentication() {
+    yield put(action(Action.INIT));
 }
 
 export function useLoginStatus() {
@@ -75,38 +78,38 @@ export function useLoginError() {
 }
 
 export function useLoginHandler() {
-    return useUpdater(login);
+    return useUpdater2(Action.LOGGING_IN);
 }
 
 export function useLogoutHandler() {
-    return useUpdater(logout);
+    return useUpdater2(Action.LOGOUT);
 }
 
-function login(ajax, form) {
-    return async dispatch => {
-        dispatch(action(Action.LOGGING_IN));
-        try {
-            let result = await ajax.authentication.login(form);
-            console.info("Login success");
-            dispatch(newState(Action.LOGIN, {expiry: result.expiry}));
-        } catch (e) {
-            console.error("Error logging in", e);
-            if (e.status === 400) {
-                console.warn("Login failure:", e.response.body.errors);
-                dispatch(newState(Action.ERROR, {error: e.response.body.errors.join(" | ")}));
-            }
+function* login(form) {
+    let ajax = yield fetchAjax();
+    try {
+        let result = yield call(ajax.authentication.login, form);
+        console.info("Login success");
+        yield put(action(Action.LOGIN, {expiry: result.expiry}));
+    } catch (e) {
+        console.error("Error logging in", e);
+        if (e.status >= 400 && e.status < 500) {
+            console.warn("Login failure:", e.response.body.errors);
+            yield put(error(Action.ERROR, e.response.body.errors || ["unknown"]).join(" | "));
+        } else {
+            console.error("Server error", e.response);
+            yield put(error(Action.ERROR, "Unknown error while trying to log in"));
         }
+
     }
 }
 
-function logout(ajax) {
-    return async dispatch => {
-        try {
-            await ajax.authentication.logout();
-            return dispatch(action(Action.LOGOUT));
-        } catch (e) {
-            console.error("Error while logging out", e);
-            alert(e.message);
-        }
-    };
+function* logout() {
+    let ajax = yield fetchAjax();
+    try {
+        yield call(ajax.authentication.logout);
+    } catch (e) {
+        console.error("Error while logging out", e);
+        alert(e.message);
+    }
 }

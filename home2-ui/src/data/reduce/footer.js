@@ -1,7 +1,10 @@
 import {fromJS, Map} from "immutable";
 import {Loading, Updating} from "./global/enums";
-import {action, error, newState} from "./global/actions";
-import {useData, useLastError, useLoading, useUpdater, useUpdating} from "./global/hook-barebone";
+import {action, error} from "./global/actions";
+import {useLastError, useLoading, useUpdater2, useUpdating} from "./global/hook-barebone";
+import {call, put, takeEvery} from "redux-saga/effects";
+import {fetchAjax} from "./ajax";
+import {useImmutableSelector} from "../../utils/redux-store";
 
 let defaultFooter = fromJS({
     links: [],
@@ -36,8 +39,13 @@ export function footer(state = Map({loading: Loading.INITIAL, data: defaultFoote
     }
 }
 
+export function* watchFooter() {
+    yield preload();
+    yield takeEvery(Action.UPDATE, ({data}) => update(data));
+}
+
 export function useFooter() {
-    return useData(load, [], "footer");
+    return useImmutableSelector("footer", "data");
 }
 
 export function useFooterError() {
@@ -53,31 +61,32 @@ export function useFooterUpdating() {
 }
 
 export function useFooterUpdater() {
-    return useUpdater(update);
+    return useUpdater2(Action.UPDATE);
 }
 
-function load(ajax) {
-    return async dispatch => {
-        dispatch(action(Action.LOAD));
-        try {
-            let result = await ajax.footer.load();
-            dispatch(newState(Action.LOADED, result));
-        } catch (e) {
-            console.error("Cannot load footer info", e);
-            dispatch(error(Action.LOAD_ERROR, e.toLocaleString()));
-        }
+function* preload() {
+    yield put(action(Action.LOAD));
+    yield call(load);
+}
+
+function* load() {
+    let ajax = yield fetchAjax();
+    try {
+        let result = yield call(ajax.footer.load);
+        yield put(action(Action.LOADED, result));
+    } catch (e) {
+        console.error("Cannot load footer info", e);
+        yield put(error(Action.LOAD_ERROR, e.toLocaleString()));
     }
 }
 
-function update(ajax, footer) {
-    return async dispatch => {
-        dispatch(action(Action.UPDATE));
-        try {
-            let result = await ajax.footer.update(footer);
-            dispatch(newState(Action.UPDATED, result));
-        } catch (e) {
-            console.error("Cannot load footer info", e);
-            dispatch(error(Action.UPDATE_ERROR, e.toLocaleString()));
-        }
+function* update(footer) {
+    let ajax = yield fetchAjax();
+    try {
+        let result = yield call(ajax.footer.updatem, footer);
+        yield put(action(Action.UPDATED, result));
+    } catch (e) {
+        console.error("Cannot load footer info", e);
+        yield put(error(Action.UPDATE_ERROR, e.toLocaleString()));
     }
 }

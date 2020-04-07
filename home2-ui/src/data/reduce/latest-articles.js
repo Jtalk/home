@@ -1,7 +1,10 @@
 import {fromJS, Map} from "immutable";
 import {Loading} from "./global/enums";
-import {action, error, newState} from "./global/actions";
-import {useData, useLastError, useLoading} from "./global/hook-barebone";
+import {action, error} from "./global/actions";
+import {useLastError, useLoading} from "./global/hook-barebone";
+import {call, put} from "redux-saga/effects";
+import {fetchAjax} from "./ajax";
+import {useImmutableSelector} from "../../utils/redux-store";
 
 const MAX_PAGE_SIZE = 100;
 
@@ -14,7 +17,7 @@ export const Action = {
 export function latestArticles(state = fromJS({loading: Loading.INITIAL, data: []}), action) {
     switch (action.type) {
         case Action.LOAD:
-            return fromJS({loading: Loading.LOADING, errorMessage: undefined, uploading: undefined, data: []});
+            return fromJS({loading: Loading.LOADING, errorMessage: undefined, data: []});
         case Action.LOADED:
             return Map({loading: Loading.READY, errorMessage: undefined, data: fromJS(action.data)});
         case Action.LOAD_ERROR:
@@ -24,8 +27,12 @@ export function latestArticles(state = fromJS({loading: Loading.INITIAL, data: [
     }
 }
 
-export function useLatestArticles(PREVIEW_SIZE) {
-    return useData(load, [PREVIEW_SIZE], "latest-articles");
+export function* watchLatestArticles() {
+    yield preload();
+}
+
+export function useLatestArticles() {
+    return useImmutableSelector("latest-articles", "data");
 }
 
 export function useLatestArticlesLoading() {
@@ -36,18 +43,21 @@ export function useLatestArticlesError() {
     return useLastError("latest-articles");
 }
 
-function load(ajax, previewSize) {
+function* preload() {
+    yield put(action(Action.LOAD));
+    yield call(load, 3);
+}
+
+function* load(previewSize) {
     if (previewSize > MAX_PAGE_SIZE) {
         throw Error(`The requested preview size ${previewSize} exceeds max ${MAX_PAGE_SIZE}`);
     }
-    return async dispatch => {
-        dispatch(action(Action.LOAD));
-        try {
-            let {articles} = await ajax.articles.load(0, previewSize, true);
-            dispatch(newState(Action.LOADED, articles));
-        } catch (e) {
-            console.error(`Cannot load ${previewSize} latest articles `, e);
-            dispatch(error(Action.LOAD_ERROR, e.toLocaleString()));
-        }
+    let ajax = yield fetchAjax();
+    try {
+        let {articles} = yield call(ajax.articles.load, 0, previewSize, true);
+        yield put(action(Action.LOADED, articles));
+    } catch (e) {
+        console.error(`Cannot load ${previewSize} latest articles `, e);
+        yield put(error(Action.LOAD_ERROR, e.toLocaleString()));
     }
 }

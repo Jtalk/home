@@ -7,11 +7,9 @@ import {Loading} from "../data/reduce/global/enums";
 import {Link} from "react-router-dom";
 import "./latest-posts.css";
 
-const PREVIEW_SIZE = 3;
-
 export const LatestPosts = function () {
 
-    let posts = useLatestArticles(PREVIEW_SIZE);
+    let posts = useLatestArticles();
     let loading = useLatestArticlesLoading();
 
     let latestPostElements = posts.map(post =>
