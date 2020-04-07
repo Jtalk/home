@@ -15,7 +15,6 @@ import {BlogRouter} from "../blog/blog-router";
 
 export const Navigation = function ({renderMode}) {
     return <RenderModeProvider renderMode={renderMode}>
-        {renderMode === RenderMode.ROUTER ? <Navigation renderMode={RenderMode.MENU}/> : null}
         <NavigationHeader>
             <NavigationRoute exact title="About" path="/">
                 <About/>

@@ -15,6 +15,7 @@ export const App = function () {
         <Container className="main-content-pusher framed">
             <OwnerTitled>
                 <Router>
+                    <Navigation renderMode={RenderMode.MENU}/>
                     <Navigation renderMode={RenderMode.ROUTER}/>
                 </Router>
             </OwnerTitled>
