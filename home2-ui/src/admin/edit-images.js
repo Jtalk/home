@@ -8,7 +8,7 @@ import {
     useImageDeleter,
     useImages,
     useImagesLoading,
-    useImagesPagination,
+    useImagesTotalCount,
     useImagesUploading,
     useImagesUploadingError,
     useImageUploader
@@ -30,16 +30,16 @@ export const EditImages = function ({page}) {
     let loadingStatus = useImagesLoading();
     let uploadStatus = useImagesUploading();
     let errorMessage = useImagesUploadingError();
-    let images = useImages(page);
-    let pagination = useImagesPagination();
+    let images = useImages(page || 0);
+    let totalCount = useImagesTotalCount();
 
     let uploadImage = useImageUploader();
     let deleteImage = useImageDeleter();
 
-    return <EditImagesStateless {...{loadingStatus, uploadStatus, errorMessage, images, pagination, uploadImage, deleteImage}}/>
+    return <EditImagesStateless {...{loadingStatus, uploadStatus, errorMessage, images, page, totalCount, uploadImage, deleteImage}}/>
 };
 
-export const EditImagesStateless = function ({loadingStatus, uploadStatus, errorMessage, images, pagination, deleteImage, uploadImage}) {
+export const EditImagesStateless = function ({loadingStatus, uploadStatus, errorMessage, images, page, totalCount, deleteImage, uploadImage}) {
     return <Grid centered>
         <Titled title={t => "Edit Images | " + t}/>
         <Grid.Column width={16}>
@@ -49,7 +49,7 @@ export const EditImagesStateless = function ({loadingStatus, uploadStatus, error
                 <Divider hidden={true}/>
                 <LoadingViewImages {...{loadingStatus, images, deleteImage}}/>
                 <Segment floated="right" compact basic>
-                    <Pagination {...pagination}/>
+                    <Pagination current={page} total={totalCount}/>
                 </Segment>
             </Segment>
         </Grid.Column>

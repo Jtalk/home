@@ -1,5 +1,5 @@
 import {put, select} from "redux-saga/effects";
-import {newState} from "./global/actions";
+import {action} from "./global/actions";
 import {Ajax} from "../ajax-requests";
 import {immutableSelector} from "../../utils/redux-store";
 
@@ -21,5 +21,5 @@ export function* fetchAjax() {
 }
 
 export function* initAjax() {
-    yield put(newState(Action.INIT, new Ajax()));
+    yield put(action(Action.INIT, new Ajax()));
 }

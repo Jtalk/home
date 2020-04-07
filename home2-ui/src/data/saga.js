@@ -6,6 +6,7 @@ import {watchLatestArticles} from "./reduce/latest-articles";
 import {watchAuthentication} from "./reduce/authentication";
 import {watchFooter} from "./reduce/footer";
 import {watchTags} from "./reduce/tags";
+import {watchImages} from "./reduce/images";
 
 export function* rootSaga() {
     yield all([
@@ -13,6 +14,7 @@ export function* rootSaga() {
         watchTags(),
         watchOwner(),
         watchFooter(),
+        watchImages(),
         watchProjects(),
         watchAuthentication(),
         watchLatestArticles(),

@@ -1,25 +1,15 @@
 import {fromJS} from "immutable";
-import {action, error, newState} from "./global/actions";
+import {action, error} from "./global/actions";
 import config from 'react-global-configuration';
 import {Deleting, Loading, Uploading} from "./global/enums";
-import {useData, useDeleter, useLastError, useLoading, useUpdater, useUpdating} from "./global/hook-barebone";
+import {useDeleter2, useLastError, useLoader, useLoading, useUpdater2, useUpdating} from "./global/hook-barebone";
 import {useImmutableSelector} from "../../utils/redux-store";
+import {call, put, takeEvery, takeLatest} from "redux-saga/effects";
+import {fetchAjax} from "./ajax";
 
-// let testimages = [
-//     {
-//         description: "A test image 1",
-//         href: "/images/avatar.png",
-//         uploadedDateTime: new Date(2018, 11, 6, 13, 35)
-//     },
-//     {description: "A test image 2", href: "/images/avatar.png", uploadedDateTime: new Date()},
-//     {description: "A test image 3", href: "/images/avatar.png", uploadedDateTime: new Date(2016, 3, 6, 11, 3)},
-//     {description: "A test image 4", href: "/images/avatar.png", uploadedDateTime: new Date()},
-//     {description: "A test image 5", href: "/images/avatar.png", uploadedDateTime: new Date()},
-// ];
-
-const defaultImages = fromJS({
-    images: [],
-    pagination: { total: 0 },
+const defaultData = fromJS({
+    pages: [],
+    total: undefined
 });
 
 const initialState = fromJS({
@@ -31,17 +21,18 @@ const initialState = fromJS({
         status: undefined,
         error: undefined,
     },
-    data: defaultImages,
+    data: defaultData,
 });
 
 const Action = {
     INIT: Symbol("images init"),
-    LOADING: Symbol("images loading"),
+    LOAD: Symbol("images loading"),
     LOADED: Symbol("images loaded"),
     LOAD_ERROR: Symbol("images load error"),
-    UPLOADING: Symbol("images uploading"),
+    UPLOAD: Symbol("images uploading"),
     UPLOADED: Symbol("images uploaded"),
     UPLOAD_ERROR: Symbol("images upload error"),
+    DELETE: Symbol("images delete"),
     DELETED: Symbol("images deleted"),
     DELETE_ERROR: Symbol("images delete error"),
 };
@@ -50,38 +41,53 @@ export function images(state = initialState, action) {
     switch (action.type) {
         case Action.INIT:
             return state.merge(fromJS({loading: undefined, uploading: undefined, deletion: undefined}));
-        case Action.LOADING:
-            return state.merge(fromJS({loading: {status: Loading.LOADING}, data: defaultImages}));
+        case Action.LOAD:
+            return state.merge(fromJS({loading: {status: Loading.LOADING}}));
         case Action.LOADED:
-            return fromJS({loading: {status: Loading.READY}, data: fromJS(action.data)});
+            return state.merge(fromJS({
+                loading: {status: Loading.READY},
+                data: {
+                    pages: addPage(state.get("data").get("pages"), action.data.images, action.data.pagination.current),
+                    total: action.data.pagination.total
+                }
+            }));
         case Action.LOAD_ERROR:
             return state.merge(fromJS({loading: {status: Loading.ERROR, error: {message: action.errorMessage}}}));
-        case Action.UPLOADING:
-            return state.merge(fromJS({uploading: {status: Uploading.UPLOADING}}));
+        case Action.UPLOAD:
+            return state.merge(fromJS({uploading: {status: Uploading.UPLOADING}, deleting: undefined}));
         case Action.UPLOADED:
-            let pagination = state.get("data").get("pagination").toJS();
-            let images = state.get("data").get("images");
-            if (pagination.current === 0) {
-                images = images.withMutations(is => growPreservingSize(is, action.data, pagination.pageSize));
-            }
-            return state.merge(fromJS({uploading: {status: Uploading.UPLOADED}, data: {images, pagination}}));
+            return state.merge(fromJS({uploading: {status: Uploading.UPLOADED}, data: defaultData}));
         case Action.UPLOAD_ERROR:
             return state.merge(fromJS({uploading: {status: Uploading.ERROR, error: {message: action.errorMessage}}}));
+        case Action.DELETE:
+            return state.merge(fromJS({deletion: {status: Deleting.DELETING}, uploading: undefined}));
         case Action.DELETED:
-            return state.merge(fromJS({deletion: {status: Deleting.DELETED}}));
+            return state.merge(fromJS({deletion: {status: Deleting.DELETED}, data: defaultData}));
         case Action.DELETE_ERROR:
-            return state.merge(fromJS({deletion: {status: Deleting.DELETE_ERROR, error: {message: action.errorMessage}}}));
+            return state.merge(fromJS({
+                deletion: {
+                    status: Deleting.DELETE_ERROR, error: {message: action.errorMessage}
+                }
+            }));
         default:
             return state;
     }
 }
 
-export function useImages(page = 0) {
-    return useData(load, [page], "images", ["data", "images"]);
+export function* watchImages() {
+    yield takeLatest(Action.LOAD, ({data}) => load(data));
+    yield takeEvery(Action.UPLOAD, ({data: {update}}) => upload(update.description, update.file));
+    yield takeEvery(Action.DELETE, ({data}) => delete_(data));
 }
 
-export function useImagesPagination() {
-    return useImmutableSelector("images", "data", "pagination");
+export function useImages(page) {
+    let images = useImmutableSelector("images", "data", "pages");
+    useLoader(action(Action.LOAD, page), !images[page]);
+    return images[page] || [];
+}
+
+export function useImagesTotalCount() {
+    return useImmutableSelector("images", "data", "total") || 0;
 }
 
 export function useImagesLoading() {
@@ -97,75 +103,54 @@ export function useImagesUploadingError() {
 }
 
 export function useImageUploader() {
-    let {current} = useImagesPagination() || {};
-    return useUpdater((ajax, {file, description}) => upload(ajax, description, file, current));
+    return useUpdater2(Action.UPLOAD);
 }
 
 export function useImageDeleter() {
-    let images = useImmutableSelector("images", "data", "images");
-    let pagination = useImagesPagination();
-    return useDeleter((ajax, id) => delete_(ajax, id, images, pagination));
+    return useDeleter2(Action.DELETE);
 }
 
-function load(ajax, page) {
-    page = page || 0;
-    return async dispatch => {
-        dispatch(action(Action.INIT));
-        reload(ajax, page)(dispatch);
+function* load(page) {
+    let ajax = yield fetchAjax();
+    try {
+        let imagesData = yield call(ajax.images.load, page);
+        imagesData = toInternalImagesData(imagesData);
+        yield put(action(Action.LOADED, imagesData));
+    } catch (e) {
+        console.error("Cannot load images list", e);
+        yield put(error(Action.LOAD_ERROR, e.toLocaleString()));
     }
 }
 
-function reload(ajax, page) {
-    return async dispatch => {
-        dispatch(action(Action.LOADING));
-        try {
-            let imagesData = await ajax.images.load(page);
-            imagesData = toInternalImagesData(imagesData);
-            dispatch(newState(Action.LOADED, fromJS(imagesData)));
-        } catch (e) {
-            console.error("Cannot load images list", e);
-            dispatch(error(Action.LOAD_ERROR, e.toLocaleString()));
-        }
+function* upload(description, file) {
+    let ajax = yield fetchAjax();
+    try {
+        let response = yield call(ajax.images.upload, description, file);
+        yield put(action(Action.UPLOADED, toInternalImageData(response.body)));
+    } catch (e) {
+        console.error(`Cannot upload image "${description}"`, e);
+        yield put(error(Action.UPLOAD_ERROR, e.toLocaleString()));
     }
 }
 
-function upload(ajax, description, file, currentPage) {
-    return async dispatch => {
-        dispatch(action(Action.UPLOADING));
-        try {
-            let response = await ajax.images.upload(description, file);
-            dispatch(newState(Action.UPLOADED, toInternalImageData(response.body)));
-            if (currentPage > 0) {
-                // Optimisation: we don't reload it for page=0 as we can handle uploading here locally.
-                // page=0 is expected to be the most common scenario for this function.
-                reload(ajax, currentPage)(dispatch);
-            }
-        } catch (e) {
-            console.error(`Cannot upload image "${description}"`, e);
-            dispatch(error(Action.UPLOAD_ERROR, e.toLocaleString()));
-        }
-    }
-}
-
-function delete_(ajax, id, currentImages, pagination) {
-    return async dispatch => {
-        try {
-            let wasLoaded = !!currentImages.find(i => i.id === id);
-            await ajax.images.delete(id);
-            dispatch(newState(Action.DELETED, id));
-            if (wasLoaded) {
-                dispatch(reload(ajax, pagination.current));
-            }
-        } catch (e) {
-            console.error(`Cannot delete image ${id}`, e);
-            dispatch(error(Action.DELETE_ERROR, e.toLocaleString()));
-        }
+function* delete_(id) {
+    let ajax = yield fetchAjax();
+    try {
+        yield call(ajax.images.delete, id);
+        yield put(action(Action.DELETED, id));
+    } catch (e) {
+        console.error(`Cannot delete image ${id}`, e);
+        yield put(error(Action.DELETE_ERROR, e.toLocaleString()));
     }
 }
 
 function asImgSrc(id) {
     let apiPrefix = config.get().api;
     return `${apiPrefix}/images/${id}`;
+}
+
+function addPage(pages, newPage, pageN) {
+    return pages.set(pageN, fromJS(newPage));
 }
 
 function toInternalImagesData(serverImagesData) {
@@ -183,13 +168,4 @@ function toInternalImageData(image) {
     delete result.metadata;
     console.log("uploaded", image);
     return result;
-}
-
-function growPreservingSize(collection, newItem, collectionMaxSize) {
-    let withNewImage = collection.unshift(newItem);
-    if (collectionMaxSize > withNewImage.length) {
-        return withNewImage.pop();
-    } else {
-        return withNewImage
-    }
 }
