@@ -51,7 +51,7 @@ export const EditProjectsRoute = function () {
 
 export const EditProjects = function ({currentProjectId}) {
 
-    let projects = useProjects(false);
+    let projects = useProjects(true);
     let loading = useProjectLoading();
     let updating = useProjectUpdating();
     let deleting = useProjectDeleting();

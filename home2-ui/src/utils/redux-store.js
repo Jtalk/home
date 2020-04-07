@@ -8,7 +8,18 @@ export function useImmutableSelector(storeSegment, ...path) {
     let result = useSelector(store => {
         return store && loadAsObj(store[storeSegment], path)
     });
-    return (result && result.toJS && result.toJS()) || result;
+    return asJs(result);
+}
+
+export function immutableSelector(storeSegment, ...path) {
+    return store => {
+        let result = store && loadAsObj(store[storeSegment], path);
+        return asJs(result);
+    };
+}
+
+function asJs(immutableValue) {
+    return (immutableValue && immutableValue.toJS && immutableValue.toJS()) || immutableValue;
 }
 
 function loadAsObj(store, pathArray) {

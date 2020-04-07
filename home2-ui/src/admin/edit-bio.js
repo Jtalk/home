@@ -1,7 +1,5 @@
 import React from "react";
-import {useDispatch} from "react-redux";
 import {useOwner, useOwnerError, useOwnerLoading, useOwnerUpdater, useOwnerUpdating} from "../data/reduce/owner";
-import {useAjax} from "../context/ajax-context";
 import {useForm} from "./common/use-form";
 import {Loading, Updating} from "../data/reduce/global/enums";
 import {useLoadedStateChange} from "../utils/state-change";
@@ -14,8 +12,6 @@ import {Titled} from "react-titled";
 
 export const EditBio = function () {
 
-    let ajax = useAjax();
-    let dispatch = useDispatch();
     let owner = useOwner();
     let loading = useOwnerLoading();
     let loadingStatusChanged = useLoadedStateChange(loading, {from: Loading.LOADING, to: Loading.READY});

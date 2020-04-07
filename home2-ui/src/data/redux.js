@@ -12,8 +12,12 @@ import {article} from "./reduce/article";
 import {tags} from "./reduce/tags";
 import {latestArticles} from "./reduce/latest-articles";
 import {authentication} from "./reduce/authentication";
+import createSagaMiddleware from "redux-saga";
+import {rootSaga} from "./saga";
+import {ajax} from "./reduce/ajax";
 
 export const reducers = {
+    ajax,
     authentication,
     owner,
     projects,
@@ -26,22 +30,31 @@ export const reducers = {
 };
 
 export function createAppStore() {
-    return createStore(
+    let [mw, saga] = middleware();
+    let result = createStore(
         combineReducers({
             ...reducers
         }),
-        middleware()
+        mw
     );
+    saga.run(rootSaga);
+    return result;
 }
 
 export function createTestStore(submodule, reducer) {
-    return createStore(combineReducers({[submodule]: reducer}), middleware());
+    let [mw, saga] = middleware();
+    let result = createStore(combineReducers({[submodule]: reducer}), mw);
+    saga.run(rootSaga);
+    return result;
 }
 
 function middleware() {
-    return applyMiddleware(
+    let saga = createSagaMiddleware();
+    let result = applyMiddleware(
+        saga,
         thunk,
         promiseMiddleware,
         createLogger(reduxLoggerOpts())
     );
+    return [result, saga];
 }

@@ -1,7 +1,10 @@
 import {fromJS, Map} from "immutable";
 import {Loading, Updating} from "./global/enums";
 import {action, error, newState} from "./global/actions";
-import {useData, useLastError, useLoading, useUpdater, useUpdating} from "./global/hook-barebone";
+import {useLastError, useLoading, useUpdater2, useUpdating} from "./global/hook-barebone";
+import {call, put, takeEvery} from "redux-saga/effects";
+import {fetchAjax} from "./ajax";
+import {useImmutableSelector} from "../../utils/redux-store";
 
 let defaultOwner = fromJS({
     name: "",
@@ -21,7 +24,7 @@ export const Action = {
     UPDATE_ERROR: Symbol("owner update error"),
 };
 
-export function owner(state = Map({loading: Loading.LOADING, data: defaultOwner}), action) {
+export function owner(state = Map({loading: Loading.INITIAL, data: defaultOwner}), action) {
     switch (action.type) {
         case Action.LOAD:
             return Map({loading: Loading.LOADING, errorMessage: undefined, uploading: undefined, data: defaultOwner});
@@ -40,8 +43,13 @@ export function owner(state = Map({loading: Loading.LOADING, data: defaultOwner}
     }
 }
 
+export function* watchOwner() {
+    yield preload();
+    yield takeEvery(Action.UPDATE, ({data}) => update(data.update, data.extra.photo));
+}
+
 export function useOwner() {
-    return useData(load, [], "owner");
+    return useImmutableSelector("owner", "data");
 }
 
 export function useOwnerLoading() {
@@ -57,32 +65,33 @@ export function useOwnerError() {
 }
 
 export function useOwnerUpdater() {
-    return useUpdater(update);
+    return useUpdater2(Action.UPDATE);
 }
 
-function load(ajax) {
-    return async dispatch => {
-        dispatch(action(Action.LOAD));
-        try {
-            let owner = await ajax.owner.load();
-            dispatch(newState(Action.LOADED, fromJS(owner)));
-        } catch (e) {
-            console.error("Cannot load owner info", e);
-            dispatch(error(Action.LOAD_ERROR, e.toLocaleString()));
-        }
+function* preload() {
+    yield put(action(Action.LOAD));
+    yield call(load);
+}
+
+function* load() {
+    let ajax = yield fetchAjax();
+    try {
+        let owner = yield call(ajax.owner.load);
+        yield put(newState(Action.LOADED, fromJS(owner)));
+    } catch (e) {
+        console.error("Cannot load owner info", e);
+        yield put(error(Action.LOAD_ERROR, e.toLocaleString()));
     }
 }
 
-function update(ajax, update, {photo}) {
-    return async dispatch => {
-        dispatch(action(Action.UPDATE));
-        try {
-            let newOwner = await ajax.owner.update(update, photo);
-            dispatch(newState(Action.UPDATED, fromJS(newOwner)));
-        } catch (e) {
-            console.error("Exception while updating owner bio for", update, e);
-            dispatch(error(Action.UPDATE_ERROR, e.toLocaleString()));
-        }
-    };
+function* update(update, photo) {
+    let ajax = yield fetchAjax();
+    try {
+        let newOwner = yield call(ajax.owner.update, update, photo);
+        yield put(newState(Action.UPDATED, fromJS(newOwner)));
+    } catch (e) {
+        console.error("Exception while updating owner bio for", update, e);
+        yield put(error(Action.UPDATE_ERROR, e.toLocaleString()));
+    }
 }
 
