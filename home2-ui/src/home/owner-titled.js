@@ -4,7 +4,7 @@ import React from "react";
 
 export const OwnerTitled = function ({children}) {
     let {name} = useOwner();
-    return <Titled title={() => name}>
+    return <Titled title={() => name || "Home"}>
         {children}
     </Titled>
 };
