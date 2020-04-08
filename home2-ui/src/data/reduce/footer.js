@@ -41,7 +41,7 @@ export function footer(state = Map({loading: Loading.INITIAL, data: defaultFoote
 
 export function* watchFooter() {
     yield preload();
-    yield takeEvery(Action.UPDATE, ({data}) => update(data));
+    yield takeEvery(Action.UPDATE, ({data}) => update(data.update));
 }
 
 export function useFooter() {
@@ -83,7 +83,7 @@ function* load() {
 function* update(footer) {
     let ajax = yield fetchAjax();
     try {
-        let result = yield call(ajax.footer.updatem, footer);
+        let result = yield call(ajax.footer.update, footer);
         yield put(action(Action.UPDATED, result));
     } catch (e) {
         console.error("Cannot load footer info", e);
