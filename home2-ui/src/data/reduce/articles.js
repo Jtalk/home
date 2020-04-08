@@ -161,7 +161,7 @@ function* remove(articleId, page) {
     let ajax = yield fetchAjax();
     try {
         yield call(ajax.articles.remove, articleId);
-        let pageSize = yield select(pageSizeSelector("articles", "data"));
+        let pageSize = yield select(pageSizeSelector("articles", "pages"));
         let updatedList = yield call(ajax.articles.load, page, pageSize, false);
         yield put(action(Action.DELETED, {...updatedList, deletedId: articleId}));
     } catch (e) {
