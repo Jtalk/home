@@ -1,33 +1,35 @@
 import React from "react";
 import {Button, Dropdown, Form, Grid, Segment, TextArea} from "semantic-ui-react";
 import {ErrorMessage, SuccessMessage} from "../form/form-message";
-import {useAjax, useLoader} from "../context/ajax-context";
-import {load, update} from "../data/reduce/article";
 import {useAvailableTags} from "../data/reduce/tags";
-import {useDispatch} from "react-redux";
-import {useImmutableSelector} from "../utils/redux-store";
 import {useForm} from "./common/use-form";
 import {Loading, Updating} from "../data/reduce/global/enums";
-import {useStateChange} from "../utils/state-change";
+import {useLoadedStateChange} from "../utils/state-change";
 import {DatePicker} from "./common/date-picker";
 import {useHistory} from "react-router-dom";
 import _ from "lodash";
+import {
+    useArticle,
+    useArticlesError,
+    useArticlesLoading,
+    useArticlesUpdating,
+    useArticleUpdater
+} from "../data/reduce/articles";
 
 export const EditBlogArticle = function ({articleId}) {
 
-    let ajax = useAjax();
-    let dispatch = useDispatch();
     let history = useHistory();
 
-    useLoader(load, ajax, articleId);
-
-    let article = useImmutableSelector("article", "data");
+    let article = useArticle(articleId);
     let knownTags = useAvailableTags();
-    let errorMessage = useImmutableSelector("article", ["errorMessage"]);
-    let [loaded, loadingStatus] = useStateChange("article", ["loading"], {from: Loading.LOADING, to: Loading.READY});
-    let [updated, updateStatus] = useStateChange("article", ["updating"], {from: Updating.UPDATING, to: Updating.UPDATED});
+    let errorMessage = useArticlesError();
+    let loading = useArticlesLoading();
+    let updating = useArticlesUpdating();
+    let loaded = useLoadedStateChange(loading, {from: Loading.LOADING, to: Loading.READY});
+    let updated = useLoadedStateChange(updating, {from: Updating.UPDATING, to: Updating.UPDATED});
 
-    let {data, updater, onSubmit, canSubmit} = useForm({init: article, updateStatus});
+    let {data, updater, onSubmit, canSubmit} = useForm({init: article, updateStatus: updating});
+    let articleUpdater = useArticleUpdater();
 
     let forceReload = loaded || updated;
     if (forceReload) {
@@ -35,7 +37,7 @@ export const EditBlogArticle = function ({articleId}) {
     }
 
     let submit = (updatedArticle) => {
-        dispatch(update(ajax, articleId, updatedArticle));
+        articleUpdater(updatedArticle, {id: articleId});
     };
     let reset = () => {
         updater.reloaded(article);
@@ -46,10 +48,10 @@ export const EditBlogArticle = function ({articleId}) {
         setTimeout(() => history.push(editHref(article.id)), 0);
     }
 
-    return <EditBlogArticleStateless article={data} submit={onSubmit(submit)} {...{knownTags, reset, updater, canSubmit, loadingStatus, updateStatus, errorMessage}}/>
+    return <EditBlogArticleStateless article={data} submit={onSubmit(submit)} {...{knownTags, reset, updater, canSubmit, loading, updating, errorMessage}}/>
 };
 
-export const EditBlogArticleStateless = function ({article, knownTags = [], submit, reset, updater, canSubmit, loadingStatus, updateStatus, errorMessage}) {
+export const EditBlogArticleStateless = function ({article, knownTags = [], submit, reset, updater, canSubmit, loading, updating, errorMessage}) {
     knownTags = _.uniq([...knownTags, ...(article.tags || [])]);
     let applyTags = (e, {options, value}) => {
         updater.change("tags")(e, {value: _.uniq(asDropdownText(value, options))});
@@ -61,9 +63,9 @@ export const EditBlogArticleStateless = function ({article, knownTags = [], subm
         <Grid.Column width={13}>
             <Segment raised>
                 <h2>Edit Blog Post</h2>
-                <Form success={updateStatus === Updating.UPDATED}
+                <Form success={updating === Updating.UPDATED}
                       error={!!errorMessage}
-                      loading={loadingStatus === Loading.LOADING}>
+                      loading={loading === Loading.LOADING}>
                     <Grid centered>
                         <Grid.Row>
                             <Grid.Column width={12}>
@@ -94,7 +96,7 @@ export const EditBlogArticleStateless = function ({article, knownTags = [], subm
                             </Grid.Column>
                             <Grid.Column verticalAlign="middle" width={4}>
                                 <Button.Group>
-                                    <Button primary disabled={!canSubmit} loading={updateStatus === Updating.UPDATING} onClick={submit}>Save</Button>
+                                    <Button primary disabled={!canSubmit} loading={updating === Updating.UPDATING} onClick={submit}>Save</Button>
                                     <Button.Or/>
                                     <Button secondary onClick={reset}>Cancel</Button>
                                 </Button.Group>

@@ -1,30 +1,27 @@
 import React from "react";
 import {Button, Form, Icon, Modal} from "semantic-ui-react";
 import {ErrorMessage} from "../form/form-message";
-import {useDispatch} from "react-redux";
-import {update} from "../data/reduce/article";
-import {useAjax} from "../context/ajax-context";
 import {useForm} from "./common/use-form";
-import {useImmutableSelector} from "../utils/redux-store";
 import {Updating} from "../data/reduce/global/enums";
-import {useStateChange} from "../utils/state-change";
+import {useLoadedStateChange} from "../utils/state-change";
 import {useHistory} from "react-router";
+import {useArticlesError, useArticlesUpdating, useArticleUpdater} from "../data/reduce/articles";
 
 const INITIAL = () => ({title: '', id: '', });
 
 export const AddBlogArticleModal = function () {
 
-    let ajax = useAjax();
-    let dispatch = useDispatch();
     let history = useHistory();
 
-    let errorMessage = useImmutableSelector("article", "errorMessage");
-    let [updated] = useStateChange("article", ["updating"], {from: Updating.UPDATING, to: Updating.UPDATED});
+    let errorMessage = useArticlesError();
+    let updating = useArticlesUpdating();
+    let updated = useLoadedStateChange(updating, {from: Updating.UPDATING, to: Updating.UPDATED});
 
+    let articleUpdater = useArticleUpdater();
     let {data, updater, onSubmit, canSubmit} = useForm({init: INITIAL()});
 
     let submit = (article) => {
-        dispatch(update(ajax, article.id, article));
+        articleUpdater(article, { id: article.id});
     };
     let clear = () => {
         updater.reloaded(INITIAL());

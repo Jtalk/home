@@ -8,7 +8,6 @@ import promiseMiddleware from "redux-promise-middleware";
 import {images} from "./reduce/images";
 import {projects} from "./reduce/projects";
 import {articles} from "./reduce/articles";
-import {article} from "./reduce/article";
 import {tags} from "./reduce/tags";
 import {latestArticles} from "./reduce/latest-articles";
 import {authentication} from "./reduce/authentication";
@@ -22,7 +21,6 @@ export const reducers = {
     owner,
     projects,
     articles,
-    article,
     "latest-articles": latestArticles,
     tags,
     footer,

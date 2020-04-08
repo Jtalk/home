@@ -6,20 +6,15 @@ import {formatMarkup} from "../utils/text-markup";
 import {formatDateTime} from "../utils/date-time";
 import {ContentPlaceholderOr} from "../utils/placeholder";
 import {Loading} from "../data/reduce/global/enums";
-import {useAjax, useLoader} from "../context/ajax-context";
 import _ from "lodash";
-import {load} from "../data/reduce/article";
-import {useImmutableSelector} from "../utils/redux-store";
 import {Titled} from "react-titled";
 import {OwnerCard} from "../home/owner-card";
 import {LatestPosts} from "../home/latest-posts";
+import {useArticle, useArticlesLoading} from "../data/reduce/articles";
 
 export const BlogArticle = function (props) {
 
-    let ajax = useAjax();
-    useLoader(load, ajax, props.id);
-
-    let loading = useImmutableSelector("article", "loading");
+    let loading = useArticlesLoading();
     if (props.preview) {
         return <ArticleView {...props}/>
     }
@@ -38,14 +33,10 @@ export const BlogArticle = function (props) {
     </Grid>
 };
 
-export const ArticleView = function ({article = {}, id, href, preview}) {
+export const ArticleView = function ({id, href, preview}) {
 
-    let loadedArticle = useImmutableSelector("article", "data");
-    let loading = useImmutableSelector("article", "loading");
-
-    if (loading === Loading.READY && loadedArticle && loadedArticle.id === id) {
-        article = loadedArticle;
-    }
+    let article = useArticle(id);
+    let loading = useArticlesLoading();
 
     let articleLoading = _.isEmpty(article) && loading !== Loading.READY;
 

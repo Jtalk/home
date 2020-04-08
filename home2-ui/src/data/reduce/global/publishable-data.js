@@ -1,16 +1,19 @@
 import {fromJS} from "immutable";
 import {immutableSelector, useImmutableSelector} from "../../../utils/redux-store";
 
-export function publishableData(items, withUnpublished) {
+export function publishableData(items, withUnpublished, mapping = v => v) {
+    let mappedItems = items.map(mapping);
     if (withUnpublished) {
-        let published = items.filter(i => i.published);
+        let published = items
+            .filter(i => i.published)
+            .map(mapping);
         return fromJS({
-            all: items,
+            all: mappedItems,
             published
         });
     } else {
         return fromJS({
-            published: items
+            published: mappedItems
         });
     }
 }

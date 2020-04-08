@@ -31,7 +31,7 @@ export const Blog = function () {
         <Grid.Row>
             <Grid.Column width={11}>
                 <ContentPlaceholderOr loading={loading === Loading.LOADING} lines={30}>
-                    {articles.map(article => <BlogArticle preview key={article.id} id={article.id} href={routeConcat(path, article.id)} article={article} />)}
+                    {articles.map(article => <BlogArticle preview key={article.id} id={article.id} href={routeConcat(path, article.id)} />)}
                 </ContentPlaceholderOr>
             </Grid.Column>
             <Grid.Column width={3}>
