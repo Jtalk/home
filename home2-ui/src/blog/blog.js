@@ -4,9 +4,7 @@ import {Grid, Menu, Segment} from "semantic-ui-react";
 import {OwnerCard} from "../home/owner-card";
 import {LatestPosts} from "../home/latest-posts";
 import {useHistory} from "react-router-dom";
-import {useImmutableSelector} from "../utils/redux-store";
-import {useAjax, useLoader} from "../context/ajax-context";
-import {loadPagePublished} from "../data/reduce/articles";
+import {DEFAULT_PAGE_SIZE, useArticles, useArticlesLoading, useArticlesTotalCount} from "../data/reduce/articles";
 import {useQueryParam} from "../utils/routing";
 import {ContentPlaceholderOr} from "../utils/placeholder";
 import {Loading} from "../data/reduce/global/enums";
@@ -15,17 +13,14 @@ import {routeConcat, useActiveRoute} from "../navigation/active-route-context";
 
 export const Blog = function () {
 
-    let ajax = useAjax();
     let history = useHistory();
 
     let page = useQueryParam("page", 1);
     let path = useActiveRoute();
 
-    useLoader(loadPagePublished, ajax, page - 1);
-
-    let articles = useImmutableSelector("articles", "data", "articles");
-    let pagination = useImmutableSelector("articles", "data", "pagination");
-    let loading = useImmutableSelector("articles", "loading");
+    let articles = useArticles(page - 1, DEFAULT_PAGE_SIZE);
+    let totalCount = useArticlesTotalCount();
+    let loading = useArticlesLoading();
 
     let navigateToPage = (page) => {
         history.push(path + `?page=${page}`)
@@ -46,17 +41,17 @@ export const Blog = function () {
         </Grid.Row>
             <Grid.Row>
                 <Segment floated="right" basic compact>
-                    <Pagination pagination={pagination} page={page} navigate={navigateToPage}/>
+                    <Pagination total={totalCount} page={page} navigate={navigateToPage}/>
                 </Segment>
             </Grid.Row>
     </Grid>
 };
 
-export const Pagination = function ({pagination, page, navigate}) {
+export const Pagination = function ({total, page, navigate}) {
     let currentIndex = page - 1;
     return <Menu pagination>
         {
-            Array(pagination.total || 1).fill().map((_, i) => {
+            Array(total || 1).fill().map((_, i) => {
                 return <Menu.Item key={i} name={`${i + 1}`} active={currentIndex === i} onClick={() => navigate(i + 1)}/>
             })
         }

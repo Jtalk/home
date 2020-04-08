@@ -3,36 +3,20 @@ import {Button, Grid, Icon, List, Segment} from "semantic-ui-react";
 import {formatDateTime} from "../utils/date-time";
 import {Link} from "react-router-dom";
 import {AddBlogArticleModal} from "./add-blog-article-modal";
-import {useAjax, useLoader} from "../context/ajax-context";
-import {loadPage as articlesLoader, remove} from "../data/reduce/articles";
-import {useDispatch} from "react-redux";
-import {useImmutableSelector} from "../utils/redux-store";
+import {useArticles, useArticlesDeleter} from "../data/reduce/articles";
 import {editHref} from "./edit-blog-article";
 
 const DEFAULT_PAGE_SIZE = 100;
 
 export const EditBlog = function ({page = 0, pageSize = DEFAULT_PAGE_SIZE}) {
 
-    let ajax = useAjax();
+    let articles = useArticles(0, DEFAULT_PAGE_SIZE, true); // TODO: Add pagination to blog editor
+    let onDelete = useArticlesDeleter();
 
-    useLoader(articlesLoader, ajax, page, pageSize);
-
-    let dispatch = useDispatch();
-    let articles = useImmutableSelector("articles", ["data", "articles"]);
-    let pagination = useImmutableSelector("articles", ["data", "pagination"]);
-
-    let onDelete = (id) => {
-        return () => {
-            dispatch(remove(ajax, id, page, pageSize));
-        }
-    };
-
-    return <EditBlogStateless {...{articles, pagination, onDelete}}/>
+    return <EditBlogStateless {...{articles, page, onDelete}}/>
 };
 
-export const EditBlogStateless = function ({articles, pagination, onDelete}) {
-
-    void pagination;
+export const EditBlogStateless = function ({articles, page, onDelete}) {
 
     return <Grid centered>
         <Grid.Column width={13}>
@@ -43,7 +27,7 @@ export const EditBlogStateless = function ({articles, pagination, onDelete}) {
                 <br/>
                 <List animated celled verticalAlign="middle">
                     {articles.map(article => <EditBlogItem key={article.id} article={article}
-                                                           onDelete={onDelete(article.id)}/>)}
+                                                           onDelete={() => onDelete({id: article.id, page})}/>)}
                 </List>
             </Segment>
         </Grid.Column>

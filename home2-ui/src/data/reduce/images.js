@@ -6,11 +6,7 @@ import {useDeleter2, useLastError, useLoader, useLoading, useUpdater2, useUpdati
 import {useImmutableSelector} from "../../utils/redux-store";
 import {call, put, takeEvery, takeLatest} from "redux-saga/effects";
 import {fetchAjax} from "./ajax";
-
-const defaultData = fromJS({
-    pages: [],
-    total: undefined
-});
+import {addPage, defaultPages} from "./global/paginated-data";
 
 const initialState = fromJS({
     upload: {
@@ -21,7 +17,7 @@ const initialState = fromJS({
         status: undefined,
         error: undefined,
     },
-    data: defaultData,
+    data: defaultPages(),
 });
 
 const Action = {
@@ -46,23 +42,20 @@ export function images(state = initialState, action) {
         case Action.LOADED:
             return state.merge(fromJS({
                 loading: {status: Loading.READY},
-                data: {
-                    pages: addPage(state.get("data").get("pages"), action.data.images, action.data.pagination.current),
-                    total: action.data.pagination.total
-                }
+                data: addPage(state.get("data"), action.data.images, action.data.pagination),
             }));
         case Action.LOAD_ERROR:
             return state.merge(fromJS({loading: {status: Loading.ERROR, error: {message: action.errorMessage}}}));
         case Action.UPLOAD:
             return state.merge(fromJS({uploading: {status: Uploading.UPLOADING}, deleting: undefined}));
         case Action.UPLOADED:
-            return state.merge(fromJS({uploading: {status: Uploading.UPLOADED}, data: defaultData}));
+            return state.merge(fromJS({uploading: {status: Uploading.UPLOADED}, data: defaultPages()}));
         case Action.UPLOAD_ERROR:
             return state.merge(fromJS({uploading: {status: Uploading.ERROR, error: {message: action.errorMessage}}}));
         case Action.DELETE:
             return state.merge(fromJS({deletion: {status: Deleting.DELETING}, uploading: undefined}));
         case Action.DELETED:
-            return state.merge(fromJS({deletion: {status: Deleting.DELETED}, data: defaultData}));
+            return state.merge(fromJS({deletion: {status: Deleting.DELETED}, data: defaultPages()}));
         case Action.DELETE_ERROR:
             return state.merge(fromJS({
                 deletion: {
@@ -147,10 +140,6 @@ function* delete_(id) {
 function asImgSrc(id) {
     let apiPrefix = config.get().api;
     return `${apiPrefix}/images/${id}`;
-}
-
-function addPage(pages, newPage, pageN) {
-    return pages.set(pageN, fromJS(newPage));
 }
 
 function toInternalImagesData(serverImagesData) {

@@ -1,4 +1,4 @@
-import {fromJS, Map} from "immutable";
+import {Map} from "immutable";
 import {Deleting, Loading, Updating} from "./global/enums";
 import {action, error, takeOnce} from "./global/actions";
 import _ from "lodash";
@@ -11,9 +11,9 @@ import {
     useUpdater2,
     useUpdating
 } from "./global/hook-barebone";
-import {useImmutableSelector} from "../../utils/redux-store";
 import {fetchAjax} from "./ajax";
 import {call, put, takeEvery, takeLatest} from "redux-saga/effects";
+import {publishableData, useAllData, usePublishedData} from "./global/publishable-data";
 
 export const Action = {
     LOAD: Symbol("projects load"),
@@ -35,23 +35,20 @@ export function projects(state = Map({loading: Loading.LOADING, data: Map()}), a
         case Action.LOADED:
             return state.merge({
                 loading: Loading.READY, errorMessage: undefined,
-                data: asStoreData(action.data.projects, !action.data.publishedOnly)
+                data: publishableData(action.data.projects, !action.data.publishedOnly)
             });
         case Action.LOAD_ERROR:
             return state.merge({loading: Loading.ERROR, errorMessage: action.errorMessage});
         case Action.UPDATE:
             return state.merge({updating: Updating.UPDATING, errorMessage: undefined});
         case Action.UPDATED:
-            return state.merge({
-                updating: Updating.UPDATED, errorMessage: undefined,
-                data: asStoreData(action.data.projects, !action.data.publishedOnly)
-            });
+            return state.merge({updating: Updating.UPDATED, errorMessage: undefined});
         case Action.UPDATE_ERROR:
             return state.merge({updating: Updating.ERROR, errorMessage: action.errorMessage});
         case Action.DELETE:
             return state.merge({deleting: Deleting.DELETING, errorMessage: undefined});
         case Action.DELETED:
-            return state.merge({deleting: Deleting.DELETED, data: fromJS(action.data)});
+            return state.merge({deleting: Deleting.DELETED});
         case Action.DELETE_ERROR:
             return state.merge({deleting: Deleting.DELETE_ERROR, errorMessage: action.data});
         default:
@@ -67,8 +64,8 @@ export function* watchProjects() {
 }
 
 export function useProjects(withUnpublished = false) {
-    let published = useImmutableSelector("projects", "data", "published");
-    let all = useImmutableSelector("projects", "data", "all");
+    let published = usePublishedData("projects", "data");
+    let all = useAllData("projects", "data");
     useLoader(action(Action.LOAD), !published);
     useLoader(action(Action.RELOAD_UNPUBLISHED), withUnpublished && !all);
     return (withUnpublished ? all : published) || [];
@@ -132,19 +129,5 @@ function* remove(projectId) {
     } catch (e) {
         console.error(`Exception while deleting project ${projectId}`, e);
         yield put(error(Action.DELETE_ERROR, e.toLocaleString()));
-    }
-}
-
-function asStoreData(projects, withUnpublished) {
-    if (withUnpublished) {
-        let published = projects.filter(p => p.published);
-        return fromJS({
-            all: projects,
-            published
-        });
-    } else {
-        return fromJS({
-            published: projects
-        });
     }
 }
