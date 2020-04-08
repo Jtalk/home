@@ -13,7 +13,10 @@ export function useImmutableSelector(storeSegment, ...path) {
 
 export function immutableSelector(storeSegment, ...path) {
     return store => {
-        let result = store && loadAsObj(store[storeSegment], path);
+        if (storeSegment) {
+            store = store[storeSegment];
+        }
+        let result = store && loadAsObj(store, path);
         return asJs(result);
     };
 }

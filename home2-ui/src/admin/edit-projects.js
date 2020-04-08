@@ -170,14 +170,15 @@ export const EditProject = function ({project, errorMessage, updating, deleting,
         submit(project.id, editedProject, files);
     };
 
-    let reorderLink = (index, direction) => updater.reorder(index, index + direction, "links");
-    let updateLink = (index) => updater.changeItem(index, "links");
-    let removeLink = (index) => updater.removeItem(index, "links");
-
     let {onSubmit, data, updater, canSubmit, edited} = useForm({
         init: project,
         updateStatus: updating
     });
+
+    let reorderLink = (index, direction) => updater.reorder(index, index + direction, "links");
+    let addLink = updater.addItem(emptyLink(), "links");
+    let updateLink = (index) => updater.changeItem(index, "links");
+    let removeLink = (index) => updater.removeItem(index, "links");
 
     if (forceReload) {
         if (data.order === project.order || !edited) {
@@ -198,7 +199,7 @@ export const EditProject = function ({project, errorMessage, updating, deleting,
                         <Form.Input label="Project Title" placeholder="Title" value={data.title || ''} onChange={updater.change("title")}/>
                         <Form.Input label="Internal ID" placeholder="(letters, digits, dashes)" value={data.id || ''} onChange={updater.change("id")}/>
                         <Form.Checkbox toggle label="This project is published" checked={!!data.published} onChange={updater.changeToggle("published")}/>
-                        <ProjectLinks className="field" links={data.links} reorder={reorderLink} update={updateLink} remove={removeLink}/>
+                        <ProjectLinks className="field" links={data.links} add={addLink} reorder={reorderLink} update={updateLink} remove={removeLink}/>
                         <ErrorMessage message={errorMessage}/>
                     </Grid.Column>
                     <Grid.Column width={5}>
@@ -223,9 +224,9 @@ export const EditProject = function ({project, errorMessage, updating, deleting,
     </div>
 };
 
-export const ProjectLinks = function ({links, setLinks, className, reorder, update, remove}) {
+export const ProjectLinks = function ({links, className, add, reorder, update, remove}) {
     return <div className={className}>
-        <label>Project links <Icon link name="plus" onClick={() => setLinks([...links, emptyLink()])}/></label>
+        <label>Project links <Icon link name="plus" onClick={add}/></label>
         Edit and rearrange links shown at the left panel
         <List celled verticalAlign="middle" ordered>
             {

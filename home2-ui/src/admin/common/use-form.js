@@ -94,6 +94,14 @@ class Updater {
         };
     };
 
+    addItem = (item, ...path) => {
+        return e => {
+            let collection = _.get(this.data, path);
+            let copy = [...collection, item];
+            this.change(path)(e, {value: copy});
+        };
+    };
+
     changeItem = (index, ...path) => {
         return (e, {value}) => {
             let collection = _.get(this.data, path);

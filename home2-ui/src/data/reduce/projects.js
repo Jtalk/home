@@ -89,7 +89,7 @@ export function useProjectError() {
 
 export function useProjectUpdater() {
     let updater = useUpdater2(Action.UPDATE);
-    return (id, update, {logo}) => updater(update, {id, logo});
+    return (id, update, {logo} = {}) => updater(update, {id, logo});
 }
 
 export function useProjectDeleter() {
@@ -112,8 +112,8 @@ function* update(projectId, update, logo) {
     let ajax = yield fetchAjax();
     try {
         yield call(ajax.projects.update, projectId, update, logo);
-        let projects = yield call(ajax.projects.load, false);
-        yield put(action(Action.UPDATED, {projects}));
+        yield put(action(Action.RELOAD_UNPUBLISHED));
+        yield put(action(Action.UPDATED));
     } catch (e) {
         console.error(`Exception while updating project ${projectId}`, update, e);
         yield put(error(Action.UPDATE_ERROR, e.toLocaleString()));
@@ -124,8 +124,8 @@ function* remove(projectId) {
     let ajax = yield fetchAjax();
     try {
         yield call(ajax.projects.remove, projectId);
-        let projects = yield call(ajax.projects.load, false);
-        yield put(action(Action.DELETED, {projects}));
+        yield put(action(Action.RELOAD_UNPUBLISHED));
+        yield put(action(Action.DELETED));
     } catch (e) {
         console.error(`Exception while deleting project ${projectId}`, e);
         yield put(error(Action.DELETE_ERROR, e.toLocaleString()));
