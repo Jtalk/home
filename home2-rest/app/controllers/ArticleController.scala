@@ -47,7 +47,7 @@ class ArticleController @Inject()(cc: ControllerComponents,
       .map(Ok[Article])
   }
 
-  def delete(id: String) = AuthenticatedAction.async(Article.jsonParser) { _ => _ =>
+  def delete(id: String) = AuthenticatedAction.async { _ => _ =>
     db.delete[Article](id)
       .map(_ => Ok(""))
   }
