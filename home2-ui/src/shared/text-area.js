@@ -35,22 +35,57 @@ hljs.registerLanguage("json", json);
 hljs.registerLanguage("xml", xml);
 hljs.registerLanguage("properties", properties);
 
-export const MarkdownTextArea = function ({children}) {
+// We're using a random string to wrap our text. This way we can still utilise the power of
+// <Markdown/> and keep our article preview system nice to work with.
+const WRAPPER_COMPONENT_NAME = "UGxeb0I7MWsgq5YuVDXxlfH0DlKS1nfu5m3vZviiU7hbPXhfyYlN1RqoLoz4OzOz";
+
+export const MarkdownTextArea = function ({children, preview}) {
     let opts = {
         overrides: {
             InfoMessage,
+            preview: {
+                component: Preview
+            },
+            [WRAPPER_COMPONENT_NAME]: {
+                component: preview ? PreviewOnly : Preview
+            }
         }
     };
     const rootRef = useRef();
     useEffect(() => {
-        rootRef.current.querySelectorAll('pre code').forEach((block) => {
+        rootRef.current.querySelectorAll("pre code").forEach((block) => {
             hljs.highlightBlock(block);
         });
     }, [children]);
 
+    if (typeof children !== "string") {
+        throw Error("Markdown text area can only render textual content, but was " + typeof children);
+    }
+
     return <div ref={rootRef}>
         <Markdown options={opts}>
-            {children}
+            {`<${WRAPPER_COMPONENT_NAME}>${children}</${WRAPPER_COMPONENT_NAME}>`}
         </Markdown>
     </div>
+};
+
+
+export const Preview = function ({children}) {
+    return children;
+};
+
+export const PreviewOnly = function ({children}) {
+    let previewChildren = [];
+    React.Children.forEach(children, child => {
+        if (child.type === Preview) {
+            previewChildren.push(child);
+        }
+    });
+    if (previewChildren.length <= 0) {
+        console.warn("Cannot find a preview tag among", children, "using a default preview");
+        return <p>
+            <i>No preview available for this entry</i>
+        </p>
+    }
+    return previewChildren;
 };

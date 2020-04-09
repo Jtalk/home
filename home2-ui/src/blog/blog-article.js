@@ -56,7 +56,7 @@ export const ArticleView = function ({id, href, preview}) {
                         {/*</Button.Group>*/}
                     </Item.Meta>}
                     <Item.Description>
-                        <MarkdownTextArea>{article.content || ''}</MarkdownTextArea>
+                        <MarkdownTextArea preview={preview}>{article.content || ''}</MarkdownTextArea>
                         {preview && <p/>}
                         {preview && <Link to={href} className="ui compact basic small button">
                             Read further
