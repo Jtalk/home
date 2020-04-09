@@ -172,7 +172,7 @@ function* remove(articleId, page) {
 }
 
 function* loadOne(articleId) {
-    let ajax = fetchAjax();
+    let ajax = yield fetchAjax();
     try {
         let article = yield call(ajax.articles.loadOne, articleId);
         yield put(action(Action.LOADED_ONE, article));
