@@ -38,7 +38,8 @@ class ArticleController @Inject()(cc: ControllerComponents,
       log.error(s"The requested page size is too big: ${requestedPageSize} with max set to ${MAX_PAGE_SIZE}, overriding")
     }
     val filter = if (published) Json.obj("published" -> true) else Json.obj()
-    db.findPage[Article](page, pageSize, filter)
+    val sorter = Json.obj("created" -> -1)
+    db.findPage[Article](page, pageSize, filter, sorter)
       .map(Ok[PaginatedResult[Article]])
   }
 

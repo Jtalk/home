@@ -38,13 +38,15 @@ class Database @Inject()(cc: ControllerComponents, val reactiveMongoApi: Reactiv
   def findWith[T](selector: JsObject)(implicit ec: ExecutionContext, mt: ModelType[T], reads: Reads[T]): Future[Option[T]] = collection
     .flatMap(_.find(selector, None).one)
 
-  def findAll[T](filter: JsObject = obj())(implicit ec: ExecutionContext, mt: ModelType[T], reads: Reads[T]): Future[Seq[T]] =  collection
+  def findAll[T](filter: JsObject = obj(), sorter: JsObject = obj())(implicit ec: ExecutionContext, mt: ModelType[T], reads: Reads[T]): Future[Seq[T]] =  collection
     .flatMap(_.find(filter, None)
+      .sort(sorter)
       .cursor[T]()
       .collect[Seq](MAX_ALL_ITEMS, Cursor.FailOnError()))
 
-  def findPage[T](page: Int, pageSize: Int, filter: JsObject = obj())(implicit ec: ExecutionContext, mt: ModelType[T], reads: Reads[T]): Future[PaginatedResult[T]] = collection
+  def findPage[T](page: Int, pageSize: Int, filter: JsObject = obj(), sorter: JsObject = obj())(implicit ec: ExecutionContext, mt: ModelType[T], reads: Reads[T]): Future[PaginatedResult[T]] = collection
     .flatMap(_.find(filter, None)
+      .sort(sorter)
       .skip(page * pageSize)
       .cursor[T]()
       .collect[Seq](pageSize, Cursor.FailOnError()))

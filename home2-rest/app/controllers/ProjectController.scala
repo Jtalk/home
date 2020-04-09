@@ -30,7 +30,8 @@ class ProjectController @Inject()(cc: ControllerComponents,
 
   def all(published: Boolean) = Action.async { implicit request: Request[AnyContent] =>
     val filter = if (published) Json.obj("published" -> true) else Json.obj();
-    db.findAll[Project](filter)
+    val sorter = Json.obj("order" -> 1)
+    db.findAll[Project](filter, sorter)
       .map(Json.toJson(_))
       .map(Ok.apply(_))
   }

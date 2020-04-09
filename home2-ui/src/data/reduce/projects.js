@@ -1,7 +1,6 @@
 import {Map} from "immutable";
 import {Deleting, Loading, Updating} from "./global/enums";
 import {action, error, takeOnce} from "./global/actions";
-import _ from "lodash";
 import {
     useDeleter2,
     useDeleting,
@@ -100,7 +99,6 @@ function* load(publishedOnly) {
     let ajax = yield fetchAjax();
     try {
         let projects = yield call(ajax.projects.load, publishedOnly);
-        projects = _.sortBy(projects, "order");
         yield put(action(Action.LOADED, {projects, publishedOnly}));
     } catch (e) {
         console.error("Cannot load project info", e);
