@@ -8,7 +8,7 @@ db.projects.insert({
 	title: 'Test Project 1',
 	id: 'test-project',
 	order: 0,
-	description: 'A very cool test project',
+	description: '# A very cool test project\nNuff said',
 	logoId: logoId,
 	published: true,
 	links: [
@@ -21,7 +21,7 @@ db.projects.insert({
 	title: 'Test Project 2',
 	id: 'another-test-project',
 	order: 1,
-	description: 'Another very cool test project',
+	description: '# Another very cool test project\nA description for this very cool project',
 	logoId: '',
 	published: false,
 	links: [

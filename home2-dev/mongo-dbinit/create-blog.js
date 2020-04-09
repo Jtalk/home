@@ -14,7 +14,7 @@ db.articles.insert({
 	id: 'test-article',
 	published: true,
 	created: '2020-01-20T10:00:01Z',
-	content: 'A very cool test article',
+	content: '# A very cool test article\n<preview>Once upon a time...</preview>\nOther content',
 	tags: ["Java", "Scala"]
 });
 db.articles.insert({
@@ -31,7 +31,7 @@ Array(20).fill().forEach((_, i) => {
 		id: 'test-article-' + (i + 3),
 		published: true,
 		created: asIso('2020-01-20T', ':00:01Z', (i + 1)),
-		content: 'A very cool test article',
+		content: '<preview>A very cool test article</preview>',
 		tags: ["Java", "Scala"]
 	});
 });
@@ -40,7 +40,7 @@ db.articles.insert({
 	id: 'last-test-article',
 	published: false,
 	created: '2020-01-22T14:00:01Z',
-	content: 'Another very cool test article',
+	content: '# Another very cool test article\n<preview>Preview going ahead...</preview>\nSomething something',
 	tags: []
 });
 print('Created collection Articles');

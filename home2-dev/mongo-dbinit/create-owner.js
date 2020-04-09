@@ -9,7 +9,7 @@ db.owner.insert({
 	nickname: 'pupkivas',
 	description: 'A very cool guy with his own website',
 	photoId: photoId,
-	bio: 'A very cool guy.\nHe has his very own website right here!',
+	bio: '# A very cool guy.\nHe has his very own ~~website~~ right here!',
 	contacts: {
 		email: { contactType: 'email', value: 'pupkivas@example.com' },
 		skype: { contactType: 'skype', value: 'pupkivas' },
