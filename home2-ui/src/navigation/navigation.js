@@ -8,10 +8,12 @@ import {EditImagesRouter} from "../admin/edit-images";
 import {EditFooter} from "../admin/edit-footer";
 import {NotFound} from "../error/not-found";
 import {Switch} from "react-router-dom";
-import {Header} from "../header/header";
+import {Header, LogoutButton} from "../header/header";
 import {NavigationDropdown, NavigationRoute, RouteOnly} from "./route";
 import {RenderMode, RenderModeProvider, useRenderMode} from "./render-context";
 import {BlogRouter} from "../blog/blog-router";
+import {Menu} from "semantic-ui-react";
+import {HeaderSearch} from "../header/header-search";
 
 export const Navigation = function ({renderMode}) {
     return <RenderModeProvider renderMode={renderMode}>
@@ -42,6 +44,14 @@ export const Navigation = function ({renderMode}) {
                     <EditFooter/>
                 </NavigationRoute>
             </NavigationDropdown>
+            <NavigationRight>
+                <MenuOnly>
+                    <HeaderSearch/>
+                </MenuOnly>
+                <MenuOnly>
+                    <LogoutButton/>
+                </MenuOnly>
+            </NavigationRight>
             <RouteOnly>
                 <NotFound/>
             </RouteOnly>
@@ -58,6 +68,33 @@ const NavigationHeader = function ({children}) {
             </Header>;
         case RenderMode.ROUTER:
             return <Switch children={children}/>;
+        default:
+            throw Error(`Unsupported render mode ${renderMode}`);
+    }
+};
+
+const NavigationRight = function ({children}) {
+    let renderMode = useRenderMode();
+    switch (renderMode) {
+        case RenderMode.MENU:
+            return <Menu.Menu position="right">
+                {children}
+            </Menu.Menu>;
+        case RenderMode.ROUTER:
+            // Just keep rendering routes
+            return children;
+        default:
+            throw Error(`Unsupported render mode ${renderMode}`);
+    }
+};
+
+const MenuOnly = function ({children}) {
+    let renderMode = useRenderMode();
+    switch (renderMode) {
+        case RenderMode.MENU:
+            return children;
+        case RenderMode.ROUTER:
+            return null;
         default:
             throw Error(`Unsupported render mode ${renderMode}`);
     }
