@@ -1,5 +1,4 @@
 import React from "react";
-import "../bbcode/tags";
 import {Menu} from "semantic-ui-react";
 import {Link} from "react-router-dom";
 

@@ -1,5 +1,4 @@
 import React from "react";
-import "../bbcode/tags";
 import {BrowserRouter as Router, Route, Switch} from "react-router-dom";
 import {Projects} from "./projects";
 import {NotFound} from "../error/not-found";

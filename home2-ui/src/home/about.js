@@ -2,7 +2,6 @@ import React from "react";
 import {Grid} from "semantic-ui-react";
 import {OwnerCard} from "./owner-card";
 import {LatestPosts} from "./latest-posts";
-import "../bbcode/tags";
 import {ContentPlaceholderOr} from "../utils/placeholder";
 import {Loading} from "../data/reduce/global/enums";
 import {useOwner, useOwnerLoading} from "../data/reduce/owner";

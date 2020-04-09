@@ -1,5 +1,4 @@
 import React from "react";
-import "../bbcode/tags";
 import {Grid, Image, Menu} from "semantic-ui-react";
 import {imageUrl} from "../utils/image";
 import {MarkdownTextArea} from "../shared/text-area";

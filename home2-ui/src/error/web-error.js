@@ -1,5 +1,4 @@
 import React from "react";
-import "../bbcode/tags";
 import {Container} from "semantic-ui-react";
 import {Titled} from "react-titled";
 

@@ -1,5 +1,4 @@
 import React from "react";
-import "../bbcode/tags";
 import {Link} from "react-router-dom";
 import {Button, Divider, Grid, Item, Segment} from "semantic-ui-react";
 import {formatDateTime} from "../utils/date-time";

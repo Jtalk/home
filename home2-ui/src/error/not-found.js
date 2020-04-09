@@ -1,5 +1,4 @@
 import React from "react";
-import "../bbcode/tags";
 import {WebError} from "./web-error";
 import {useLocation} from "react-router";
 

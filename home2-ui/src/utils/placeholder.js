@@ -1,4 +1,3 @@
-import "../bbcode/tags";
 import React from "react";
 import {Placeholder} from "semantic-ui-react";
 
