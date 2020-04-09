@@ -107,7 +107,8 @@ export function useArticles(page, pageSize, withUnpublished = false) {
 
 export function useArticle(id) {
     let found = useImmutableSelector("articles", "data", id);
-    useLoader(action(Action.LOAD_ONE, id), !found);
+    let loading = useArticlesLoading();
+    useLoader(action(Action.LOAD_ONE, id), loading !== Loading.ERROR && !found);
     return found || {};
 }
 
