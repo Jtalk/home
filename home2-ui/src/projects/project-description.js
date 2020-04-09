@@ -1,8 +1,8 @@
 import React from "react";
 import "../bbcode/tags";
 import {Grid, Image, Menu} from "semantic-ui-react";
-import {formatMarkup} from "../utils/text-markup";
 import {imageUrl} from "../utils/image";
+import {MarkdownTextArea} from "../shared/text-area";
 
 export const ProjectDescription = function (project) {
 
@@ -15,7 +15,7 @@ export const ProjectDescription = function (project) {
             </Menu>
         </Grid.Column>
         <Grid.Column width={12}>
-            {formatMarkup(project.description)}
+            <MarkdownTextArea>{project.description}</MarkdownTextArea>
         </Grid.Column>
     </Grid>
 };

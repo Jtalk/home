@@ -2,7 +2,6 @@ import React from "react";
 import "../bbcode/tags";
 import {Link} from "react-router-dom";
 import {Button, Divider, Grid, Item, Segment} from "semantic-ui-react";
-import {formatMarkup} from "../utils/text-markup";
 import {formatDateTime} from "../utils/date-time";
 import {ContentPlaceholderOr} from "../utils/placeholder";
 import {Loading} from "../data/reduce/global/enums";
@@ -11,6 +10,7 @@ import {Titled} from "react-titled";
 import {OwnerCard} from "../home/owner-card";
 import {LatestPosts} from "../home/latest-posts";
 import {useArticle, useArticlesLoading} from "../data/reduce/articles";
+import {MarkdownTextArea} from "../shared/text-area";
 
 export const BlogArticle = function (props) {
 
@@ -57,7 +57,7 @@ export const ArticleView = function ({id, href, preview}) {
                         {/*</Button.Group>*/}
                     </Item.Meta>}
                     <Item.Description>
-                        {formatMarkup(article.content || '')}
+                        <MarkdownTextArea>{article.content || ''}</MarkdownTextArea>
                         {preview && <p/>}
                         {preview && <Link to={href} className="ui compact basic small button">
                             Read further

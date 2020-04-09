@@ -3,11 +3,11 @@ import {Grid} from "semantic-ui-react";
 import {OwnerCard} from "./owner-card";
 import {LatestPosts} from "./latest-posts";
 import "../bbcode/tags";
-import {formatMarkup} from "../utils/text-markup";
 import {ContentPlaceholderOr} from "../utils/placeholder";
 import {Loading} from "../data/reduce/global/enums";
 import {useOwner, useOwnerLoading} from "../data/reduce/owner";
 import {Titled} from "react-titled";
+import {MarkdownTextArea} from "../shared/text-area";
 
 export const About = function () {
 
@@ -19,7 +19,7 @@ export const About = function () {
         <Grid.Row>
             <Grid.Column width={10} as="main">
                 <ContentPlaceholderOr header lines={30} loading={loading === Loading.LOADING}>
-                    {formatMarkup(bio)}
+                    <MarkdownTextArea>{bio}</MarkdownTextArea>
                 </ContentPlaceholderOr>
             </Grid.Column>
             <Grid.Column width={4}>
