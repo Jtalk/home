@@ -1,13 +1,11 @@
-import {put, select} from "redux-saga/effects";
-import {action} from "./global/actions";
+import {select} from "redux-saga/effects";
 import {Ajax} from "../ajax-requests";
-import {immutableSelector} from "../../utils/redux-store";
 
 const Action = {
     INIT: Symbol("ajax init")
 };
 
-export function ajax(state = {}, action) {
+export function ajax(state = new Ajax(), action) {
     switch (action.type) {
         case Action.INIT:
             return action.data;
@@ -17,9 +15,5 @@ export function ajax(state = {}, action) {
 }
 
 export function* fetchAjax() {
-    return yield select(immutableSelector("ajax"));
-}
-
-export function* initAjax() {
-    yield put(action(Action.INIT, new Ajax()));
+    return yield select(store => store["ajax"]);
 }
