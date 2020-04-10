@@ -66,6 +66,8 @@ export const EditAccountStateless = function ({onSubmit, updating, username, err
                     <Grid stackable>
                         <Grid.Row>
                             <Grid.Column width={16}>
+                                {/*Helping password managers determine which account to edit*/}
+                                <input readOnly autoComplete="username" value={username} style={{display: "none"}}/>
                                 <Form.Input label="Old password"
                                             placeholder="Current password"
                                             autoComplete="current-password"
@@ -96,7 +98,6 @@ export const EditAccountStateless = function ({onSubmit, updating, username, err
                             </Grid.Column>
                         </Grid.Row>
                     </Grid>
-                    <input readOnly type="text" name="username" autoComplete="username" value={username} style={{display: "none"}}/>
                 </Form>
             </Segment>
         </Grid.Column>
