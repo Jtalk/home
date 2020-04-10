@@ -4,7 +4,7 @@ import {Updating} from "../../data/reduce/global/enums";
 
 const FILES_PATH = "__files";
 
-export function useForm({init, updateStatus, autoSubmit} = {}) {
+export function useForm({init, updateStatus, autoSubmit, secure} = {}) {
     const [submitting, setSubmitting] = useState(false);
     const [data, setData] = useState(init || {});
     const [edited, setEdited] = useState(false);
@@ -42,26 +42,27 @@ export function useForm({init, updateStatus, autoSubmit} = {}) {
     if (autoSubmit) {
         autoSubmitter = (data) => submit(autoSubmit, data);
     }
-    const updater = new Updater(data, setData, setEdited, autoSubmitter);
+    const updater = new Updater(data, setData, setEdited, autoSubmitter, secure);
     return {onSubmit, data, updater, edited, submitting, canSubmit: edited && !submitting};
 }
 
 class Updater {
 
-    constructor(data, setData, setEdited, autoSubmit) {
+    constructor(data, setData, setEdited, autoSubmit, secure) {
         this.data = data;
         this.setData = setData;
         this.setEdited = setEdited;
         this.autoSubmit = autoSubmit;
+        this.secure = secure;
     }
 
     change = (...path) => {
         return (e, {value}) => {
             let oldValue = _.get(this.data, path);
             if (_.isEqual(oldValue, value)) {
-                console.debug(`Not changing value at path:`, path, oldValue, value);
+                console.debug(`Not changing value at path:`, path, showSecurely(oldValue, this.secure), showSecurely(value, this.secure));
             } else {
-                console.debug(`Changing value at path:`, path, oldValue, value);
+                console.debug(`Changing value at path:`, path, showSecurely(oldValue, this.secure), showSecurely(value, this.secure));
                 let newData = _.cloneDeep(this.data);
                 _.set(newData, path, value);
                 this.setData(newData);
@@ -142,4 +143,8 @@ class Updater {
             this.setEdited(false);
         }
     }
+}
+
+function showSecurely(value, secure) {
+    return secure ? "<<securely hidden>>" : value;
 }

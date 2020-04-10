@@ -17,7 +17,9 @@ export const EditAccount = function () {
     let changer = usePasswordChanger();
     let errors = useFormErrors();
     let [updating, setUpdating] = useState();
-    let {onSubmit, data, updater, canSubmit, submitting} = useForm({init: PASSWORD_FORM(), updateStatus: updating});
+    let {onSubmit, data, updater, canSubmit, submitting} = useForm({
+        init: PASSWORD_FORM(), updateStatus: updating, secure: true
+    });
 
     let changePassword = async data => {
         setUpdating(Updating.UPDATING);
@@ -44,7 +46,9 @@ export const EditAccount = function () {
         }
     }
 
-    return <EditAccountStateless onSubmit={onSubmit(changePassword)} {...{updating, username, errors, updater, data, canSubmit, submitting}}/>
+    return <EditAccountStateless onSubmit={onSubmit(changePassword)} {...{
+        updating, username, errors, updater, data, canSubmit, submitting
+    }}/>
 };
 
 export const EditAccountStateless = function ({onSubmit, updating, username, errors, updater, data, canSubmit, submitting}) {

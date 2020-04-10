@@ -36,7 +36,7 @@ export const LoginModalStateless = function ({enabled, onClose, loginStatus, err
 
     let errors = useFormErrors();
     let {updater, onSubmit, submitting, data, edited} = useForm({
-        init: EMPTY_FORM(), updateStatus: asUpdateStatus(loginStatus)
+        init: EMPTY_FORM(), updateStatus: asUpdateStatus(loginStatus), secure: true
     });
 
     errorMessage = errors.message || errorMessage;
