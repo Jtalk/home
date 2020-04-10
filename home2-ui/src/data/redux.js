@@ -39,9 +39,10 @@ export function createAppStore() {
     return result;
 }
 
-export function createTestStore(submodule, reducer) {
+export function createTestStore(reducers) {
+    reducers = Object.assign({}, {ajax}, reducers);
     let [mw, saga] = middleware();
-    let result = createStore(combineReducers({[submodule]: reducer}), mw);
+    let result = createStore(combineReducers(reducers), mw);
     saga.run(rootSaga);
     return result;
 }

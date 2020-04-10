@@ -6,12 +6,12 @@ import {Button, Form, Image, Input, TextArea} from "semantic-ui-react";
 import {imageUrl} from "../utils/image";
 import config from "react-global-configuration";
 import {Loading, Updating} from "../data/reduce/global/enums";
-import {AjaxProvider} from "../context/ajax-context";
 import {Provider as ReduxProvider} from "react-redux";
 import {createTestStore} from "../data/redux";
 import {owner as ownerReducer} from "../data/reduce/owner";
 import {ImageUploadPreview} from "./common/image-upload-preview";
 import {FileConverterProvider} from "../utils/file-converter-context";
+import {ajax, ajaxResetAction} from "../data/reduce/ajax";
 
 describe("<EditBio/>", () => {
 
@@ -21,13 +21,17 @@ describe("<EditBio/>", () => {
     let owner;
 
     beforeEach(() => {
-        store = createTestStore("owner", ownerReducer);
+        store = createTestStore({
+            "owner": ownerReducer,
+            "ajax": ajax
+        });
         ajaxMock = {
             owner: {
                 load: jest.fn(() => owner),
                 update: jest.fn(updated => updated),
             }
         };
+        store.dispatch(ajaxResetAction(ajaxMock));
         fileConverter = {
             toDataUrl: async file => ({dataUrl: true, file}),
         };
@@ -50,13 +54,11 @@ describe("<EditBio/>", () => {
     }
     it("follows form lifecycle", async () => {
         let result = await mount(
-            <AjaxProvider ajax={ajaxMock}>
-                <ReduxProvider store={store}>
-                    <FileConverterProvider fileConverter={fileConverter}>
-                        <EditBio/>
-                    </FileConverterProvider>
-                </ReduxProvider>
-            </AjaxProvider>
+            <ReduxProvider store={store}>
+                <FileConverterProvider fileConverter={fileConverter}>
+                    <EditBio/>
+                </FileConverterProvider>
+            </ReduxProvider>
         );
         result.update();
 
