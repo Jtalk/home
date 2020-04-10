@@ -9,13 +9,17 @@ import {EditFooter} from "../admin/edit-footer";
 import {NotFound} from "../error/not-found";
 import {Switch} from "react-router-dom";
 import {Header, LogoutButton} from "../header/header";
-import {NavigationDropdown, NavigationRoute, RouteOnly} from "./route";
+import {NavigationDropdown, NavigationRoute, PartialRoute, PartialSwitch, RouteOnly} from "./route";
 import {RenderMode, RenderModeProvider, useRenderMode} from "./render-context";
 import {BlogRouter} from "../blog/blog-router";
-import {Menu} from "semantic-ui-react";
+import {Dropdown, Menu} from "semantic-ui-react";
 import {HeaderSearch} from "../header/header-search";
+import {useOwner} from "../data/reduce/owner";
+import {EditAccount} from "../admin/edit-account";
+import {ActiveRouteProvider, useActiveRoute} from "./active-route-context";
 
 export const Navigation = function ({renderMode}) {
+    let {name} = useOwner();
     return <RenderModeProvider renderMode={renderMode}>
         <NavigationHeader>
             <NavigationRoute exact title="About" path="/">
@@ -44,17 +48,23 @@ export const Navigation = function ({renderMode}) {
                     <EditFooter/>
                 </NavigationRoute>
             </NavigationDropdown>
-            <NavigationRight>
-                <MenuOnly>
+            <NavigationRight path="/user">
+                <MenuOnly path="/noroute">
                     <HeaderSearch/>
                 </MenuOnly>
-                <MenuOnly>
-                    <LogoutButton/>
-                </MenuOnly>
+                <NavigationDropdown authenticated icon="user" path="/">
+                    <MenuOnly path="/noroute">
+                        <Dropdown.Header content={name}/>
+                        <Dropdown.Divider/>
+                    </MenuOnly>
+                    <NavigationRoute exact title="Account" icon="settings" path="/account">
+                        <EditAccount/>
+                    </NavigationRoute>
+                    <MenuOnly path="/noroute">
+                        <LogoutButton/>
+                    </MenuOnly>
+                </NavigationDropdown>
             </NavigationRight>
-            <RouteOnly>
-                <NotFound/>
-            </RouteOnly>
         </NavigationHeader>
     </RenderModeProvider>
 };
@@ -73,13 +83,16 @@ const NavigationHeader = function ({children}) {
     }
 };
 
-const NavigationRight = function ({children}) {
+const NavigationRight = function ({children, path}) {
     let renderMode = useRenderMode();
+    let routeSoFar = useActiveRoute(path);
     switch (renderMode) {
         case RenderMode.MENU:
-            return <Menu.Menu position="right">
-                {children}
-            </Menu.Menu>;
+            return <ActiveRouteProvider routeSoFar={routeSoFar}>
+                <Menu.Menu position="right">
+                    {children}
+                </Menu.Menu>
+            </ActiveRouteProvider>;
         case RenderMode.ROUTER:
             // Just keep rendering routes
             return children;

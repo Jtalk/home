@@ -9,6 +9,7 @@ import scala.util.{Failure, Success, Try}
 object Extension {
   implicit class FutureOption[T](val fo: Future[Option[T]]) extends AnyVal {
     def fomap[R](f: T => R)(implicit ec: ExecutionContext): Future[Option[R]] = fo.map(_.map(f))
+    def fofilter(f: T => Boolean)(implicit ec: ExecutionContext): Future[Option[T]] = fo.map(_.filter(f))
     def oflatMap[R](f: T => Option[R])(implicit ec: ExecutionContext): Future[Option[R]] = fo.map(_.flatMap(f))
     def fflatMap[R](f: T => Future[R])(implicit ec: ExecutionContext): Future[Option[R]] = fo.flatMap(o => o.map(f).map(v => v.map(x => Some(x))).getOrElse(Future.apply(None)))
     def foflatMap[R](f: T => Future[Option[R]])(implicit ec: ExecutionContext): Future[Option[R]] = fflatMap(f).map(o => o.flatten)

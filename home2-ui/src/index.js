@@ -6,18 +6,15 @@ import {App} from './App';
 import * as serviceWorker from './serviceWorker';
 import {createAppStore} from "./data/redux";
 import {Provider as ReduxProvider} from "react-redux";
-import {AjaxProvider} from "./context/ajax-context";
 import {FileConverterProvider} from "./utils/file-converter-context";
 
 const store = createAppStore();
 
 ReactDOM.render(
     <ReduxProvider store={store}>
-        <AjaxProvider>
-            <FileConverterProvider>
-                <App/>
-            </FileConverterProvider>
-        </AjaxProvider>
+        <FileConverterProvider>
+            <App/>
+        </FileConverterProvider>
     </ReduxProvider>,
     document.getElementById('root'));
 

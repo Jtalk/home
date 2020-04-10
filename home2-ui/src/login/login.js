@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React from "react";
 import {Button, Form, Icon, Modal} from "semantic-ui-react";
 import {useForm} from "../admin/common/use-form";
 import _ from "lodash";
@@ -8,6 +8,7 @@ import {ErrorMessage} from "../form/form-message";
 import {Login, useLoginError, useLoginHandler, useLoginStatus} from "../data/reduce/authentication";
 import {useLoadedStateChange} from "../utils/state-change";
 import {execAsync} from "../utils/async";
+import {useFormErrors} from "../admin/common/use-errors";
 
 const EMPTY_FORM = () => ({login: '', password: ''});
 
@@ -33,19 +34,21 @@ export const LoginModal = function ({enabled, onClose}) {
 
 export const LoginModalStateless = function ({enabled, onClose, loginStatus, errorMessage, submitLogin}) {
 
-    let [error, setError] = useState({});
+    let errors = useFormErrors();
     let {updater, onSubmit, submitting, data, edited} = useForm({
         init: EMPTY_FORM(), updateStatus: asUpdateStatus(loginStatus)
     });
 
-    errorMessage = errorMessage || ((error.login || error.password) && "Invalid field");
+    errorMessage = errors.message || errorMessage;
 
-    let submit = form => {
-        let errors = checkError(form, "login", "password");
-        if (!_.isEmpty(errors)) {
-            setError(errors);
+    let submit = async form => {
+        errors.reset("login");
+        errors.reset("password");
+        checkError(form, errors, "login", "password");
+        if (!errors.hasErrors()) {
+            await submitLogin(form);
         } else {
-            submitLogin(form);
+            throw Error("Form validation failed");
         }
     };
     let cleanAndClose = function (e) {
@@ -56,11 +59,11 @@ export const LoginModalStateless = function ({enabled, onClose, loginStatus, err
     return <Modal closeIcon basic={false} open={enabled} onClose={cleanAndClose}>
         <Modal.Header>Login</Modal.Header>
         <Modal.Content>
-            <Form loading={submitting} error={!!errorMessage} onSubmit={onSubmit(submit)}>
+            <Form loading={submitting} error={!!errorMessage || errors.hasErrors()} onSubmit={onSubmit(submit)}>
                 <Form.Input label="Login" autoComplete="username" value={data.login} onChange={updater.change("login")}
-                            error={error.login}/>
+                            error={errors.errorFor("login")}/>
                 <Form.Input label="Password" type="password" autoComplete="current-password" value={data.password}
-                            onChange={updater.change("password")} error={error.password}/>
+                            onChange={updater.change("password")} error={errors.errorFor("password")}/>
                 <ErrorMessage message={errorMessage}/>
             </Form>
         </Modal.Content>
@@ -71,10 +74,10 @@ export const LoginModalStateless = function ({enabled, onClose, loginStatus, err
     </Modal>
 };
 
-function checkError(form, ...fields) {
+function checkError(form, errors, ...fields) {
     _.chain(fields)
         .filter(f => !form[f])
-        .zipObject(true)
+        .map(errors.report("Empty value"))
         .value();
 }
 

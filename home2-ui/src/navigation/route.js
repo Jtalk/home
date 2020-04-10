@@ -5,6 +5,7 @@ import {ActiveRouteProvider, useActiveRoute, useCurrentRouteMatch} from "./activ
 import {RenderMode, useRenderMode} from "./render-context";
 import {HeaderMenuDropdownItem} from "../header/header-menu-dropdown-item";
 import {useLoggedIn} from "../data/reduce/authentication";
+import {NotFound} from "../error/not-found";
 
 export const PartialRoute = function (props) {
     let currentRoute = useActiveRoute(props.path);
@@ -18,7 +19,7 @@ export const NavigationRoute = function (props) {
     return <ComplexRoute {...props} href={props.path}/>
 };
 
-export const ComplexRoute = function ({exact, title, href, path, authenticated, children}) {
+export const ComplexRoute = function ({exact, title, icon, href, path, authenticated, children}) {
     let renderMode = useRenderMode();
     let fullHref = useActiveRoute(href);
     let fullPath = useActiveRoute(path);
@@ -30,7 +31,7 @@ export const ComplexRoute = function ({exact, title, href, path, authenticated, 
     }
     switch (renderMode) {
         case RenderMode.MENU:
-            return <HeaderMenuItem active={active} title={title} href={fullHref}/>;
+            return <HeaderMenuItem active={active} title={title} icon={icon} href={fullHref}/>;
         case RenderMode.ROUTER:
             return <PartialRoute exact={exact} path={path}>
                 {children}
@@ -40,7 +41,7 @@ export const ComplexRoute = function ({exact, title, href, path, authenticated, 
     }
 };
 
-export const NavigationDropdown = function ({title, path, authenticated, children}) {
+export const NavigationDropdown = function ({title, icon, path, authenticated, children}) {
     let renderMode = useRenderMode();
     let routeSoFar = useActiveRoute(path);
     let loggedIn = useLoggedIn();
@@ -51,7 +52,7 @@ export const NavigationDropdown = function ({title, path, authenticated, childre
     switch (renderMode) {
         case RenderMode.MENU:
             return <ActiveRouteProvider routeSoFar={routeSoFar}>
-                <HeaderMenuDropdownItem title={title}>
+                <HeaderMenuDropdownItem title={title} icon={icon}>
                     {children}
                 </HeaderMenuDropdownItem>
             </ActiveRouteProvider>;

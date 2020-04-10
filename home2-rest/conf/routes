@@ -5,7 +5,7 @@
 
 POST        /login                     controllers.AuthenticationController.login
 POST        /refresh                   controllers.AuthenticationController.refresh
-PUT         /user/:login               controllers.AuthenticationController.changeUser(login)
+PUT         /user                      controllers.AuthenticationController.changeUser
 POST        /logout                    controllers.AuthenticationController.logout
 
 GET         /owner/name                controllers.OwnerController.name

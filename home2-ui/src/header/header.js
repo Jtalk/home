@@ -22,11 +22,7 @@ export const LogoutButton = function () {
     let onClick = () => {
         loggedIn && logoutHandler();
     };
-    if (loggedIn) {
-        return <Menu.Item onClick={onClick} tooltip="Logout">
-            <Icon name="sign-out"/>
-        </Menu.Item>
-    } else {
-        return <div/>;
-    }
+    return <Menu.Item onClick={onClick} tooltip="Logout">
+        <Icon name="sign-out"/>Sign out
+    </Menu.Item>
 };

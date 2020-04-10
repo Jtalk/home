@@ -20,6 +20,7 @@ import play.api.{Configuration, Logger}
 import utils.Extension._
 import utils.security.PasswordType
 import utils.security.Randoms.newToken
+import play.api.libs.concurrent.Futures
 
 import scala.concurrent.Future.successful
 import scala.concurrent.{ExecutionContext, Future}
@@ -40,7 +41,7 @@ class AuthenticationController @Inject()(cc: ControllerComponents,
   implicit private def ec: ExecutionContext = cc.executionContext
 
   private val loginForm = Form(tuple("login" -> nonEmptyText, "password" -> nonEmptyText))
-  private val changeUserForm = Form("password" -> nonEmptyText)
+  private val changeUserForm = Form(tuple("password" -> nonEmptyText, "old-password" -> nonEmptyText))
 
   def login(): Action[AnyContent] = Action.async { implicit request: Request[AnyContent] =>
     loginForm.bindFromRequest().fold(
@@ -67,23 +68,21 @@ class AuthenticationController @Inject()(cc: ControllerComponents,
       .map(_ => Ok)
   }
 
-  def changeUser(userLogin: String): Action[AnyContent] = AuthenticatedAction.async { implicit session => implicit request =>
+  def changeUser(): Action[AnyContent] = AuthenticatedAction.async { implicit session => implicit request =>
     changeUserForm.bindFromRequest.fold(
       hasErrors => {
         log.error(s"Error parsing change user form ${hasErrors.errors}")
         Future(BadRequest(Response(error, hasErrors.errors)))
       },
-      password => {
+      { case (newPassword, oldPassword) =>
         val passwordType = PasswordType.PBKDF2WithHmacSHA512
-        val newLogin = () => Login.fromPassword(userLogin, password, passwordType)
-        findAuth(userLogin)
-          .fomap(auth => auth.withLogin(
-            auth.login
-              .map(_.withPassword(password, passwordType))
-              .getOrElse(newLogin())))
-          .map(_.getOrElse(Authentication(UUID.randomUUID().toString, AuthenticationType.Login, Some(newLogin()))))
-          .flatMap(db.update[Authentication])
-          .map(_ => Ok)
+        val newLogin = () => Login.fromPassword(session.login, newPassword, passwordType)
+        findAuth(session.login)
+          .fofilter(_.login.exists(_.check(oldPassword)))
+          .fomap(auth => auth.withLogin(auth.login.get.withPassword(newPassword, passwordType)))
+          .fflatMap(db.update[Authentication])
+          .fomap(_ => Ok("Success"))
+          .foget(Conflict("Incorrect old password was provided"))
       }
     )
   }

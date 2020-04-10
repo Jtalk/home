@@ -1,9 +1,9 @@
 import React from "react";
 import {Dropdown} from "semantic-ui-react";
 
-export const HeaderMenuDropdownItem = function ({title, children}) {
+export const HeaderMenuDropdownItem = function ({title, icon, children}) {
 
-    return <Dropdown item text={title}>
+    return <Dropdown item icon={icon} text={title}>
         <Dropdown.Menu>
             {children}
         </Dropdown.Menu>

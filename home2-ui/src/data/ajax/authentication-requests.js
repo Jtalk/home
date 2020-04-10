@@ -10,6 +10,14 @@ export class AuthenticationRequests {
         return response.ok && response.body;
     }
 
+    async changePassword(oldPassword, newPassword) {
+        let response = await request.put("/user")
+            .type("form")
+            .send({password: newPassword, "old-password": oldPassword})
+            .use(api);
+        return response.ok && response.body;
+    }
+
     async logout() {
         return await request.post("/logout")
             .use(api);
