@@ -15,12 +15,13 @@ import {
     useArticlesUpdating,
     useArticleUpdater
 } from "../data/reduce/articles";
+import {NotFound} from "../error/not-found";
 
 export const EditBlogArticle = function ({articleId}) {
 
     let history = useHistory();
 
-    let article = useArticle(articleId);
+    let article = useArticle(articleId) || {};
     let knownTags = useAvailableTags();
     let errorMessage = useArticlesError();
     let loading = useArticlesLoading();
@@ -46,6 +47,10 @@ export const EditBlogArticle = function ({articleId}) {
     if (updated && article && article.id && article.id !== articleId) {
         // avoiding change-state-from-within-render error from React
         setTimeout(() => history.push(editHref(article.id)), 0);
+    }
+
+    if (!article.id && loading !== Loading.LOADING) {
+        return <NotFound/>
     }
 
     return <EditBlogArticleStateless article={data} submit={onSubmit(submit)} {...{knownTags, reset, updater, canSubmit, loading, updating, errorMessage}}/>

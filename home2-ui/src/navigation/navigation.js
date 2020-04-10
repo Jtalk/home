@@ -9,7 +9,7 @@ import {EditFooter} from "../admin/edit-footer";
 import {NotFound} from "../error/not-found";
 import {Switch} from "react-router-dom";
 import {Header, LogoutButton} from "../header/header";
-import {NavigationDropdown, NavigationRoute, PartialRoute, PartialSwitch, RouteOnly} from "./route";
+import {NavigationDropdown, NavigationRoute, PartialRoute, PartialSwitch} from "./route";
 import {RenderMode, RenderModeProvider, useRenderMode} from "./render-context";
 import {BlogRouter} from "../blog/blog-router";
 import {Dropdown, Menu} from "semantic-ui-react";
@@ -77,7 +77,10 @@ const NavigationHeader = function ({children}) {
                 {children}
             </Header>;
         case RenderMode.ROUTER:
-            return <Switch children={children}/>;
+            return <Switch>
+                {children}
+                <NotFound/>
+            </Switch>;
         default:
             throw Error(`Unsupported render mode ${renderMode}`);
     }
@@ -95,7 +98,12 @@ const NavigationRight = function ({children, path}) {
             </ActiveRouteProvider>;
         case RenderMode.ROUTER:
             // Just keep rendering routes
-            return children;
+            return <PartialRoute path={path}>
+                <PartialSwitch path="/">
+                    {children}
+                    <NotFound/>
+                </PartialSwitch>
+            </PartialRoute>
         default:
             throw Error(`Unsupported render mode ${renderMode}`);
     }
@@ -107,8 +115,8 @@ const MenuOnly = function ({children}) {
         case RenderMode.MENU:
             return children;
         case RenderMode.ROUTER:
-            return null;
+            return <NotFound/>;
         default:
-            throw Error(`Unsupported render mode ${renderMode}`);
+            throw Error(`Unsupported render mode ${renderMode && renderMode.description}`);
     }
 };

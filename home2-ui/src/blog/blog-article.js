@@ -10,10 +10,16 @@ import {OwnerCard} from "../home/owner-card";
 import {LatestPosts} from "../home/latest-posts";
 import {useArticle, useArticlesLoading} from "../data/reduce/articles";
 import {MarkdownTextArea} from "../shared/text-area";
+import {NotFound} from "../error/not-found";
 
 export const BlogArticle = function (props) {
 
+    let article = useArticle(props.id);
     let loading = useArticlesLoading();
+    if (!article && loading !== Loading.LOADING) {
+        return <NotFound/>
+    }
+    article = article || {};
     if (props.preview) {
         return <ArticleView {...props}/>
     }

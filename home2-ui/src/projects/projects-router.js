@@ -1,7 +1,6 @@
 import React from "react";
 import {BrowserRouter as Router, Route, Switch} from "react-router-dom";
 import {Projects} from "./projects";
-import {NotFound} from "../error/not-found";
 import {Titled} from "react-titled";
 
 export const ProjectsRouter = function () {
@@ -12,7 +11,6 @@ export const ProjectsRouter = function () {
                 let selectedProjectId = params.match.params.projectId;
                 return <Projects selectedProjectId={selectedProjectId} />
             }}/>
-            <Route render={() => <NotFound/>}/>
         </Switch>
     </Router>
 };

@@ -109,7 +109,7 @@ export function useArticle(id) {
     let found = useImmutableSelector("articles", "data", id);
     let loading = useArticlesLoading();
     useLoader(action(Action.LOAD_ONE, id), loading !== Loading.ERROR && !found);
-    return found || {};
+    return found;
 }
 
 export function useArticlesPageSize() {

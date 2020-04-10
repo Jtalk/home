@@ -45,22 +45,26 @@ export const NavigationDropdown = function ({title, icon, path, authenticated, c
     let renderMode = useRenderMode();
     let routeSoFar = useActiveRoute(path);
     let loggedIn = useLoggedIn();
-    if (authenticated && !loggedIn) {
-        // Skip authorised-only endpoints altogether.
-        return null;
-    }
     switch (renderMode) {
         case RenderMode.MENU:
+            if (authenticated && !loggedIn) {
+                // Skip authorised-only endpoints altogether.
+                return null;
+            }
             return <ActiveRouteProvider routeSoFar={routeSoFar}>
                 <HeaderMenuDropdownItem title={title} icon={icon}>
                     {children}
                 </HeaderMenuDropdownItem>
             </ActiveRouteProvider>;
         case RenderMode.ROUTER:
+            if (authenticated && !loggedIn) {
+                return <NotFound/>;
+            }
             return <PartialRoute path={path}>
                 {/*It's / because this partial switch doesn't contribute toward any PART of the actual route*/}
                 <PartialSwitch path="/">
                     {children}
+                    <NotFound/>
                 </PartialSwitch>
             </PartialRoute>;
         default:
@@ -78,18 +82,6 @@ export const PartialSwitch = function ({path, children}) {
     return <Switch location={sublocation}>
         {children}
     </Switch>
-};
-
-export const RouteOnly = function (props) {
-    let renderMode = useRenderMode();
-    switch (renderMode) {
-        case RenderMode.MENU:
-            return null;
-        case RenderMode.ROUTER:
-            return <PartialRoute {...props}/>;
-        default:
-            throw Error(`Unsupported render mode ${renderMode}`);
-    }
 };
 
 function dropPathPrefix(path, prefix) {

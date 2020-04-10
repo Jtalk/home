@@ -19,6 +19,7 @@ import _ from "lodash";
 import uuid from "uuid/v1";
 import {PartialRoute} from "../navigation/route";
 import {Titled} from "react-titled";
+import {NotFound} from "../error/not-found";
 
 const BASE_HREF = "/admin/projects";
 const NEW_PROJECT_ID = "new";
@@ -80,13 +81,17 @@ export const EditProjects = function ({currentProjectId}) {
         return <Redirect to={editHref(NEW_PROJECT_ID)}/>
     }
 
-    return <EditProjectsStateless {...{projects, errorMessage, updating, deleting, currentProjectId, submit, remove}}
+    return <EditProjectsStateless {...{projects, errorMessage, loading, updating, deleting, currentProjectId, submit, remove}}
                                   forceReload={loadingStatusChanged || updateStatusChanged || deleteStatusChanged}/>;
 };
 
-export const EditProjectsStateless = function ({projects, errorMessage, updating, deleting, currentProjectId, forceReload, submit, remove}) {
+export const EditProjectsStateless = function ({projects, errorMessage, loading, updating, deleting, currentProjectId, forceReload, submit, remove}) {
 
-    let currentProject = _.find(projects, p => p.id === currentProjectId) || _.chain(projects).values().first().value();
+    let currentProject = _.find(projects, p => p.id === currentProjectId);
+    if (projects && projects.length && currentProjectId && !currentProject && loading !== Loading.LOADING) {
+        return <NotFound/>
+    }
+    currentProject = currentProject || projects[0] || {};
 
     let add = () => {
         let maxOrderProject = _.chain(projects).sortBy("order").last().value();
