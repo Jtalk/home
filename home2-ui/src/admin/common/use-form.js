@@ -27,6 +27,7 @@ export function useForm({init, updateStatus, autoSubmit} = {}) {
                 },
                 error => {
                     console.debug("Form submit error", error);
+                    setSubmitting(false);
                 });
     };
     const onSubmit = (onSubmit) => {
