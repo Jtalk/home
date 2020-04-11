@@ -35,8 +35,8 @@ export function useDeleter2(actionType) {
 
 export function useDirectDeleter(deleter) {
     let dispatch = useDispatch();
-    return async (id) => {
-        return await dispatch(deleter(id));
+    return async (id, extra) => {
+        return await dispatch(deleter(id, extra));
     }
 }
 

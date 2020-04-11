@@ -7,14 +7,19 @@ import * as serviceWorker from './serviceWorker';
 import {createAppStore} from "./data/redux";
 import {Provider as ReduxProvider} from "react-redux";
 import {FileConverterProvider} from "./utils/file-converter-context";
+import {createBrowserHistory} from "history";
+import {ConnectedRouter} from "connected-react-router"
 
-const store = createAppStore();
+const history = createBrowserHistory();
+const store = createAppStore(history);
 
 ReactDOM.render(
     <ReduxProvider store={store}>
-        <FileConverterProvider>
-            <App/>
-        </FileConverterProvider>
+        <ConnectedRouter history={history}>
+            <FileConverterProvider>
+                <App/>
+            </FileConverterProvider>
+        </ConnectedRouter>
     </ReduxProvider>,
     document.getElementById('root'));
 

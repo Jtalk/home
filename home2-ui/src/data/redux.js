@@ -14,6 +14,7 @@ import {authentication} from "./reduce/authentication";
 import createSagaMiddleware from "redux-saga";
 import {rootSaga} from "./saga";
 import {ajax} from "./reduce/ajax";
+import {routerMiddleware, connectRouter} from "connected-react-router"
 
 export const reducers = {
     ajax,
@@ -27,10 +28,11 @@ export const reducers = {
     images,
 };
 
-export function createAppStore() {
-    let [mw, saga] = middleware();
+export function createAppStore(history) {
+    let [mw, saga] = middleware(history);
     let result = createStore(
         combineReducers({
+            router: connectRouter(history),
             ...reducers
         }),
         mw
@@ -47,12 +49,14 @@ export function createTestStore(reducers) {
     return result;
 }
 
-function middleware() {
+function middleware(history) {
     let saga = createSagaMiddleware();
+
     let result = applyMiddleware(
         saga,
         thunk,
         promiseMiddleware,
+        routerMiddleware(history),
         createLogger(reduxLoggerOpts())
     );
     return [result, saga];
