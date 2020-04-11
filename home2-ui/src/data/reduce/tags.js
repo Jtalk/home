@@ -5,6 +5,7 @@ import {useLoader, useUpdater2} from "./global/hook-barebone";
 import {fetchAjax} from "./ajax";
 import {call, put, takeLatest} from "redux-saga/effects";
 import {useImmutableSelector} from "../../utils/redux-store";
+import {useMemo} from "react";
 
 export const Action = {
     LOAD: Symbol("tags load"),
@@ -12,7 +13,7 @@ export const Action = {
     LOAD_ERROR: Symbol("tags loading error"),
 };
 
-export function tags(state = Map({loading: Loading.INITIAL, data: undefined}), action) {
+export function tags(state = Map({loading: Loading.LOADING, data: undefined}), action) {
     switch (action.type) {
         case Action.LOAD:
             return state.merge({loading: Loading.LOADING});
@@ -31,7 +32,8 @@ export function* watchTags() {
 
 export function useAvailableTags() {
     let tags = useImmutableSelector("tags", "data");
-    useLoader(action(Action.LOAD), !tags);
+    let loadAction = useMemo(() => action(Action.LOAD), []);
+    useLoader(loadAction, !tags);
     return tags || [];
 }
 

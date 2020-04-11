@@ -7,6 +7,7 @@ import {useImmutableSelector} from "../../utils/redux-store";
 import {call, put, takeEvery, takeLatest} from "redux-saga/effects";
 import {fetchAjax} from "./ajax";
 import {addPage, defaultPages} from "./global/paginated-data";
+import {useMemo} from "react";
 
 const initialState = fromJS({
     upload: {
@@ -75,7 +76,8 @@ export function* watchImages() {
 
 export function useImages(page) {
     let images = useImmutableSelector("images", "data", "pages");
-    useLoader(action(Action.LOAD, page), !images[page]);
+    let loadAction = useMemo(() => action(Action.LOAD, page), [page]);
+    useLoader(loadAction, !images[page]);
     return images[page] || [];
 }
 

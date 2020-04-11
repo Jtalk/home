@@ -1,6 +1,6 @@
 import {fromJS, Map} from "immutable";
 import {Loading, Updating} from "./global/enums";
-import {action, error, newState} from "./global/actions";
+import {action, error} from "./global/actions";
 import {useLastError, useLoading, useUpdater2, useUpdating} from "./global/hook-barebone";
 import {call, put, takeEvery} from "redux-saga/effects";
 import {fetchAjax} from "./ajax";
@@ -24,7 +24,7 @@ export const Action = {
     UPDATE_ERROR: Symbol("owner update error"),
 };
 
-export function owner(state = Map({loading: Loading.INITIAL, data: defaultOwner}), action) {
+export function owner(state = Map({loading: Loading.LOADING, data: defaultOwner}), action) {
     switch (action.type) {
         case Action.LOAD:
             return Map({loading: Loading.LOADING, errorMessage: undefined, uploading: undefined, data: defaultOwner});
@@ -77,7 +77,7 @@ function* load() {
     let ajax = yield fetchAjax();
     try {
         let owner = yield call(ajax.owner.load);
-        yield put(newState(Action.LOADED, fromJS(owner)));
+        yield put(action(Action.LOADED, fromJS(owner)));
     } catch (e) {
         console.error("Cannot load owner info", e);
         yield put(error(Action.LOAD_ERROR, e.toLocaleString()));
@@ -88,7 +88,7 @@ function* update(update, photo) {
     let ajax = yield fetchAjax();
     try {
         let newOwner = yield call(ajax.owner.update, update, photo);
-        yield put(newState(Action.UPDATED, fromJS(newOwner)));
+        yield put(action(Action.UPDATED, fromJS(newOwner)));
     } catch (e) {
         console.error("Exception while updating owner bio for", update, e);
         yield put(error(Action.UPDATE_ERROR, e.toLocaleString()));

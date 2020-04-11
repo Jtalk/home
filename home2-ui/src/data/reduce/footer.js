@@ -20,7 +20,7 @@ let Action = {
     UPDATE_ERROR: Symbol("footer update error"),
 };
 
-export function footer(state = Map({loading: Loading.INITIAL, data: defaultFooter}), action) {
+export function footer(state = Map({loading: Loading.LOADING, data: defaultFooter}), action) {
     switch (action.type) {
         case Action.LOAD:
             return state.merge({loading: Loading.LOADING});

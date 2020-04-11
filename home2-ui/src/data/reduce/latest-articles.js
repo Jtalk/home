@@ -14,7 +14,7 @@ export const Action = {
     LOAD_ERROR: Symbol("latest articles load error"),
 };
 
-export function latestArticles(state = fromJS({loading: Loading.INITIAL, data: []}), action) {
+export function latestArticles(state = fromJS({loading: Loading.LOADING, data: []}), action) {
     switch (action.type) {
         case Action.LOAD:
             return fromJS({loading: Loading.LOADING, errorMessage: undefined, data: []});
