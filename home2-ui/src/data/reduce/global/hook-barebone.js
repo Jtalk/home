@@ -28,8 +28,8 @@ export function useDirectUpdater(updater) {
 
 export function useDeleter2(actionType) {
     let dispatch = useDispatch();
-    return async (id) => {
-        return await dispatch(action(actionType, id));
+    return async (id, extra) => {
+        return await dispatch(action(actionType, {id, extra}));
     }
 }
 

@@ -3,6 +3,7 @@ import {Deleting, Loading, Updating} from "./global/enums";
 import {action, error} from "./global/actions";
 import {addPage, defaultPages, pageSizeSelector, usePage, usePageSize, useTotalCount} from "./global/paginated-data";
 import {call, put, select, takeEvery, takeLatest} from "redux-saga/effects";
+import {push} from "connected-react-router";
 import {
     useDeleter2,
     useDeleting,
@@ -88,8 +89,8 @@ export function articles(state = fromJS({
 export function* watchArticles() {
     yield takeLatest(Action.LOAD, ({data}) => load(data.page, data.pageSize, data.publishedOnly));
     yield takeEvery(Action.LOAD_ONE, ({data}) => loadOne(data));
-    yield takeEvery(Action.UPDATE, ({data}) => update(data.extra.id, data.update));
-    yield takeEvery(Action.DELETE, ({data}) => remove(data.id, data.page));
+    yield takeEvery(Action.UPDATE, ({data}) => update(data.extra.id, data.update, data.extra.redirectTo));
+    yield takeEvery(Action.DELETE, ({data}) => remove(data.id, data.extra.page));
 }
 
 export function useArticles(page, pageSize, withUnpublished = false) {
@@ -126,7 +127,7 @@ export function useArticlesLoading() {
 }
 
 export function useArticleLoading(id) {
-    return useLoading("articles", ["loadings", id]);
+    return useImmutableSelector("articles", "loadings", id);
 }
 
 export function useArticlesUpdating() {
@@ -142,7 +143,8 @@ export function useArticlesError() {
 }
 
 export function useArticleUpdater() {
-    return useUpdater2(Action.UPDATE);
+    let updater = useUpdater2(Action.UPDATE);
+    return async (id, redirectTo, update, extra = {}) => await updater(update, {...extra, id, redirectTo});
 }
 
 export function useArticlesDeleter() {
@@ -187,11 +189,12 @@ function* loadOne(articleId) {
     }
 }
 
-function* update(articleId, update) {
+function* update(articleId, update, redirectTo) {
     let ajax = yield fetchAjax();
     try {
         let updated = yield call(ajax.articles.update, articleId, update);
         yield put(action(Action.UPDATED, updated));
+        yield put(push(redirectTo));
     } catch (e) {
         console.error(`Exception while updating article ${articleId}`, update, e);
         yield put(error(Action.UPDATE_ERROR, e.toLocaleString()));

@@ -4,9 +4,7 @@ import {ErrorMessage, SuccessMessage} from "../form/form-message";
 import {useAvailableTags} from "../data/reduce/tags";
 import {useForm} from "./common/use-form";
 import {Loading, Updating} from "../data/reduce/global/enums";
-import {useLoadedStateChange} from "../utils/state-change";
 import {DatePicker} from "./common/date-picker";
-import {useHistory} from "react-router-dom";
 import _ from "lodash";
 import {
     useArticle,
@@ -19,37 +17,23 @@ import {NotFound} from "../error/not-found";
 
 export const EditBlogArticle = function ({articleId}) {
 
-    let history = useHistory();
-
-    let article = useArticle(articleId) || {};
+    let article = useArticle(articleId);
     let knownTags = useAvailableTags();
     let errorMessage = useArticlesError();
     let loading = useArticleLoading(articleId);
     let updating = useArticlesUpdating();
-    let loaded = useLoadedStateChange(loading, {from: Loading.LOADING, to: Loading.READY});
-    let updated = useLoadedStateChange(updating, {from: Updating.UPDATING, to: Updating.UPDATED});
 
-    let {data, updater, onSubmit, canSubmit} = useForm({init: article, updateStatus: updating});
+    let {data, updater, onSubmit, canSubmit} = useForm({init: article});
     let articleUpdater = useArticleUpdater();
 
-    let forceReload = loaded || updated;
-    if (forceReload) {
-        updater.reloaded(article);
-    }
-
     let submit = (updatedArticle) => {
-        articleUpdater(updatedArticle, {id: articleId});
+        article && articleUpdater(article.id, editHref(updatedArticle.id), updatedArticle, {});
     };
     let reset = () => {
-        updater.reloaded(article);
+        article && updater.reload(article);
     };
 
-    if (updated && data.id && data.id !== articleId) {
-        // avoiding change-state-from-within-render error from React
-        setTimeout(() => history.push(editHref(data.id)), 0);
-    }
-
-    if (!article.id && loading !== Loading.LOADING) {
+    if (!article && loading && loading !== Loading.LOADING) {
         return <NotFound/>
     }
 
@@ -69,7 +53,7 @@ export const EditBlogArticleStateless = function ({article, knownTags = [], subm
             <Segment raised>
                 <h2>Edit Blog Post</h2>
                 <Form success={updating === Updating.UPDATED}
-                      error={!!errorMessage}
+                      error={updating === Updating.ERROR || loading === Loading.ERROR}
                       loading={loading === Loading.LOADING}>
                     <Grid centered>
                         <Grid.Row>
@@ -122,6 +106,7 @@ export const EditBlogArticleStateless = function ({article, knownTags = [], subm
 };
 
 export function editHref(articleId) {
+    articleId = articleId || "";
     return `/admin/blog/articles/${articleId}`;
 }
 
