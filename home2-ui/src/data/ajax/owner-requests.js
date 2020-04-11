@@ -15,7 +15,7 @@ export class OwnerRequests {
         return response.body
     }
 
-    async update(update, photo) {
+    update = async (update, photo) => {
         if (photo) {
             update.photoId = await this.updatePhoto(photo);
         }
@@ -25,7 +25,7 @@ export class OwnerRequests {
         return Object.assign({}, response.body);
     }
 
-    async updatePhoto(photo) {
+    updatePhoto = async (photo) => {
         console.debug("Uploading photo", photo);
         try {
             let response = await this.images.upload("owner photo", photo);

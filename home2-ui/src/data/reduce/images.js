@@ -71,7 +71,7 @@ export function images(state = initialState, action) {
 export function* watchImages() {
     yield takeLatest(Action.LOAD, ({data}) => load(data));
     yield takeEvery(Action.UPLOAD, ({data: {update}}) => upload(update.description, update.file));
-    yield takeEvery(Action.DELETE, ({data}) => delete_(data));
+    yield takeEvery(Action.DELETE, ({data}) => delete_(data.id));
 }
 
 export function useImages(page) {
