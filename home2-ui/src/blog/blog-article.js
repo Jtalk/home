@@ -8,14 +8,14 @@ import _ from "lodash";
 import {Titled} from "react-titled";
 import {OwnerCard} from "../home/owner-card";
 import {LatestPosts} from "../home/latest-posts";
-import {useArticle, useArticlesLoading} from "../data/reduce/articles";
+import {useArticle, useArticleLoading} from "../data/reduce/articles";
 import {MarkdownTextArea} from "../shared/text-area";
 import {NotFound} from "../error/not-found";
 
 export const BlogArticle = function (props) {
 
     let article = useArticle(props.id);
-    let loading = useArticlesLoading();
+    let loading = useArticleLoading(props.id);
     if (!article && loading !== Loading.LOADING) {
         return <NotFound/>
     }
@@ -41,7 +41,7 @@ export const BlogArticle = function (props) {
 export const ArticleView = function ({id, href, preview}) {
 
     let article = useArticle(id);
-    let loading = useArticlesLoading();
+    let loading = useArticleLoading(id);
 
     let articleLoading = _.isEmpty(article) && loading !== Loading.READY;
 

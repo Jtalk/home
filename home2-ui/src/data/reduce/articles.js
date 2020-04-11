@@ -14,6 +14,7 @@ import {
 } from "./global/hook-barebone";
 import {allSelector, publishableData, publishedSelector} from "./global/publishable-data";
 import {fetchAjax} from "./ajax";
+import {useMemo} from "react";
 import {useImmutableSelector} from "../../utils/redux-store";
 
 export const DEFAULT_PAGE_SIZE = 20;
@@ -24,6 +25,7 @@ export const Action = {
     LOADED: Symbol("articles loaded"),
     LOAD_ONE: Symbol("single article load"),
     LOADED_ONE: Symbol("single article loaded"),
+    LOAD_ONE_ERROR: Symbol("single article load error"),
     LOAD_ERROR: Symbol("articles load error"),
     UPDATE: Symbol("article update"),
     UPDATED: Symbol("article updated"),
@@ -34,7 +36,7 @@ export const Action = {
 };
 
 export function articles(state = fromJS({
-    loading: Loading.INITIAL, data: Map(), pages: defaultPages()
+    loading: Loading.LOADING, loadings: Map(), data: Map(), pages: defaultPages()
 }), action) {
     switch (action.type) {
         case Action.LOAD:
@@ -45,15 +47,19 @@ export function articles(state = fromJS({
                 data: mergeCache(state.get("data"), action.data.articles),
                 pages: addPage(state.get("pages"), publishableIds(action.data.articles, !action.data.publishedOnly), action.data.pagination),
             });
-        case Action.LOAD_ONE:
-            return state.merge({loading: Loading.LOADING});
-        case Action.LOADED_ONE:
-            return state.merge({
-                loading: Loading.READY, errorMessage: undefined,
-                data: mergeCache(state.get("data"), [action.data])
-            });
         case Action.LOAD_ERROR:
             return state.merge({loading: Loading.ERROR, errorMessage: action.errorMessage});
+        case Action.LOAD_ONE:
+            return state.merge({loadings: state.get("loadings").set(action.data, Loading.LOADING)});
+        case Action.LOADED_ONE:
+            return state.merge({
+                loadings: state.get("loadings").set(action.data.id, Loading.READY), errorMessage: undefined,
+                data: mergeCache(state.get("data"), [action.data])
+            });
+        case Action.LOAD_ONE_ERROR:
+            return state.merge({
+                loadings: state.get("loadings").set(action.ctx.id, Loading.ERROR), errorMessage: action.errorMessage
+            });
         case Action.UPDATE:
             return state.merge({updating: Updating.UPDATING, errorMessage: undefined});
         case Action.UPDATED:
@@ -92,23 +98,18 @@ export function useArticles(page, pageSize, withUnpublished = false) {
     let data = useImmutableSelector("articles", "data");
     let publishedPage = publishedSelector(null)(fromJS(existingPage));
     let allPage = allSelector(null)(fromJS(existingPage));
-
-    let loading = useArticlesLoading();
-    useLoader(action(Action.LOAD, {page, pageSize, publishedOnly: !withUnpublished}),
-        loading !== Loading.ERROR
-        && (
-            !existingPage
-            || existingSize !== pageSize
-            || (withUnpublished && !allPage)
-        ));
+    let loadAction = useMemo(
+        () => action(Action.LOAD, {page, pageSize, publishedOnly: !withUnpublished}),
+        [page, pageSize, withUnpublished]);
+    useLoader(loadAction, !existingPage || existingSize !== pageSize || (withUnpublished && !allPage));
     return pageContent(withUnpublished ? allPage : publishedPage, data);
 
 }
 
 export function useArticle(id) {
     let found = useImmutableSelector("articles", "data", id);
-    let loading = useArticlesLoading();
-    useLoader(action(Action.LOAD_ONE, id), loading !== Loading.ERROR && !found);
+    let loadAction = useMemo(() => action(Action.LOAD_ONE, id), [id]);
+    useLoader(loadAction, !found);
     return found;
 }
 
@@ -122,6 +123,10 @@ export function useArticlesTotalCount() {
 
 export function useArticlesLoading() {
     return useLoading("articles");
+}
+
+export function useArticleLoading(id) {
+    return useLoading("articles", ["loadings", id]);
 }
 
 export function useArticlesUpdating() {
@@ -178,7 +183,7 @@ function* loadOne(articleId) {
         yield put(action(Action.LOADED_ONE, article));
     } catch (e) {
         console.error(`Cannot load article info ${articleId}`, e);
-        yield put(error(Action.LOAD_ERROR, e.toLocaleString()));
+        yield put(error(Action.LOAD_ONE_ERROR, e.toLocaleString(), {id: articleId}));
     }
 }
 
