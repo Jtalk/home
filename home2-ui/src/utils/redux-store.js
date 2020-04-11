@@ -1,4 +1,5 @@
 import {useSelector} from "react-redux";
+import {useMemo} from "react";
 
 export function useImmutableSelector(storeSegment, ...path) {
     // Support deprecated use with supplying an array as path
@@ -8,7 +9,7 @@ export function useImmutableSelector(storeSegment, ...path) {
     let result = useSelector(store => {
         return store && loadAsObj(store[storeSegment], path)
     });
-    return asJs(result);
+    return useMemo(() => asJs(result), [result]);
 }
 
 export function immutableSelector(storeSegment, ...path) {

@@ -1,13 +1,13 @@
-import {useState} from "react";
+import {useState, useEffect} from "react";
 
-export function useVersionedState(initial, version, onReset) {
-    const [data, setData] = useState(initial);
-    const [currentVersion, setCurrentVersion] = useState(version);
-    if (version !== currentVersion) {
-        console.debug("Resetting the value with new version", version);
-        setData(initial);
-        setCurrentVersion(version);
-        onReset();
-    }
-    return [data, setData];
+export function useDependentState(init) {
+    let [state, setState] = useState(init);
+    useEffect(() => {
+        // Avoid double set on first call
+        if (state !== init) {
+            setState(init);
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [init]);
+    return [state, setState];
 }

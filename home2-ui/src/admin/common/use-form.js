@@ -1,59 +1,57 @@
-import {useState} from "react";
+import {useCallback, useMemo, useState} from "react";
 import _ from "lodash";
-import {Updating} from "../../data/reduce/global/enums";
+import {useDependentState} from "./state";
 
 const FILES_PATH = "__files";
 
-export function useForm({init, updateStatus, autoSubmit, secure} = {}) {
-    const [submitting, setSubmitting] = useState(false);
-    const [data, setData] = useState(init || {});
+export function useForm({init, autoSubmit, secure} = {}) {
+    const defaultValue = useMemo(() => ({}), []);
     const [edited, setEdited] = useState(false);
-    if (submitting && updateStatus === Updating.UPDATED) {
-        setSubmitting(false);
-        setEdited(false);
-        setData(init);
-    } else if (submitting && updateStatus === Updating.ERROR) {
-        setSubmitting(false);
-    }
-    const submit = async (onSubmit, update) => {
-        console.debug("Submitting form", update);
+    const [data, setData] = useDependentState(init || defaultValue);
+    const submit = useCallback(async (onSubmit, update) => {
+        console.debug("Submitting form", showSecurely(update, secure));
         let copy = Object.assign({}, update);
         delete copy[FILES_PATH];
-        setSubmitting(true);
         try {
             let result = await onSubmit(copy, update[FILES_PATH] || {});
             console.debug("Form submit success");
             return result;
         } catch (e) {
             console.debug("Form submit error", e);
-            setSubmitting(false);
             throw e;
         }
-    };
+    }, [secure]);
+    let emptyAutoSubmitter = () => {};
+    let activeAutoSubmitter = useCallback((data) => submit(autoSubmit, data), [submit, autoSubmit]);
+    let autoSubmitter = autoSubmit ? activeAutoSubmitter : emptyAutoSubmitter;
+    let updateData = useCallback(update => {
+        setData(update);
+        setEdited(true);
+    }, [setData, setEdited]);
+    let updater = useMemo(
+        () => new Updater(data, updateData, autoSubmitter),
+        [data, updateData, autoSubmitter]);
+    updater.secure = secure;
+
     const onSubmit = (onSubmit) => {
-        return async (e) => {
+        return async () => {
             if (!edited) {
                 throw Error("The form is being submitted without any preceding edits, likely a submit button enable/disable screwup");
             }
             return await submit(onSubmit, data);
         };
     };
-    let autoSubmitter = () => {};
-    if (autoSubmit) {
-        autoSubmitter = (data) => submit(autoSubmit, data);
-    }
-    const updater = new Updater(data, setData, setEdited, autoSubmitter, secure);
-    return {onSubmit, data, updater, edited, submitting, canSubmit: edited && !submitting};
+
+    return {onSubmit, data, updater, edited, canSubmit: edited};
 }
 
 class Updater {
 
-    constructor(data, setData, setEdited, autoSubmit, secure) {
+    constructor(data, setData, autoSubmit) {
         this.data = data;
         this.setData = setData;
-        this.setEdited = setEdited;
         this.autoSubmit = autoSubmit;
-        this.secure = secure;
+        this.secure = false;
     }
 
     change = (...path) => {
@@ -66,7 +64,6 @@ class Updater {
                 let newData = _.cloneDeep(this.data);
                 _.set(newData, path, value);
                 this.setData(newData);
-                this.setEdited(true);
                 this.autoSubmit(newData);
             }
         };
@@ -136,12 +133,13 @@ class Updater {
         };
     };
 
+    reload(newData) {
+        console.debug("Reloading form data to", showSecurely(newData, this.secure));
+        this.setData(newData);
+    }
+
+    // Deprecated
     reloaded(newData) {
-        if (!_.isEqual(this.data, newData)) {
-            console.debug("Resetting the form state to", newData);
-            this.setData(newData);
-            this.setEdited(false);
-        }
     }
 }
 

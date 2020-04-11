@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useMemo} from "react";
 import {Button, Form, Icon, Modal} from "semantic-ui-react";
 import {useForm} from "../admin/common/use-form";
 import _ from "lodash";
@@ -30,9 +30,10 @@ export const LoginModal = function ({enabled, onClose}) {
 
 export const LoginModalStateless = function ({enabled, onClose, errorMessage, submitLogin}) {
 
+    let emptyForm = useMemo(EMPTY_FORM, []);
     let errors = useFormErrors();
     let {updater, onSubmit, submitting, data, edited} = useForm({
-        init: EMPTY_FORM(), secure: true, version: 1
+        init: emptyForm, secure: true
     });
 
     errorMessage = errors.message || errorMessage;

@@ -30,6 +30,13 @@ class FormErrors {
         result.for = result;
         return result;
     }
+    validate = (predicate, message) => {
+        if (!predicate) {
+            return this.report(message);
+        } else {
+            return () => {};
+        }
+    }
     reset = (...path) => {
         this.message = undefined;
         _.set(this.store, path, undefined);
