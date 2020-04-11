@@ -1,16 +1,9 @@
-import React from "react";
+import React, {useMemo} from "react";
 import {Divider, Form, Grid, Icon, Image, List, Segment} from "semantic-ui-react";
 import {ErrorMessage} from "../form/form-message";
-import {
-    useFooter,
-    useFooterError,
-    useFooterLoading,
-    useFooterUpdater,
-    useFooterUpdating
-} from "../data/reduce/footer";
+import {useFooter, useFooterError, useFooterLoading, useFooterUpdater, useFooterUpdating} from "../data/reduce/footer";
 import {useForm} from "./common/use-form";
 import {Loading, Updating} from "../data/reduce/global/enums";
-import {useLoadedStateChange} from "../utils/state-change";
 import {imageUrl} from "../utils/image";
 import {Titled} from "react-titled";
 
@@ -22,52 +15,33 @@ export const EditFooter = function () {
     let footer = useFooter();
     let errorMessage = useFooterError();
     let loading = useFooterLoading();
-    let updateStatus = useFooterUpdating();
-
-    let loaded = useLoadedStateChange(loading, {from: Loading.LOADING, to: Loading.READY});
-    let updated = useLoadedStateChange(updateStatus, {from: Updating.UPDATING, to: Updating.UPDATED});
+    let updating = useFooterUpdating();
 
     let submit = useFooterUpdater();
 
-    let {updater, data} = useForm({init: footer, autoSubmit: submit, updateStatus});
-
-    let logoAdded = data.logos.length !== footer.logos.length;
-    let linkAdded = data.links.length !== footer.links.length;
-
-    if (loaded || updated) {
-        updater.reloaded(footer);
-    }
+    let {updater, data} = useForm({init: footer, autoSubmit: submit});
 
     return <Grid centered>
         <Titled title={t => "Edit Footer | " + t}/>
         <Grid.Column width={13}>
             <Segment raised>
-                <EditLinks footer={data} {...{submit, updater, updated, linkAdded, errorMessage, updateStatus}}/>
+                <EditLinks footer={data} {...{submit, updater, loading, updating, errorMessage}}/>
                 <Divider/>
-                <EditLogos footer={data} {...{submit, updater, updated, logoAdded, errorMessage, updateStatus}}/>
+                <EditLogos footer={data} {...{submit, updater, loading, updating, errorMessage}}/>
             </Segment>
         </Grid.Column>
     </Grid>
 };
 
-export const EditLogos = function ({errorMessage, updateStatus, footer, updater, updated, logoAdded, submit}) {
+export const EditLogos = function ({errorMessage, loading, updating, footer, updater, submit}) {
 
-    let newLogoForm = useForm({init: EMPTY_LOGO(), updateStatus});
+    let emptyLogo = useMemo(EMPTY_LOGO, [footer]);
+    let newLogoForm = useForm({init: emptyLogo});
 
-    if (updated && logoAdded) {
-        // A new footer has been successfully created
-        newLogoForm.updater.reloaded(EMPTY_LOGO());
-    }
-
-    let createNewLogo = (logo) => {
-        let newFooter = Object.assign({}, footer);
-        newFooter.logos = [...newFooter.logos];
-        newFooter.logos.push(logo);
-        submit(newFooter);
-    };
+    let createNewLogo = (logo) => submit({...footer, logos: [...footer.logos, logo]});
 
     return <div>
-        <Form error={!!errorMessage} success={updateStatus === Updating.UPDATED && !errorMessage}>
+        <Form error={loading === Loading.ERROR || updating === Updating.ERROR} success={updating === Updating.UPDATED}>
             <h2>Edit logos</h2>
             <Form.Input label="New Logo Name" placeholder="A name to show in the <alt/> tag"
                         value={newLogoForm.data.name || ''}
@@ -87,8 +61,10 @@ export const EditLogos = function ({errorMessage, updateStatus, footer, updater,
                 footer.logos.map((logo, i, logos) => {
                     return <List.Item key={logo.name}>
                         <List.Content floated="right">
-                            <Icon link={i === 0} name={i === 0 ? "lock" : "up arrow"} onClick={updater.reorder(i, i - 1, "logos")}/>
-                            <Icon link={i === logos.length - 1} name={i === logos.length - 1 ? "lock" : "down arrow"} onClick={updater.reorder(i, i + 1, "logos")}/>
+                            <Icon link={i === 0} name={i === 0 ? "lock" : "up arrow"}
+                                  onClick={updater.reorder(i, i - 1, "logos")}/>
+                            <Icon link={i === logos.length - 1} name={i === logos.length - 1 ? "lock" : "down arrow"}
+                                  onClick={updater.reorder(i, i + 1, "logos")}/>
                             <Icon link color="red" name="remove" onClick={updater.removeItem(i, "logos")}/>
                         </List.Content>
                         <List.Content>
@@ -106,25 +82,21 @@ export const EditLogos = function ({errorMessage, updateStatus, footer, updater,
     </div>
 };
 
-export const EditLinks = function ({errorMessage, updateStatus, footer, updater, updated, linkAdded, submit}) {
+export const EditLinks = function ({errorMessage, updating, loading, footer, updater, submit}) {
 
-    let newLinkForm = useForm({init: EMPTY_LINK(), updateStatus});
+    let emptyLink = useMemo(EMPTY_LINK, [footer]);
+    let newLinkForm = useForm({init: emptyLink});
 
-    if (updated && linkAdded) {
-        // A new footer has been successfully created
-        newLinkForm.updater.reloaded(EMPTY_LINK());
-    }
     let createNewLink = (link) => {
-        let newFooter = Object.assign({}, footer);
-        newFooter.links = [...newFooter.links];
-        newFooter.links.push(link);
+        let newFooter = {...footer};
+        newFooter.links = [...newFooter.links, link];
         submit(newFooter);
     };
 
     return <div>
         <h1>Edit Footer</h1>
         <Divider/>
-        <Form error={!!errorMessage} success={updateStatus === Updating.UPDATED && !errorMessage}>
+        <Form error={updating === Updating.ERROR || loading === Loading.ERROR} success={updating === Updating.UPDATED}>
             <h2>Edit links</h2>
             <Form.Input label="New Link Caption" placeholder="A text to show for this link"
                         value={newLinkForm.data.caption || ''}
