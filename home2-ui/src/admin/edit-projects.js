@@ -49,6 +49,7 @@ export const EditProjects = function ({currentProjectId}) {
     if (projects && projects.length && currentProjectId && !currentProject) {
         return <NotFound/>
     }
+    currentProjectId = currentProjectId || (currentProject && currentProject.id);
     return <EditProjectsStateless {...{projects, currentProject, currentProjectId, errorMessage, submit}}/>;
 };
 
