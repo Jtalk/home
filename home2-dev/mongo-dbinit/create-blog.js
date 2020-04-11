@@ -9,6 +9,7 @@ function asIso(prefix, suffix, hour) {
 	return prefix + hourString + suffix;
 }
 
+db.articles.createIndex({id: 1}, {unique: true});
 db.articles.insert({
 	title: 'Test Article 1',
 	id: 'test-article',
