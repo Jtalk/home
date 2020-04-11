@@ -20,6 +20,10 @@ export function* fetchAjax() {
     return yield select(store => store["ajax"]);
 }
 
+export function ajaxSelector(state) {
+    return state.ajax;
+}
+
 export function useAjax() {
     return useImmutableSelector("ajax");
 }

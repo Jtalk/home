@@ -1,18 +1,19 @@
 import {Map} from "immutable";
 import {Deleting, Loading, Updating} from "./global/enums";
-import {action, error, takeOnce} from "./global/actions";
+import {action, error} from "./global/actions";
 import {
-    useDeleter2,
     useDeleting,
+    useDirectDeleter,
+    useDirectUpdater,
     useLastError,
     useLoader,
     useLoading,
-    useUpdater2,
     useUpdating
 } from "./global/hook-barebone";
-import {fetchAjax} from "./ajax";
-import {call, put, takeEvery, takeLatest} from "redux-saga/effects";
+import {ajaxSelector, fetchAjax} from "./ajax";
+import {call, put, takeLatest} from "redux-saga/effects";
 import {publishableData, useAllData, usePublishedData} from "./global/publishable-data";
+import {useMemo} from "react";
 
 export const Action = {
     LOAD: Symbol("projects load"),
@@ -41,13 +42,19 @@ export function projects(state = Map({loading: Loading.LOADING, data: Map()}), a
         case Action.UPDATE:
             return state.merge({updating: Updating.UPDATING, errorMessage: undefined});
         case Action.UPDATED:
-            return state.merge({updating: Updating.UPDATED, errorMessage: undefined});
+            return state.merge({
+                updating: Updating.UPDATED, errorMessage: undefined,
+                data: publishableData(action.data.projects, !action.data.publishedOnly)
+            });
         case Action.UPDATE_ERROR:
             return state.merge({updating: Updating.ERROR, errorMessage: action.errorMessage});
         case Action.DELETE:
             return state.merge({deleting: Deleting.DELETING, errorMessage: undefined});
         case Action.DELETED:
-            return state.merge({deleting: Deleting.DELETED});
+            return state.merge({
+                deleting: Deleting.DELETED, errorMessage: undefined,
+                data: publishableData(action.data.projects, !action.data.publishedOnly)
+            });
         case Action.DELETE_ERROR:
             return state.merge({deleting: Deleting.DELETE_ERROR, errorMessage: action.data});
         default:
@@ -56,17 +63,19 @@ export function projects(state = Map({loading: Loading.LOADING, data: Map()}), a
 }
 
 export function* watchProjects() {
-    yield takeOnce(Action.LOAD, () => load(true));
+    yield takeLatest(Action.LOAD, () => load(true));
     yield takeLatest(Action.RELOAD_UNPUBLISHED, () => load(false));
-    yield takeEvery(Action.UPDATE, ({data}) => update(data.extra.id, data.update, data.extra.logo));
-    yield takeEvery(Action.DELETE, ({data}) => remove(data));
 }
 
 export function useProjects(withUnpublished = false) {
     let published = usePublishedData("projects", "data");
     let all = useAllData("projects", "data");
-    useLoader(action(Action.LOAD), !published);
-    useLoader(action(Action.RELOAD_UNPUBLISHED), withUnpublished && !all);
+
+    let loadAction = useMemo(() => action(Action.LOAD), []);
+    useLoader(loadAction, !published && !withUnpublished);
+
+    let reloadAction = useMemo(() => action(Action.RELOAD_UNPUBLISHED), []);
+    useLoader(reloadAction, withUnpublished && !all);
     return (withUnpublished ? all : published) || [];
 }
 
@@ -87,12 +96,12 @@ export function useProjectError() {
 }
 
 export function useProjectUpdater() {
-    let updater = useUpdater2(Action.UPDATE);
-    return (id, update, {logo} = {}) => updater(update, {id, logo});
+    let updater = useDirectUpdater(update);
+    return async (id, update, {logo} = {}) => await updater(update, {id, logo});
 }
 
 export function useProjectDeleter() {
-    return useDeleter2(Action.DELETE);
+    return useDirectDeleter(remove);
 }
 
 function* load(publishedOnly) {
@@ -106,26 +115,34 @@ function* load(publishedOnly) {
     }
 }
 
-function* update(projectId, update, logo) {
-    let ajax = yield fetchAjax();
-    try {
-        yield call(ajax.projects.update, projectId, update, logo);
-        yield put(action(Action.RELOAD_UNPUBLISHED));
-        yield put(action(Action.UPDATED));
-    } catch (e) {
-        console.error(`Exception while updating project ${projectId}`, update, e);
-        yield put(error(Action.UPDATE_ERROR, e.toLocaleString()));
-    }
+function update(update, {id, logo}) {
+    return async (dispatch, getState) => {
+        let ajax = ajaxSelector(getState());
+        try {
+            let result = await ajax.projects.update(id, update, logo);
+            let reloaded = await ajax.projects.load(false);
+            dispatch(action(Action.UPDATED, {projects: reloaded, publishedOnly: false}));
+            return result;
+        } catch (e) {
+            console.error(`Exception while updating project ${id}`, update, e);
+            dispatch(error(Action.UPDATE_ERROR, e.toLocaleString()));
+            return null;
+        }
+    };
 }
 
-function* remove(projectId) {
-    let ajax = yield fetchAjax();
-    try {
-        yield call(ajax.projects.remove, projectId);
-        yield put(action(Action.RELOAD_UNPUBLISHED));
-        yield put(action(Action.DELETED));
-    } catch (e) {
-        console.error(`Exception while deleting project ${projectId}`, e);
-        yield put(error(Action.DELETE_ERROR, e.toLocaleString()));
-    }
+function remove(projectId) {
+    return async (dispatch, getState) => {
+        let ajax = ajaxSelector(getState());
+        try {
+            await ajax.projects.remove(projectId);
+            let reloaded = await ajax.projects.load(false);
+            dispatch(action(Action.DELETED, {projects: reloaded, publishedOnly: false}));
+            return projectId;
+        } catch (e) {
+            console.error(`Exception while deleting project ${projectId}`, e);
+            dispatch(error(Action.DELETE_ERROR, e.toLocaleString()));
+            return null;
+        }
+    };
 }

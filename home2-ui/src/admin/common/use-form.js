@@ -15,27 +15,27 @@ export function useForm({init, updateStatus, autoSubmit, secure} = {}) {
     } else if (submitting && updateStatus === Updating.ERROR) {
         setSubmitting(false);
     }
-    const submit = (onSubmit, update) => {
+    const submit = async (onSubmit, update) => {
         console.debug("Submitting form", update);
         let copy = Object.assign({}, update);
         delete copy[FILES_PATH];
         setSubmitting(true);
-        Promise.resolve(onSubmit(copy, update[FILES_PATH] || {}))
-            .then(
-                () => {
-                    console.debug("Form submit success");
-                },
-                error => {
-                    console.debug("Form submit error", error);
-                    setSubmitting(false);
-                });
+        try {
+            let result = await onSubmit(copy, update[FILES_PATH] || {});
+            console.debug("Form submit success");
+            return result;
+        } catch (e) {
+            console.debug("Form submit error", e);
+            setSubmitting(false);
+            throw e;
+        }
     };
     const onSubmit = (onSubmit) => {
-        return (e) => {
+        return async (e) => {
             if (!edited) {
                 throw Error("The form is being submitted without any preceding edits, likely a submit button enable/disable screwup");
             }
-            submit(onSubmit, data);
+            return await submit(onSubmit, data);
         };
     };
     let autoSubmitter = () => {};

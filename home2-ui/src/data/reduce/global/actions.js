@@ -1,27 +1,14 @@
-import {call, take} from "redux-saga/effects";
-
-export function action(action, newData) {
+export function action(type, data) {
     return {
-        type: action,
-        data: newData,
+        type,
+        data,
     }
 }
 
-export function newState(action, newData) {
+export function error(type, errorMessage, ctx) {
     return {
-        type: action,
-        data: newData
+        type,
+        errorMessage,
+        ctx
     }
-}
-
-export function error(action, errorMsg) {
-    return {
-        type: action,
-        errorMessage: errorMsg
-    }
-}
-
-export function* takeOnce(actionType, fn, ...args) {
-    yield take(actionType);
-    yield call(fn, ...args);
 }

@@ -1,6 +1,6 @@
 import React, {useState} from "react";
 import {Button, Divider, Form, Grid, Icon, Image, Input, List, Menu, Message, Segment} from "semantic-ui-react";
-import {Link, Redirect, useParams} from "react-router-dom";
+import {Link, Redirect, useHistory, useParams} from "react-router-dom";
 import {ErrorMessage} from "../form/form-message";
 import {
     useProjectDeleter,
@@ -20,6 +20,7 @@ import uuid from "uuid/v1";
 import {PartialRoute} from "../navigation/route";
 import {Titled} from "react-titled";
 import {NotFound} from "../error/not-found";
+import {ContentPlaceholderOr} from "../utils/placeholder";
 
 const BASE_HREF = "/admin/projects";
 const NEW_PROJECT_ID = "new";
@@ -52,6 +53,8 @@ export const EditProjectsRoute = function () {
 
 export const EditProjects = function ({currentProjectId}) {
 
+    let history = useHistory();
+
     let projects = useProjects(true);
     let loading = useProjectLoading();
     let updating = useProjectUpdating();
@@ -71,9 +74,25 @@ export const EditProjects = function ({currentProjectId}) {
     let submit = useProjectUpdater();
     let remove = useProjectDeleter();
 
-    if (deleteStatusChanged) {
-        return <Redirect to={BASE_HREF}/>
+    let submitWithRedirect = async (update, extras) => {
+        let result = await submit(update, extras);
+        if (result && result.id !== currentProjectId) {
+            history.push(editHref(result.id));
+            return null;
+        } else {
+            return result;
+        }
+    };
+    let removeWithRedirect = async (id) => {
+        let result = await remove(id);
+        if (result) {
+            history.push(BASE_HREF);
+            return null;
+        } else {
+            return result;
+        }
     }
+
     // Force redirect to the new project if present.
     // This way we can avoid complicated state management
     // and just force the user to edit the project first.
@@ -81,14 +100,18 @@ export const EditProjects = function ({currentProjectId}) {
         return <Redirect to={editHref(NEW_PROJECT_ID)}/>
     }
 
-    return <EditProjectsStateless {...{projects, errorMessage, loading, updating, deleting, currentProjectId, submit, remove}}
+    return <EditProjectsStateless {...{
+        projects, errorMessage, loading, updating, deleting, currentProjectId,
+        submit: submitWithRedirect,
+        remove: removeWithRedirect
+    }}
                                   forceReload={loadingStatusChanged || updateStatusChanged || deleteStatusChanged}/>;
 };
 
 export const EditProjectsStateless = function ({projects, errorMessage, loading, updating, deleting, currentProjectId, forceReload, submit, remove}) {
 
     let currentProject = _.find(projects, p => p.id === currentProjectId);
-    if (projects && projects.length && currentProjectId && !currentProject && loading !== Loading.LOADING) {
+    if (projects && projects.length && currentProjectId && !currentProject) {
         return <NotFound/>
     }
     currentProject = currentProject || projects[0] || {};
@@ -121,40 +144,43 @@ export const EditProjectsStateless = function ({projects, errorMessage, loading,
     return <Grid centered>
         <Grid.Column width={13}>
             <Segment raised>
-                <Menu tabular>
-                    {
-                        projects.map(project => project.id === currentProject.id
-                            ? <Menu.Item active key={project.id}>{project.title}</Menu.Item>
-                            : <Link className="item" to={editHref(project.id)} key={project.id}>{project.title}</Link>)
-                    }
-                    <Menu.Item>
-                        <Icon link name="plus" disabled={currentProjectId === NEW_PROJECT_ID} onClick={add}/>
-                    </Menu.Item>
-                    { currentProject && <Menu.Menu position="right">
-                        <Menu.Item>
-                            <Icon link name="left arrow" onClick={move(-1)}/>
-                        </Menu.Item>
-                        <Menu.Item>
-                            <Icon link name="right arrow" onClick={move(1)}/>
-                        </Menu.Item>
-                    </Menu.Menu> }
-                </Menu>
-                <Grid centered>
-                    <Grid.Column width={15} layout="block">
+                <ContentPlaceholderOr loading={loading === Loading.LOADING} lines={20}>
+                    <Menu tabular>
                         {
-                            !currentProject
-                                ? <Segment raised><h2>No projects available</h2></Segment>
-                                : <EditProject key={currentProject.id}
-                                               project={currentProject}
-                                               errorMessage={errorMessage}
-                                               updating={updating}
-                                               deleting={deleting}
-                                               forceReload={forceReload}
-                                               submit={submit}
-                                               remove={remove}/>
+                            projects.map(project => project.id === currentProject.id
+                                ? <Menu.Item active key={project.id}>{project.title}</Menu.Item>
+                                : <Link className="item" to={editHref(project.id)}
+                                        key={project.id}>{project.title}</Link>)
                         }
-                    </Grid.Column>
-                </Grid>
+                        <Menu.Item>
+                            <Icon link name="plus" disabled={currentProjectId === NEW_PROJECT_ID} onClick={add}/>
+                        </Menu.Item>
+                        {currentProject && <Menu.Menu position="right">
+                            <Menu.Item>
+                                <Icon link name="left arrow" onClick={move(-1)}/>
+                            </Menu.Item>
+                            <Menu.Item>
+                                <Icon link name="right arrow" onClick={move(1)}/>
+                            </Menu.Item>
+                        </Menu.Menu>}
+                    </Menu>
+                    <Grid centered>
+                        <Grid.Column width={15} layout="block">
+                            {
+                                !currentProject
+                                    ? <Segment raised><h2>No projects available</h2></Segment>
+                                    : <EditProject key={currentProject.id}
+                                                   project={currentProject}
+                                                   errorMessage={errorMessage}
+                                                   updating={updating}
+                                                   deleting={deleting}
+                                                   forceReload={forceReload}
+                                                   submit={submit}
+                                                   remove={remove}/>
+                            }
+                        </Grid.Column>
+                    </Grid>
+                </ContentPlaceholderOr>
             </Segment>
         </Grid.Column>
     </Grid>
@@ -168,30 +194,37 @@ export const EditProject = function ({project, errorMessage, updating, deleting,
     let dropLinkIds = (links) => {
         return links.map(l => _.omit(l, "id"));
     };
-
-    project = Object.assign({}, project, {links: addLinkIds(project.links)});
-    let submitClear = (editedProject, files) => {
-        editedProject = Object.assign({}, editedProject, {links: dropLinkIds(editedProject.links)});
-        submit(project.id, editedProject, files);
-    };
+    let withLinkIds = (project) => {
+        return Object.assign({}, project, {links: addLinkIds(project.links || [])});
+    }
+    project = withLinkIds(project);
 
     let {onSubmit, data, updater, canSubmit, edited} = useForm({
         init: project,
         updateStatus: updating
     });
 
+    let submitClear = async (editedProject, files) => {
+        editedProject = Object.assign({}, editedProject, {links: dropLinkIds(editedProject.links)});
+        let result = await submit(project.id, editedProject, files);
+        if (result) {
+            result = withLinkIds(result);
+            updater.reloaded(result);
+        }
+    };
+
     let reorderLink = (index, direction) => updater.reorder(index, index + direction, "links");
     let addLink = updater.addItem(emptyLink(), "links");
     let updateLink = (index) => updater.changeItem(index, "links");
     let removeLink = (index) => updater.removeItem(index, "links");
 
-    if (forceReload) {
-        if (data.order === project.order || !edited) {
-            updater.reloaded(project);
-        } else {
-            updater.change("order")(null, {value: project.order});
-        }
-    }
+    // if (forceReload) {
+    //     if (data.order === project.order || !edited) {
+    //         updater.reloaded(project);
+    //     } else {
+    //         updater.change("order")(null, {value: project.order});
+    //     }
+    // }
 
     return <div>
         <h2>Edit project</h2>
@@ -201,20 +234,27 @@ export const EditProject = function ({project, errorMessage, updating, deleting,
             <Grid stackable centered>
                 <Grid.Row>
                     <Grid.Column width={11}>
-                        <Form.Input label="Project Title" placeholder="Title" value={data.title || ''} onChange={updater.change("title")}/>
-                        <Form.Input label="Internal ID" placeholder="(letters, digits, dashes)" value={data.id || ''} onChange={updater.change("id")}/>
-                        <Form.Checkbox toggle label="This project is published" checked={!!data.published} onChange={updater.changeToggle("published")}/>
-                        <ProjectLinks className="field" links={data.links} add={addLink} reorder={reorderLink} update={updateLink} remove={removeLink}/>
+                        <Form.Input label="Project Title" placeholder="Title" value={data.title || ''}
+                                    onChange={updater.change("title")}/>
+                        <Form.Input label="Internal ID" placeholder="(letters, digits, dashes)" value={data.id || ''}
+                                    onChange={updater.change("id")}/>
+                        <Form.Checkbox toggle label="This project is published" checked={!!data.published}
+                                       onChange={updater.changeToggle("published")}/>
+                        <ProjectLinks className="field" links={data.links} add={addLink} reorder={reorderLink}
+                                      update={updateLink} remove={removeLink}/>
                         <ErrorMessage message={errorMessage}/>
                     </Grid.Column>
                     <Grid.Column width={5}>
                         <Form.Field>
                             {data.logoId && <Image src={imageUrl(data.logoId)} alt="Current project logo"/>}
-                            <Input type="file" accept="image/jpeg, image/png, image/svg, image/gif" onChange={updater.changeFile("logo")}/>
+                            <Input type="file" accept="image/jpeg, image/png, image/svg, image/gif"
+                                   onChange={updater.changeFile("logo")}/>
                         </Form.Field>
-                        <Button primary loading={updating === Updating.UPDATING} disabled={!canSubmit} onClick={onSubmit(submitClear)}>Save</Button>
+                        <Button primary loading={updating === Updating.UPDATING} disabled={!canSubmit}
+                                onClick={onSubmit(submitClear)}>Save</Button>
                         <Button secondary onClick={() => updater.reloaded(project)}>Clear</Button>
-                        <Button color="red" loading={deleting === Deleting.DELETING} onClick={() => remove(project.id)}>Delete</Button>
+                        <Button color="red" loading={deleting === Deleting.DELETING}
+                                onClick={() => remove(project.id)}>Delete</Button>
                     </Grid.Column>
                 </Grid.Row>
                 <Grid.Row>
@@ -319,10 +359,12 @@ export const ProjectEditLink = function ({link, updateLink, cancelEdit}) {
         </List.Content>
         <List.Content>
             <List.Header>
-                <Input transparent size="mini" name="name" placeholder="Link content" value={editedLink.name} onChange={changeLink}/>
+                <Input transparent size="mini" name="name" placeholder="Link content" value={editedLink.name}
+                       onChange={changeLink}/>
             </List.Header>
             <List.Description>
-                <Input transparent size="mini" name="href" placeholder="Link target" value={editedLink.href} onChange={changeLink}/>
+                <Input transparent size="mini" name="href" placeholder="Link target" value={editedLink.href}
+                       onChange={changeLink}/>
                 {errorMessage && <Message negative size="mini">
                     {errorMessage}
                 </Message>}

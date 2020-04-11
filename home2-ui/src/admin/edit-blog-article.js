@@ -10,8 +10,8 @@ import {useHistory} from "react-router-dom";
 import _ from "lodash";
 import {
     useArticle,
+    useArticleLoading,
     useArticlesError,
-    useArticlesLoading,
     useArticlesUpdating,
     useArticleUpdater
 } from "../data/reduce/articles";
@@ -24,7 +24,7 @@ export const EditBlogArticle = function ({articleId}) {
     let article = useArticle(articleId) || {};
     let knownTags = useAvailableTags();
     let errorMessage = useArticlesError();
-    let loading = useArticlesLoading();
+    let loading = useArticleLoading(articleId);
     let updating = useArticlesUpdating();
     let loaded = useLoadedStateChange(loading, {from: Loading.LOADING, to: Loading.READY});
     let updated = useLoadedStateChange(updating, {from: Updating.UPDATING, to: Updating.UPDATED});
@@ -44,9 +44,9 @@ export const EditBlogArticle = function ({articleId}) {
         updater.reloaded(article);
     };
 
-    if (updated && article && article.id && article.id !== articleId) {
+    if (updated && data.id && data.id !== articleId) {
         // avoiding change-state-from-within-render error from React
-        setTimeout(() => history.push(editHref(article.id)), 0);
+        setTimeout(() => history.push(editHref(data.id)), 0);
     }
 
     if (!article.id && loading !== Loading.LOADING) {

@@ -1,25 +1,42 @@
 import {useDispatch} from "react-redux";
 import {useImmutableSelector} from "../../../utils/redux-store";
 import {action} from "./actions";
+import {useEffect} from "react";
 
-export function useLoader(action, enabled = true) {
+export function useLoader(memoAction, enabled) {
     let dispatch = useDispatch();
-    if (enabled) {
-        dispatch(action);
-    }
+    useEffect(() => {
+        if (enabled) {
+            dispatch(memoAction);
+        }
+    }, [dispatch, enabled, memoAction]);
 }
 
 export function useUpdater2(actionType) {
     let dispatch = useDispatch();
-    return (update, extra) => {
-        dispatch(action(actionType, {update, extra}));
+    return async (update, extra) => {
+        return await dispatch(action(actionType, {update, extra}));
+    }
+}
+
+export function useDirectUpdater(updater) {
+    let dispatch = useDispatch();
+    return async (update, extra) => {
+        return await dispatch(updater(update, extra));
     }
 }
 
 export function useDeleter2(actionType) {
     let dispatch = useDispatch();
-    return (id) => {
-        dispatch(action(actionType, id));
+    return async (id) => {
+        return await dispatch(action(actionType, id));
+    }
+}
+
+export function useDirectDeleter(deleter) {
+    let dispatch = useDispatch();
+    return async (id) => {
+        return await dispatch(deleter(id));
     }
 }
 

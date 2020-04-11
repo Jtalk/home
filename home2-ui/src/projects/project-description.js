@@ -10,11 +10,11 @@ export const ProjectDescription = function (project) {
             {project.logoId && <Image size="small" src={imageUrl(project.logoId)} alt={project.title + " Logo"}/>}
             <Menu fluid vertical text layout="block">
                 <div className="active item">Overview</div>
-                {project.links.map(link => <a key={link.name} className="item" href={link.href}>{link.name}</a>)}
+                {project.links && project.links.map(link => <a key={link.name} className="item" href={link.href}>{link.name}</a>)}
             </Menu>
         </Grid.Column>
         <Grid.Column width={12}>
-            <MarkdownTextArea>{project.description}</MarkdownTextArea>
+            <MarkdownTextArea>{project.description || ""}</MarkdownTextArea>
         </Grid.Column>
     </Grid>
 };
