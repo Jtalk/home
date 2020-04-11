@@ -2,7 +2,7 @@ import {Divider, Form, Grid, Segment} from "semantic-ui-react";
 import {Titled} from "react-titled";
 import {Updating} from "../data/reduce/global/enums";
 import {ErrorMessage, SuccessMessage} from "../form/form-message";
-import React, {useState} from "react";
+import React, {useState, useMemo} from "react";
 import {EXISTING_PASSWORD_MISMATCH, usePasswordChanger, useUsername} from "../data/reduce/authentication";
 import {useForm} from "./common/use-form";
 import {useFormErrors} from "./common/use-errors";
@@ -15,24 +15,24 @@ export const EditAccount = function () {
 
     let username = useUsername();
     let changer = usePasswordChanger();
-    let errors = useFormErrors();
     let [updating, setUpdating] = useState();
+    let emptyPasswordForm = useMemo(PASSWORD_FORM, []);
     let {onSubmit, data, updater, canSubmit, submitting} = useForm({
-        init: PASSWORD_FORM(), updateStatus: updating, secure: true
+        init: emptyPasswordForm, secure: true
     });
+    let errors = useFormErrors(emptyPasswordForm);
 
     let changePassword = async data => {
         setUpdating(Updating.UPDATING);
         let updateResult = Updating.ERROR;
         try {
-            if (!data.password.new) {
-                return errors.report("No password was provided")("password", "new");
-            }
-            if (!passwordConfirmed(data.password.new, data.password.confirmation)) {
-                return errors.report("The new password and its confirmation do not match")
+            errors.reset("server-response");
+            errors.validate(data.password.new, "No password was provided")("password", "new");
+            errors.validate(passwordConfirmed(data.password.new, data.password.confirmation),
+                "The new password and its confirmation do not match")
                     .for("password", "new")
                     .for("password", "confirmation");
-            } else {
+            if (!errors.hasErrors()) {
                 await changer(data.password);
                 updateResult = Updating.UPDATED;
             }
@@ -40,7 +40,7 @@ export const EditAccount = function () {
             if (e.message === EXISTING_PASSWORD_MISMATCH) {
                 return errors.report(e.message)("password", "current");
             }
-            return errors.report(e.message);
+            return errors.report(e.message)("server-response");
         } finally {
             setUpdating(updateResult);
         }
@@ -58,6 +58,7 @@ export const EditAccountStateless = function ({onSubmit, updating, username, err
             updater.change(...path)(...data);
         }
     }
+
     return <Grid centered>
         <Titled title={t => "Edit Account | " + t}/>
         <Grid.Column width={11}>
@@ -65,7 +66,7 @@ export const EditAccountStateless = function ({onSubmit, updating, username, err
                 <h2>Edit Account</h2>
                 <Form onSubmit={onSubmit}
                       success={updating === Updating.UPDATED}
-                      error={updating === Updating.ERROR || errors.hasErrors()}>
+                      error={errors.hasErrors()}>
                     <Divider/>
                     <Grid stackable>
                         <Grid.Row>
@@ -96,7 +97,7 @@ export const EditAccountStateless = function ({onSubmit, updating, username, err
                                 <SuccessMessage message="Password successfully changed"/>
                                 <ErrorMessage message={errors.message}/>
                                 <Form.Button primary floated="right"
-                                             disabled={!canSubmit || !!errors.hasErrors()}
+                                             disabled={!canSubmit}
                                              loading={submitting || updating === Updating.UPDATING}
                                              content="Apply"/>
                             </Grid.Column>

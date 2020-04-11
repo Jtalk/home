@@ -137,7 +137,7 @@ export const EditableProjectLink = function ({link, index, links, reorder, updat
 export const ProjectEditLink = function ({link, updateLink, cancelEdit}) {
 
     let {data, updater} = useForm({init: link});
-    let errors = useFormErrors();
+    let errors = useFormErrors(link);
 
     let applyEdit = (e) => {
         errors.validate(data.name, "name must be defined")("name");

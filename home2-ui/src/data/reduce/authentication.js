@@ -4,7 +4,7 @@ import dayjs from "dayjs";
 import {useImmutableSelector} from "../../utils/redux-store";
 import {useLastError, useUpdater2} from "./global/hook-barebone";
 import {call, put, takeEvery} from "redux-saga/effects";
-import {fetchAjax, useAjax} from "./ajax";
+import {ajaxSelector, fetchAjax, useAjax} from "./ajax";
 import {useDispatch} from "react-redux";
 
 export const EXISTING_PASSWORD_MISMATCH = "The existing password does not match";
@@ -90,14 +90,13 @@ export function useUsername() {
 }
 
 export function useLoginError() {
-    return useLastError("login");
+    return useLastError("authentication");
 }
 
 export function useLoginHandler() {
-    let ajax = useAjax();
     let dispatch = useDispatch();
     return async form => {
-        return await dispatch(login(ajax, form));
+        return await dispatch(login(form));
     };
 }
 
@@ -112,8 +111,9 @@ export function usePasswordChanger() {
     };
 }
 
-function login(ajax, form) {
-    return async dispatch => {
+function login(form) {
+    return async (dispatch, getState) => {
+        let ajax = ajaxSelector(getState());
         dispatch(action(Action.LOGGING_IN));
         try {
             let result = await ajax.authentication.login(form);
