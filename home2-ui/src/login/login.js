@@ -2,12 +2,9 @@ import React from "react";
 import {Button, Form, Icon, Modal} from "semantic-ui-react";
 import {useForm} from "../admin/common/use-form";
 import _ from "lodash";
-import {Updating} from "../data/reduce/global/enums";
 import {useHistory, useLocation} from "react-router";
 import {ErrorMessage} from "../form/form-message";
-import {Login, useLoginError, useLoginHandler, useLoginStatus} from "../data/reduce/authentication";
-import {useLoadedStateChange} from "../utils/state-change";
-import {execAsync} from "../utils/async";
+import {useLoginError, useLoginHandler, useLoginStatus} from "../data/reduce/authentication";
 import {useFormErrors} from "../admin/common/use-errors";
 
 const EMPTY_FORM = () => ({login: '', password: ''});
@@ -18,25 +15,24 @@ export const LoginModal = function ({enabled, onClose}) {
     let location = useLocation();
     let errorMessage = useLoginError();
     let loginStatus = useLoginStatus();
-    let justLoggedIn = useLoadedStateChange(loginStatus, {
-        from: Login.LOGGING_IN, to: Login.LOGGED_IN
-    });
 
     let submitLogin = useLoginHandler();
-    if (justLoggedIn) {
-        console.debug("Login complete, closing modal");
-        onClose();
-        execAsync(() => history.push(location));
+    let closingSubmit = async (form) => {
+        let result = await submitLogin(form);
+        if (result) {
+            onClose();
+            history.push(location);
+        }
     }
 
-    return <LoginModalStateless {...{enabled, onClose, submitLogin, loginStatus, errorMessage}}/>
+    return <LoginModalStateless {...{enabled, onClose, submitLogin: closingSubmit, loginStatus, errorMessage}}/>
 };
 
-export const LoginModalStateless = function ({enabled, onClose, loginStatus, errorMessage, submitLogin}) {
+export const LoginModalStateless = function ({enabled, onClose, errorMessage, submitLogin}) {
 
     let errors = useFormErrors();
     let {updater, onSubmit, submitting, data, edited} = useForm({
-        init: EMPTY_FORM(), updateStatus: asUpdateStatus(loginStatus), secure: true
+        init: EMPTY_FORM(), secure: true, version: 1
     });
 
     errorMessage = errors.message || errorMessage;
@@ -52,7 +48,8 @@ export const LoginModalStateless = function ({enabled, onClose, loginStatus, err
         }
     };
     let cleanAndClose = function (e) {
-        updater.reloaded(EMPTY_FORM());
+        updater.change("login")(null, {value: ""});
+        updater.change("password")(null, {value: ""});
         onClose(e);
     };
 
@@ -60,10 +57,17 @@ export const LoginModalStateless = function ({enabled, onClose, loginStatus, err
         <Modal.Header>Login</Modal.Header>
         <Modal.Content>
             <Form loading={submitting} error={!!errorMessage || errors.hasErrors()} onSubmit={onSubmit(submit)}>
-                <Form.Input label="Login" autoComplete="username" value={data.login} onChange={updater.change("login")}
+                <Form.Input label="Login"
+                            autoComplete="username"
+                            value={data.login || ""}
+                            onChange={updater.change("login")}
                             error={errors.errorFor("login")}/>
-                <Form.Input label="Password" type="password" autoComplete="current-password" value={data.password}
-                            onChange={updater.change("password")} error={errors.errorFor("password")}/>
+                <Form.Input label="Password"
+                            type="password"
+                            autoComplete="current-password"
+                            value={data.password || ""}
+                            onChange={updater.change("password")}
+                            error={errors.errorFor("password")}/>
                 <ErrorMessage message={errorMessage}/>
             </Form>
         </Modal.Content>
@@ -79,17 +83,4 @@ function checkError(form, errors, ...fields) {
         .filter(f => !form[f])
         .map(errors.report("Empty value"))
         .value();
-}
-
-function asUpdateStatus(loginStatus) {
-    switch (loginStatus) {
-        case Login.LOGGED_IN:
-            return Updating.UPDATED;
-        case Login.ERROR:
-            return Updating.ERROR;
-        case Login.LOGGING_IN:
-            return Updating.UPDATING;
-        default:
-            return undefined;
-    }
 }

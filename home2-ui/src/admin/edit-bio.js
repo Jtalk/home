@@ -1,8 +1,14 @@
 import React from "react";
-import {useOwner, useOwnerError, useOwnerLoading, useOwnerUpdater, useOwnerUpdating} from "../data/reduce/owner";
+import {
+    useOwner,
+    useOwnerError,
+    useOwnerLoading,
+    useOwnerUpdater,
+    useOwnerUpdating,
+    useOwnerVersion
+} from "../data/reduce/owner";
 import {useForm} from "./common/use-form";
 import {Loading, Updating} from "../data/reduce/global/enums";
-import {useLoadedStateChange} from "../utils/state-change";
 import {Button, Divider, Form, Grid, Input, Segment, TextArea} from "semantic-ui-react";
 import _ from "lodash";
 import {ErrorMessage, SuccessMessage} from "../form/form-message";
@@ -14,25 +20,21 @@ export const EditBio = function () {
 
     let owner = useOwner();
     let loading = useOwnerLoading();
-    let loadingStatusChanged = useLoadedStateChange(loading, {from: Loading.LOADING, to: Loading.READY});
     let updateStatus = useOwnerUpdating();
     let errorMessage = useOwnerError();
+    let version = useOwnerVersion();
 
     let onUpdate = useOwnerUpdater();
 
     let {onSubmit, data, updater, canSubmit} = useForm({
         init: owner,
-        updateStatus
+        version
     });
-
-    if (loadingStatusChanged) {
-        updater.reloaded(owner);
-    }
 
     return <EditBioStateless onSubmit={onSubmit(onUpdate)} {...{loading, updateStatus, errorMessage, updater, data, canSubmit}}/>
 };
 
-export const EditBioStateless = function ({data, onSubmit, updater, loading, updateStatus, errorMessage, canSubmit, selectedPhotoDataUrl}) {
+export const EditBioStateless = function ({data, onSubmit, updater, loading, updateStatus, errorMessage, canSubmit}) {
     return <Grid centered>
         <Titled title={t => "Edit Bio | " + t}/>
         <Grid.Column width={11}>
@@ -68,7 +70,7 @@ export const EditBioStateless = function ({data, onSubmit, updater, loading, upd
                             <Grid.Column width={5}>
                                 <PhotoUpload existingPhotoId={data.photoId}
                                              onPhotoSelected={updater.changeFile("photo")}
-                                             selectedPhoto={data.__files && data.__files.photo}/>
+                                             selectedPhoto={data.__files && data.__files["photo"]}/>
                                 <Button primary type="submit" loading={updateStatus === Updating.UPDATING} disabled={!canSubmit}>Save</Button>
                             </Grid.Column>
                         </Grid.Row>
@@ -96,6 +98,6 @@ export const PhotoUpload = function ({existingPhotoId, selectedPhoto, onPhotoSel
     </Form.Field>
 };
 
-export const BioTextArea = function ({bio, onChange, name}) {
+export const BioTextArea = function ({bio, onChange}) {
     return <TextArea label="Bio" placeholder="Something about me..." value={bio} onChange={onChange}/>
 };

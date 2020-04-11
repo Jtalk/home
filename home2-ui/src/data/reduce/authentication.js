@@ -97,7 +97,7 @@ export function useLoginHandler() {
     let ajax = useAjax();
     let dispatch = useDispatch();
     return async form => {
-        dispatch(login(ajax, form));
+        return await dispatch(login(ajax, form));
     };
 }
 
@@ -119,6 +119,7 @@ function login(ajax, form) {
             let result = await ajax.authentication.login(form);
             console.info("Login success");
             dispatch(action(Action.LOGIN, {expiry: result.expiry, username: form.login}));
+            return true;
         } catch (e) {
             console.error("Error logging in", e);
             if (e.status >= 400 && e.status < 500) {
@@ -128,6 +129,7 @@ function login(ajax, form) {
                 console.error("Server error", e.response);
                 dispatch(error(Action.ERROR, "Unknown error while trying to log in"));
             }
+            return false;
         }
     }
 }

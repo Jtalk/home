@@ -41,17 +41,17 @@ export function useDirectDeleter(deleter) {
 }
 
 export function useLoading(segment, path = ["loading"]) {
-    return useImmutableSelector(segment, path);
+    return useImmutableSelector(segment, ...path);
 }
 
 export function useUpdating(segment, path = ["updating"]) {
-    return useImmutableSelector(segment, path);
+    return useImmutableSelector(segment, ...path);
 }
 
 export function useDeleting(segment, path = ["deleting"]) {
-    return useImmutableSelector(segment, path);
+    return useImmutableSelector(segment, ...path);
 }
 
 export function useLastError(segment, path = ["errorMessage"]) {
-    return useImmutableSelector(segment, path);
+    return useImmutableSelector(segment, ...path);
 }

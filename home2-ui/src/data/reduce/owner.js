@@ -5,6 +5,7 @@ import {useLastError, useLoading, useUpdater2, useUpdating} from "./global/hook-
 import {call, put, takeEvery} from "redux-saga/effects";
 import {fetchAjax} from "./ajax";
 import {useImmutableSelector} from "../../utils/redux-store";
+import {upVersion, useVersion} from "./global/version";
 
 let defaultOwner = fromJS({
     name: "",
@@ -24,18 +25,26 @@ export const Action = {
     UPDATE_ERROR: Symbol("owner update error"),
 };
 
-export function owner(state = Map({loading: Loading.LOADING, data: defaultOwner}), action) {
+export function owner(state = Map({loading: Loading.LOADING, data: defaultOwner, version: 1}), action) {
     switch (action.type) {
         case Action.LOAD:
-            return Map({loading: Loading.LOADING, errorMessage: undefined, uploading: undefined, data: defaultOwner});
+            return state.merge({loading: Loading.LOADING});
         case Action.LOADED:
-            return Map({loading: Loading.READY, errorMessage: undefined, data: action.data});
+            return state.merge({
+                loading: Loading.READY, errorMessage: undefined,
+                data: fromJS(action.data),
+                version: upVersion(state)
+            });
         case Action.LOAD_ERROR:
             return state.merge({loading: Loading.ERROR, errorMessage: action.errorMessage});
         case Action.UPDATE:
-            return state.merge({updating: Updating.UPDATING, errorMessage: undefined});
+            return state.merge({updating: Updating.UPDATING});
         case Action.UPDATED:
-            return state.merge({updating: Updating.UPDATED, errorMessage: undefined, data: action.data});
+            return state.merge({
+                updating: Updating.UPDATED, errorMessage: undefined,
+                data: fromJS(action.data),
+                version: upVersion(state)
+            });
         case Action.UPDATE_ERROR:
             return state.merge({updating: Updating.ERROR, errorMessage: action.errorMessage});
         default:
@@ -49,7 +58,7 @@ export function* watchOwner() {
 }
 
 export function useOwner() {
-    return useImmutableSelector("owner", "data");
+    return useImmutableSelector("owner", "data") || {};
 }
 
 export function useOwnerLoading() {
@@ -62,6 +71,10 @@ export function useOwnerUpdating() {
 
 export function useOwnerError() {
     return useLastError("owner");
+}
+
+export function useOwnerVersion() {
+    return useVersion("owner");
 }
 
 export function useOwnerUpdater() {
@@ -77,7 +90,7 @@ function* load() {
     let ajax = yield fetchAjax();
     try {
         let owner = yield call(ajax.owner.load);
-        yield put(action(Action.LOADED, fromJS(owner)));
+        yield put(action(Action.LOADED, owner));
     } catch (e) {
         console.error("Cannot load owner info", e);
         yield put(error(Action.LOAD_ERROR, e.toLocaleString()));
@@ -88,7 +101,7 @@ function* update(update, photo) {
     let ajax = yield fetchAjax();
     try {
         let newOwner = yield call(ajax.owner.update, update, photo);
-        yield put(action(Action.UPDATED, fromJS(newOwner)));
+        yield put(action(Action.UPDATED, newOwner));
     } catch (e) {
         console.error("Exception while updating owner bio for", update, e);
         yield put(error(Action.UPDATE_ERROR, e.toLocaleString()));
