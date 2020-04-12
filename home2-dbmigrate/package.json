@@ -1,0 +1,13 @@
+{
+  "name": "home2-dbmigrate",
+  "version": "1.0",
+  "private": true,
+  "dependencies": {
+    "migrate-mongo": "^7.1.0"
+  },
+  "scripts": {
+    "up": "migrate-mongo up -f config.js",
+    "down": "migrate-mongo down -f config.js",
+    "status": "migrate-mongo status -f config.js"
+  }
+}
