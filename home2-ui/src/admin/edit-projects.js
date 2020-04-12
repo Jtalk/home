@@ -100,7 +100,7 @@ export const EditProjectsStateless = function ({projects, currentProject, curren
                                         key={project.id}>{project.title}</Link>)
                         }
                         <Menu.Item>
-                            <Icon link name="plus" disabled={!currentProject || currentProject.id === NEW_PROJECT_ID}
+                            <Icon link name="plus" disabled={!projects || (currentProject && currentProject.id === NEW_PROJECT_ID)}
                                   onClick={add}/>
                         </Menu.Item>
                         {currentProject && <Menu.Menu position="right">
