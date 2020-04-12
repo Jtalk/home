@@ -21,8 +21,8 @@ object OwnerInfo {
   implicit val jsonWriteable: Writeable[OwnerInfo] = Writeable.writeableOf_JsValue.map[OwnerInfo](Json.toJson _)
   implicit val jsonReader: Reads[OwnerInfo] = (
     (JsPath \ "name").read(minLength[String](1)) and
-      (JsPath \ "nickname").read(minLength[String](1)) and
-      (JsPath \ "description").read(minLength[String](1)) and
+      (JsPath \ "nickname").read[String] and
+      (JsPath \ "description").read[String] and
       (JsPath \ "photoId").read[String] and
       (JsPath \ "bio").read[String] and
       (JsPath \ "contacts").read[Map[String, Contact]])
