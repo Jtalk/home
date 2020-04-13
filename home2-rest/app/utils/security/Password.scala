@@ -3,18 +3,23 @@ package utils.security
 import java.util
 import java.util.Base64
 
-import play.api.libs.json.{Reads, Writes}
+import enumeratum.{Enum, EnumEntry, PlayEnum, PlayJsonEnum}
 
+import scala.collection.immutable
 import scala.util.{Failure, Success, Try}
 
-object PasswordType extends Enumeration {
-  case class Val(hasher: PasswordHasher, checker: PasswordChecker) extends super.Val {
-    implicit val writes: Writes[PasswordType] = Writes.enumNameWrites[PasswordType.type]
-  }
-  type PasswordType = Val
-  val PBKDF2WithHmacSHA512: PasswordType = Val(PBKDF2("PBKDF2WithHmacSHA512"), PBKDF2("PBKDF2WithHmacSHA512"))
+sealed trait PasswordType extends EnumEntry {
+  def hasher: PasswordHasher
+  def checker: PasswordChecker
+}
 
-  implicit val reads: Reads[PasswordType.PasswordType] = Reads.enumNameReads(PasswordType).map(_.asInstanceOf[PasswordType.PasswordType])
+object PasswordType extends Enum[PasswordType] with PlayEnum[PasswordType] with PlayJsonEnum[PasswordType] {
+  override def values: immutable.IndexedSeq[PasswordType] = findValues
+
+  case object PBKDF2WithHmacSHA512 extends PasswordType {
+    override def hasher: PasswordHasher = PBKDF2("PBKDF2WithHmacSHA512")
+    override def checker: PasswordChecker = PBKDF2("PBKDF2WithHmacSHA512")
+  }
 }
 
 trait PasswordChecker {

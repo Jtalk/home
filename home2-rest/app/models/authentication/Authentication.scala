@@ -8,7 +8,6 @@ import play.api.Logger
 import play.api.http.Writeable
 import play.api.libs.json.{Json, OWrites, Reads, Writes}
 import utils.security.PasswordType
-import utils.security.PasswordType.PasswordType
 
 object AuthenticationType extends Enumeration {
   type AuthenticationType = Value
