@@ -6,6 +6,7 @@ import play.api.libs.streams.Accumulator
 import play.api.mvc.{MultipartFormData, PlayBodyParsers}
 import play.modules.reactivemongo.MongoController.{JsFileToSave, JsGridFS, JsGridFSBodyParser, JsReadFile}
 import play.modules.reactivemongo.PlaySupport
+import reactivemongo.akkastream.GridFSStreams
 
 import scala.concurrent.{ExecutionContext, Future}
 
