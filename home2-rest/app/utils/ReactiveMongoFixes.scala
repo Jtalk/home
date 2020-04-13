@@ -1,14 +1,11 @@
 package utils
 
 import akka.stream.Materializer
-import play.api.libs.json.{JsObject, JsValue, Reads}
+import play.api.libs.json.{JsValue, Reads}
 import play.api.libs.streams.Accumulator
 import play.api.mvc.{MultipartFormData, PlayBodyParsers}
 import play.modules.reactivemongo.MongoController.{JsFileToSave, JsGridFS, JsGridFSBodyParser, JsReadFile}
 import play.modules.reactivemongo.PlaySupport
-import reactivemongo.akkastream.GridFSStreams
-import reactivemongo.api.gridfs.IdProducer
-import reactivemongo.bson.BSONDocumentWriter
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -21,7 +18,7 @@ object ReactiveMongoFixes {
     * I asked around but they don't seem to be selling this kind of absinthe here in London.
     */
   def myVeryOwnGridFSBodyParser[Id <: JsValue](gfs: Future[JsGridFS], fileToSave: (String, Option[String]) => JsFileToSave[Id])
-                                              (implicit readFileReader: Reads[JsReadFile[Id]], materializer: Materializer, parse: PlayBodyParsers, idProducer: IdProducer[Id], writer: BSONDocumentWriter[JsObject]): JsGridFSBodyParser[Id] = {
+                                              (implicit readFileReader: Reads[JsReadFile[Id]], materializer: Materializer, parse: PlayBodyParsers): JsGridFSBodyParser[Id] = {
     implicit def ec: ExecutionContext = materializer.executionContext
 
     parse.multipartFormData {
