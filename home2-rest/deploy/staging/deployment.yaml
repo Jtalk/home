@@ -1,0 +1,75 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: home
+    type: api
+  name: home-api
+  namespace: home-staging
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: home
+      type: api
+  strategy:
+    rollingUpdate:
+      maxSurge: 100%
+      maxUnavailable: 50%
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: home
+        type: api
+    spec:
+      containers:
+        - name: home-api
+          image: jtalk/home-api:0b5682ba24514f3a2ad2d61fd800036e9575c5db
+          # [[IMAGE_TAG]]
+          env:
+            - name: HTTP_PORT
+              value: "8080"
+            - name: APPLICATION_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: home-api
+                  key: application-secret
+            - name: MONGODB_URI
+              valueFrom:
+                secretKeyRef:
+                  name: home-api
+                  key: mongo-uri
+            - name: APP_SETUP_ENABLED
+              value: "true"
+            - name: APP_SETUP_DEFAULT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: home-api
+                  key: default-password
+          startupProbe:
+            httpGet:
+              path: /status
+              port: 8080
+              scheme: HTTP
+            periodSeconds: 1
+            timeoutSeconds: 15
+          livenessProbe:
+            failureThreshold: 2
+            httpGet:
+              path: /status
+              port: 8080
+              scheme: HTTP
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 3
+            initialDelaySeconds: 15
+          ports:
+            - containerPort: 80
+              protocol: TCP
+          resources:
+            limits:
+              memory: 600M
+            requests:
+              cpu: 10m
+              memory: 50M
