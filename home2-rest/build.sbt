@@ -15,3 +15,12 @@ libraryDependencies += "com.beachape" %% "enumeratum-play-json" % "1.5.17"
 libraryDependencies += "com.beachape" %% "enumeratum-play" % "1.5.17"
 
 libraryDependencies += "org.scalatestplus.play" %% "scalatestplus-play" % "3.1.2" % Test
+
+javaOptions in Universal += "-Dpidfile.path=/dev/null"
+
+import com.typesafe.sbt.packager.docker.DockerChmodType
+(packageName in Docker) := "home-api"
+(dockerBaseImage in Docker) := "openjdk:12-alpine"
+(dockerExposedPorts in Docker) := Seq(80)
+(dockerEnvVars in Docker) := Map("HTTP_PORT" -> "80")
+(dockerChmodType in Docker) := DockerChmodType.UserGroupWriteExecute
