@@ -37,7 +37,7 @@ class AuthenticationInit @Inject()(db: Database, config: Configuration, implicit
   private def createDefaultAuthentication(): Future[Unit] = {
     val login = setupLogin
     val password = setupPassword
-    if (login == null || login.isBlank || password == null || password.isBlank) {
+    if (login == null || login.trim.isEmpty || password == null || password.trim.isEmpty) {
       return Future.failed(new RuntimeException("Initial setup failed: either login and/or password was not provided"))
     }
     val auth = Authentication(
