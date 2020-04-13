@@ -1,12 +1,5 @@
 import React from "react";
-import {
-    useOwner,
-    useOwnerError,
-    useOwnerLoading,
-    useOwnerUpdater,
-    useOwnerUpdating,
-    useOwnerVersion
-} from "../data/reduce/owner";
+import {useOwner, useOwnerError, useOwnerLoading, useOwnerUpdater, useOwnerUpdating} from "../data/reduce/owner";
 import {useForm} from "./common/use-form";
 import {Loading, Updating} from "../data/reduce/global/enums";
 import {Button, Divider, Form, Grid, Input, Segment, TextArea} from "semantic-ui-react";
@@ -22,13 +15,11 @@ export const EditBio = function () {
     let loading = useOwnerLoading();
     let updateStatus = useOwnerUpdating();
     let errorMessage = useOwnerError();
-    let version = useOwnerVersion();
 
     let onUpdate = useOwnerUpdater();
 
     let {onSubmit, data, updater, canSubmit} = useForm({
         init: owner,
-        version
     });
 
     return <EditBioStateless onSubmit={onSubmit(onUpdate)} {...{loading, updateStatus, errorMessage, updater, data, canSubmit}}/>

@@ -1,52 +1,54 @@
-import {useState} from "react";
+import React from "react";
 import {useForm} from "./use-form";
 import {Updating} from "../../data/reduce/global/enums";
-import {UseStateMock} from "../../utils/testing/use-state-mock";
+import {Button, Input} from "semantic-ui-react";
+import _ from "lodash";
+import {act, renderHook} from "@testing-library/react-hooks";
 
-jest.mock("react");
+const Dummy = function ({data, edited}) {
+    return null;
+}
+const TestForm = function (init, autoSubmit, submit, secure, changePath) {
+    let {data, updater, canSubmit, onSubmit, edited} = useForm({init, autoSubmit, secure})
+    return <div>
+        <Input value={_.get(data, changePath)} onChange={updater.change(...changePath)}/>
+        <Button disabled={!canSubmit} onClick={onSubmit(submit)}/>
+        <Dummy data={data} edited={edited}/>
+    </div>
+}
 
 describe("useForm", () => {
 
-    let useStateMock;
-
-    function testUseForm(obj) {
-        useStateMock.rerender();
-        // eslint-disable-next-line react-hooks/rules-of-hooks
-        return useForm(obj);
-    }
-
-    beforeEach(() => {
-        useStateMock = new UseStateMock();
-        useState.mockImplementation(useStateMock.useState);
-    });
     describe("initial state", () => {
         it("initial state without an initial value", () => {
-            let {data, edited, submitting, canSubmit} = testUseForm();
-            expect(data).toEqual({});
-            expect(edited).toBe(false);
-            expect(submitting).toBe(false);
-            expect(canSubmit).toBe(false);
+            let {result} = renderHook(() => useForm({}));
+
+            let form = result.current;
+            expect(form.data).toEqual({});
+            expect(form.edited).toBe(false);
+            expect(form.canSubmit).toBe(false);
         });
         it("initial state with an initial value", () => {
             let init = {hello: "world"};
-            let {data, edited, submitting, canSubmit} = testUseForm({init});
-            expect(data).toEqual(init);
-            expect(edited).toBe(false);
-            expect(submitting).toBe(false);
-            expect(canSubmit).toBe(false);
+            let {result} = renderHook(() => useForm({init}));
+
+            let form = result.current;
+            expect(form.data).toEqual(init);
+            expect(form.edited).toBe(false);
+            expect(form.canSubmit).toBe(false);
         });
         it("initial state after reloading", () => {
 
             const updatedObject = {hello: "world"};
 
-            let {updater} = testUseForm();
-            updater.reloaded(updatedObject);
+            let {result} = renderHook(useForm);
+            act(() => result.current.updater.reload(updatedObject));
 
-            let {data, edited, submitting, canSubmit} = testUseForm();
-            expect(data).toEqual(updatedObject);
-            expect(edited).toBe(false);
-            expect(submitting).toBe(false);
-            expect(canSubmit).toBe(false);
+            let form = result.current;
+            expect(form.data).toEqual(updatedObject);
+            expect(form.edited).toBe(false);
+            expect(form.submitting).toBe(false);
+            expect(form.canSubmit).toBe(false);
         });
     });
     describe("update", () => {
@@ -54,58 +56,51 @@ describe("useForm", () => {
 
             const updatedValue = "some-value";
 
-            let {updater} = testUseForm();
-            updater.change("testField")(null, {value: updatedValue});
+            let {result} = renderHook(useForm);
+            act(() => result.current.updater.change("testField")(null, {value: updatedValue}));
 
-            let {data, edited, submitting, canSubmit} = testUseForm();
-            expect(data).toEqual({testField: updatedValue});
-            expect(edited).toBe(true);
-            expect(submitting).toBe(false);
-            expect(canSubmit).toBe(true);
+            let form = result.current;
+            expect(form.data).toEqual({testField: updatedValue});
+            expect(form.edited).toBe(true);
+            expect(form.canSubmit).toBe(true);
         });
         it("updating a single nested field", () => {
 
             const updatedValue = "some-value";
 
-            let {updater} = testUseForm();
-            updater.change("user", "details", "testField")(null, {value: updatedValue});
+            let {result} = renderHook(useForm);
+            act(() => result.current.updater.change("user", "details", "testField")(null, {value: updatedValue}));
 
-
-            let {data, edited, submitting, canSubmit} = testUseForm();
-            expect(data).toEqual({user: {details: {testField: updatedValue}}});
-            expect(edited).toBe(true);
-            expect(submitting).toBe(false);
-            expect(canSubmit).toBe(true);
+            let form = result.current;
+            expect(form.data).toEqual({user: {details: {testField: updatedValue}}});
+            expect(form.edited).toBe(true);
+            expect(form.canSubmit).toBe(true);
         });
         it("updating multiple fields", () => {
 
             const updatedValue1 = "some-value1";
             const updatedValue2 = "some-value2";
 
-            let {updater} = testUseForm();
-            updater.change("testField")(null, {value: updatedValue1});
-            // We must re-render the page (another testUseForm call) between changes to mimic React's event handling.
-            updater = testUseForm().updater;
-            updater.change("user", "details", "testField")(null, {value: updatedValue2});
+            let {result} = renderHook(useForm);
+            act(() => result.current.updater.change("testField")(null, {value: updatedValue1}));
+            act(() => result.current.updater.change("user", "details", "testField")(null, {value: updatedValue2}));
 
-            let {data, edited, submitting, canSubmit} = testUseForm();
-            expect(data).toEqual({testField: updatedValue1, user: {details: {testField: updatedValue2}}});
-            expect(edited).toBe(true);
-            expect(submitting).toBe(false);
-            expect(canSubmit).toBe(true);
+            let form = result.current;
+            expect(form.data).toEqual({testField: updatedValue1, user: {details: {testField: updatedValue2}}});
+            expect(form.edited).toBe(true);
+            expect(form.canSubmit).toBe(true);
         });
         it("updating with file", () => {
 
             const file = {name: "some-file"};
 
-            let {updater} = testUseForm();
-            updater.changeFile("file")({target: {files: [file]}});
+            let {result} = renderHook(useForm);
+            act(() => result.current.updater.changeFile("file")({target: {files: [file]}}));
 
-            let {data, edited, submitting, canSubmit} = testUseForm();
-            expect(data).toEqual({__files: {file}});
-            expect(edited).toBe(true);
-            expect(submitting).toBe(false);
-            expect(canSubmit).toBe(true);
+            let form = result.current;
+            expect(form.data).toEqual({__files: {file}});
+            expect(form.edited).toBe(true);
+            expect(form.canSubmit).toBe(true);
         });
         it("updating with multiple files", () => {
 
@@ -113,142 +108,153 @@ describe("useForm", () => {
             const file1 = {name: "some-file"};
             const file2 = {name: "some-file-2"};
 
-            let {updater} = testUseForm();
-            updater.change("testField")(null, {value: updatedValue1});
-            // We must re-render the page (another testUseForm call) between changes to mimic React's event handling.
-            ({updater} = testUseForm());
-            updater.changeFile("file1")({target: {files: [file1]}});
-            // We must re-render the page (another testUseForm call) between changes to mimic React's event handling.
-            ({updater} = testUseForm());
-            updater.changeFile("file2")({target: {files: [file2]}});
+            let {result} = renderHook(useForm);
+            act(() => result.current.updater.change("testField")(null, {value: updatedValue1}));
+            act(() => result.current.updater.changeFile("file1")({target: {files: [file1]}}));
+            act(() => result.current.updater.changeFile("file2")({target: {files: [file2]}}));
 
-            let {data, edited, submitting, canSubmit} = testUseForm();
-            expect(data).toEqual({testField: updatedValue1, __files: {file1, file2}});
-            expect(edited).toBe(true);
-            expect(submitting).toBe(false);
-            expect(canSubmit).toBe(true);
+            let form = result.current;
+            expect(form.data).toEqual({testField: updatedValue1, __files: {file1, file2}});
+            expect(form.edited).toBe(true);
+            expect(form.canSubmit).toBe(true);
         });
     });
     describe("submit", () => {
-        it("refuse submit without prior edits", () => {
+        it("refuse submit without prior edits", async () => {
             let submit = jest.fn();
-            let {onSubmit} = testUseForm();
-            expect(() => onSubmit(submit)({})).toThrow(/The form is being submitted without any preceding edits/);
+            let {result} = renderHook(useForm);
+            await expect(result.current.onSubmit(submit)())
+                .rejects.toEqual(new Error("The form is being submitted without any preceding edits, likely a submit button enable/disable screwup"));
         });
         it("submit when edited", () => {
 
             const updatedValue = "some-value";
 
-            let {updater} = testUseForm();
-            updater.change("testField")(null, {value: updatedValue});
+            let {result} = renderHook(useForm);
+            act(() => result.current.updater.change("testField")(null, {value: updatedValue}));
 
             let submit = jest.fn();
-            let {onSubmit} = testUseForm();
-            onSubmit(submit)({});
+            act(() => result.current.onSubmit(submit)());
 
-            let {edited, submitting, canSubmit} = testUseForm();
+            let form = result.current;
             expect(submit).toHaveBeenCalledWith({testField: updatedValue}, {});
-            expect(edited).toBe(true);
-            expect(submitting).toBe(true);
-            expect(canSubmit).toBe(false);
+            expect(form.edited).toBe(true);
+            expect(form.canSubmit).toBe(false);
         });
         it("submit with file upload", () => {
 
             const file = {name: "some-file"};
 
-            let {updater} = testUseForm();
-            updater.changeFile("file")({target: {files: [file]}});
+            let {result} = renderHook(useForm);
+            act(() => result.current.updater.changeFile("file")({target: {files: [file]}}));
 
             let submit = jest.fn();
-            let {onSubmit} = testUseForm();
-            onSubmit(submit)({});
+            act(() => result.current.onSubmit(submit)({}));
 
-            let {edited, submitting, canSubmit} = testUseForm();
             expect(submit).toHaveBeenCalledWith({}, {file});
-            expect(edited).toBe(true);
-            expect(submitting).toBe(true);
-            expect(canSubmit).toBe(false);
+            expect(result.current.edited).toBe(true);
+            expect(result.current.canSubmit).toBe(false);
         });
         it("submit mixed", () => {
 
             const updatedValue = "some-value";
             const file = {name: "some-file"};
 
-            let {updater} = testUseForm();
-            updater.change("testField")(null, {value: updatedValue});
-            ({updater} = testUseForm());
-            updater.changeFile("file")({target: {files: [file]}});
+            let {result} = renderHook(useForm);
+            act(() => result.current.updater.change("testField")(null, {value: updatedValue}));
+            act(() => result.current.updater.changeFile("file")({target: {files: [file]}}));
 
             let submit = jest.fn();
-            let {onSubmit} = testUseForm();
-            onSubmit(submit)({});
+            act(() => result.current.onSubmit(submit)({}));
 
-            let {edited, submitting, canSubmit} = testUseForm();
             expect(submit).toHaveBeenCalledWith({testField: updatedValue}, {file});
-            expect(edited).toBe(true);
-            expect(submitting).toBe(true);
-            expect(canSubmit).toBe(false);
+            expect(result.current.edited).toBe(true);
+            expect(result.current.canSubmit).toBe(false);
         });
     });
     describe("after submit", () => {
-        it("submit success", () => {
+        it("submit success", async () => {
 
-            let {updater} = testUseForm();
-            updater.change("testField")(null, {value: "some-value"});
-            let {onSubmit} = testUseForm();
-            onSubmit(jest.fn())({});
+            let {result, rerender, waitForNextUpdate} = renderHook(useForm);
+            await act(() => result.current.updater.change("testField")(null, {value: "some-value"}));
 
-            let {edited, submitting, canSubmit} = testUseForm({updateStatus: Updating.UPDATING});
-            expect(edited).toBe(true);
-            expect(submitting).toBe(true);
-            expect(canSubmit).toBe(false);
+            let resolveLater;
+            let submittingPromise = new Promise(resolve => resolveLater = resolve);
+            let submitting;
+            await act(() => {
+                submitting = result.current.onSubmit(() => submittingPromise)({});
+            });
 
-            ({edited, submitting, canSubmit} = testUseForm({updateStatus: Updating.UPDATING}));
-            expect(edited).toBe(true);
-            expect(submitting).toBe(true);
-            expect(canSubmit).toBe(false);
+            expect(result.current.edited).toBe(true);
+            expect(result.current.submitting).toBe(true);
+            expect(result.current.canSubmit).toBe(false);
 
-            // The updates will be visible on the next render
-            ({edited, submitting, canSubmit} = testUseForm({updateStatus: Updating.UPDATED}));
-            ({edited, submitting, canSubmit} = testUseForm());
-            expect(edited).toBe(false);
-            expect(submitting).toBe(false);
-            expect(canSubmit).toBe(false);
+            await act(async () => {
+                resolveLater(true);
+                await submitting;
+            });
+            expect(result.current.edited).toBe(true);
+            expect(result.current.submitting).toBe(false);
+            expect(result.current.canSubmit).toBe(true);
+
+            rerender({init: {testField: "some-new-value"}});
+            await waitForNextUpdate();
+            expect(result.current.data).toMatchObject({testField: "some-new-value"});
+            expect(result.current.edited).toBe(false);
+            expect(result.current.canSubmit).toBe(false);
         });
-        it("submit error and resubmit", () => {
+        it("submit error and resubmit", async () => {
 
-            let {updater} = testUseForm();
-            updater.change("testField")(null, {value: "some-wrong-value"});
-            let {onSubmit} = testUseForm();
-            onSubmit(jest.fn())({});
+            let {result, rerender, waitForNextUpdate} = renderHook(useForm, {initialProps: {}});
+            await act(() => result.current.updater.change("testField")(null, {value: "some-wrong-value"}));
 
-            let {edited, submitting, canSubmit} = testUseForm({updateStatus: Updating.UPDATING});
-            expect(edited).toBe(true);
-            expect(submitting).toBe(true);
-            expect(canSubmit).toBe(false);
+            let failLater;
+            let submittingPromise = new Promise((resolve, fail) => failLater = fail);
+            let submitting;
+            await act(() => {
+                submitting = result.current.onSubmit(() => submittingPromise)({});
+            });
 
-            // The updates will be visible on the next render
-            ({edited, submitting, canSubmit} = testUseForm({updateStatus: Updating.ERROR}));
-            ({edited, submitting, canSubmit} = testUseForm());
-            expect(edited).toBe(true);
-            expect(submitting).toBe(false);
-            expect(canSubmit).toBe(true);
+            expect(result.current.edited).toBe(true);
+            expect(result.current.submitting).toBe(true);
+            expect(result.current.canSubmit).toBe(false);
 
-            ({updater} = testUseForm());
-            updater.change("testField")(null, {value: "some-right-value"});
-            ({onSubmit} = testUseForm());
-            let submit = jest.fn();
-            onSubmit(submit)({});
+            await act(async () => {
+                failLater(new Error("test error"));
+                await submitting;
+            });
+            expect(result.current.data).toMatchObject({testField: "some-wrong-value"});
+            expect(result.current.edited).toBe(true);
+            expect(result.current.submitting).toBe(false);
+            expect(result.current.canSubmit).toBe(true);
 
-            expect(submit).toHaveBeenCalledWith({testField: "some-right-value"}, {});
+            await act(() => result.current.updater.change("testField")(null, {value: "some-right-value"}));
 
-            // The updates will be visible on the next render
-            ({edited, submitting, canSubmit} = testUseForm({updateStatus: Updating.UPDATED}));
-            ({edited, submitting, canSubmit} = testUseForm());
-            expect(edited).toBe(false);
-            expect(submitting).toBe(false);
-            expect(canSubmit).toBe(false);
+            let resolveLater;
+            submittingPromise = new Promise(resolve => resolveLater = resolve);
+            let successfulSubmit = jest.fn(() => submittingPromise);
+            await act(() => {
+                submitting = result.current.onSubmit(successfulSubmit)({});
+            });
 
+            expect(successfulSubmit).toHaveBeenCalledWith({testField: "some-right-value"}, {});
+
+            expect(result.current.edited).toBe(true);
+            expect(result.current.submitting).toBe(true);
+            expect(result.current.canSubmit).toBe(false);
+
+            await act(async () => {
+                resolveLater(true);
+                await submitting;
+            });
+            expect(result.current.edited).toBe(true);
+            expect(result.current.submitting).toBe(false);
+
+            rerender({init: {testField: "some-new-value"}});
+            await waitForNextUpdate();
+            expect(result.current.data).toMatchObject({testField: "some-new-value"});
+            expect(result.current.edited).toBe(false);
+            expect(result.current.canSubmit).toBe(false);
         });
     });
 });

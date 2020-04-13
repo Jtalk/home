@@ -7,20 +7,25 @@ const FILES_PATH = "__files";
 export function useForm({init, autoSubmit, secure} = {}) {
     const defaultValue = useMemo(() => ({}), []);
     const [edited, setEdited] = useState(false);
-    const [data, setData] = useDependentState(init || defaultValue);
+    const onReload = useCallback(() => setEdited(false), [setEdited]);
+    const [data, setData] = useDependentState(init || defaultValue, onReload);
+    const [submitting, setSubmitting] = useState(false);
     const submit = useCallback(async (onSubmit, update) => {
         console.debug("Submitting form", showSecurely(update, secure));
-        let copy = Object.assign({}, update);
+        let copy = {...update};
         delete copy[FILES_PATH];
         try {
+            setSubmitting(true);
             let result = await onSubmit(copy, update[FILES_PATH] || {});
             console.debug("Form submit success");
             return result;
         } catch (e) {
             console.debug("Form submit error", e);
-            throw e;
+        } finally {
+            console.debug("Form submit complete");
+            setSubmitting(false);
         }
-    }, [secure]);
+    }, [secure, setSubmitting]);
     let emptyAutoSubmitter = () => {};
     let activeAutoSubmitter = useCallback((data) => submit(autoSubmit, data), [submit, autoSubmit]);
     let autoSubmitter = autoSubmit ? activeAutoSubmitter : emptyAutoSubmitter;
@@ -29,8 +34,8 @@ export function useForm({init, autoSubmit, secure} = {}) {
         setEdited(true);
     }, [setData, setEdited]);
     let updater = useMemo(
-        () => new Updater(data, updateData, autoSubmitter),
-        [data, updateData, autoSubmitter]);
+        () => new Updater(data, updateData, setData, autoSubmitter),
+        [data, updateData, setData, autoSubmitter]);
     updater.secure = secure;
 
     const onSubmit = (onSubmit) => {
@@ -42,14 +47,15 @@ export function useForm({init, autoSubmit, secure} = {}) {
         };
     };
 
-    return {onSubmit, data, updater, edited, canSubmit: edited};
+    return {onSubmit, data, updater, edited, submitting, canSubmit: edited && !submitting};
 }
 
 class Updater {
 
-    constructor(data, setData, autoSubmit) {
+    constructor(data, setData, resetData, autoSubmit) {
         this.data = data;
         this.setData = setData;
+        this.resetData = resetData;
         this.autoSubmit = autoSubmit;
         this.secure = false;
     }
@@ -135,11 +141,7 @@ class Updater {
 
     reload(newData) {
         console.debug("Reloading form data to", showSecurely(newData, this.secure));
-        this.setData(newData);
-    }
-
-    // Deprecated
-    reloaded(newData) {
+        this.resetData(newData);
     }
 }
 

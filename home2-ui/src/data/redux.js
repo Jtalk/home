@@ -15,6 +15,8 @@ import createSagaMiddleware from "redux-saga";
 import {rootSaga} from "./saga";
 import {ajax} from "./reduce/ajax";
 import {routerMiddleware, connectRouter} from "connected-react-router"
+import {createMemoryHistory} from "history";
+import {emptySaga} from "../utils/testing/test-saga";
 
 export const reducers = {
     ajax,
@@ -41,12 +43,15 @@ export function createAppStore(history) {
     return result;
 }
 
-export function createTestStore(reducers) {
-    reducers = Object.assign({}, {ajax}, reducers);
-    let [mw, saga] = middleware();
+export function createTestStore(reducers, rootSaga) {
+    if (!rootSaga) {
+        rootSaga = emptySaga;
+    }
+    reducers = {ajax, ...reducers};
+    let [mw, saga] = middleware(createMemoryHistory());
     let result = createStore(combineReducers(reducers), mw);
-    saga.run(rootSaga);
-    return result;
+    let sagaTask = saga.run(rootSaga);
+    return [result, sagaTask];
 }
 
 function middleware(history) {

@@ -53,6 +53,7 @@ export function owner(state = Map({loading: Loading.LOADING, data: defaultOwner,
 }
 
 export function* watchOwner() {
+    console.log("Setting up the owner saga");
     yield preload();
     yield takeEvery(Action.UPDATE, ({data}) => update(data.update, data.extra.photo));
 }
@@ -87,9 +88,11 @@ function* preload() {
 }
 
 function* load() {
+    console.debug("Loading owner");
     let ajax = yield fetchAjax();
     try {
         let owner = yield call(ajax.owner.load);
+        console.debug("Owner loaded", owner);
         yield put(action(Action.LOADED, owner));
     } catch (e) {
         console.error("Cannot load owner info", e);

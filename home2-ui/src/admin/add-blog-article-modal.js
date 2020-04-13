@@ -19,7 +19,7 @@ export const AddBlogArticleModal = function () {
         articleUpdater(article.id, editHref(article.id), article);
     };
     let clear = () => {
-        updater.reloaded(INITIAL());
+        updater.reload(INITIAL());
     };
 
     return <Modal size="small" closeIcon onClose={clear} trigger={<Button><Icon name="plus"/>Add entry</Button>}>

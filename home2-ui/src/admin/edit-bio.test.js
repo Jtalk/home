@@ -8,10 +8,11 @@ import config from "react-global-configuration";
 import {Loading, Updating} from "../data/reduce/global/enums";
 import {Provider as ReduxProvider} from "react-redux";
 import {createTestStore} from "../data/redux";
-import {owner as ownerReducer} from "../data/reduce/owner";
+import {owner as ownerReducer, watchOwner} from "../data/reduce/owner";
 import {ImageUploadPreview} from "./common/image-upload-preview";
 import {FileConverterProvider} from "../utils/file-converter-context";
-import {ajax, ajaxResetAction} from "../data/reduce/ajax";
+import {cancel} from "redux-saga/effects";
+import {END} from "redux-saga";
 
 describe("<EditBio/>", () => {
 
@@ -19,36 +20,46 @@ describe("<EditBio/>", () => {
     let ajaxMock;
     let fileConverter;
     let owner;
+    let sagaTask;
 
     beforeEach(() => {
-        store = createTestStore({
-            "owner": ownerReducer,
-            "ajax": ajax
-        });
-        ajaxMock = {
-            owner: {
-                load: jest.fn(() => owner),
-                update: jest.fn(updated => updated),
-            }
-        };
-        store.dispatch(ajaxResetAction(ajaxMock));
-        fileConverter = {
-            toDataUrl: async file => ({dataUrl: true, file}),
-        };
         owner = {
             name: "Test Owner",
             contacts: {
                 email: {value: "test.owner@example.com"}
             }
         };
+        ajaxMock = {
+            owner: {
+                load: jest.fn(() => {
+                    console.log("Loading owner for test");
+                    return owner;
+                }),
+                update: jest.fn(updated => updated),
+            }
+        };
+        let rootSaga = function* () {
+            yield watchOwner()
+        };
+        [store, sagaTask] = createTestStore({
+            "owner": ownerReducer,
+            "ajax": () => ajaxMock
+        }, rootSaga);
+        sagaTask.toPromise()
+            .catch(e => console.log("Error stopping Saga", e))
+            .then(() => console.log("Saga successfully stopped"));
+        fileConverter = {
+            toDataUrl: async file => ({dataUrl: true, file}),
+        };
+    });
+    afterEach(() => {
+        store.dispatch(END);
     });
     async function editAndSubmit(wrapper, edit) {
-        await act(async () => {
-            edit();
-        });
+        await edit();
         wrapper.update();
         await act(async () => {
-            wrapper.find(Form).prop("onSubmit")(null);
+            await wrapper.find(Form).prop("onSubmit")(null);
         });
         wrapper.update();
     }
@@ -65,26 +76,28 @@ describe("<EditBio/>", () => {
         await editAndSubmit(result, async () => {
             result.find(Form.Input).find({label: "Owner Name"}).at(0).prop("onChange")(null, {value: "New Owner"});
         });
-        expect(ajaxMock.owner.update).toHaveBeenCalledWith(Object.assign({}, owner, {name: "New Owner"}), undefined);
+        expect(ajaxMock.owner.update).toHaveBeenCalledWith({...owner, name: "New Owner"}, undefined);
         expect(result.find(Form).props()).toMatchObject({success: true, error: false, loading: false});
 
         await editAndSubmit(result, async () => {
             result.find(Form.Input).find({label: "Owner Nickname"}).at(0).prop("onChange")(null, {value: "New Nickname"});
         });
-        expect(ajaxMock.owner.update).toHaveBeenCalledWith(Object.assign({}, owner, {name: "New Owner", nickname: "New Nickname"}), undefined);
+        expect(ajaxMock.owner.update).toHaveBeenCalledWith(Object.assign({}, owner, {
+            name: "New Owner", nickname: "New Nickname"
+        }), undefined);
         expect(result.find(Form).props()).toMatchObject({success: true, error: false, loading: false});
 
         await editAndSubmit(result, async () => {
             result.find(PhotoUpload).prop("onPhotoSelected")({target: {files: [{name: "test photo"}]}});
         });
-        expect(ajaxMock.owner.update).toHaveBeenCalledWith(Object.assign({}, owner, {name: "New Owner", nickname: "New Nickname"}), {name: "test photo"});
+        expect(ajaxMock.owner.update).toHaveBeenCalledWith({...owner, name: "New Owner", nickname: "New Nickname"}, {name: "test photo"});
         expect(result.find(Form).props()).toMatchObject({success: true, error: false, loading: false});
 
         ajaxMock.owner.update.mockImplementationOnce(() => { throw Error("Test I/O Error"); });
         await editAndSubmit(result, async () => {
             result.find(Form.Input).find({label: "Owner Nickname"}).at(0).prop("onChange")(null, {value: "Incorrect Nickname"});
         });
-        expect(ajaxMock.owner.update).toHaveBeenCalledWith(Object.assign({}, owner, {name: "New Owner", nickname: "Incorrect Nickname"}), undefined);
+        expect(ajaxMock.owner.update).toHaveBeenCalledWith({...owner, name: "New Owner", nickname: "Incorrect Nickname"}, undefined);
         expect(result.find(Form).props()).toMatchObject({success: false, error: true, loading: false});
         // The incorrect value remained for easier edit
         expect(result.find(Form.Input).find({label: "Owner Nickname"}).at(0).prop("value")).toEqual("Incorrect Nickname");
@@ -92,7 +105,7 @@ describe("<EditBio/>", () => {
         await editAndSubmit(result, async () => {
             result.find(Form.Input).find({label: "Owner Nickname"}).at(0).prop("onChange")(null, {value: "Correct Nickname"});
         });
-        expect(ajaxMock.owner.update).toHaveBeenCalledWith(Object.assign({}, owner, {name: "New Owner", nickname: "Correct Nickname"}), undefined);
+        expect(ajaxMock.owner.update).toHaveBeenCalledWith({...owner, name: "New Owner", nickname: "Correct Nickname"}, undefined);
         expect(result.find(Form).props()).toMatchObject({success: true, error: false, loading: false});
         expect(result.find(Form.Input).find({label: "Owner Nickname"}).at(0).prop("value")).toEqual("Correct Nickname");
     });
@@ -205,7 +218,7 @@ describe("<EditBioStateless/>", () => {
         expect(result.find(Button).props()).toMatchObject({primary: true, type: "submit"});
     });
     it("renders form with loading indicator", () => {
-        let result = shallow(<EditBioStateless data={owner} updater={updaterMock} loadingStatus={Loading.LOADING}/>);
+        let result = shallow(<EditBioStateless data={owner} updater={updaterMock} loading={Loading.LOADING}/>);
         expect(result.find(Form).props()).toMatchObject({loading: true, success: false, error: false});
     });
     it("renders form with success message", () => {
@@ -217,7 +230,7 @@ describe("<EditBioStateless/>", () => {
         expect(result.find(Form).props()).toMatchObject({loading: false, success: false, error: true});
     });
     it("renders form with error message if cannot be loaded", () => {
-        let result = shallow(<EditBioStateless data={owner} updater={updaterMock} loadingStatus={Loading.ERROR}/>);
+        let result = shallow(<EditBioStateless data={owner} updater={updaterMock} loading={Loading.ERROR}/>);
         expect(result.find(Form).props()).toMatchObject({loading: false, success: false, error: true});
     });
     it("triggers updates to the supplied updater", () => {

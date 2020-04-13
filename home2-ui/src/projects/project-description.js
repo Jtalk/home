@@ -1,13 +1,13 @@
 import React from "react";
-import {Grid, Image, Menu} from "semantic-ui-react";
-import {imageUrl} from "../utils/image";
+import {Grid, Menu} from "semantic-ui-react";
 import {MarkdownTextArea} from "../shared/text-area";
+import {OptionalImage} from "../common/optional-image";
 
 export const ProjectDescription = function (project) {
 
     return <Grid stackable centered layout="block">
         <Grid.Column width={3}>
-            {project.logoId && <Image size="small" src={imageUrl(project.logoId)} alt={project.title + " Logo"}/>}
+            <OptionalImage size="small" id={project.logoId} alt={project.title + " Logo"}/>}
             <Menu fluid vertical text layout="block">
                 <div className="active item">Overview</div>
                 {project.links && project.links.map(link => <a key={link.name} className="item" href={link.href}>{link.name}</a>)}

@@ -7,7 +7,8 @@ import {Footer, StatelessFooter} from "./footer";
 import {Provider} from "react-redux";
 import {fromJS} from "immutable";
 import {createTestStore} from "../data/redux";
-import {ajaxResetAction} from "../data/reduce/ajax";
+import {watchFooter} from "../data/reduce/footer";
+import {END} from "redux-saga";
 
 let links = [
   {caption: "Link1", href: "/test/link1"},
@@ -49,20 +50,31 @@ describe("<StatelessFooter/>", () => {
 
 describe("<Footer/>", () => {
 
-  let footerReducer = () => fromJS({
-    data: {
-      links: links,
-      logos: logos,
-    }
+  let ajaxMock;
+  let store;
+  beforeEach(() => {
+    let footerReducer = () => fromJS({
+      data: {
+        links: links,
+        logos: logos,
+      }
+    });
+    ajaxMock = {
+      footer: {
+        load: jest.fn(() => {})
+      }
+    };
+    let rootSaga = function* () {
+      yield watchFooter();
+    };
+    [store] = createTestStore({
+      "footer": footerReducer,
+      "ajax": () => ajaxMock,
+    }, rootSaga);
   });
-  let store = createTestStore({"footer": footerReducer});
-  let ajaxMock = {
-    footer: {
-      load: jest.fn(() => {})
-    }
-  };
-  store.dispatch(ajaxResetAction(ajaxMock))
-
+  afterEach(async () => {
+    await store.dispatch(END);
+  });
   it('calls the loading function upon mounting', () => {
     mount(<Provider store={store}>
       <Footer/>

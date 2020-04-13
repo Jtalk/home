@@ -30,7 +30,7 @@ describe("<Pagination/>", () => {
     let result = shallow(<Pagination {...pagination}/>);
     result = result.find(Link);
     expect(result.length).toBe(2);
-    expect(result.find({children: 1}).props()).toMatchObject({to: "/admin/images/0"});
-    expect(result.find({children: 3}).props()).toMatchObject({to: "/admin/images/2"});
+    expect(result.find({children: 1}).props()).toMatchObject({to: "/admin/images/?page=0"});
+    expect(result.find({children: 3}).props()).toMatchObject({to: "/admin/images/?page=2"});
   });
 });
