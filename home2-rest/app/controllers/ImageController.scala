@@ -40,6 +40,7 @@ class ImageController @Inject()(val config: Configuration,
   private def uploaded(id: JsValue) = findOne(id).fomap(Ok[JsObject]).map(_.getOrElse(InternalServerError("Cannot find image just uploaded")))
   private def serveById(id: String, gfs: JsGridFS)
   = serve[JsValue, JsReadFile[JsValue]](gfs)(gfs.find(Json.obj("_id" -> id)), dispositionMode = CONTENT_DISPOSITION_INLINE)
+    .map(withoutContentLength)
   private def deleteById(id: String, gfs: JsGridFS)= gfs.remove(JsString(id))
 
   private def parseFile(description: String): JsGridFSBodyParser[JsValue] = ReactiveMongoFixes.myVeryOwnGridFSBodyParser(
@@ -61,6 +62,10 @@ class ImageController @Inject()(val config: Configuration,
   private def filterPrivateMeta(in: JsObject) = in.fields
     .filter(f => publicMetadataFields.contains(f._1))
     .map(f => (publicMetadataFields(f._1), f._2)) |> JsObject
+
+  private def withoutContentLength(result: Result): Result = result.copy(
+    header = result.header.copy(
+      headers = result.header.headers.filterKeys(_ != CONTENT_LENGTH)))
 
   private lazy val pageSize = config.get[Int]("app.images.page.size")
   private def publicMetadataFields = Map(
