@@ -4,5 +4,7 @@ WORKDIR /app
 COPY build ./
 ENV PORT=80
 ENV NODE_ENV=production
-ENV REACT_APP_TEST_DURATION=0
+# To be set by the build process
+# ENV REACT_APP_API_URL=...
+# ENV REACT_APP_TEST_DURATION=0
 CMD ["serve", "-s", "."]
