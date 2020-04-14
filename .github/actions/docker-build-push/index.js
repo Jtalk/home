@@ -16,6 +16,7 @@ try {
     let registry = getInput("registry");
     let username = getInput("username");
     let password = getInput("password");
+    let workingDir = getInput("working-dir");
     let push = ["yes", "true", "y", "1"].includes(getInput("push") || "true");
     setSecret(password);
 
@@ -26,7 +27,7 @@ try {
     info("Logging into the registry " + registry);
     docker.login(registry, username, password);
     info(`Building from ${dockerfile} to ${tag}`);
-    docker.build(dockerfile, tag);
+    docker.build(workingDir, dockerfile, tag);
     if (push) {
         info(`Pushing tag ${tag}`);
         docker.push(tag);
@@ -73,9 +74,9 @@ const docker = {
         });
         debug(output);
     },
-    build: (dockerfile, tag) => {
+    build: (workingDir, dockerfile, tag) => {
         let dockerfileOpt = dockerfile && `-f '${dockerfile}'`;
-        let output = execSync(`docker build ${dockerfileOpt} -t '${tag}' .`, this.processConfig);
+        let output = execSync(`docker build ${dockerfileOpt} -t '${tag}' ${workingDir}`, this.processConfig);
         debug(output);
     },
     tag: (from, to) => {

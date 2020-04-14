@@ -12,6 +12,10 @@ inputs:
     description: Push file after build
     required: false
     default: "true"
+  working-dir:
+    description: A working directory to switch for building
+    required: false
+    default: "."
   registry:
     description: Registry to publish to. Defaults to Docker Hub
     required: false
