@@ -42,6 +42,29 @@ jobs:
         working-directory: home2-ui
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
+        
+  build-release-api:
+    name: Build and Release to Docker
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+    - name: Specify the current hash as a build version
+      run: sed -Ei 's/^version := ".+"\$/version := "${{ github.sha }}"' build.sbt
+      working-directory: home-api
+    - name: Build & publish the project
+      uses: matankdr/github-docker-sbt@3d98d670c583c68bf69e51ac6ed08125d3f55b51
+      with:
+        command: "cd home-api; sbt test docker:publish"
+        docker-login-username: ${{ secrets.DOCKER_USERNAME }}
+        docker-login-password: ${{ secrets.DOCKER_PASSWORD }}
+    - name: Push branch and master tags
+      uses: ./.github/actions/docker-build-push
+      with:
+        tag-prefix: ${{ env.UI_DOCKER_IMAGE_PREFIX }}
+        working-directory: home2-api
+        build: "false"
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
 #   deploy:
 #     name: Deploy to Kubernetes
 #     runs-on: ubuntu-latest
