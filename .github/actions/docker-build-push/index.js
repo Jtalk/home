@@ -22,7 +22,7 @@ const docker = {
             return;
         }
         let output = proc.execSync(`docker login -u '${username}' --password-stdin ${registry}`,
-            Object.assign({}, processConfig, {input: password}));
+            Object.assign({}, processConfig, {input: password, stdio: "pipe"}));
         core.debug(output);
     },
     build: (workingDir, dockerfile, tag) => {
