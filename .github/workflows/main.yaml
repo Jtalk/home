@@ -23,18 +23,15 @@ jobs:
       uses: actions/setup-node@v1
       with:
         node-version: ${{ env.NODE_VERSION }}
-      
     - name: Test UI
       working-directory: home2-ui
       env:
-        CI: true
         NODE_ENV: development
       run: |
         npm ci
-        npm test src/
+        npm run test
     - name: Build UI
       working-directory: home2-ui
-      env:
       run: |
         npm ci
         npm run build
