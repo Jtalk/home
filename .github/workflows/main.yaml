@@ -49,7 +49,7 @@ jobs:
     steps:
     - uses: actions/checkout@v1
     - name: Specify the current hash as a build version
-      run: sed -Ei 's/^version := ".+"\$/version := "${{ github.sha }}"' build.sbt
+      run: sed -Ei 's/^version := ".+"\$/version := "${{ github.sha }}"/' build.sbt
       working-directory: home2-rest
     - name: Build & publish the project
       uses: matankdr/github-docker-sbt@3d98d670c583c68bf69e51ac6ed08125d3f55b51
