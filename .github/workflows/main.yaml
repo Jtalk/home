@@ -54,7 +54,7 @@ jobs:
     - name: Build & publish the project
       uses: matankdr/github-docker-sbt@3d98d670c583c68bf69e51ac6ed08125d3f55b51
       with:
-        command: "cd home2-rest; sbt test docker:publishLocal"
+        command: bash -c "cd home2-rest; sbt test docker:publishLocal"
         docker-login-username: ${{ secrets.DOCKER_USERNAME }}
         docker-login-password: ${{ secrets.DOCKER_PASSWORD }}
     - name: Push branch and master tags
