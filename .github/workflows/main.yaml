@@ -12,7 +12,7 @@ env:
   
 jobs:
   build-release-ui:
-    name: Build and Release to Docker
+    name: Build and Release UI
     runs-on: ubuntu-latest
     env:
       NODE_ENV: production
@@ -44,12 +44,16 @@ jobs:
         password: ${{ secrets.DOCKER_PASSWORD }}
         
   build-release-api:
-    name: Build and Release to Docker
+    name: Build and Release API
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v1
     - name: Specify the current hash as a build version
-      run: sed -Ei 's/^version := ".+"\$/version := "${{ github.sha }}"' build.sbt
+      run: |
+        which sed
+        ls
+        pwd
+        sed -Ei 's/^version := ".+"\$/version := "${{ github.sha }}"' build.sbt
       working-directory: home-api
     - name: Build & publish the project
       uses: matankdr/github-docker-sbt@3d98d670c583c68bf69e51ac6ed08125d3f55b51
