@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  "scripts": {},
+  "scripts": {
+    "build": "ncc build"
+  },
   "author": "",
   "license": "GPL-3.0-or-later",
   "dependencies": {
