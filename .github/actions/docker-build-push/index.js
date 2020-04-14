@@ -23,6 +23,7 @@ try {
     let tag = withRegistry(registry, `${tagPrefix}:${sha}`);
     let refTag = ref && withRegistry(registry, `${tagPrefix}:${refTag}`);
     let latestTag = withRegistry(registry, `${tagPrefix}:latest`);
+    dockerfile = `${workingDir}/${dockerfile}`;
 
     info("Logging into the registry " + registry);
     docker.login(registry, username, password);
