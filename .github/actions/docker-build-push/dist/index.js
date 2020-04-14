@@ -1760,31 +1760,32 @@ function withRegistry(registry, tag) {
     }
 }
 
+const processConfig = {
+    stdio: "inherit",
+    encoding: "utf8",
+};
+    
 const docker = {
-    processConfig: () => ({
-        stdio: "inherit",
-        encoding: "utf8",
-    }),
     login: (registry = "", username, password) => {
         if (!username && !password) {
             core.info("Login skipped: no username/password provided");
             return;
         }
         let output = proc.execSync(`docker login -u '${username}' --password-stdin ${registry}`,
-            Object.assign({}, this.processConfig(), {input: password}));
+            Object.assign({}, processConfig, {input: password}));
         core.debug(output);
     },
     build: (workingDir, dockerfile, tag) => {
         let dockerfileOpt = dockerfile && `-f '${dockerfile}'`;
-        let output = proc.execSync(`docker build ${dockerfileOpt} -t '${tag}' ${workingDir}`, this.processConfig());
+        let output = proc.execSync(`docker build ${dockerfileOpt} -t '${tag}' ${workingDir}`, processConfig);
         core.debug(output);
     },
     tag: (from, to) => {
-        let output = proc.execSync(`docker tag '${from}' '${to}'`, this.processConfig());
+        let output = proc.execSync(`docker tag '${from}' '${to}'`, processConfig);
         core.debug(output);
     },
     push: (tag) => {
-        let output = proc.execSync(`docker push '${tag}'`, this.processConfig());
+        let output = proc.execSync(`docker push '${tag}'`, processConfig);
         core.debug(output);
     },
 }
