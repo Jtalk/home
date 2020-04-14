@@ -1,0 +1,22 @@
+name: 'Docker Build Push'
+description: 'Build & push multiple tags based on refs'
+inputs:
+  tag-prefix:
+    description: Value to prefix docker tag (user & name part, no version, no registry, no trailing colon
+    required: true
+  dockerfile:
+    description: Path to the dockerfile to build
+    required: false
+    default: Dockerfile
+  registry:
+    description: Registry to publish to. Defaults to Docker Hub
+    required: false
+  username:
+    description: The docker login user name
+    required: false
+  password:
+    description: The docker login password
+    required: false
+runs:
+  using: 'node12'
+  main: 'index.js'

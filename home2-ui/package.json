@@ -63,5 +63,6 @@
     "not dead",
     "not ie <= 11",
     "not op_mini all"
-  ]
+  ],
+  "license": "GPL-3.0-or-later"
 }
