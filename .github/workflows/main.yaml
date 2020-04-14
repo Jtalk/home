@@ -38,7 +38,7 @@ jobs:
     - name: Build & Push docker
       uses: ./.github/actions/docker-build-push
       with:
-        tag-prefix: ${UI_DOCKER_IMAGE_PREFIX}
+        tag-prefix: ${{ env.UI_DOCKER_IMAGE_PREFIX }}
         working-directory: home2-ui
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
