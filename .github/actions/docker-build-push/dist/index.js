@@ -1793,10 +1793,10 @@ const docker = {
 try {
     let {sha, ref} = github.context;
     if (ref && ref.startsWith("refs/heads/")) {
-        ref = ref.substring(0, "refs/heads/".length);
+        ref = ref.substring("refs/heads/".length);
     }
     if (ref && ref.startsWith("refs/tags/")) {
-        ref = ref.substring(0, "refs/tags/".length);
+        ref = ref.substring("refs/tags/".length);
     }
     let isMaster = ref === "master";
     let tagPrefix = core.getInput("tag-prefix", {required: true});
