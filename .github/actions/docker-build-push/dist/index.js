@@ -1820,8 +1820,12 @@ try {
 
     core.info("Logging into the registry " + registry);
     docker.login(registry, username, password);
-    core.info(`Building from ${dockerfile} to ${tag}`);
-    docker.build(workingDir, dockerfile, tag);
+    if (build) {
+        core.info(`Building from ${dockerfile} to ${tag}`);
+        docker.build(workingDir, dockerfile, tag);
+    } else {
+        core.info("Skipping build as configured");
+    }
     if (push) {
         core.info(`Pushing tag ${tag}`);
         docker.push(tag);
@@ -1836,7 +1840,7 @@ try {
             docker.push(latestTag);
         }
     } else {
-        core.info("Skipping push");
+        core.info("Skipping push as configured");
     }
     core.info("Done");
 } catch (e) {
