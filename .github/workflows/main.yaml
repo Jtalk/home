@@ -50,11 +50,8 @@ jobs:
     - uses: actions/checkout@v1
     - name: Specify the current hash as a build version
       run: |
-        which sed
-        ls
-        pwd
         sed -Ei 's/^version := ".+"\$/version := "${{ github.sha }}"' build.sbt
-      working-directory: home-api
+      working-directory: home2-api
     - name: Build & publish the project
       uses: matankdr/github-docker-sbt@3d98d670c583c68bf69e51ac6ed08125d3f55b51
       with:
@@ -64,7 +61,7 @@ jobs:
     - name: Push branch and master tags
       uses: ./.github/actions/docker-build-push
       with:
-        tag-prefix: ${{ env.UI_DOCKER_IMAGE_PREFIX }}
+        tag-prefix: ${{ env.API_DOCKER_IMAGE_PREFIX }}
         working-directory: home2-api
         build: "false"
         username: ${{ secrets.DOCKER_USERNAME }}
