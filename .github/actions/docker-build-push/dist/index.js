@@ -1760,6 +1760,10 @@ function withRegistry(registry, tag) {
     }
 }
 
+function asBoolean(str) {
+    return str && ["yes", "true", "y", "1"].includes(str);
+}
+
 const processConfig = {
     stdio: "inherit",
     encoding: "utf8",
@@ -1805,7 +1809,8 @@ try {
     let username = core.getInput("username");
     let password = core.getInput("password");
     let workingDir = core.getInput("working-directory");
-    let push = ["yes", "true", "y", "1"].includes(core.getInput("push") || "true");
+    let build = asBoolean(core.getInput("build") || "true");
+    let push = asBoolean(core.getInput("push") || "true");
     core.setSecret(password);
 
     let tag = withRegistry(registry, `${tagPrefix}:${sha}`);

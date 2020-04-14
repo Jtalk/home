@@ -12,6 +12,10 @@ inputs:
     description: Push file after build
     required: false
     default: "true"
+  build:
+    description: Build the file before pushing
+    required: false
+    default: "true"
   working-directory:
     description: A working directory to switch for building
     required: false
