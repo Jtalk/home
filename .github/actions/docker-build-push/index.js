@@ -16,7 +16,7 @@ try {
     let registry = getInput("registry");
     let username = getInput("username");
     let password = getInput("password");
-    let workingDir = getInput("working-dir");
+    let workingDir = getInput("working-directory");
     let push = ["yes", "true", "y", "1"].includes(getInput("push") || "true");
     setSecret(password);
 

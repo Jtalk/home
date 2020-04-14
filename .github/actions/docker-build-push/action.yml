@@ -12,7 +12,7 @@ inputs:
     description: Push file after build
     required: false
     default: "true"
-  working-dir:
+  working-directory:
     description: A working directory to switch for building
     required: false
     default: "."
