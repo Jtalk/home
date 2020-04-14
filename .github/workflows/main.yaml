@@ -36,7 +36,7 @@ jobs:
         npm ci
         npm run build
     - name: Build & Push docker
-      uses: ./.github/action/docker-build-push
+      uses: ./.github/actions/docker-build-push
       with:
         tagPrefix: ${UI_DOCKER_IMAGE_PREFIX}
         working-dir: home2-ui
