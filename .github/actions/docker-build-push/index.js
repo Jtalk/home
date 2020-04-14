@@ -63,7 +63,11 @@ const docker = {
         encoding: "utf8",
     },
     login: (registry = "", username, password) => {
-        let output = execSync(`docker login -u ${username} --password-stdin ${registry}`, {
+        if (!username && !password) {
+            info("Login skipped: no username/password provided");
+            return;
+        }
+        let output = execSync(`docker login -u '${username}' --password-stdin ${registry}`, {
             input: password,
             ...this.processConfig
         });
