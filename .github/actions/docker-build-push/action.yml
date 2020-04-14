@@ -8,6 +8,10 @@ inputs:
     description: Path to the dockerfile to build
     required: false
     default: Dockerfile
+  push:
+    description: Push file after build
+    required: false
+    default: "true"
   registry:
     description: Registry to publish to. Defaults to Docker Hub
     required: false

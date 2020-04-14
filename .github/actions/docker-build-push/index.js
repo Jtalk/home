@@ -16,6 +16,7 @@ try {
     let registry = getInput("registry");
     let username = getInput("username");
     let password = getInput("password");
+    let push = ["yes", "true", "y", "1"].includes(getInput("push") || "true");
     setSecret(password);
 
     let tag = withRegistry(registry, `${tagPrefix}:${sha}`);
@@ -26,17 +27,21 @@ try {
     docker.login(registry, username, password);
     info(`Building from ${dockerfile} to ${tag}`);
     docker.build(dockerfile, tag);
-    info(`Pushing tag ${tag}`);
-    docker.push(tag);
-    if (ref) {
-        docker.tag(tag, refTag);
-        info(`Ref '${ref}' build, pushing tag ${refTag}`);
-        docker.push(refTag);
-    }
-    if (isMaster) {
-        docker.tag(tag, latestTag);
-        info(`Master branch build, pushing tag ${latestTag}`);
-        docker.push(latestTag);
+    if (push) {
+        info(`Pushing tag ${tag}`);
+        docker.push(tag);
+        if (ref) {
+            docker.tag(tag, refTag);
+            info(`Ref '${ref}' build, pushing tag ${refTag}`);
+            docker.push(refTag);
+        }
+        if (isMaster) {
+            docker.tag(tag, latestTag);
+            info(`Master branch build, pushing tag ${latestTag}`);
+            docker.push(latestTag);
+        }
+    } else {
+        info("Skipping push");
     }
     info("Done");
 } catch (e) {
