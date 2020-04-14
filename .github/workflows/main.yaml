@@ -50,6 +50,7 @@ jobs:
     - uses: actions/checkout@v1
     - name: Specify the current hash as a build version
       run: |
+        echo test
         echo `which sed`
         echo `ls`
         echo `pwd`
