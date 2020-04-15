@@ -126,7 +126,7 @@ jobs:
       - name: Kubernetes set context
         uses: Azure/k8s-set-context@v1
         with:
-          kubeconfig: ${{ github.workspace }}/.kubeconfig
+          kubeconfig: $GITHUB_WORKSPACE/.kubeconfig
       - name: Deploy API to Kubernetes
         uses: Azure/k8s-deploy@v1
         with:
