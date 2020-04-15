@@ -1764,6 +1764,15 @@ function asBoolean(str) {
     return str && ["yes", "true", "y", "1"].includes(str);
 }
 
+function tryPush(tag, orElse) {
+    try {
+        docker.push(tag);
+    } catch (e) {
+        core.debug("Error while pushing image: " + e.message);
+        orElse();
+    }
+}
+
 const processConfig = {
     stdio: "inherit",
     encoding: "utf8",
@@ -1786,6 +1795,10 @@ const docker = {
     },
     tag: (from, to) => {
         let output = proc.execSync(`docker tag '${from}' '${to}'`, processConfig);
+        core.debug(output);
+    },
+    pull: (tag) => {
+        let output = proc.execSync(`docker pull '${tag}'`, processConfig);
         core.debug(output);
     },
     push: (tag) => {
@@ -1828,7 +1841,15 @@ try {
     }
     if (push) {
         core.info(`Pushing tag ${tag}`);
-        docker.push(tag);
+        if (build) {
+            // Don't fall back to pull if we know we've just built the image
+            docker.push(tag);
+        } else {
+            // If we were asked to skip the build phase, there might already be
+            // an image available in this container. Or there might be none,
+            // in which case we'd want to pull it before applying branch/master tags.
+            tryPush(tag, () => docker.pull(tag));
+        }
         if (ref) {
             docker.tag(tag, refTag);
             core.info(`Ref '${ref}' build, pushing tag ${refTag}`);
