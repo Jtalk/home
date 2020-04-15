@@ -50,7 +50,7 @@ jobs:
     - uses: actions/checkout@v1
     - name: Specify the current hash as a build version
       run: |
-        sed -Ei 's/^version := ".+"\$/version := "${{ github.sha }}"/' build.sbt
+        sed -Ei 's/^version := "\w+"$/version := "${{ github.sha }}"/' build.sbt
         echo The new build.sbt with its version updated
         cat build.sbt
       working-directory: home2-rest
