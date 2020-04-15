@@ -103,7 +103,15 @@ jobs:
           DIGITALOCEAN_ACCESS_TOKEN: ${{ secrets.DO_TOKEN }}
         with:
           args: kubernetes cluster kubeconfig show ${{ secrets.DO_CLUSTER_NAME }} > $GITHUB_WORKSPACE/.kubeconfig
-
+      - name: Deploy API to Kubernetes
+        uses: Azure/k8s-deploy@v1
+        with:
+          manifests: |
+            home2-rest/deploy/deployment.yaml
+            home2-rest/deploy/service.yaml
+            home2-rest/deploy/ingress.yaml
+          images: ${{ env.API_DOCKER_IMAGE_PREFIX }}:${{ github.sha }}
+          
 #       - name: Deploy to Kubernetes
 #         working-directory: digito-ui/deploy
 #         run: |
