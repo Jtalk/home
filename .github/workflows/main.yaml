@@ -119,7 +119,9 @@ jobs:
           DIGITALOCEAN_ACCESS_TOKEN: ${{ secrets.DO_TOKEN }}
         with:
           args: kubernetes cluster kubeconfig show ${{ secrets.DO_CLUSTER_NAME }} > $GITHUB_WORKSPACE/.kubeconfig
-      - run: head -n 3 ${{ github.workspace }}/.kubeconfig
+      - run: |
+          test -d $HOME/.kube || mkdir $HOME/.kube 
+          cp ${{ github.workspace }}/.kubeconfig $HOME/.kube/config
       - name: Kubernetes set context
         uses: Azure/k8s-set-context@v1
         with:
