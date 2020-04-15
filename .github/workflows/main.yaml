@@ -111,6 +111,8 @@ jobs:
       - build-release-ui
 #       - deploy-migrations
     if: github.ref == 'refs/heads/master'
+    env:
+      KUBECONFIG: ${{ github.workspace }}/.kubeconfig
     steps:
       - uses: actions/checkout@v1
       - name: Load Kubernetes config
@@ -118,13 +120,7 @@ jobs:
         env:
           DIGITALOCEAN_ACCESS_TOKEN: ${{ secrets.DO_TOKEN }}
         with:
-          args: kubernetes cluster kubeconfig show ${{ secrets.DO_CLUSTER_NAME }} > /github/workspace/.kubeconfig
-      - run: |
-          head -n 3 ${{ github.workspace }}/.kubeconfig:  
-      - name: Kubernetes set context
-        uses: Azure/k8s-set-context@v1
-        with:
-          kubeconfig: $GITHUB_WORKSPACE/.kubeconfig
+          args: kubernetes cluster kubeconfig show ${{ secrets.DO_CLUSTER_NAME }} > $GITHUB_WORKSPACE/.kubeconfig
       - run: |
           echo $KUBECONFIG
       - name: Deploy API to Kubernetes
