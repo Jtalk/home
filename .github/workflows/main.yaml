@@ -103,6 +103,16 @@ jobs:
           DIGITALOCEAN_ACCESS_TOKEN: ${{ secrets.DO_TOKEN }}
         with:
           args: kubernetes cluster kubeconfig show ${{ secrets.DO_CLUSTER_NAME }} > $GITHUB_WORKSPACE/.kubeconfig
+      - name: Kubernetes set context
+        uses: Azure/k8s-set-context@v1
+        with:
+          kubeconfig: .kubeconfig
+          # If your kubeconfig has multiple contexts, use this field to use a specific context, otherwise the default one would be chosen
+          # context: # optional, default is 
+          # Cluster Url
+          # k8s-url: # optional, default is 
+          # Service account secret. Run kubectl get serviceaccounts <service-account-name> -o yaml and copy the service-account-secret-name. Copy the ouptut of kubectl get secret <service-account-secret-name> -o yaml
+          # k8s-secret: # optional, default is 
       - name: Deploy API to Kubernetes
         uses: Azure/k8s-deploy@v1
         with:
