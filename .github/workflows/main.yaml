@@ -120,8 +120,9 @@ jobs:
         with:
           args: kubernetes cluster kubeconfig show ${{ secrets.DO_CLUSTER_NAME }} > $GITHUB_WORKSPACE/.kubeconfig
       - run: |
-          test -d $HOME/.kube || mkdir $HOME/.kube 
-          cp ${{ github.workspace }}/.kubeconfig $HOME/.kube/config
+          echo $KUBECONFIG
+          head -n 3 $HOME/.kube/config
+          rm $HOME/.kube/config
       - name: Kubernetes set context
         uses: Azure/k8s-set-context@v1
         with:
