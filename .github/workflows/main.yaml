@@ -120,9 +120,6 @@ jobs:
           KUBECONFIG: /home/runner/.kube/config
         with:
           args: kubernetes cluster kubeconfig show ${{ secrets.DO_CLUSTER_NAME }} > $GITHUB_WORKSPACE/.kubeconfig
-      - run: |
-          head -n 3 /home/runner/work/_temp/kubeconfig_*
-          
       - name: Kubernetes set context
         uses: Azure/k8s-set-context@v1
         with:
