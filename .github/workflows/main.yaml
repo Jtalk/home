@@ -120,7 +120,7 @@ jobs:
         with:
           args: kubernetes cluster kubeconfig show ${{ secrets.DO_CLUSTER_NAME }} > $GITHUB_WORKSPACE/.kubeconfig
       - run: |
-          head -n 3 $GITHUB_WORKSPACE/.kubeconfig:  
+          head -n 3 ${{ github.workspace }}/.kubeconfig:  
       - name: Kubernetes set context
         uses: Azure/k8s-set-context@v1
         with:
