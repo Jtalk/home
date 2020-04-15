@@ -117,12 +117,15 @@ jobs:
         uses: digitalocean/action-doctl@v1.8.0
         env:
           DIGITALOCEAN_ACCESS_TOKEN: ${{ secrets.DO_TOKEN }}
+          KUBECONFIG: /home/runner/.kube/config
         with:
           args: kubernetes cluster kubeconfig show ${{ secrets.DO_CLUSTER_NAME }} > $GITHUB_WORKSPACE/.kubeconfig
       - run: |
           echo $KUBECONFIG
+          test -d $HOME/.kube || mkdir $HOME/.kube
+          cp $GITHUB_WORKSPACE/.kubeconfig $HOME/.kube/config
           head -n 3 $HOME/.kube/config
-          rm $HOME/.kube/config
+          
       - name: Kubernetes set context
         uses: Azure/k8s-set-context@v1
         with:
