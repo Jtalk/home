@@ -6,8 +6,8 @@
     "migrate-mongo": "^7.1.0"
   },
   "scripts": {
-    "up": "migrate-mongo up -f config.js",
-    "down": "migrate-mongo down -f config.js",
+    "up": "migrate-mongo up -f config.js && npm run status",
+    "down": "migrate-mongo down -f config.js && npm run status",
     "status": "migrate-mongo status -f config.js"
   }
 }
