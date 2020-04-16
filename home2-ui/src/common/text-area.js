@@ -19,6 +19,7 @@ import json from "highlight.js/lib/languages/json";
 import xml from "highlight.js/lib/languages/xml";
 import properties from "highlight.js/lib/languages/properties";
 import {InfoMessage} from "./messages";
+import {IdImage} from "./image";
 
 hljs.registerLanguage("javascript", javascript);
 hljs.registerLanguage("cpp", cpp);
@@ -43,6 +44,7 @@ export const MarkdownTextArea = function ({children, preview}) {
     let opts = {
         overrides: {
             InfoMessage,
+            IdImage,
             preview: {
                 component: Preview
             },
