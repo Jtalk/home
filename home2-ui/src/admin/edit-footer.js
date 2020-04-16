@@ -1,10 +1,9 @@
 import React, {useMemo} from "react";
-import {Divider, Form, Grid, Icon, Image, List, Segment} from "semantic-ui-react";
+import {Divider, Form, Grid, Icon, List, Segment} from "semantic-ui-react";
 import {ErrorMessage} from "../form/form-message";
 import {useFooter, useFooterError, useFooterLoading, useFooterUpdater, useFooterUpdating} from "../data/reduce/footer";
 import {useForm} from "./common/use-form";
 import {Loading, Updating} from "../data/reduce/global/enums";
-import {imageUrl} from "../utils/image";
 import {Titled} from "react-titled";
 import {IdImage} from "../common/image";
 
