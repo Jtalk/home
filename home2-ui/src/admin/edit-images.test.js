@@ -13,7 +13,7 @@ import {
 } from "./edit-images";
 import {MemoryRouter} from "react-router"
 import ImageUploader from "react-images-upload";
-import {Pagination} from "../shared/pagination";
+import {Pagination} from "../common/pagination";
 import {formatDateTime} from "../utils/date-time";
 import {FileConverterProvider} from "../utils/file-converter-context";
 import {ErrorMessage} from "../form/form-message";

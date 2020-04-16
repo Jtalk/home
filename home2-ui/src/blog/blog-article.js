@@ -9,7 +9,7 @@ import {Titled} from "react-titled";
 import {OwnerCard} from "../home/owner-card";
 import {LatestPosts} from "../home/latest-posts";
 import {useArticle, useArticleLoading} from "../data/reduce/articles";
-import {MarkdownTextArea} from "../shared/text-area";
+import {MarkdownTextArea} from "../common/text-area";
 import {NotFound} from "../error/not-found";
 
 export const BlogArticle = function (props) {

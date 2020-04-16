@@ -1,6 +1,6 @@
 import React, {useState} from "react";
 import {Button, Card, Container, Divider, Form, Grid, Image, Loader, Segment} from "semantic-ui-react";
-import {Pagination} from "../shared/pagination";
+import {Pagination} from "../common/pagination";
 import {checkTruthy} from "../utils/validation";
 import {formatDateTime} from "../utils/date-time";
 import ImageUploader from "react-images-upload";

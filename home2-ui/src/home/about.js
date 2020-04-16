@@ -6,7 +6,7 @@ import {ContentPlaceholderOr} from "../utils/placeholder";
 import {Loading} from "../data/reduce/global/enums";
 import {useOwner, useOwnerLoading} from "../data/reduce/owner";
 import {Titled} from "react-titled";
-import {MarkdownTextArea} from "../shared/text-area";
+import {MarkdownTextArea} from "../common/text-area";
 
 export const About = function () {
 
