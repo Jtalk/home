@@ -16,7 +16,7 @@ jobs:
     name: Build and Release UI
     runs-on: ubuntu-latest
     env:
-      REACT_APP_API_LOCATION: /api
+      REACT_APP_API_URL: /api
     steps:
     - uses: actions/checkout@v1
     - name: Set up Node.JS ${{ env.NODE_VERSION }}
