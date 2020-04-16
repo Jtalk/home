@@ -95,6 +95,8 @@ jobs:
       - build-release-api
       - build-release-migrations
     if: github.ref == 'refs/heads/master'
+    env:
+      KUBECONFIG: ${{ github.workspace }}/.kubeconfig
     steps:
       - uses: actions/checkout@v1
       - name: Load Kubernetes config
@@ -103,6 +105,25 @@ jobs:
           DIGITALOCEAN_ACCESS_TOKEN: ${{ secrets.DO_TOKEN }}
         with:
           args: kubernetes cluster kubeconfig show ${{ secrets.DO_CLUSTER_NAME }} > $GITHUB_WORKSPACE/.kubeconfig
+      - name: Deploy the migration job
+        run: kubectl delete -f home2-dbmigrate/deploy/staging/up.job.yaml
+      - name: Deploy Database to Kubernetes
+        uses: Azure/k8s-deploy@v1
+        with:
+          namespace: home-staging
+          manifests: |
+            home2-dbmigrate/deploy/staging/up.job.yaml
+          images: ${{ env.DBMIGRATE_DOCKER_IMAGE_PREFIX }}:${{ github.sha }}
+      - name: Verify database deployment
+        env:
+          WAIT_TIMEOUT: 60s
+        working-directory: home2-dbmigrate/deploy/staging
+        run: |
+          kubectl wait --for=condition=complete --timeout=$WAIT_TIMEOUT -f up.job.yaml &
+          success_pid=$!
+          kubectl wait --for=condition=failed --timeout=$WAIT_TIMEOUT -f up.job.yaml && exit 1 &
+          fail_pid=$!
+          wait -n $success_pid $fail_pid
 
   deploy-ui:
     name: Deploy UI to Kubernetes
