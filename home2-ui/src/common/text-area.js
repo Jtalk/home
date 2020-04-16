@@ -18,6 +18,7 @@ import yaml from "highlight.js/lib/languages/yaml";
 import json from "highlight.js/lib/languages/json";
 import xml from "highlight.js/lib/languages/xml";
 import properties from "highlight.js/lib/languages/properties";
+import ini from "highlight.js/lib/languages/ini";
 import {InfoMessage} from "./messages";
 import {IdImage} from "./image";
 
@@ -35,6 +36,7 @@ hljs.registerLanguage("yaml", yaml);
 hljs.registerLanguage("json", json);
 hljs.registerLanguage("xml", xml);
 hljs.registerLanguage("properties", properties);
+hljs.registerLanguage("ini", ini);
 
 // We're using a random string to wrap our text. This way we can still utilise the power of
 // <Markdown/> and keep our article preview system nice to work with.
