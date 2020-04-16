@@ -6,6 +6,7 @@ import {useForm} from "./common/use-form";
 import {Loading, Updating} from "../data/reduce/global/enums";
 import {imageUrl} from "../utils/image";
 import {Titled} from "react-titled";
+import {IdImage} from "../common/image";
 
 let EMPTY_LINK = () => ({caption: '', href: ''});
 let EMPTY_LOGO = () => ({name: '', src: ''});
@@ -72,7 +73,7 @@ export const EditLogos = function ({errorMessage, loading, updating, footer, upd
                                 {logo.name}
                             </List.Header>
                             <List.Description>
-                                <Image src={imageUrl(logo.src)} alt={logo.name} href={logo.href}/>
+                                <IdImage id={logo.src} alt={logo.name} href={logo.href}/>
                             </List.Description>
                         </List.Content>
                     </List.Item>

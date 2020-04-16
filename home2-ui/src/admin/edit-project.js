@@ -1,8 +1,10 @@
 import {
-    useProject, useProjectDeleter,
+    useProject,
+    useProjectDeleter,
     useProjectDeleting,
     useProjectError,
-    useProjectLoading, useProjectUpdater,
+    useProjectLoading,
+    useProjectUpdater,
     useProjectUpdating
 } from "../data/reduce/projects";
 import {useForm} from "./common/use-form";
@@ -11,8 +13,8 @@ import React, {useState} from "react";
 import {Button, Divider, Form, Grid, Icon, Input, List, Message} from "semantic-ui-react";
 import {Deleting, Loading, Updating} from "../data/reduce/global/enums";
 import {ErrorMessage} from "../form/form-message";
-import {OptionalImage} from "../common/optional-image";
 import {useFormErrors} from "./common/use-errors";
+import {OptionalImage} from "../common/image";
 
 export const EditProject = function ({projectId}) {
 

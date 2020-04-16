@@ -1,12 +1,12 @@
 import React, {useState} from "react";
-import {Card, Image} from "semantic-ui-react";
+import {Card} from "semantic-ui-react";
 import {ContentPlaceholderOr, ImagePlaceholderOr, LinePlaceholderOr} from "../utils/placeholder";
-import {imageUrl} from "../utils/image";
 import {Loading} from "../data/reduce/global/enums";
 import _ from "lodash";
 import {useOwner, useOwnerLoading} from "../data/reduce/owner";
 import {LoginModal} from "../login/login";
 import {useLoggedIn} from "../data/reduce/authentication";
+import {OptionalImage} from "../common/image";
 
 export const OwnerCard = function () {
 
@@ -34,7 +34,7 @@ export const CardStateless = function({loading, owner, showLogin}) {
     };
     return <Card>
         <ImagePlaceholderOr square loading={loading === Loading.LOADING}>
-            {owner.photoId && <Image wrapped src={imageUrl(owner.photoId)}/>}
+            <OptionalImage wrapped id={owner.photoId}/>
         </ImagePlaceholderOr>
         <Card.Content>
             <ContentPlaceholderOr header loading={loading === Loading.LOADING} lines={3}>

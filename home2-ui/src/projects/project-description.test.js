@@ -2,7 +2,7 @@ import React from 'react';
 import {shallow} from "enzyme";
 import {ProjectDescription} from "./project-description";
 import {MarkdownTextArea} from "../common/text-area";
-import {OptionalImage} from "../common/optional-image";
+import {OptionalImage} from "../common/image";
 
   describe("<ProjectDescription/>", () => {
   let project = {

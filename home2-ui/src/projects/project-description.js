@@ -1,7 +1,7 @@
 import React from "react";
 import {Grid, Menu} from "semantic-ui-react";
 import {MarkdownTextArea} from "../common/text-area";
-import {OptionalImage} from "../common/optional-image";
+import {OptionalImage} from "../common/image";
 
 export const ProjectDescription = function (project) {
 

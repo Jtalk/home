@@ -1,8 +1,8 @@
 import {shallow} from "enzyme";
 import {ImageUploadPreview} from "./image-upload-preview";
-import {Image} from "semantic-ui-react";
 import {useDataUrl} from "../../utils/file-converter-context";
 import React from "react";
+import {OptionalImage} from "../../common/image";
 
 jest.mock("../../utils/file-converter-context");
 useDataUrl.mockImplementation(v => v);
@@ -16,6 +16,6 @@ describe("<ImageUploadPreview/>", () => {
     it('renders preview when preview data url is available', () => {
         let previewDataUrl = 'some-file-data-url';
         let result = shallow(<ImageUploadPreview src={previewDataUrl} alt={"Image upload preview"}/>);
-        expect(result.find(Image).props()).toMatchObject({src: previewDataUrl, alt: "Image upload preview"})
+        expect(result.find(OptionalImage).props()).toMatchObject({src: previewDataUrl, alt: "Image upload preview"})
     });
 });
