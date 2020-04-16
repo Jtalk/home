@@ -2,7 +2,8 @@ package models.owner
 
 import play.api.libs.json.{Json, Reads, Writes}
 
-case class Contact(contactType: String, value: String) {
+// We want to be able to add arbitrary metadata to contact details in future, hence the single-field class
+case class Contact(value: String) {
 }
 
 object Contact {
