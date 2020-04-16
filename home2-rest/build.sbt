@@ -1,4 +1,4 @@
-name := """home2"""
+name := """home2-api"""
 organization := "com.example"
 
 version := "SNAPSHOT"
