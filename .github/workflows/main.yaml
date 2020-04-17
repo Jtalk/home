@@ -152,8 +152,8 @@ jobs:
           namespace: home-staging
           manifests: |
             home2-ui/deploy/deployment.yaml
-            home2-ui/deploy/staging/service.yaml
-            home2-ui/deploy/ingress.yaml
+            home2-ui/deploy/service.yaml
+            home2-ui/deploy/staging/ingress.yaml
           images: ${{ env.UI_DOCKER_IMAGE_PREFIX }}:${{ github.sha }}
           
   deploy-api-staging:
@@ -179,8 +179,8 @@ jobs:
           namespace: home-staging
           manifests: |
             home2-rest/deploy/deployment.yaml
-            home2-rest/deploy/staging/service.yaml
-            home2-rest/deploy/ingress.yaml
+            home2-rest/deploy/service.yaml
+            home2-rest/deploy/staging/ingress.yaml
           images: ${{ env.API_DOCKER_IMAGE_PREFIX }}:${{ github.sha }}
           
 
@@ -260,8 +260,8 @@ jobs:
           namespace: home
           manifests: |
             home2-ui/deploy/deployment.yaml
-            home2-ui/deploy/live/service.yaml
-            home2-ui/deploy/ingress.yaml
+            home2-ui/deploy/service.yaml
+            home2-ui/deploy/live/ingress.yaml
           images: ${{ env.UI_DOCKER_IMAGE_PREFIX }}:${{ github.sha }}
           
   deploy-api-live:
@@ -288,8 +288,8 @@ jobs:
           namespace: home
           manifests: |
             home2-rest/deploy/deployment.yaml
-            home2-rest/deploy/live/service.yaml
-            home2-rest/deploy/ingress.yaml
+            home2-rest/deploy/service.yaml
+            home2-rest/deploy/live/ingress.yaml
           images: ${{ env.API_DOCKER_IMAGE_PREFIX }}:${{ github.sha }}
           
 
