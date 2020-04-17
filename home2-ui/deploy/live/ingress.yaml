@@ -2,7 +2,7 @@ apiVersion: networking.k8s.io/v1beta1
 kind: Ingress
 metadata:
   name: home-ui
-  namespace: home-staging
+  namespace: home
   labels:
     app: home-ui
   annotations:
@@ -11,10 +11,10 @@ metadata:
 spec:
   tls:
     - hosts:
-        - staging.jtalk.me
-      secretName: home-staging-certificate
+        - jtalk.me
+      secretName: home-certificate
   rules:
-    - host: staging.jtalk.me
+    - host: jtalk.me
       http:
         paths:
           - path: /(.*)

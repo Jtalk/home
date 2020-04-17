@@ -5,7 +5,6 @@ metadata:
     app: home
     type: api
   name: home-api
-  namespace: home
 spec:
   replicas: 1
   selector:
