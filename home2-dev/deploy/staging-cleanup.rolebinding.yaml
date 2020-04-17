@@ -1,0 +1,13 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: staging-cleanup
+  namespace: home-staging
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: staging-cleanup
+subjects:
+- kind: ServiceAccount
+  namespace: home-staging
+  name: staging-cleanup
