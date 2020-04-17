@@ -49,9 +49,9 @@ export const Navigation = function ({renderMode}) {
                 </NavigationRoute>
             </NavigationDropdown>
             <NavigationRight path="/user">
-                <MenuOnly path="/noroute">
-                    <HeaderSearch/>
-                </MenuOnly>
+                {/*<MenuOnly path="/noroute">*/}
+                {/*    <HeaderSearch/>*/}
+                {/*</MenuOnly>*/}
                 <NavigationDropdown authenticated icon="user" path="/">
                     <MenuOnly path="/noroute">
                         <Dropdown.Header content={name}/>
