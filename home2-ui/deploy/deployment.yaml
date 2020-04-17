@@ -22,6 +22,16 @@ spec:
         app: home
         type: ui
     spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - podAffinityTerm:
+                labelSelector:
+                  matchLabels:
+                    app: home
+                    type: ui
+                topologyKey: kubernetes.io/hostname
+              weight: 100
       containers:
         - name: home-ui
           image: jtalk/home-ui:[[IMAGE_TAG]]
