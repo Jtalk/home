@@ -13,7 +13,6 @@ import {NavigationDropdown, NavigationRoute, PartialRoute, PartialSwitch} from "
 import {RenderMode, RenderModeProvider, useRenderMode} from "./render-context";
 import {BlogRouter} from "../blog/blog-router";
 import {Dropdown, Menu} from "semantic-ui-react";
-import {HeaderSearch} from "../header/header-search";
 import {useOwner} from "../data/reduce/owner";
 import {EditAccount} from "../admin/edit-account";
 import {ActiveRouteProvider, useActiveRoute} from "./active-route-context";
