@@ -193,7 +193,7 @@ jobs:
       - deploy-api-staging
     steps:
       - run: |
-        echo Doing nothing for now
+          echo Doing nothing for now
 
 
 ############################ LIVE ############################
@@ -302,5 +302,5 @@ jobs:
       - deploy-api-live
     steps:
       - run: |
-        echo Doing nothing for now
+          echo Doing nothing for now
 
