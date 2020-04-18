@@ -212,8 +212,10 @@ jobs:
       - deploy-ui-staging
       - deploy-api-staging
     steps:
-      - run: |
-          echo Doing nothing for now
+      - name: Check API is up
+        run: curl --fail -sv https://staging.jtalk.me/api/owner --retry 5 --retry-delay 5
+      - name: Check UI is up
+        run: curl --fail -sv https://staging.jtalk.me --retry 5 --retry-delay 5
 
 
 ############################ LIVE ############################
@@ -321,6 +323,8 @@ jobs:
       - deploy-ui-live
       - deploy-api-live
     steps:
-      - run: |
-          echo Doing nothing for now
+      - name: Check API is up
+        run: curl --fail -sv https://jtalk.me/api/owner --retry 5 --retry-delay 5
+      - name: Check UI is up
+        run: curl --fail -sv https://jtalk.me --retry 5 --retry-delay 5
 
