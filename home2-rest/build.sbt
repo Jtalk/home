@@ -21,6 +21,7 @@ javaOptions in Universal ++= Seq(
   "-Dpidfile.path=/dev/null",
   "-J-Xms64m", "-J-Xmx82m",
   "-J-XX:+PrintGCDateStamps", "-J-XX:+PrintGCDetails",
+  "-J-XX:+PrintFlagsInitial", "-J-XX:+PrintFlagsFinal", "-J-XX:+UnlockDiagnosticVMOptions",
 )
 
 import com.typesafe.sbt.packager.docker.DockerChmodType
