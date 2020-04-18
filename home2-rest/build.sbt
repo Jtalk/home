@@ -18,7 +18,7 @@ libraryDependencies += "com.beachape" %% "enumeratum-play" % "1.5.17"
 libraryDependencies += "org.scalatestplus.play" %% "scalatestplus-play" % "3.1.2" % Test
 
 javaOptions in Universal ++= Seq(
-  "-Dpidfile.path=/dev/null -Xms64m -Xmx190m"
+  "-Dpidfile.path=/dev/null"
 )
 
 import com.typesafe.sbt.packager.docker.DockerChmodType
