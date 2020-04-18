@@ -19,7 +19,7 @@ libraryDependencies += "org.scalatestplus.play" %% "scalatestplus-play" % "3.1.2
 
 javaOptions in Universal ++= Seq(
   "-Dpidfile.path=/dev/null",
-  "-J-Xms64m", "-J-Xmx190m"
+  "-J-Xms64m", "-J-Xmx110m"
 )
 
 import com.typesafe.sbt.packager.docker.DockerChmodType
