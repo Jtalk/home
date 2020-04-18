@@ -213,7 +213,7 @@ jobs:
       - deploy-api-staging
     steps:
       - name: Check staging is up
-        uses: jtalk/url-health-check-action@master
+        uses: Jtalk/url-health-check-action@v1
         with:
           url: https://staging.jtalk.me/api/owner|https://staging.jtalk.me
           follow-redirect: true
@@ -326,8 +326,11 @@ jobs:
       - deploy-ui-live
       - deploy-api-live
     steps:
-      - name: Check API is up
-        run: curl --fail -sv https://jtalk.me/api/owner --retry 5 --retry-delay 5
-      - name: Check UI is up
-        run: curl --fail -sv https://jtalk.me --retry 5 --retry-delay 5
+      - name: Check LIVE is up
+        uses: Jtalk/url-health-check-action@v1
+        with:
+          url: https://jtalk.me/api/owner|https://jtalk.me
+          follow-redirect: true
+          max-attempts: 5
+          retry-delay: 5s
 
