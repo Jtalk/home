@@ -164,8 +164,6 @@ jobs:
           DIGITALOCEAN_ACCESS_TOKEN: ${{ secrets.DO_TOKEN }}
         with:
           args: kubernetes cluster kubeconfig show ${{ secrets.DO_CLUSTER_NAME }} > $GITHUB_WORKSPACE/.kubeconfig
-      - run: |
-          echo $KUBECONFIG
       - name: Deploy API to Kubernetes
         uses: Azure/k8s-deploy@v1
         with:
@@ -277,8 +275,6 @@ jobs:
           DIGITALOCEAN_ACCESS_TOKEN: ${{ secrets.DO_TOKEN }}
         with:
           args: kubernetes cluster kubeconfig show ${{ secrets.DO_CLUSTER_NAME }} > $GITHUB_WORKSPACE/.kubeconfig
-      - run: |
-          echo $KUBECONFIG
       - name: Deploy API to Kubernetes
         uses: Azure/k8s-deploy@v1
         with:
