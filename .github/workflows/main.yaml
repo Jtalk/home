@@ -35,13 +35,17 @@ jobs:
       run: |
         npm ci
         npm run build
-    - name: Build & Push docker
-      uses: ./.github/actions/docker-build-push
+    - name: Build and push Docker images
+      uses: docker/build-push-action@v1.0.1
       with:
-        tag-prefix: ${{ env.UI_DOCKER_IMAGE_PREFIX }}
-        working-directory: home2-ui
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
+        path: home2-ui
+        repository: ${{ env.UI_DOCKER_IMAGE_PREFIX }}
+        tags: ${{ github.sha }}
+        tag_with_ref: true
+        tag_with_sha: false
+        push: true
         
   build-release-api:
     name: Build and Release API
@@ -58,17 +62,10 @@ jobs:
       uses: matankdr/github-docker-sbt@3d98d670c583c68bf69e51ac6ed08125d3f55b51
       with:
         command: |
-          eval cd home2-rest; sbt test docker:publishLocal
+          eval cd home2-rest; sbt test docker:publish
         docker-login-username: ${{ secrets.DOCKER_USERNAME }}
         docker-login-password: ${{ secrets.DOCKER_PASSWORD }}
-    - name: Push branch and master tags
-      uses: ./.github/actions/docker-build-push
-      with:
-        tag-prefix: ${{ env.API_DOCKER_IMAGE_PREFIX }}
-        working-directory: home2-api
-        build: "false"
-        username: ${{ secrets.DOCKER_USERNAME }}
-        password: ${{ secrets.DOCKER_PASSWORD }}
+    # Waiting for https://github.com/docker/build-push-action/issues/17 to push multiple tags properly
         
   build-release-migrations:
     name: Build and Release Database Migrations
@@ -90,16 +87,6 @@ jobs:
         tag_with_ref: true
         tag_with_sha: false
         push: true
-        
-        
-#     - name: Push branch and master tags
-#       uses: ./.github/actions/docker-build-push
-#       with:
-#         tag-prefix: ${{ env.DBMIGRATE_DOCKER_IMAGE_PREFIX }}
-#         working-directory: home2-dbmigrate
-#         username: ${{ secrets.DOCKER_USERNAME }}
-#         password: ${{ secrets.DOCKER_PASSWORD }}
-        
 
 ############################ STAGING ############################
   deploy-migrations-staging: 
