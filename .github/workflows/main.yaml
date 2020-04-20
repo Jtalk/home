@@ -79,13 +79,26 @@ jobs:
       uses: actions/setup-node@v1
       with:
         node-version: ${{ env.NODE_VERSION }}
-    - name: Push branch and master tags
-      uses: ./.github/actions/docker-build-push
+    - name: Build and push Docker images
+      uses: docker/build-push-action@v1.0.1
       with:
-        tag-prefix: ${{ env.DBMIGRATE_DOCKER_IMAGE_PREFIX }}
-        working-directory: home2-dbmigrate
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
+        path: home2-dbmigrate
+        repository: ${{ env.DBMIGRATE_DOCKER_IMAGE_PREFIX }}
+        tags: ${{ github.sha }}
+        tag_with_ref: yes
+        tag_with_sha: no
+        push: yes
+        
+        
+#     - name: Push branch and master tags
+#       uses: ./.github/actions/docker-build-push
+#       with:
+#         tag-prefix: ${{ env.DBMIGRATE_DOCKER_IMAGE_PREFIX }}
+#         working-directory: home2-dbmigrate
+#         username: ${{ secrets.DOCKER_USERNAME }}
+#         password: ${{ secrets.DOCKER_PASSWORD }}
         
 
 ############################ STAGING ############################
