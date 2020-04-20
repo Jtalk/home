@@ -87,9 +87,9 @@ jobs:
         path: home2-dbmigrate
         repository: ${{ env.DBMIGRATE_DOCKER_IMAGE_PREFIX }}
         tags: ${{ github.sha }}
-        tag_with_ref: yes
-        tag_with_sha: no
-        push: yes
+        tag_with_ref: true
+        tag_with_sha: false
+        push: true
         
         
 #     - name: Push branch and master tags
