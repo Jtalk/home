@@ -12,6 +12,8 @@ spec:
           - name: home-backup
             image: jtalk/home-dbbackup:[[IMAGE_TAG]]
             env:
+              - name: BUCKET_PATH
+                value: jtalk.me-backup/live
               - name: MONGO_URL
                 valueFrom:
                   secretKeyRef:
