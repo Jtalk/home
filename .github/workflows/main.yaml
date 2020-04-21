@@ -10,6 +10,7 @@ env:
   UI_DOCKER_IMAGE_PREFIX: jtalk/home-ui
   API_DOCKER_IMAGE_PREFIX: jtalk/home-api
   DBMIGRATE_DOCKER_IMAGE_PREFIX: jtalk/home-dbmigrate
+  DBBACKUP_DOCKER_IMAGE_PREFIX: jtalk/home-dbbackup
   
 jobs:
   build-release-ui:
@@ -68,15 +69,28 @@ jobs:
         docker-login-password: ${{ secrets.DOCKER_PASSWORD }}
     # Waiting for https://github.com/docker/build-push-action/issues/17 to push multiple tags properly
         
+  build-release-backup:
+    name: Build and Release Database Backup Script
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+    - name: Build and push Docker images
+      uses: docker/build-push-action@v1.0.1
+      with:
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+        path: home2-dbbackup
+        repository: ${{ env.DBBACKUP_DOCKER_IMAGE_PREFIX }}
+        tags: ${{ github.sha }}
+        tag_with_ref: true
+        tag_with_sha: false
+        push: true
+        
   build-release-migrations:
     name: Build and Release Database Migrations
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v1
-    - name: Set up Node.JS ${{ env.NODE_VERSION }}
-      uses: actions/setup-node@v1
-      with:
-        node-version: ${{ env.NODE_VERSION }}
     - name: Build and push Docker images
       uses: docker/build-push-action@v1.0.1
       with:
@@ -126,6 +140,28 @@ jobs:
           fail_pid=$!
           wait -n $success_pid $fail_pid
 
+  deploy-db-backup: 
+    name: Deploy the database backup job
+    runs-on: ubuntu-latest
+    needs: 
+      - build-release-backup
+    if: github.ref == 'refs/heads/master'
+    steps:
+      - uses: actions/checkout@v1
+      - name: Authenticate with the cluster
+        uses: Azure/k8s-set-context@v1
+        with:
+          method: service-account
+          k8s-url: ${{ secrets.CLUSTER_URL }}
+          k8s-secret: ${{ secrets.CLUSTER_ACCOUNT_SECRET }}
+      - name: Deploy the backup job
+        uses: jtalk/k8s-deploy@v2
+        with:
+          namespace: home
+          manifests: |
+            home2-dbbackup/deploy/backup.cronjob.yaml
+          images: ${{ env.DBBACKUP_DOCKER_IMAGE_PREFIX }}:${{ github.sha }}
+          
   deploy-staging-cleanup: 
     name: Deploy the daily cleanup job for the staging cluster
     runs-on: ubuntu-latest
