@@ -1,7 +1,7 @@
 module.exports = {
   async up(db, client) {
     console.log('Creating owner');
-    db.collection("owner").insertOne({
+    await db.collection("owner").insertOne({
       name: 'Master',
       nickname: '',
       description: '',
@@ -12,21 +12,17 @@ module.exports = {
     });
 
     console.log('Creating footer');
-    db.collection("footer").insertOne({
+    await db.collection("footer").insertOne({
       links: [],
       logos: []
     });
-
-    console.log('Creating indices');
-    db.collection("projects").createIndex({id: 1}, {unique: true});
-    db.collection("articles").createIndex({id: 1}, {unique: true});
   },
 
   async down(db, client) {
     console.log("Dropping collections");
-    db.collection("owner").drop();
-    db.collection("footer").drop();
-    db.collection("projects").drop();
-    db.collection("articles").drop();
+    await db.collection("owner").drop();
+    await db.collection("footer").drop();
+    await db.collection("projects").drop();
+    await db.collection("articles").drop();
   }
 };
