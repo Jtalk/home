@@ -1,6 +1,11 @@
 module.exports = {
   async up(db, client) {
 
+    console.log("Dropping old indices");
+    await db.collection("articles").dropIndex("id_1");
+    await db.collection("projects").dropIndex("id_1");
+
+
     console.log("Creating unique indices");
     await db.collection("session").createIndex("id", {unique: true, name: "session.id"});
     await db.collection("articles").createIndex("id", {unique: true, name: "articles.id"});
@@ -14,6 +19,9 @@ module.exports = {
   },
 
   async down(db, client) {
+
+    await db.collection("articles").createIndex({id: 1}, {unique: true});
+    await db.collection("projects").createIndex({id: 1}, {unique: true});
 
     await db.collection("session").dropIndex("session.id");
     await db.collection("articles").dropIndex("articles.id");
