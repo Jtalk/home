@@ -16,6 +16,10 @@ module.exports = {
       links: [],
       logos: []
     });
+
+    console.log('Creating indices');
+    db.collection("projects").createIndex({id: 1}, {unique: true});
+    db.collection("articles").createIndex({id: 1}, {unique: true});
   },
 
   async down(db, client) {
