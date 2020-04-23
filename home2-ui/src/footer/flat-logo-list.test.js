@@ -1,6 +1,6 @@
 import React from 'react';
 import {mount} from "enzyme";
-import FlatLogoList from "./flat-logo-list";
+import {FlatLogoList} from "./flat-logo-list";
 
 describe("<FlatLogoList/>", () => {
   let logos = [

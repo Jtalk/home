@@ -1,7 +1,7 @@
 import React from 'react';
 import {mount, shallow} from "enzyme";
 import FlatLinksList from "./flat-links-list";
-import FlatLogoList from "./flat-logo-list";
+import {FlatLogoList} from "./flat-logo-list";
 import {Container, Segment} from "semantic-ui-react";
 import {Footer, StatelessFooter} from "./footer";
 import {Provider} from "react-redux";
