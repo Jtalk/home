@@ -18,26 +18,13 @@ describe("<FlatLogoList/>", () => {
   it('renders empty list', () => {
     mount(<FlatLogoList logos={[]}/>);
   });
-  it('renders empty list with spacing', () => {
-    mount(<FlatLogoList logos={[]} spacing="50px"/>);
-  });
-  it('renders single logo without spacing', () => {
-    let result = mount(<FlatLogoList logos={[logos[0]]} spacing="50px"/>);
-    expect(result.find("a").props().style).toEqual({});
+  it('renders single logo', () => {
+    let result = mount(<FlatLogoList logos={[logos[0]]}/>);
     expect(result.find("a").props()).toMatchObject({href: logos[0].href});
     expect(result.find("a").find("img").props()).toMatchObject({src: logos[0].src, alt: logos[0].name})
   });
-  it('renders multiple logos with spacing', () => {
-    let result = mount(<FlatLogoList logos={logos} spacing="50px"/>);
-    expect(result.find("a").filter({href: logos[0].href}).props().style).toEqual({});
-    expect(result.find("a").filter({href: logos[1].href}).props().style).toEqual({marginLeft: "50px !important"});
-    expect(result.find("a").filter({href: logos[0].href}).find("img").props()).toMatchObject({src: logos[0].src, alt: logos[0].name});
-    expect(result.find("a").filter({href: logos[0].href}).find("img").props()).toMatchObject({src: logos[0].src, alt: logos[0].name});
-  });
-  it('renders multiple logos without spacing', () => {
+  it('renders multiple logos', () => {
     let result = mount(<FlatLogoList logos={logos}/>);
-    expect(result.find("a").filter({href: logos[0].href}).props().style).toEqual({});
-    expect(result.find("a").filter({href: logos[1].href}).props().style).toEqual({});
     expect(result.find("a").filter({href: logos[0].href}).find("img").props()).toMatchObject({src: logos[0].src, alt: logos[0].name});
     expect(result.find("a").filter({href: logos[0].href}).find("img").props()).toMatchObject({src: logos[0].src, alt: logos[0].name});
   });
