@@ -1,14 +1,11 @@
 import React from "react";
+import "./flat-logo-list.css";
 
 const LOGO_HEIGHT = '40px';
 
-export const FlatLogoList = function ({logos, spacing}) {
+export const FlatLogoList = function ({logos}) {
     return logos.map((logo, i) => {
-        let style = {};
-        if (i > 0 && spacing) {
-            style = {marginLeft: spacing + ' !important'};
-        }
-        return <a key={logo.name} href={logo.href} style={style}>
+        return <a key={logo.name} className="footer logo" href={logo.href}>
             <img src={logo.src} height={LOGO_HEIGHT} alt={logo.name}/>
         </a>
     });
