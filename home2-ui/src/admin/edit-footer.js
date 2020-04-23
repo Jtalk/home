@@ -1,11 +1,10 @@
 import React, {useMemo} from "react";
-import {Divider, Form, Grid, Icon, List, Segment} from "semantic-ui-react";
+import {Divider, Form, Grid, Icon, Image, List, Segment} from "semantic-ui-react";
 import {ErrorMessage} from "../form/form-message";
 import {useFooter, useFooterError, useFooterLoading, useFooterUpdater, useFooterUpdating} from "../data/reduce/footer";
 import {useForm} from "./common/use-form";
 import {Loading, Updating} from "../data/reduce/global/enums";
 import {Titled} from "react-titled";
-import {IdImage} from "../common/image";
 
 let EMPTY_LINK = () => ({caption: '', href: ''});
 let EMPTY_LOGO = () => ({name: '', src: ''});
@@ -72,7 +71,7 @@ export const EditLogos = function ({errorMessage, loading, updating, footer, upd
                                 {logo.name}
                             </List.Header>
                             <List.Description>
-                                <IdImage id={logo.src} alt={logo.name} href={logo.href}/>
+                                <Image src={logo.src} alt={logo.name} href={logo.href}/>
                             </List.Description>
                         </List.Content>
                     </List.Item>
