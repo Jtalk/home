@@ -133,11 +133,15 @@ export const ImageUploaderWithPreview = function ({selectedFile, onFileSelected}
     if (selectedFile) {
         return <ImageUploadPreview src={selectedFile} alt={"Image upload preview"} className={"image-upload-preview"}/>
     } else {
+        const supportedTypes = ["jpg", "png", "gif", "svg"];
         return <ImageUploader
             withIcon={true}
             withPreview={true}
-            buttonText="Choose Images"
+            buttonText="Select Images"
             singleImage={true}
+            label={"max 10mb, accepted: " + supportedTypes.join("|")}
+            maxFileSize={10 * 1024 * 1024}
+            imgExtension={supportedTypes.map(v => `.${v}`)}
             onChange={f => onFileSelected(f[0])}/>
     }
 };
