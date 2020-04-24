@@ -5,12 +5,12 @@ const LOGO_HEIGHT = '40px';
 
 export const FlatLogoList = function ({logos, className}) {
     return <div className={className}>
-        {logos.map(logo => <Logo {...logo}/>)}
+        {logos.map(logo => <Logo key={logo.name + logo.src} {...logo}/>)}
     </div>
 }
 
 export const Logo = function (logo) {
-    return <a key={logo.name} className="logo" href={logo.href}>
+    return <a className="logo" href={logo.href}>
         <img src={logo.src} height={LOGO_HEIGHT} alt={logo.name}/>
     </a>
 }

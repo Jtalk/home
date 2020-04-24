@@ -1,6 +1,6 @@
 import React from 'react';
 import {mount, shallow} from "enzyme";
-import FlatLinksList from "./flat-links-list";
+import {FlatLinksList} from "./flat-links-list";
 import {FlatLogoList} from "./flat-logo-list";
 import {Container, Segment} from "semantic-ui-react";
 import {Footer, StatelessFooter} from "./footer";
@@ -79,13 +79,13 @@ describe("<Footer/>", () => {
     mount(<Provider store={store}>
       <Footer/>
     </Provider>);
-    expect(ajaxMock.footer.load.mock.calls.length).toBeGreaterThan(0);
+    expect(ajaxMock.footer.load).toHaveBeenCalled();
   });
   it('renders data from the store', () => {
     let result = mount(<Provider store={store}>
       <Footer/>
     </Provider>);
-    expect(result.findWhere(n => n.is(FlatLinksList)).props().links).toEqual(links);
-    expect(result.findWhere(n => n.is(FlatLogoList)).props().logos).toEqual(logos);
+    expect(result.find(FlatLinksList).props().links).toEqual(links);
+    expect(result.find(FlatLogoList).props().logos).toEqual(logos);
   });
 });

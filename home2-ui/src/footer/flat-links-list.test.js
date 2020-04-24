@@ -1,10 +1,8 @@
 import React from 'react';
-import * as Enzyme from "enzyme";
 import {mount} from "enzyme";
-import Adapter from 'enzyme-adapter-react-16';
 
-import FlatLinksList from "./flat-links-list";
-import VerticalSeparator from "./vertical-separator";
+import {FlatLinksList} from "./flat-links-list";
+import {VerticalSeparator} from "./vertical-separator";
 
 describe("<FlatLinksList/>", () => {
   let separator = "%$£&*^%£$$%";
@@ -24,11 +22,11 @@ describe("<FlatLinksList/>", () => {
       {caption: "Test Link 3", href: "/test/link2"}, // Duplicate links are supported, duplicate names are not
     ];
     let result = mount(<FlatLinksList links={links} separator={separator}/>);
-    expect(result.childAt(0).filter('a').props()).toMatchObject({href: links[0].href, children: links[0].caption});
-    expect(result.childAt(1).props()).toMatchObject({separator: separator});
-    expect(result.childAt(2).filter('a').props()).toMatchObject({href: links[1].href, children: links[1].caption});
-    expect(result.childAt(3).props()).toMatchObject({separator: separator});
-    expect(result.childAt(4).filter('a').props()).toMatchObject({href: links[2].href, children: links[2].caption});
-    expect(result.childAt(5).exists()).toBe(false);
+    expect(result.find("div").childAt(0).filter('a').props()).toMatchObject({href: links[0].href, children: links[0].caption});
+    expect(result.find("div").childAt(1).props()).toMatchObject({separator: separator});
+    expect(result.find("div").childAt(2).filter('a').props()).toMatchObject({href: links[1].href, children: links[1].caption});
+    expect(result.find("div").childAt(3).props()).toMatchObject({separator: separator});
+    expect(result.find("div").childAt(4).filter('a').props()).toMatchObject({href: links[2].href, children: links[2].caption});
+    expect(result.find("div").childAt(5).exists()).toBe(false);
   });
 });

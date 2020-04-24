@@ -1,30 +1,21 @@
 import React from "react";
-import {isUndefined} from "typechecker";
 
-export default class VerticalSeparator extends React.Component {
+export const VerticalSeparator = function ({sparse, separator}) {
+    return <span>{prepareSeparator(sparse, separator)}</span>
+}
 
-    render() {
-        let sparse = isUndefined(this.props.sparse) ? true : this.props.sparse;
-        return <span>{this._prepareSeparator(sparse)}</span>
+function prepareSeparator(sparse, separator) {
+    if (!sparse) {
+        return separator || '';
     }
-
-    /**
-     * Links will glue to one another or their splitter if no whitespaces were inserted.
-     */
-    _prepareSeparator(sparse) {
-        if (!sparse) {
-            return this.props.separator || '';
-        }
-        if (!this.props.separator) {
-            return ' ';
-        }
-        var separator = this.props.separator;
-        if (!separator.startsWith(" ")) {
-            separator = " " + separator;
-        }
-        if (!separator.endsWith(" ")) {
-            separator += " ";
-        }
-        return separator;
+    if (!separator) {
+        return ' ';
     }
+    if (!separator.startsWith(" ")) {
+        separator = " " + separator;
+    }
+    if (!separator.endsWith(" ")) {
+        separator += " ";
+    }
+    return separator;
 }
