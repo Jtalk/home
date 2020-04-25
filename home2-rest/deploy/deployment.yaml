@@ -48,6 +48,8 @@ spec:
                 secretKeyRef:
                   name: home-api
                   key: mongo-uri
+            - name: CORS_ALLOWED_ORIGINS
+              value: https://jtalk.me, https://staging.jtalk.me
           startupProbe:
             httpGet:
               path: /status
