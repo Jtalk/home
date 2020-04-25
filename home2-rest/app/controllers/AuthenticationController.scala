@@ -1,6 +1,6 @@
 package controllers
 
-import java.time.{Clock, Instant}
+import java.time.{Clock, Instant, ZonedDateTime}
 import java.util.UUID
 
 import controllers.ResponseStatus.{error, ok}
@@ -112,18 +112,14 @@ object ResponseStatus extends Enumeration {
 
 import controllers.ResponseStatus._
 
-case class Response private(status: ResponseStatus, expiry: Option[Instant], errors: Seq[String]) {
+case class Response private(status: ResponseStatus, expiry: Option[ZonedDateTime], errors: Seq[String]) {
 }
 
 object Response {
 
   def apply(status: ResponseStatus, errors: Seq[FormError])(implicit messages: Messages) = new Response(status, None, errors.map(_.format))
-  def apply(status: ResponseStatus, expiry: Instant) = new Response(status, Some(expiry), Seq())
+  def apply(status: ResponseStatus, expiry: ZonedDateTime) = new Response(status, Some(expiry), Seq())
 
-  implicit val jsonWrites: OWrites[Response] = (
-    (JsPath \ "status").write[ResponseStatus] and
-      (JsPath \ "expiry").writeOptionWithNull[Instant](i => JsNumber(i.toEpochMilli)) and
-      (JsPath \ "errors").write[Seq[String]]
-    )(unlift(Response.unapply))
+  implicit val jsonWrites: OWrites[Response] = Json.writes[Response]
   implicit val jsonWriteable: Writeable[Response] = Writeable.writeableOf_JsValue.map[Response](Json.toJson _)
 }

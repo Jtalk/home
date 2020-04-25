@@ -1,6 +1,6 @@
 package models.authentication
 
-import java.time.Instant
+import java.time.ZonedDateTime
 
 import models.ModelType
 import models.ModelType.ModelType
@@ -8,9 +8,9 @@ import models.common.Identifiable
 import play.api.http.Writeable
 import play.api.libs.json.{Json, OFormat}
 
-case class Session(login: String, id: String, expiry: Instant) extends Identifiable {
+case class Session(login: String, id: String, expiry: ZonedDateTime) extends Identifiable {
   def skipToken: Session = Session(login, "<secret>", expiry)
-  def refreshed(newExpiry: Instant): Session = Session(login, id, newExpiry)
+  def refreshed(newExpiry: ZonedDateTime): Session = Session(login, id, newExpiry)
 }
 
 object Session {

@@ -1,6 +1,6 @@
 package controllers.common
 
-import java.time.{Clock, Instant}
+import java.time.{Clock, ZonedDateTime}
 
 import controllers.common.Results._
 import db.Database
@@ -44,8 +44,8 @@ trait Authenticating extends BaseController {
   }
 
   protected def unauthorisedResponse[A]: Future[Result] = successful(Unauthorized("This endpoint requires authentication, use /login").withNewSession)
-  protected def now: Instant = Instant.now(clock)
-  protected def expiry: Instant = now plus sessionDuration
+  protected def now: ZonedDateTime = ZonedDateTime.now(clock)
+  protected def expiry: ZonedDateTime = now plus sessionDuration
 
   protected def loadSession[A](req: Request[A]): Future[Option[Session]]
   = req.session.get(browserToken)
