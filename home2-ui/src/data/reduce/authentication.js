@@ -29,22 +29,6 @@ const DEFAULT = Map({login: undefined, updating: undefined});
 
 export function authentication(state = DEFAULT, action) {
     switch (action.type) {
-        case Action.INIT:
-            let expiry = window.localStorage.getItem(SESSION_EXPIRY_KEY);
-            let username = window.localStorage.getItem(SESSION_USERNAME_KEY);
-            if (!expiry || !username) {
-                return DEFAULT;
-            }
-            expiry = expiry && dayjs(expiry);
-            if (expiry && expiry.isAfter(dayjs())) {
-                console.info("Restoring authentication data from the local store");
-                return state.merge({login: Login.LOGGED_IN, expiry, username})
-            } else {
-                console.info("The authentication data in the local store has expired, cleaning it up");
-                window.localStorage.removeItem(SESSION_EXPIRY_KEY);
-                window.localStorage.removeItem(SESSION_USERNAME_KEY);
-                return DEFAULT;
-            }
         case Action.LOGGING_IN:
             return state.merge({login: Login.LOGGING_IN, errorMessage: undefined});
         case Action.LOGIN:
@@ -74,7 +58,25 @@ export function* watchAuthentication() {
 
 // Pre-load possible authentication state from the local store.
 export function* initAuthentication() {
-    yield put(action(Action.INIT));
+    let expiry = window.localStorage.getItem(SESSION_EXPIRY_KEY);
+    let username = window.localStorage.getItem(SESSION_USERNAME_KEY);
+    if (!expiry || !username) {
+        console.log("No saved credentials found in local store, unauthenticated");
+        return;
+    }
+    expiry = expiry && dayjs(expiry);
+    if (expiry && expiry.isAfter(dayjs())) {
+        expiry = yield refreshAuthentication();
+        if (expiry) {
+            console.info(`Restoring authentication data from the local store for ${username}`);
+            return yield put(action(Action.LOGIN, {expiry, username}));
+        }
+        // Else our auth is expired / our backend has lost our session due to a restart, cleaning the local store
+    }
+    // Else our auth has expired already, cleaning the local store
+    console.info("The authentication data in the local store has expired, cleaning it up");
+    window.localStorage.removeItem(SESSION_EXPIRY_KEY);
+    window.localStorage.removeItem(SESSION_USERNAME_KEY);
 }
 
 export function useLoginStatus() {
@@ -146,6 +148,17 @@ async function changePassword(ajax, newPassword, oldPassword) {
             throw Error("Error: " + e.response.body);
         }
         throw e;
+    }
+}
+
+function* refreshAuthentication() {
+    let ajax = yield fetchAjax();
+    try {
+        let response = yield call(ajax.authentication.refresh);
+        return response.expiry;
+    } catch (e) {
+        console.error("Error refreshing authentication", e);
+        yield put(action(Action.ERROR, {errorMessage: e.message}));
     }
 }
 

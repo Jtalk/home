@@ -6,7 +6,7 @@
 GET         /status                    controllers.StatusController.status
 
 POST        /login                     controllers.AuthenticationController.login
-POST        /refresh                   controllers.AuthenticationController.refresh
+POST        /login/refresh             controllers.AuthenticationController.refresh
 PUT         /user                      controllers.AuthenticationController.changeUser
 POST        /logout                    controllers.AuthenticationController.logout
 

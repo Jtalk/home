@@ -18,6 +18,12 @@ export class AuthenticationRequests {
         return response.ok && response.body;
     }
 
+    async refresh() {
+        let response = await request.post("/login/refresh")
+            .use(api);
+        return response.ok && response.body;
+    }
+
     async logout() {
         return await request.post("/logout")
             .use(api);
