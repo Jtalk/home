@@ -7,7 +7,7 @@ export class AuthenticationRequests {
             .type("form")
             .send(form)
             .use(api);
-        return response.ok && response.body;
+        return response.body.status === "ok" && response.body;
     }
 
     async changePassword(oldPassword, newPassword) {
@@ -15,13 +15,13 @@ export class AuthenticationRequests {
             .type("form")
             .send({password: newPassword, "old-password": oldPassword})
             .use(api);
-        return response.ok && response.body;
+        return response.body;
     }
 
     async refresh() {
         let response = await request.post("/login/refresh")
             .use(api);
-        return response.ok && response.body;
+        return response.body.status === "ok" && response.body;
     }
 
     async logout() {
