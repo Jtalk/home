@@ -14,7 +14,8 @@ import play.api.data.{Form, FormError}
 import play.api.http.Writeable
 import play.api.i18n.{Langs, Messages, MessagesApi, MessagesImpl}
 import play.api.libs.json.Json.obj
-import play.api.libs.json.{Json, OWrites}
+import play.api.libs.json._
+import play.api.libs.functional.syntax._
 import play.api.mvc._
 import play.api.{Configuration, Logger}
 import utils.Extension._
@@ -22,6 +23,7 @@ import utils.security.PasswordType
 import utils.security.Randoms.newToken
 import play.api.libs.concurrent.Futures
 
+import scala.Function.unlift
 import scala.concurrent.Future.successful
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -118,6 +120,10 @@ object Response {
   def apply(status: ResponseStatus, errors: Seq[FormError])(implicit messages: Messages) = new Response(status, None, errors.map(_.format))
   def apply(status: ResponseStatus, expiry: Instant) = new Response(status, Some(expiry), Seq())
 
-  implicit val jsonWrites: OWrites[Response] = Json.writes[Response]
+  implicit val jsonWrites: OWrites[Response] = (
+    (JsPath \ "status").write[ResponseStatus] and
+      (JsPath \ "expiry").writeOptionWithNull[Instant](i => JsNumber(i.toEpochMilli)) and
+      (JsPath \ "errors").write[Seq[String]]
+    )(unlift(Response.unapply))
   implicit val jsonWriteable: Writeable[Response] = Writeable.writeableOf_JsValue.map[Response](Json.toJson _)
 }
