@@ -1,9 +1,9 @@
 import {Map} from "immutable";
 import {action, error} from "./global/actions";
 import dayjs from "dayjs";
-import {useImmutableSelector} from "../../utils/redux-store";
+import {immutableSelector, useImmutableSelector} from "../../utils/redux-store";
 import {useLastError, useUpdater2} from "./global/hook-barebone";
-import {call, put, takeEvery} from "redux-saga/effects";
+import {call, put, takeEvery, delay, select} from "redux-saga/effects";
 import {ajaxSelector, fetchAjax, useAjax} from "./ajax";
 import {useDispatch} from "react-redux";
 
@@ -13,6 +13,8 @@ let Action = {
     INIT: Symbol("authentication init"),
     LOGGING_IN: Symbol("authentication logging in"),
     LOGIN: Symbol("authentication login"),
+    TRIGGER_REFRESH: Symbol("authentication trigger refresh"),
+    REFRESH: Symbol("authentication refresh"),
     LOGOUT: Symbol("authentication logout"),
     ERROR: Symbol("authentication error"),
 };
@@ -40,6 +42,11 @@ export function authentication(state = DEFAULT, action) {
                 username: action.data.username,
                 errorMessage: undefined
             });
+        case Action.REFRESH:
+            window.localStorage.setItem(SESSION_EXPIRY_KEY, action.data.expiry);
+            return state.merge({
+                expiry: dayjs(action.data.expiry),
+            });
         case Action.LOGOUT:
             window.localStorage.removeItem(SESSION_EXPIRY_KEY);
             window.localStorage.removeItem(SESSION_USERNAME_KEY);
@@ -52,12 +59,14 @@ export function authentication(state = DEFAULT, action) {
 }
 
 export function* watchAuthentication() {
-    yield initAuthentication();
+    yield takeEvery(Action.LOGIN, ({data: {expiry}}) => runTokenRefresh(expiry));
+    yield takeEvery(Action.REFRESH, ({data: {expiry}}) => runTokenRefresh(expiry));
     yield takeEvery(Action.LOGOUT, logout);
+    yield initAuthentication();
 }
 
 // Pre-load possible authentication state from the local store.
-export function* initAuthentication() {
+function* initAuthentication() {
     let expiry = window.localStorage.getItem(SESSION_EXPIRY_KEY);
     let username = window.localStorage.getItem(SESSION_USERNAME_KEY);
     if (!expiry || !username) {
@@ -69,7 +78,8 @@ export function* initAuthentication() {
         expiry = yield refreshAuthentication();
         if (expiry) {
             console.info(`Restoring authentication data from the local store for ${username}`);
-            return yield put(action(Action.LOGIN, {expiry, username}));
+            yield put(action(Action.LOGIN, {expiry, username}));
+            return;
         }
         // Else our auth is expired / our backend has lost our session due to a restart, cleaning the local store
     }
@@ -77,6 +87,35 @@ export function* initAuthentication() {
     console.info("The authentication data in the local store has expired, cleaning it up");
     window.localStorage.removeItem(SESSION_EXPIRY_KEY);
     window.localStorage.removeItem(SESSION_USERNAME_KEY);
+}
+
+function* refresh() {
+    try {
+        let newExpiry = yield refreshAuthentication();
+        yield put(action(Action.REFRESH, {expiry: newExpiry}));
+    } catch (e) {
+        console.error("Could not refresh token", e);
+    }
+}
+
+function* runTokenRefresh(expiry) {
+    expiry = dayjs(expiry);
+    let now = dayjs();
+    let timeUntilRefresh = expiry.diff(now);
+    if (timeUntilRefresh <= 0) {
+        console.error("Auth token refresh was triggered after the token had already expired", expiry && expiry.toISOString(), ">", now.toISOString());
+        return;
+    }
+    timeUntilRefresh = timeUntilRefresh / 2; // Try refreshing halfway through expiry
+    console.debug("Waiting for ", timeUntilRefresh, "ms to refresh the auth token");
+    yield delay(timeUntilRefresh);
+    let currentExpiry = yield select(immutableSelector("authentication", "expiry"));
+    if (currentExpiry && dayjs(expiry).isSame(currentExpiry)) {
+        yield refresh();
+    } else {
+        console.log(`Cancelling token refresh: mismatching expiry. It usually indicates that the token has been reissued meanwhile`,
+            expiry && dayjs(expiry).toISOString(), currentExpiry && currentExpiry.toISOString());
+    }
 }
 
 export function useLoginStatus() {
