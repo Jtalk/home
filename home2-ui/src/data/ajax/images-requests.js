@@ -1,6 +1,5 @@
 import * as request from "superagent";
 import api from "../../utils/superagent-api";
-import {apiDelay} from "../../utils/test-api-delay";
 
 export class ImagesRequests {
 
@@ -10,7 +9,6 @@ export class ImagesRequests {
             requestBuilder.query({page: page});
         }
         let response = await requestBuilder.use(api);
-        await apiDelay();
         return response.body
     }
 
@@ -18,15 +16,12 @@ export class ImagesRequests {
         let requestBuilder = request.post("/images");
         requestBuilder.attach(description, file);
         requestBuilder.query({description});
-        let response = await requestBuilder.use(api);
-        await apiDelay();
-        return response;
+        return await requestBuilder.use(api);
     }
 
     async delete(id) {
         await request.delete(`/images/${id}`)
             .use(api);
-        await apiDelay();
     }
 
 }

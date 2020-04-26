@@ -1,6 +1,5 @@
 import * as request from "superagent";
 import api from "../../utils/superagent-api";
-import {apiDelay} from "../../utils/test-api-delay";
 
 export class ProjectsRequests {
 
@@ -12,7 +11,6 @@ export class ProjectsRequests {
         let response = await request.get("/projects")
             .query({published: publishedOnly})
             .use(api);
-        await apiDelay();
         return response.body
     }
 
@@ -42,6 +40,5 @@ export class ProjectsRequests {
     async remove(id) {
         await request.delete(`/projects/${id}`)
             .use(api);
-        await apiDelay();
     }
 }
