@@ -1,7 +1,7 @@
 import {Map} from "immutable";
 import {action, error} from "./global/actions";
 import {Loading} from "./global/enums";
-import {useLoader, useUpdater2} from "./global/hook-barebone";
+import {useLoader} from "./global/hook-barebone";
 import {fetchAjax} from "./ajax";
 import {call, put, takeLatest} from "redux-saga/effects";
 import {useImmutableSelector} from "../redux-store";
@@ -35,10 +35,6 @@ export function useAvailableTags() {
     let loadAction = useMemo(() => action(Action.LOAD), []);
     useLoader(loadAction, !tags);
     return tags || [];
-}
-
-export function useTagsReloader() {
-    return useUpdater2(Action.LOAD);
 }
 
 function* load() {

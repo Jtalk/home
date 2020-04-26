@@ -8,37 +8,42 @@ export class ProjectsRequests {
     }
 
     async load(publishedOnly) {
+        console.debug(`Projects (published=${publishedOnly} loading`);
         let response = await request.get("/projects")
             .query({published: publishedOnly})
             .use(api);
+        console.debug(`Projects (published=${publishedOnly}) loaded with`, response.status, response.body);
         return response.body
     }
 
     async update(id, update, logo) {
+        console.info(`Project ${id} updating`, update);
         if (logo) {
+            console.info(`Uploading logo for project ${id}`);
             update.logoId = await this.uploadLogo(id, logo);
         }
         let response = await request.put(`/projects/${id}`, update)
             .use(api);
-        console.info(`Project ${id} updated with ${response.status}: ${response.text}`);
-        return Object.assign({}, response.body);
+        console.info(`Project ${id} updated with`, response.status, response.body);
+        return response.body;
     }
 
     async uploadLogo(id, logo) {
-        console.debug("Uploading logo", logo);
         try {
-            let response = await this.images.upload(`project-logo-${id}`, logo);
-            let body = response.body;
-            console.debug(`Logo updated, new logo ID is ${body.id}`);
-            return body.id;
+            let result = await this.images.upload(`project-logo-${id}`, logo);
+            console.info(`Logo updated, new logo ID is ${result.id}`);
+            return result.id;
         } catch (e) {
-            console.error("Exception while uploading a new logo", e);
+            console.error(`Exception while uploading a new logo for ${id}`, e);
             throw Error("Cannot upload a new logo")
         }
     }
 
     async remove(id) {
-        await request.delete(`/projects/${id}`)
+        console.info(`Project ${id} removing`);
+        let response = await request.delete(`/projects/${id}`)
             .use(api);
+        console.info(`Project ${id} removed with`, response.status, response.body);
+        return response.body
     }
 }

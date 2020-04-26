@@ -44,5 +44,5 @@ export function useDataUrl(target) {
     conv.toDataUrl(target).then(dataUrl => {
         setDataUrl(dataUrl);
         setCurrentSource(target);
-    });
+    }, reject => console.error("Error converting an image file into a data URL", reject));
 }

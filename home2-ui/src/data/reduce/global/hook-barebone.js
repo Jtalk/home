@@ -7,6 +7,7 @@ export function useLoader(memoAction, enabled) {
     let dispatch = useDispatch();
     useEffect(() => {
         if (enabled) {
+            console.debug(`Triggering load with`, memoAction);
             dispatch(memoAction);
         }
     }, [dispatch, enabled, memoAction]);
@@ -15,6 +16,7 @@ export function useLoader(memoAction, enabled) {
 export function useUpdater2(actionType) {
     let dispatch = useDispatch();
     return async (update, extra) => {
+        console.info("Running update action", actionType);
         return await dispatch(action(actionType, {update, extra}));
     }
 }
@@ -22,6 +24,7 @@ export function useUpdater2(actionType) {
 export function useDirectUpdater(updater) {
     let dispatch = useDispatch();
     return async (update, extra) => {
+        console.info("Running direct update action");
         return await dispatch(updater(update, extra));
     }
 }
@@ -29,6 +32,7 @@ export function useDirectUpdater(updater) {
 export function useDeleter2(actionType) {
     let dispatch = useDispatch();
     return async (id, extra) => {
+        console.info("Running delete action", actionType);
         return await dispatch(action(actionType, {id, extra}));
     }
 }
@@ -36,6 +40,7 @@ export function useDeleter2(actionType) {
 export function useDirectDeleter(deleter) {
     let dispatch = useDispatch();
     return async (id, extra) => {
+        console.info("Running direct delete action");
         return await dispatch(deleter(id, extra));
     }
 }

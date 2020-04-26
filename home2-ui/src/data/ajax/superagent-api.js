@@ -27,6 +27,7 @@ function delayed(saRequest) {
 async function apiDelay() {
     let delay = config.get("api.debug.delay");
     if (delay) {
+        console.debug("Simulating a loading delay for debug");
         await sleep(delay.milliseconds());
     }
 }

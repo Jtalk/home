@@ -120,8 +120,8 @@ function* load(page) {
 function* upload(description, file) {
     let ajax = yield fetchAjax();
     try {
-        let response = yield call(ajax.images.upload, description, file);
-        yield put(action(Action.UPLOADED, toInternalImageData(response.body)));
+        let result = yield call(ajax.images.upload, description, file);
+        yield put(action(Action.UPLOADED, toInternalImageData(result)));
     } catch (e) {
         console.error(`Cannot upload image "${description}"`, e);
         yield put(error(Action.UPLOAD_ERROR, e.toLocaleString()));
@@ -145,9 +145,10 @@ function asImgSrc(id) {
 }
 
 function toInternalImagesData(serverImagesData) {
-    let result = Object.assign({}, serverImagesData);
+    let result = {...serverImagesData};
     result.images = serverImagesData.data.map(toInternalImageData);
     delete result.data;
+    console.debug(`Converted backend image data to frontend:`, serverImagesData, result)
     return result;
 }
 
@@ -157,6 +158,5 @@ function toInternalImageData(image) {
     result.uploadedDateTime = image.uploaded["$date"];
     result.description = image.metadata && image.metadata.description;
     delete result.metadata;
-    console.log("uploaded", image);
     return result;
 }

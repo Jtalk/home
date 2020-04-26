@@ -5,7 +5,6 @@ import {useLastError, useLoading, useUpdater2, useUpdating} from "./global/hook-
 import {call, put, takeEvery} from "redux-saga/effects";
 import {fetchAjax} from "./ajax";
 import {useImmutableSelector} from "../redux-store";
-import {upVersion, useVersion} from "./global/version";
 
 let defaultOwner = fromJS({
     name: "",
@@ -33,7 +32,6 @@ export function owner(state = Map({loading: Loading.LOADING, data: defaultOwner,
             return state.merge({
                 loading: Loading.READY, errorMessage: undefined,
                 data: fromJS(action.data),
-                version: upVersion(state)
             });
         case Action.LOAD_ERROR:
             return state.merge({loading: Loading.ERROR, errorMessage: action.errorMessage});
@@ -43,7 +41,6 @@ export function owner(state = Map({loading: Loading.LOADING, data: defaultOwner,
             return state.merge({
                 updating: Updating.UPDATED, errorMessage: undefined,
                 data: fromJS(action.data),
-                version: upVersion(state)
             });
         case Action.UPDATE_ERROR:
             return state.merge({updating: Updating.ERROR, errorMessage: action.errorMessage});
@@ -72,10 +69,6 @@ export function useOwnerUpdating() {
 
 export function useOwnerError() {
     return useLastError("owner");
-}
-
-export function useOwnerVersion() {
-    return useVersion("owner");
 }
 
 export function useOwnerUpdater() {

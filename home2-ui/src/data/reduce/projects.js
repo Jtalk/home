@@ -83,7 +83,6 @@ export function useProjects(withUnpublished = false) {
 
 export function useProject(id, withUnpublished = false) {
     let projects = useProjects(withUnpublished) || [];
-
     if (id) {
         return _.find(projects, p => p.id === id);
     } else {

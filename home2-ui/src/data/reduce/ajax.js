@@ -1,7 +1,6 @@
 import {select} from "redux-saga/effects";
 import {Ajax} from "../ajax-requests";
 import {useImmutableSelector} from "../redux-store";
-import {action} from "./global/actions";
 
 const Action = {
     INIT: Symbol("ajax init")
@@ -26,8 +25,4 @@ export function ajaxSelector(state) {
 
 export function useAjax() {
     return useImmutableSelector("ajax");
-}
-
-export function ajaxResetAction(ajax) {
-    return action(Action.INIT, ajax);
 }

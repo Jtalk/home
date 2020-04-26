@@ -7,6 +7,7 @@ export function publishableData(items, withUnpublished, mapping = v => v) {
         let published = items
             .filter(i => i.published)
             .map(mapping);
+        console.debug(`Filtering publishable data:`, items, "to", published);
         return fromJS({
             all: mappedItems,
             published

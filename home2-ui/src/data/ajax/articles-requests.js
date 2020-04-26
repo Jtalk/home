@@ -5,30 +5,38 @@ import _ from "lodash";
 export class ArticlesRequests {
 
     async load(page, pageSize, publishedOnly = false) {
+        console.debug(`Articles (page=${page}, pageSize=${pageSize}, published=${publishedOnly}) loading`);
         let response = await request.get(`/blog/articles?page=${page}&pageSize=${pageSize}&published=${publishedOnly}`)
             .use(api);
+        console.debug(`Articles loaded with`, response.status, response.body);
         let result = _.mapKeys(response.body, (v, k) => k === "data" ? "articles" : k);
         result.articles = result.articles.map(datesFromRest);
         return result;
     }
 
     async loadOne(articleId) {
+        console.debug(`Article ${articleId} loading`);
         let response = await request.get(`/blog/articles/${articleId}`)
             .use(api);
+        console.debug(`Article ${articleId} loaded with`, response.status, response.body);
         return datesFromRest(response.body);
     }
 
     async update(id, update) {
+        console.info(`Article ${id} updating`, update);
         update = datesToRest(update);
         let response = await request.put(`/blog/articles/${id}`, update)
             .use(api);
-        console.info(`Article ${id} updated with ${response.status}: ${response.text}`);
+        console.info(`Article ${id} updated with`, response.status, response.body);
         return datesFromRest(response.body);
     }
 
     async remove(id) {
-        await request.delete(`/blog/articles/${id}`)
+        console.info(`Article ${id} deleting`);
+        let response = await request.delete(`/blog/articles/${id}`)
             .use(api);
+        console.info(`Article ${id} deleted with`, response.status, response.body);
+        return response.body;
     }
 }
 
