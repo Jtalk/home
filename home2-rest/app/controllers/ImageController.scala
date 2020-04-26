@@ -41,6 +41,7 @@ class ImageController @Inject()(val config: Configuration,
   private def serveById(id: String, gfs: JsGridFS)
   = serve[JsValue, JsReadFile[JsValue]](gfs)(gfs.find(Json.obj("_id" -> id)), dispositionMode = CONTENT_DISPOSITION_INLINE)
     .map(withoutContentLength)
+    .map(_.withHeaders(CACHE_CONTROL -> "public; max-age=604800"))
   private def deleteById(id: String, gfs: JsGridFS)= gfs.remove(JsString(id))
 
   private def parseFile(description: String): JsGridFSBodyParser[JsValue] = ReactiveMongoFixes.myVeryOwnGridFSBodyParser(
