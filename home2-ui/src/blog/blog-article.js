@@ -19,16 +19,10 @@ export const BlogArticle = function (props) {
     if (!article && loading !== Loading.LOADING) {
         return <NotFound/>
     }
-    article = article || {};
-    if (props.preview) {
-        return <ArticleView {...props}/>
-    }
     return <Grid centered stackable columns={2}>
         <Grid.Row>
             <Grid.Column width={11}>
-                <ContentPlaceholderOr loading={loading === Loading.LOADING} lines={30}>
-                    <ArticleView {...props}/>
-                </ContentPlaceholderOr>
+                <ArticleView article={article || {}} loading={loading} {...props}/>
             </Grid.Column>
             <Grid.Column width={3}>
                 <OwnerCard/>
@@ -38,10 +32,7 @@ export const BlogArticle = function (props) {
     </Grid>
 };
 
-export const ArticleView = function ({id, href, preview}) {
-
-    let article = useArticle(id);
-    let loading = useArticleLoading(id);
+export const ArticleView = function ({article, loading, href, preview}) {
 
     let articleLoading = _.isEmpty(article) && loading !== Loading.READY;
 
@@ -49,17 +40,17 @@ export const ArticleView = function ({id, href, preview}) {
         <Titled title={t => (article.title ? article.title + " | " : "") + " | Blog | " + t}/>
         <Item>
             <Item.Content>
-                <ContentPlaceholderOr loading={articleLoading} lines={20}>
+                <ContentPlaceholderOr header lines={0} loading={articleLoading}>
                     <Item.Header>
                         <Link to={href}>
                             <h1>{article.title}</h1>
                         </Link>
                     </Item.Header>
-                    <Divider/>
+                </ContentPlaceholderOr>
+                <Divider/>
+                <ContentPlaceholderOr header lines={10} loading={articleLoading}>
                     {article.tags && article.tags.length > 0 && <Item.Meta>
-                        {/*<Button.Group size="mini" compact>*/}
                         {article.tags.map(tag => <Button compact key={tag} size="mini">{tag}</Button>)}
-                        {/*</Button.Group>*/}
                     </Item.Meta>}
                     <Item.Description>
                         <MarkdownTextArea preview={preview}>{article.content || ''}</MarkdownTextArea>
