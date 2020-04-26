@@ -30,7 +30,6 @@ export const ContentPlaceholderOr = function ({loading, children, header, lines}
     </Placeholder>
 }
 
-
 export const LinePlaceholderOr = function ({loading, length, children}) {
 
     if (!loading) {
