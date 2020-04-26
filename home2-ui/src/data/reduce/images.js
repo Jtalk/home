@@ -140,7 +140,7 @@ function* delete_(id) {
 }
 
 function asImgSrc(id) {
-    let apiPrefix = config.get().api;
+    let apiPrefix = config.get("api.prefix");
     return `${apiPrefix}/images/${id}`;
 }
 
