@@ -5,7 +5,13 @@ import {Link} from "react-router-dom";
 export const ProjectsMenu = function ({projects = [], selectedProjectId}) {
 
     return <Menu tabular layout="block">
-        {projects.map((p, i) => <ProjectTab key={p.id} project={p} active={(selectedProjectId && p.id === selectedProjectId) || (!selectedProjectId && i === 0)}/>)}
+        {projects.map((p, i) => {
+            let isSelectedId = selectedProjectId && p.id === selectedProjectId;
+            let noneSelectedMeansFirst = !selectedProjectId && i === 0;
+            return <ProjectTab key={p.id}
+                               project={p}
+                               active={isSelectedId || noneSelectedMeansFirst}/>
+        })}
     </Menu>
 };
 

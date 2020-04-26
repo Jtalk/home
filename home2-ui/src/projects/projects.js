@@ -19,6 +19,6 @@ export const Projects = function ({selectedProjectId}) {
 
     return <div>
         <ProjectsMenu projects={projects} selectedProjectId={selectedProjectId}/>
-        {selectedProject && <ProjectDescription {...selectedProject}/>}
+        <ProjectDescription loading={loading === Loading.LOADING} {...selectedProject}/>
     </div>
 };
