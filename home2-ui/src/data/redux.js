@@ -1,6 +1,5 @@
 import {owner} from "./reduce/owner";
 import {footer} from "./reduce/footer";
-import {reduxLoggerOpts} from "../utils/logger";
 import {applyMiddleware, combineReducers, createStore} from "redux";
 import thunk from "redux-thunk";
 import {createLogger} from "redux-logger";
@@ -17,6 +16,7 @@ import {ajax} from "./reduce/ajax";
 import {routerMiddleware, connectRouter} from "connected-react-router"
 import {createMemoryHistory} from "history";
 import {emptySaga} from "../utils/testing/test-saga";
+import {Map} from "immutable";
 
 export const reducers = {
     ajax,
@@ -65,4 +65,11 @@ function middleware(history) {
         createLogger(reduxLoggerOpts())
     );
     return [result, saga];
+}
+
+function reduxLoggerOpts() {
+    return {
+        stateTransformer: state => Map(state).toJS(),
+        actionTransformer: action => Map(action).toJS(),
+    }
 }

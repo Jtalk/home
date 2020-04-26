@@ -3,7 +3,7 @@ import {action, error} from "./global/actions";
 import config from 'react-global-configuration';
 import {Deleting, Loading, Uploading} from "./global/enums";
 import {useDeleter2, useLastError, useLoader, useLoading, useUpdater2, useUpdating} from "./global/hook-barebone";
-import {useImmutableSelector} from "../../utils/redux-store";
+import {useImmutableSelector} from "../redux-store";
 import {call, put, takeEvery, takeLatest} from "redux-saga/effects";
 import {fetchAjax} from "./ajax";
 import {addPage, defaultPages} from "./global/paginated-data";

@@ -1,5 +1,5 @@
 import {useDispatch} from "react-redux";
-import {useImmutableSelector} from "../../../utils/redux-store";
+import {useImmutableSelector} from "../../redux-store";
 import {action} from "./actions";
 import {useEffect} from "react";
 

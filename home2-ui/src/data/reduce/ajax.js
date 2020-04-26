@@ -1,6 +1,6 @@
 import {select} from "redux-saga/effects";
 import {Ajax} from "../ajax-requests";
-import {useImmutableSelector} from "../../utils/redux-store";
+import {useImmutableSelector} from "../redux-store";
 import {action} from "./global/actions";
 
 const Action = {

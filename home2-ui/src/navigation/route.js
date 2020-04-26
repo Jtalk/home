@@ -1,11 +1,11 @@
 import {Route, Switch, useLocation} from "react-router-dom";
 import React from "react";
-import {HeaderMenuItem} from "../header/header-menu-item";
+import {HeaderMenuItem} from "../component/header/header-menu-item";
 import {ActiveRouteProvider, useActiveRoute, useCurrentRouteMatch} from "./active-route-context";
 import {RenderMode, useRenderMode} from "./render-context";
-import {HeaderMenuDropdownItem} from "../header/header-menu-dropdown-item";
+import {HeaderMenuDropdownItem} from "../component/header/header-menu-dropdown-item";
 import {useLoggedIn} from "../data/reduce/authentication";
-import {NotFound} from "../error/not-found";
+import {NotFound} from "../page/error/not-found";
 
 export const PartialRoute = function (props) {
     let currentRoute = useActiveRoute(props.path);

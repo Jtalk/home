@@ -1,7 +1,7 @@
 import {Map} from "immutable";
 import {action, error} from "./global/actions";
 import dayjs from "dayjs";
-import {immutableSelector, useImmutableSelector} from "../../utils/redux-store";
+import {immutableSelector, useImmutableSelector} from "../redux-store";
 import {useLastError, useUpdater2} from "./global/hook-barebone";
 import {call, put, takeEvery, delay, select} from "redux-saga/effects";
 import {ajaxSelector, fetchAjax, useAjax} from "./ajax";

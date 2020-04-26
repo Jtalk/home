@@ -1,5 +1,5 @@
 import * as request from "superagent";
-import api from "../../utils/superagent-api";
+import api from "./superagent-api";
 import _ from "lodash";
 
 export class ArticlesRequests {

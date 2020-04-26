@@ -1,5 +1,5 @@
 import {fromJS} from "immutable";
-import {immutableSelector, useImmutableSelector} from "../../../utils/redux-store";
+import {immutableSelector, useImmutableSelector} from "../../redux-store";
 
 export function publishableData(items, withUnpublished, mapping = v => v) {
     let mappedItems = items.map(mapping);

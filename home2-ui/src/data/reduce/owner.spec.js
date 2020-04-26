@@ -3,8 +3,7 @@ import * as owner from "./owner";
 import {watchOwner} from "./owner";
 import {Loading} from "./global/enums";
 import {END, runSaga} from "redux-saga";
-import {immutableSelector} from "../../utils/redux-store";
-import {emptySaga} from "../../utils/testing/test-saga";
+import {immutableSelector} from "../redux-store";
 
 const mockOwner = {
     name: "Vasya Pupkin",
@@ -18,7 +17,6 @@ const mockOwner = {
 describe('Redux(owner)', () => {
     let store;
     let ajax;
-    let sagaTask;
     beforeEach(() => {
         ajax = {
             owner: {

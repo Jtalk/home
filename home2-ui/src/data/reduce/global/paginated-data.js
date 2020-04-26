@@ -1,5 +1,5 @@
 import {fromJS, List, Map} from "immutable";
-import {immutableSelector, useImmutableSelector} from "../../../utils/redux-store";
+import {immutableSelector, useImmutableSelector} from "../../redux-store";
 
 export function defaultPages() {
     return Map({pages: List(), total: undefined, pageSize: undefined});

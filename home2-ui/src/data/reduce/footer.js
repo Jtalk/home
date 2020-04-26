@@ -4,7 +4,7 @@ import {action, error} from "./global/actions";
 import {useLastError, useLoading, useUpdater2, useUpdating} from "./global/hook-barebone";
 import {call, put, takeEvery} from "redux-saga/effects";
 import {fetchAjax} from "./ajax";
-import {useImmutableSelector} from "../../utils/redux-store";
+import {useImmutableSelector} from "../redux-store";
 
 let defaultFooter = fromJS({
     links: [],

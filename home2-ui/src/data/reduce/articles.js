@@ -16,7 +16,7 @@ import {
 import {allSelector, publishableData, publishedSelector} from "./global/publishable-data";
 import {fetchAjax} from "./ajax";
 import {useMemo} from "react";
-import {useImmutableSelector} from "../../utils/redux-store";
+import {useImmutableSelector} from "../redux-store";
 
 export const DEFAULT_PAGE_SIZE = 20;
 const MAX_PAGE_SIZE = 100;

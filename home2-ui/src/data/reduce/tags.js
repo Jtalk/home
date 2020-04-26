@@ -4,7 +4,7 @@ import {Loading} from "./global/enums";
 import {useLoader, useUpdater2} from "./global/hook-barebone";
 import {fetchAjax} from "./ajax";
 import {call, put, takeLatest} from "redux-saga/effects";
-import {useImmutableSelector} from "../../utils/redux-store";
+import {useImmutableSelector} from "../redux-store";
 import {useMemo} from "react";
 
 export const Action = {

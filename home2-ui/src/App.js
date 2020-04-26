@@ -1,11 +1,11 @@
 import React from 'react';
 import './App.css';
 import {Container} from "semantic-ui-react";
-import {Footer} from "./footer/footer";
+import {Footer} from "./component/footer/footer";
 import "./utils/config";
 import {Navigation} from "./navigation/navigation"
 import {RenderMode} from "./navigation/render-context";
-import {OwnerTitled} from "./home/owner-titled";
+import {OwnerTitled} from "./page/about/owner-titled";
 
 export const App = function () {
     return <div className="main-content-pushable">

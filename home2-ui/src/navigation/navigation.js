@@ -1,20 +1,20 @@
 import React from "react";
-import {About} from "../home/about";
-import {ProjectsRouter} from "../projects/projects-router";
-import {EditBio} from "../admin/edit-bio";
-import {EditProjectsRouter} from "../admin/edit-projects";
-import {EditBlogRouter} from "../admin/edit-blog-router";
-import {EditImagesRouter} from "../admin/edit-images";
-import {EditFooter} from "../admin/edit-footer";
-import {NotFound} from "../error/not-found";
+import {About} from "../page/about/about";
+import {ProjectsRouter} from "../page/projects/projects-router";
+import {EditBio} from "../page/admin/edit-bio";
+import {EditProjectsRouter} from "../page/admin/edit-projects";
+import {EditBlogRouter} from "../page/admin/edit-blog-router";
+import {EditImagesRouter} from "../page/admin/edit-images";
+import {EditFooter} from "../page/admin/edit-footer";
+import {NotFound} from "../page/error/not-found";
 import {Switch} from "react-router-dom";
-import {Header, LogoutButton} from "../header/header";
+import {Header, LogoutButton} from "../component/header/header";
 import {NavigationDropdown, NavigationRoute, PartialRoute, PartialSwitch} from "./route";
 import {RenderMode, RenderModeProvider, useRenderMode} from "./render-context";
-import {BlogRouter} from "../blog/blog-router";
+import {BlogRouter} from "../page/blog/blog-router";
 import {Dropdown, Menu} from "semantic-ui-react";
 import {useOwner} from "../data/reduce/owner";
-import {EditAccount} from "../admin/edit-account";
+import {EditAccount} from "../page/admin/edit-account";
 import {ActiveRouteProvider, useActiveRoute} from "./active-route-context";
 
 export const Navigation = function ({renderMode}) {

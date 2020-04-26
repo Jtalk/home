@@ -4,7 +4,7 @@ import {action, error} from "./global/actions";
 import {useLastError, useLoading} from "./global/hook-barebone";
 import {call, put} from "redux-saga/effects";
 import {fetchAjax} from "./ajax";
-import {useImmutableSelector} from "../../utils/redux-store";
+import {useImmutableSelector} from "../redux-store";
 
 const MAX_PAGE_SIZE = 100;
 
