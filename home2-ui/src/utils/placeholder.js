@@ -1,50 +1,44 @@
 import React from "react";
 import {Placeholder} from "semantic-ui-react";
 
-export class ImagePlaceholderOr extends React.Component {
+export const ImagePlaceholderOr = function ({loading, children, square, rectangular}) {
 
-    render() {
-        if (this.props.loading) {
-            return <Placeholder>
-                <Placeholder.Image square={this.props.square} rectangular={this.props.rectangular}/>
-            </Placeholder>
-        } else {
-            return this.props.children;
-        }
+    if (!loading) {
+        return children;
     }
+    return <Placeholder>
+        <Placeholder.Image square={square} rectangular={rectangular}/>
+    </Placeholder>
 }
 
 
-export class ContentPlaceholderOr extends React.Component {
+export const ContentPlaceholderOr = function ({loading, children, header, lines}) {
 
-    render() {
-        if (this.props.loading) {
-            return <Placeholder fluid>
-                {this.props.header ? <Placeholder.Header>
-                    <Placeholder.Line length="medium"/>
-                </Placeholder.Header> : null}
-                <Placeholder.Paragraph>
-                    {Array(this.props.lines).fill().map((_, i) => <Placeholder.Line key={i}/>)}
-                </Placeholder.Paragraph>
-            </Placeholder>
-        } else {
-            return this.props.children;
-        }
+    if (!loading) {
+        return children;
     }
+    header = header || null;
+    return <Placeholder fluid>
+        {
+            header && <Placeholder.Header>
+                <Placeholder.Line length="medium"/>
+            </Placeholder.Header>
+        }
+        <Placeholder.Paragraph>
+            {Array(lines).fill().map((_, i) => <Placeholder.Line key={i}/>)}
+        </Placeholder.Paragraph>
+    </Placeholder>
 }
 
 
-export class LinePlaceholderOr extends React.Component {
+export const LinePlaceholderOr = function ({loading, length, children}) {
 
-    render() {
-        if (this.props.loading) {
-            return <Placeholder>
-                <Placeholder.Paragraph>
-                    <Placeholder.Line length={this.props.length}/>
-                </Placeholder.Paragraph>
-            </Placeholder>
-        } else {
-            return this.props.children;
-        }
+    if (!loading) {
+        return children;
     }
+    return <Placeholder>
+        <Placeholder.Paragraph>
+            <Placeholder.Line length={length}/>
+        </Placeholder.Paragraph>
+    </Placeholder>
 }
