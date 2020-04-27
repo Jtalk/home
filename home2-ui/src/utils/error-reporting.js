@@ -3,10 +3,16 @@ import BugsnagPluginReact from "@bugsnag/plugin-react";
 import React from "react";
 
 const APP_VERSION = process.env.REACT_APP_VERSION || undefined;
+const API_KEY = process.env.REACT_APP_BUGSNAG_API_KEY;
 
 export function setupErrorReporting() {
+    if (!API_KEY) {
+        console.warn("No Bugsnag API key was detected, error reporting is disabled");
+        return;
+    }
+    console.debug("Configuring Bugsnag error reporting");
     Bugsnag.start({
-        apiKey: '899f8865a22e37b078415c92f56dfc5f',
+        apiKey: API_KEY,
         plugins: [new BugsnagPluginReact(React)],
         appVersion: APP_VERSION,
         enabledReleaseStages: ["production", "staging"],
@@ -18,6 +24,9 @@ export function setupErrorReporting() {
 }
 
 export function reportError(e) {
+    if (!API_KEY) {
+        return;
+    }
     try {
         Bugsnag.notify(e);
     } catch (e) {
