@@ -2,7 +2,7 @@ import Bugsnag from "@bugsnag/js";
 import BugsnagPluginReact from "@bugsnag/plugin-react";
 import React from "react";
 
-const APP_VERSION = process.env.REACT_APP_VERSION;
+const APP_VERSION = process.env.REACT_APP_VERSION || undefined;
 
 export function setupErrorReporting() {
     Bugsnag.start({

@@ -18,6 +18,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       REACT_APP_API_URL: /api
+      REACT_APP_VERSION: ${{ github.sha }}
     steps:
     - uses: actions/checkout@v1
     - name: Set up Node.JS ${{ env.NODE_VERSION }}
