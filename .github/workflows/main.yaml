@@ -107,7 +107,7 @@ jobs:
 
 ############################ STAGING ############################
   deploy-migrations-staging: 
-    name: Deploy database migrations to staging
+    name: Deploy database to staging
     runs-on: ubuntu-latest
     needs: 
       - build-release-ui
@@ -183,7 +183,7 @@ jobs:
         run: kubectl apply -f deploy/
           
   deploy-ui-staging:
-    name: Deploy UI to Kubernetes staging
+    name: Deploy UI to staging
     runs-on: ubuntu-latest
     needs: 
       - build-release-ui
@@ -208,7 +208,7 @@ jobs:
           images: ${{ env.UI_DOCKER_IMAGE_PREFIX }}:${{ github.sha }}
           
   deploy-api-staging:
-    name: Deploy API to Kubernetes staging
+    name: Deploy API to staging
     runs-on: ubuntu-latest
     needs: 
       - build-release-api
@@ -235,7 +235,7 @@ jobs:
 
 ############################ Staging Test ############################
   verify-staging: 
-    name: Verify deployment is working on staging
+    name: Verify on staging
     runs-on: ubuntu-latest
     needs: 
       - deploy-ui-staging
@@ -252,7 +252,7 @@ jobs:
 
 ############################ LIVE ############################
   deploy-migrations-live: 
-    name: Deploy database migrations to live
+    name: Deploy database to live
     runs-on: ubuntu-latest
     needs: 
       - build-release-migrations
@@ -287,7 +287,7 @@ jobs:
           wait -n $success_pid $fail_pid
 
   deploy-ui-live:
-    name: Deploy UI to Kubernetes live
+    name: Deploy UI to live
     runs-on: ubuntu-latest
     needs: 
       - build-release-ui
@@ -313,7 +313,7 @@ jobs:
           images: ${{ env.UI_DOCKER_IMAGE_PREFIX }}:${{ github.sha }}
           
   deploy-api-live:
-    name: Deploy API to Kubernetes live
+    name: Deploy API to live
     runs-on: ubuntu-latest
     needs: 
       - build-release-api
@@ -341,7 +341,7 @@ jobs:
 
 ############################ LIVE Test ############################
   verify-live: 
-    name: Verify deployment is working on LIVE
+    name: Verify on LIVE
     runs-on: ubuntu-latest
     needs: 
       - deploy-ui-live
