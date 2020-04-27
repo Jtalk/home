@@ -58,6 +58,6 @@ function* load(previewSize) {
         yield put(action(Action.LOADED, articles));
     } catch (e) {
         console.error(`Cannot load ${previewSize} latest articles `, e);
-        yield put(error(Action.LOAD_ERROR, e.toLocaleString()));
+        yield put(error(Action.LOAD_ERROR, e.toLocaleString(), {error: e}));
     }
 }

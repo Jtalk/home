@@ -113,7 +113,7 @@ function* load(page) {
         yield put(action(Action.LOADED, imagesData));
     } catch (e) {
         console.error("Cannot load images list", e);
-        yield put(error(Action.LOAD_ERROR, e.toLocaleString()));
+        yield put(error(Action.LOAD_ERROR, e.toLocaleString(), {error: e}));
     }
 }
 
@@ -124,7 +124,7 @@ function* upload(description, file) {
         yield put(action(Action.UPLOADED, toInternalImageData(result)));
     } catch (e) {
         console.error(`Cannot upload image "${description}"`, e);
-        yield put(error(Action.UPLOAD_ERROR, e.toLocaleString()));
+        yield put(error(Action.UPLOAD_ERROR, e.toLocaleString(), {error: e}));
     }
 }
 
@@ -135,7 +135,7 @@ function* delete_(id) {
         yield put(action(Action.DELETED, id));
     } catch (e) {
         console.error(`Cannot delete image ${id}`, e);
-        yield put(error(Action.DELETE_ERROR, e.toLocaleString()));
+        yield put(error(Action.DELETE_ERROR, e.toLocaleString(), {error: e}));
     }
 }
 

@@ -161,7 +161,7 @@ function* load(page, pageSize, publishedOnly) {
         yield put(action(Action.LOADED, {publishedOnly, ...articlesResult}));
     } catch (e) {
         console.error(`Cannot load article info page = ${page}, page size = ${pageSize}`, e);
-        yield put(error(Action.LOAD_ERROR, e.toLocaleString()));
+        yield put(error(Action.LOAD_ERROR, e.toLocaleString(), {error: e}));
     }
 }
 
@@ -174,7 +174,7 @@ function* remove(articleId, page) {
         yield put(action(Action.DELETED, {...updatedList, deletedId: articleId}));
     } catch (e) {
         console.error(`Exception while deleting article ${articleId}`, e);
-        yield put(error(Action.DELETE_ERROR, e.toLocaleString()));
+        yield put(error(Action.DELETE_ERROR, e.toLocaleString(), {error: e}));
     }
 }
 
@@ -185,7 +185,7 @@ function* loadOne(articleId) {
         yield put(action(Action.LOADED_ONE, article));
     } catch (e) {
         console.error(`Cannot load article info ${articleId}`, e);
-        yield put(error(Action.LOAD_ONE_ERROR, e.toLocaleString(), {id: articleId}));
+        yield put(error(Action.LOAD_ONE_ERROR, e.toLocaleString(), {id: articleId, error: e}));
     }
 }
 
@@ -197,7 +197,7 @@ function* update(articleId, update, redirectTo) {
         yield put(push(redirectTo));
     } catch (e) {
         console.error(`Exception while updating article ${articleId}`, update, e);
-        yield put(error(Action.UPDATE_ERROR, e.toLocaleString()));
+        yield put(error(Action.UPDATE_ERROR, e.toLocaleString(), {error: e}));
     }
 }
 

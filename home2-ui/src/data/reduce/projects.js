@@ -123,7 +123,7 @@ function* load(publishedOnly) {
         yield put(action(Action.LOADED, {projects, publishedOnly}));
     } catch (e) {
         console.error("Cannot load project info", e);
-        yield put(error(Action.LOAD_ERROR, e.toLocaleString()));
+        yield put(error(Action.LOAD_ERROR, e.toLocaleString(), {error: e}));
     }
 }
 
@@ -140,7 +140,7 @@ function update(update, {id, logo, redirectTo}) {
             return result;
         } catch (e) {
             console.error(`Exception while updating project ${id}`, update, e);
-            dispatch(error(Action.UPDATE_ERROR, e.toLocaleString()));
+            dispatch(error(Action.UPDATE_ERROR, e.toLocaleString(), {error: e}));
             return null;
         }
     };
@@ -159,7 +159,7 @@ function remove(projectId, {redirectTo}) {
             return projectId;
         } catch (e) {
             console.error(`Exception while deleting project ${projectId}`, e);
-            dispatch(error(Action.DELETE_ERROR, e.toLocaleString()));
+            dispatch(error(Action.DELETE_ERROR, e.toLocaleString(), {error: e}));
             return null;
         }
     };

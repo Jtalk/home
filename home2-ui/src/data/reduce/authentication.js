@@ -6,6 +6,7 @@ import {useLastError, useUpdater2} from "./global/hook-barebone";
 import {call, put, takeEvery, delay, select} from "redux-saga/effects";
 import {ajaxSelector, fetchAjax, useAjax} from "./ajax";
 import {useDispatch} from "react-redux";
+import {reportError} from "../../utils/error-reporting";
 
 export const EXISTING_PASSWORD_MISMATCH = "The existing password does not match";
 
@@ -95,6 +96,7 @@ function* refresh() {
         yield put(action(Action.REFRESH, {expiry: newExpiry}));
     } catch (e) {
         console.error("Could not refresh token", e);
+        reportError(e);
     }
 }
 
@@ -165,10 +167,10 @@ function login(form) {
             console.error("Error logging in", e);
             if (e.status >= 400 && e.status < 500) {
                 console.warn("Login failure:", e.response.body.errors);
-                dispatch(error(Action.ERROR, (e.response.body.errors || ["unknown"]).join(" | ")));
+                dispatch(error(Action.ERROR, (e.response.body.errors || ["unknown"]).join(" | "), {error: e}));
             } else {
                 console.error("Server error", e.response);
-                dispatch(error(Action.ERROR, "Unknown error while trying to log in"));
+                dispatch(error(Action.ERROR, "Unknown error while trying to log in", {error: e}));
             }
             return false;
         }
@@ -197,7 +199,7 @@ function* refreshAuthentication() {
         return response.expiry;
     } catch (e) {
         console.error("Error refreshing authentication", e);
-        yield put(action(Action.ERROR, {errorMessage: e.message}));
+        yield put(error(Action.ERROR, e.toLocaleString(), {error: e}));
     }
 }
 
@@ -207,6 +209,7 @@ function* logout() {
         yield call(ajax.authentication.logout);
     } catch (e) {
         console.error("Error while logging out", e);
+        reportError(e);
         alert(e.message);
     }
 }

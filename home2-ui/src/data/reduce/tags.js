@@ -44,6 +44,6 @@ function* load() {
         yield put(action(Action.LOADED, tags));
     } catch (e) {
         console.error("Cannot load tags info", e);
-        yield put(error(Action.LOAD_ERROR, e.message));
+        yield put(error(Action.LOAD_ERROR, e.toLocaleString(), {error: e}));
     }
 }

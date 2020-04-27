@@ -76,7 +76,7 @@ function* load() {
         yield put(action(Action.LOADED, result));
     } catch (e) {
         console.error("Cannot load footer info", e);
-        yield put(error(Action.LOAD_ERROR, e.toLocaleString()));
+        yield put(error(Action.LOAD_ERROR, e.toLocaleString(), {error: e}));
     }
 }
 
@@ -87,6 +87,6 @@ function* update(footer) {
         yield put(action(Action.UPDATED, result));
     } catch (e) {
         console.error("Cannot load footer info", e);
-        yield put(error(Action.UPDATE_ERROR, e.toLocaleString()));
+        yield put(error(Action.UPDATE_ERROR, e.toLocaleString(), {error: e}));
     }
 }
