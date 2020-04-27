@@ -1,6 +1,7 @@
 import {useCallback, useMemo, useState} from "react";
 import _ from "lodash";
 import {useDependentState} from "./state";
+import {reportError} from "../../../utils/error-reporting";
 
 const FILES_PATH = "__files";
 
@@ -21,6 +22,7 @@ export function useForm({init, autoSubmit, secure} = {}) {
             return result;
         } catch (e) {
             console.error("Form submit error", e);
+            reportError(e);
         } finally {
             console.debug("Form submit complete");
             setSubmitting(false);

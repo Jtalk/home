@@ -6,6 +6,7 @@ import React, {useState, useMemo} from "react";
 import {EXISTING_PASSWORD_MISMATCH, usePasswordChanger, useUsername} from "../../data/reduce/authentication";
 import {useForm} from "./common/use-form";
 import {useFormErrors} from "./common/use-errors";
+import {reportError} from "../../utils/error-reporting";
 
 const PASSWORD_FORM = () => ({
     password: {}
@@ -37,6 +38,7 @@ export const EditAccount = function () {
                 updateResult = Updating.UPDATED;
             }
         } catch (e) {
+            reportError(e);
             if (e.message === EXISTING_PASSWORD_MISMATCH) {
                 return errors.report(e.message)("password", "current");
             }
