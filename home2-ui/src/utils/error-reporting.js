@@ -8,7 +8,7 @@ const API_KEY = process.env.REACT_APP_BUGSNAG_API_KEY;
 export function setupErrorReporting() {
     if (!API_KEY) {
         console.warn("No Bugsnag API key was detected, error reporting is disabled");
-        return;
+        return {ErrorBoundary: React.Fragment};
     }
     console.debug("Configuring Bugsnag error reporting");
     Bugsnag.start({
