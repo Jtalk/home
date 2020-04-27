@@ -17,6 +17,7 @@ import {routerMiddleware, connectRouter} from "connected-react-router"
 import {createMemoryHistory} from "history";
 import {emptySaga} from "../utils/testing/test-saga";
 import {Map} from "immutable";
+import {reportError} from "../utils/error-reporting";
 
 export const reducers = {
     ajax,
@@ -55,7 +56,12 @@ export function createTestStore(reducers, rootSaga) {
 }
 
 function middleware(history) {
-    let saga = createSagaMiddleware();
+    let saga = createSagaMiddleware({
+        onError(e, {sagaStack}) {
+            console.error("Unhandled error in Saga:", sagaStack, e);
+            reportError(e);
+        }
+    });
 
     let result = applyMiddleware(
         saga,
