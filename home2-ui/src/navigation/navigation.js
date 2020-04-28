@@ -7,7 +7,7 @@ import {EditBlogRouter} from "../page/admin/edit-blog-router";
 import {EditImagesRouter} from "../page/admin/edit-images";
 import {EditFooter} from "../page/admin/edit-footer";
 import {NotFound} from "../page/error/not-found";
-import {Switch} from "react-router-dom";
+import {Redirect, Switch} from "react-router-dom";
 import {Header, LogoutButton} from "../component/header/header";
 import {NavigationDropdown, NavigationRoute, PartialRoute, PartialSwitch} from "./route";
 import {RenderMode, RenderModeProvider, useRenderMode} from "./render-context";
@@ -15,7 +15,8 @@ import {BlogRouter} from "../page/blog/blog-router";
 import {Dropdown, Menu} from "semantic-ui-react";
 import {useOwner} from "../data/reduce/owner";
 import {EditAccount} from "../page/admin/edit-account";
-import {ActiveRouteProvider, useActiveRoute} from "./active-route-context";
+import {ActiveRouteProvider, routeConcat, useActiveRoute} from "./active-route-context";
+import {useQueryParam} from "./query";
 
 export const Navigation = function ({renderMode}) {
     let {name} = useOwner();
@@ -30,6 +31,9 @@ export const Navigation = function ({renderMode}) {
             <NavigationRoute title="Blog" path="/blog/articles">
                 <BlogRouter/>
             </NavigationRoute>
+            <LegacyRedirect exact from="/home" to="/"/>
+            <LegacyRedirect from="/home/projects.xhtml" to="/projects" parameterName="project"/>
+            <LegacyRedirect from="/home/blog/post.xhtml" to="/blog/articles" parameterName="name"/>
             <NavigationDropdown authenticated title="Admin" path="/admin">
                 <NavigationRoute authenticated exact title="Edit Bio" path="/bio">
                     <EditBio/>
@@ -119,3 +123,20 @@ const MenuOnly = function ({children}) {
             throw Error(`Unsupported render mode ${renderMode && renderMode.description}`);
     }
 };
+
+const LegacyRedirect = function ({from, to, parameterName=""}) {
+    let renderMode = useRenderMode();
+    let id = useQueryParam(parameterName, "");
+    if (renderMode !== RenderMode.ROUTER) {
+        return null;
+    }
+    if (typeof to === "string") {
+        to = routeConcat(to, id);
+    } else if (typeof to === "function") {
+        to = to(id);
+    } else {
+        throw Error("Unsupported 'to' parameter for LegacyRedirect");
+    }
+    console.info(`Redirecting from a legacy endpoint ${from}, redirecting to the new one: ${to}`);
+    return <Redirect from={from} to={to}/>
+}
