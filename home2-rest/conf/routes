@@ -3,6 +3,7 @@
 # https://www.playframework.com/documentation/latest/ScalaRouting
 # ~~~~
 
+GET         /status/ready              controllers.StatusController.ready
 GET         /status                    controllers.StatusController.status
 
 POST        /login                     controllers.AuthenticationController.login

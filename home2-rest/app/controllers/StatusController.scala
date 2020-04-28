@@ -18,7 +18,11 @@ class StatusController @Inject()(cc: ControllerComponents, db: Database)
 
   implicit private def ec: ExecutionContext = cc.executionContext
 
-  def status() = Action.async { implicit request: Request[AnyContent] =>
+  def status(): Action[AnyContent] = Action { implicit request: Request[AnyContent] =>
+    Ok("UP")
+  }
+
+  def ready(): Action[AnyContent] = Action.async { implicit request: Request[AnyContent] =>
     db.findSingle[OwnerInfo]
       .map(_ => Ok("UP"))
       .recover {
