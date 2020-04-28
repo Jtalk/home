@@ -19,7 +19,6 @@ libraryDependencies += "org.scalatestplus.play" %% "scalatestplus-play" % "3.1.2
 
 javaOptions in Universal ++= Seq(
   "-Dpidfile.path=/dev/null",
-  "-J-Xms64m", "-J-Xmx96m",
   "-J-XX:+PrintGCDateStamps", "-J-XX:+PrintGCDetails",
 )
 
