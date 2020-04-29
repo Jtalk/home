@@ -15,7 +15,7 @@ import {NotFound} from "../error/not-found";
 export const BlogArticle = function (props) {
 
     let article = useArticle(props.id);
-    let loading = useArticleLoading(props.id);
+    let loading = useArticleLoading(props.id) || Loading.LOADING;
     if (!article && loading !== Loading.LOADING) {
         return <NotFound/>
     }
