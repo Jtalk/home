@@ -5,6 +5,7 @@ import javax.inject.{Inject, Singleton}
 import models.ModelType.ModelType
 import models.common.Identifiable
 import models.common.Pagination.fromTotalCount
+import models.search.{SearchResult, Searchable}
 import play.api.Logger
 import play.api.libs.json.Json.obj
 import play.api.libs.json._
@@ -86,6 +87,13 @@ class Database @Inject()(cc: ControllerComponents, val reactiveMongoApi: Reactiv
 
   def count[T](implicit ec: ExecutionContext, mt: ModelType[T]): Future[Long] = collection
     .flatMap(_.count(None, None, 0, None, ReadConcern.Majority))
+
+  def search[T <: Searchable](terms: String, maxResults: Int)(implicit ec: ExecutionContext, model: ModelType[T], reads: Reads[SearchResult[T]]): Future[Seq[SearchResult[T]]] = collection
+    .map(_.find(obj("$text" -> obj("$search" -> terms)), Some(obj("score" -> obj("$meta" -> "textScore")))))
+    .map(_.sort(obj("score" -> obj("$meta" -> "textScore"))))
+    .map(_.cursor[SearchResult[T]]())
+    .flatMap(_.collect[Seq](maxResults, Cursor.FailOnError()))
+
 
   private def findExistingSingleId[T](implicit ec: ExecutionContext, mt: ModelType[T]) = collection
     .flatMap(_.find(obj(), Some(obj("_id" -> true))).one[JsObject])

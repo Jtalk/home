@@ -2,6 +2,7 @@ package models.owner
 
 import models.ModelType
 import models.ModelType.ModelType
+import models.search.Searchable
 import play.api.http.Writeable
 import play.api.libs.functional.syntax._
 import play.api.libs.json.Reads._
@@ -11,7 +12,13 @@ import utils.WebUtils
 
 import scala.concurrent.ExecutionContext
 
-case class OwnerInfo(name: String, nickname: String, description: String, photoId: String, bio: String, contacts: Map[String, Contact]) {
+case class OwnerInfo(name: String,
+                     nickname: String,
+                     description: String,
+                     photoId: String,
+                     bio: String,
+                     contacts: Map[String, Contact],
+                    ) extends Searchable {
 }
 
 object OwnerInfo {

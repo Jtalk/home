@@ -5,6 +5,7 @@ import java.time.{ZoneOffset, ZonedDateTime}
 import models.ModelType
 import models.ModelType.ModelType
 import models.common.Identifiable
+import models.search.Searchable
 import play.api.http.Writeable
 import play.api.libs.functional.syntax._
 import play.api.libs.json.Reads._
@@ -14,7 +15,13 @@ import utils.WebUtils
 
 import scala.concurrent.ExecutionContext
 
-case class Article(title: String, id: String, published: Boolean, created: ZonedDateTime, content: String, tags: Set[String]) extends Identifiable {
+case class Article(title: String,
+                   id: String,
+                   published: Boolean,
+                   created: ZonedDateTime,
+                   content: String,
+                   tags: Set[String],
+                  ) extends Identifiable with Searchable {
 }
 object Article {
 
