@@ -4,7 +4,7 @@ import {Loading} from "../../data/reduce/global/enums";
 import {useSearch, useSearchQuery, useSearchResults, useSearchStatus} from "../../data/reduce/search";
 import {reportError} from "../../utils/error-reporting";
 import Fuse from "fuse.js";
-import {maxBy, throttle} from "lodash-es";
+import _ from "lodash";
 import {blogArticleHref} from "../../page/blog/blog-article";
 import {projectHref} from "../../page/projects/projects";
 import {Link} from "react-router-dom";
@@ -18,7 +18,7 @@ export const HeaderSearch = function () {
     let results = useMemo(() => toVisualResults(query, rawResults), [query, rawResults]);
     console.debug(`Showing search results for term '${query}':`, results);
 
-    let onSearchChange = throttle(onSearch, 300, {leading: true});
+    let onSearchChange = _.throttle(onSearch, 300, {leading: true});
 
     return <HeaderSearchStateless {...{loading, results, onSearchChange}}/>
 };
@@ -76,7 +76,7 @@ function toVisualResultDescription(query, ...candidates) {
     if (!result.length) {
         return "preview unavailable";
     }
-    let value = maxBy(result, r => -r.score).item;
+    let value = _.maxBy(result, r => -r.score).item;
     if (value && value.length > 50) {
         return value.substring(0, 50) + "...";
     } else {

@@ -1,5 +1,5 @@
 import {useEffect, useState} from "react";
-import {get as _get, set as _set, uniq} from "lodash-es";
+import _ from "lodash";
 
 export function useFormErrors(errorsFor) {
     let [errors, setErrors] = useState();
@@ -19,26 +19,27 @@ export class FormErrors {
         this.onUpdate = onUpdate || (() => {});
     }
     get message() {
-        let result = [...this.knownPaths]
+        return _.chain([...this.knownPaths])
             .map(p => p.split("|"))
             .map(p => this.errorFor(...p))
             .filter(v => !!v)
-        return uniq(result)
-            .join(", ");
+            .uniq()
+            .join(", ")
+            .value();
     }
     hasErrors = (...path) => {
         return !!this.errorFor(...path);
     }
     errorFor = (...path) => {
         if (path.length) {
-            return _get(this.store, path);
+            return _.get(this.store, path);
         } else {
             return this.message;
         }
     }
     report = message => {
         let result = (...path) => {
-            _set(this.store, path, message);
+            _.set(this.store, path, message);
             this.knownPaths.add(path.join("|"));
             this.onUpdate(this);
             return result;
@@ -55,7 +56,7 @@ export class FormErrors {
         }
     }
     reset = (...path) => {
-        _set(this.store, path, undefined);
+        _.set(this.store, path, undefined);
         this.knownPaths.delete(path.join("|"));
         this.onUpdate(this);
         return this.reset;

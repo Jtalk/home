@@ -2,7 +2,7 @@ import React, {useState} from "react";
 import {Card} from "semantic-ui-react";
 import {ContentPlaceholderOr, ImagePlaceholderOr, LinePlaceholderOr} from "../../component/placeholder";
 import {Loading} from "../../data/reduce/global/enums";
-import {get as _get} from "lodash-es";
+import _ from "lodash";
 import {useOwner, useOwnerLoading} from "../../data/reduce/owner";
 import {LoginModal} from "../../component/login/login";
 import {useLoggedIn} from "../../data/reduce/authentication";
@@ -45,7 +45,7 @@ export const CardStateless = function({loading, owner, showLogin}) {
         </Card.Content>
         <Card.Content extra icon="user">
             <LinePlaceholderOr length="short" loading={loading === Loading.LOADING}>
-                {_get(owner, "contacts.email.value", null)}
+                {_.get(owner, "contacts.email.value", null)}
             </LinePlaceholderOr>
         </Card.Content>
     </Card>;

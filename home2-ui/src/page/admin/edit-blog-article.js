@@ -5,7 +5,7 @@ import {useAvailableTags} from "../../data/reduce/tags";
 import {useForm} from "./common/use-form";
 import {Loading, Updating} from "../../data/reduce/global/enums";
 import {DatePicker} from "./common/date-picker";
-import {uniq, keyBy, toLower as _toLower} from "lodash-es";
+import _ from "lodash";
 import {
     useArticle,
     useArticleLoading,
@@ -41,12 +41,12 @@ export const EditBlogArticle = function ({articleId}) {
 };
 
 export const EditBlogArticleStateless = function ({article, knownTags = [], submit, reset, updater, canSubmit, loading, updating, errorMessage}) {
-    knownTags = uniq([...knownTags, ...(article.tags || [])]);
+    knownTags = _.uniq([...knownTags, ...(article.tags || [])]);
     let applyTags = (e, {options, value}) => {
-        updater.change("tags")(e, {value: uniq(asDropdownText(value, options))});
+        updater.change("tags")(e, {value: _.uniq(asDropdownText(value, options))});
     };
     let addTag = (e, {value}) => {
-        updater.change("tags")(e, {value: uniq([...article.tags, value])});
+        updater.change("tags")(e, {value: _.uniq([...article.tags, value])});
     };
     return <Grid centered>
         <Grid.Column width={13}>
@@ -76,7 +76,7 @@ export const EditBlogArticleStateless = function ({article, knownTags = [], subm
                                     <Dropdown fluid multiple search selection
                                               allowAdditions
                                               options={asDropdownOptions(knownTags)}
-                                              value={(article.tags || []).map(_toLower)}
+                                              value={(article.tags || []).map(_.toLower)}
                                               onAddItem={addTag}
                                               onChange={applyTags}/>
                                 </Form.Field>
@@ -111,11 +111,14 @@ export function editHref(articleId) {
 }
 
 function asDropdownOptions(tags) {
-    return uniq(tags.map(t => ({text: t, value: _toLower(t)})))
+    return _.chain(tags)
+        .map(t => ({text: t, value: _.toLower(t)}))
+        .uniqBy("value")
+        .value();
 }
 
 function asDropdownText(values, options) {
-    let dict = keyBy(options, "value");
+    let dict = _.keyBy(options, "value");
     return values.map(v => {
         let found = dict[v];
         return (found && found.text) || v;

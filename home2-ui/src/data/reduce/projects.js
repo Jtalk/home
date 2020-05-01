@@ -15,7 +15,7 @@ import {ajaxSelector, fetchAjax} from "./ajax";
 import {call, put, takeLatest} from "redux-saga/effects";
 import {publishableData, useAllData, usePublishedData} from "./global/publishable-data";
 import {useMemo} from "react";
-import {find} from "lodash-es";
+import _ from "lodash";
 
 export const Action = {
     LOAD: Symbol("projects load"),
@@ -84,7 +84,7 @@ export function useProjects(withUnpublished = false) {
 export function useProject(id, withUnpublished = false) {
     let projects = useProjects(withUnpublished) || [];
     if (id) {
-        return find(projects, p => p.id === id);
+        return _.find(projects, p => p.id === id);
     } else {
         return projects && projects[0];
     }

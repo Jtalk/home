@@ -14,7 +14,7 @@
     "highlight.js": "^9.18.1",
     "history": "^4.10.1",
     "immutable": "^4.0.0-rc.12",
-    "lodash-es": "^4.17.15",
+    "lodash": "^4.17.15",
     "markdown-to-jsx": "^6.11.1",
     "optional": "^0.1.4",
     "react": "^16.13.1",

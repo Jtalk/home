@@ -4,7 +4,7 @@ import {useState} from "react";
 import {Form} from "semantic-ui-react";
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat"
-import {isEqual} from "lodash-es";
+import _ from "lodash";
 
 // We hard code this format. JS Date Locale API is sooo broken...
 const FORMAT = "DD MMM YYYY, HH:mm:ss";
@@ -14,7 +14,7 @@ export const DatePicker = function ({value, onChange}) {
     let [state, setState] = useState(null);
     let [renderedValue, setRenderedValue] = useState(value);
     let [valid, setValid] = useState(true);
-    if (!isEqual(value, renderedValue)) {
+    if (!_.isEqual(value, renderedValue)) {
         setRenderedValue(value);
         setState(asString(value));
         setValid(true);

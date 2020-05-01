@@ -1,6 +1,6 @@
 import * as request from "superagent";
 import api from "./superagent-api";
-import {mapKeys} from "lodash-es";
+import _ from "lodash";
 
 export class ArticlesRequests {
 
@@ -9,7 +9,7 @@ export class ArticlesRequests {
         let response = await request.get(`/blog/articles?page=${page}&pageSize=${pageSize}&published=${publishedOnly}`)
             .use(api);
         console.debug(`Articles loaded with`, response.status, response.body);
-        let result = mapKeys(response.body, (v, k) => k === "data" ? "articles" : k);
+        let result = _.mapKeys(response.body, (v, k) => k === "data" ? "articles" : k);
         result.articles = result.articles.map(datesFromRest);
         return result;
     }
