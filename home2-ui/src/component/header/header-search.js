@@ -74,7 +74,12 @@ function toVisualResultDescription(query, ...candidates) {
     if (!result.length) {
         return "preview unavailable";
     }
-    return _.maxBy(result, r => -r.score).item;
+    let value = _.maxBy(result, r => -r.score).item;
+    if (value && value.length > 50) {
+        return value.substring(0, 50) + "...";
+    } else {
+        return value;
+    }
 }
 
 function toVisualResults(query, raw) {
