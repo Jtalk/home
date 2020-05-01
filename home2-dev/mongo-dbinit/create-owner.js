@@ -4,6 +4,18 @@ print('Creating collection Owner');
 photoId = db['fs.files'].findOne({filename: 'avatar.png'})._id
 print('Using GridFS object as the owner\'s photo: ' + photoId);
 
+db.owner.createIndex({
+	name: "text",
+	nickname: "text",
+	description: "text",
+	bio: "text",
+	contacts: "text",
+}, {
+	weights: {
+		name: 2,
+		nickname: 2
+	}
+})
 db.owner.insert({
 	name: 'Vasya Pupkin',
 	nickname: 'pupkivas',
