@@ -11,12 +11,14 @@ import {Link} from "react-router-dom";
 
 export const HeaderSearch = function () {
 
-    let onSearchChange = useSearch();
+    let onSearch = useSearch();
     let loading = useSearchStatus();
     let query = useSearchQuery() || "";
     let rawResults = useSearchResults() || [];
     let results = useMemo(() => toVisualResults(query, rawResults), [query, rawResults]);
     console.debug(`Showing search results for term '${query}':`, results);
+
+    let onSearchChange = _.throttle(onSearch, 300, {leading: true});
 
     return <HeaderSearchStateless {...{loading, results, onSearchChange}}/>
 };
