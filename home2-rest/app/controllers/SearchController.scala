@@ -10,6 +10,7 @@ import models.owner.OwnerInfo
 import models.project.Project
 import models.search.{SearchResult, Searchable}
 import play.api.http.Writeable
+import play.api.libs.json.Json.obj
 import play.api.libs.json.{JsObject, Json, OWrites, Reads}
 import play.api.mvc._
 import play.api.{Configuration, Logger}
@@ -34,9 +35,9 @@ class SearchController @Inject()(cc: ControllerComponents,
       log.error(s"Too many search results were requested: requested ${maxResultsReq}, but max is ${maxSearchResults}")
     }
     val maxResults = min(maxResultsReq, maxSearchResults)
-    val owner = searchFor[OwnerInfo](query, maxResults)
-    val projects = searchFor[Project](query, maxResults) // FILTER BY PUBLISHED
-    val blog = searchFor[Article](query, maxResults) // FILTER BY PUBLISHED
+    val owner = searchFor[OwnerInfo](query, maxResults, obj())
+    val projects = searchFor[Project](query, maxResults, obj("published" -> true))
+    val blog = searchFor[Article](query, maxResults, obj("published" -> true))
     val total = owner.flatMap(o => projects.flatMap(p => blog.map(_ ++ p ++ o)))
     total
       .map(_.sortBy(_("score").as[Float])(Ordering.Float.reverse))
@@ -45,9 +46,9 @@ class SearchController @Inject()(cc: ControllerComponents,
       .map(Ok(_))
   }
 
-  private def searchFor[T <: Searchable](query: String, max: Int)(implicit m: ModelType[T],
+  private def searchFor[T <: Searchable](query: String, max: Int, filter: JsObject)(implicit m: ModelType[T],
                                                     w: OWrites[SearchResult[T]],
                                                     r: Reads[SearchResult[T]]): Future[Seq[JsObject]]
-  = db.search[T](query, max)
+  = db.search[T](query, max, filter)
     .fmap(Json.toJsObject[SearchResult[T]])
 }
