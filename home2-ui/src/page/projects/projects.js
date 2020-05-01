@@ -22,3 +22,7 @@ export const Projects = function ({selectedProjectId}) {
         <ProjectDescription loading={loading === Loading.LOADING} {...selectedProject}/>
     </div>
 };
+
+export function projectHref(id) {
+    return `/projects/${id}`;
+}

@@ -69,3 +69,7 @@ export const ArticleView = function ({article, loading, href, preview}) {
         </Item>
     </Segment>
 };
+
+export function blogArticleHref(id) {
+    return `/blog/articles/${id}`;
+}

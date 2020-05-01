@@ -18,6 +18,7 @@ import {createMemoryHistory} from "history";
 import {emptySaga} from "../utils/testing/test-saga";
 import {Map} from "immutable";
 import {reportError} from "../utils/error-reporting";
+import {search} from "./reduce/search";
 
 export const reducers = {
     ajax,
@@ -29,6 +30,7 @@ export const reducers = {
     tags,
     footer,
     images,
+    search,
 };
 
 export function createAppStore(history) {

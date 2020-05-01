@@ -17,6 +17,7 @@ import {useOwner} from "../data/reduce/owner";
 import {EditAccount} from "../page/admin/edit-account";
 import {ActiveRouteProvider, routeConcat, useActiveRoute} from "./active-route-context";
 import {useQueryParam} from "./query";
+import {HeaderSearch} from "../component/header/header-search";
 
 export const Navigation = function ({renderMode}) {
     let {name} = useOwner();
@@ -52,9 +53,9 @@ export const Navigation = function ({renderMode}) {
                 </NavigationRoute>
             </NavigationDropdown>
             <NavigationRight path="/user">
-                {/*<MenuOnly path="/noroute">*/}
-                {/*    <HeaderSearch/>*/}
-                {/*</MenuOnly>*/}
+                <MenuOnly path="/noroute">
+                    <HeaderSearch/>
+                </MenuOnly>
                 <NavigationDropdown authenticated icon="user" path="/">
                     <MenuOnly path="/noroute">
                         <Dropdown.Header content={name}/>

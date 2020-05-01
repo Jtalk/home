@@ -1,11 +1,88 @@
-import React from "react";
+import React, {useMemo, useState} from "react";
+import {Search} from "semantic-ui-react";
+import {Loading} from "../../data/reduce/global/enums";
+import {useSearch, useSearchQuery, useSearchResults, useSearchStatus} from "../../data/reduce/search";
+import {reportError} from "../../utils/error-reporting";
+import Fuse from "fuse.js";
+import _ from "lodash";
+import {blogArticleHref} from "../../page/blog/blog-article";
+import {projectHref} from "../../page/projects/projects";
+import {Link} from "react-router-dom";
 
 export const HeaderSearch = function () {
-    return <div className="ui right aligned category search item">
-        <div className="ui transparent icon input">
-            <input className="prompt" type="text" placeholder="Search..."/>
-            <i className="search link icon"/>
-        </div>
-        <div className="results"/>
-    </div>
+
+    let onSearchChange = useSearch();
+    let loading = useSearchStatus();
+    let query = useSearchQuery() || "";
+    let rawResults = useSearchResults() || [];
+    let results = useMemo(() => toVisualResults(query, rawResults), [query, rawResults]);
+    console.debug(`Showing search results for term '${query}':`, results);
+
+    return <HeaderSearchStateless {...{loading, results, onSearchChange}}/>
 };
+
+export const HeaderSearchStateless = function ({loading, results, onSearchChange}) {
+    let [query, setQuery] = useState("");
+    let onChange = (e, {value}) => {
+        setQuery(value);
+        onSearchChange(value);
+    };
+    return <Search category size="mini" aligned="right"
+                   className="item"
+                   loading={loading === Loading.LOADING}
+                   results={results}
+                   onSearchChange={onChange}
+                   resultRenderer={HeaderSearchResult}
+                   value={query} />
+};
+
+export const HeaderSearchResult = ({ title, description, url }) =>
+    <Link className='content' to={url}>
+        {title && <div className='title'>{title}</div>}
+        {description && <div className='description'>{description}</div>}
+    </Link>
+
+function toVisualResult(query, type, value) {
+    switch (type) {
+        case "article":
+            return {
+                url: blogArticleHref(value.id),
+                title: value.title,
+                description: toVisualResultDescription(query, value.title, value.id, value.content, ...(value.tags)),
+            }
+        case "project":
+            return {
+                url: projectHref(value.id),
+                title: value.title,
+                description: toVisualResultDescription(query, value.title, value.id, value.description, ...(value.links || []).map(v => v.name)),
+            }
+        case "owner":
+            return {
+                url: "/",
+                title: "Owner",
+                description: toVisualResultDescription(query, value.name, value.nickname, value.description, value.bio),
+            }
+        default:
+            console.error(`Unknown search result type ${type} when visualising for the search field`);
+            reportError({errorClass: "search", errorMessage: `Unsupported search result type ${type}`});
+            return null;
+    }
+}
+
+function toVisualResultDescription(query, ...candidates) {
+    let result = new Fuse(candidates, {includeScore: true}).search(query);
+    if (!result.length) {
+        return "preview unavailable";
+    }
+    return _.maxBy(result, r => -r.score).item;
+}
+
+function toVisualResults(query, raw) {
+    let result = {};
+    raw.forEach(({value, type}) => {
+        let content = toVisualResult(query, type, value);
+        result[type] = result[type] || {name: type, results: []}
+        result[type].results.push(content);
+    });
+    return result;
+}

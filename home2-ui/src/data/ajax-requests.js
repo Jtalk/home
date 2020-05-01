@@ -5,6 +5,7 @@ import {ProjectsRequests} from "./ajax/projects-requests";
 import {ArticlesRequests} from "./ajax/articles-requests";
 import {TagsRequests} from "./ajax/tags-requests";
 import {AuthenticationRequests} from "./ajax/authentication-requests";
+import {SearchRequests} from "./ajax/search-requests";
 
 export class Ajax {
 
@@ -16,5 +17,6 @@ export class Ajax {
         this.projects = new ProjectsRequests(this.images);
         this.articles = new ArticlesRequests();
         this.tags = new TagsRequests();
+        this.search = new SearchRequests();
     }
 }
