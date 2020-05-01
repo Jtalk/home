@@ -4,7 +4,7 @@ import {Button, Divider, Grid, Item, Segment} from "semantic-ui-react";
 import {formatDateTime} from "../../utils/date-time";
 import {ContentPlaceholderOr} from "../../component/placeholder";
 import {Loading} from "../../data/reduce/global/enums";
-import _ from "lodash";
+import {isEmpty} from "lodash-es";
 import {Titled} from "react-titled";
 import {OwnerCard} from "../about/owner-card";
 import {LatestPosts} from "../about/latest-posts";
@@ -34,7 +34,7 @@ export const BlogArticle = function (props) {
 
 export const ArticleView = function ({article, loading, href, preview}) {
 
-    let articleLoading = _.isEmpty(article) && loading !== Loading.READY;
+    let articleLoading = isEmpty(article) && loading !== Loading.READY;
 
     return <Segment className="items">
         <Titled title={t => (article.title ? article.title + " | " : "") + " | Blog | " + t}/>
