@@ -1,5 +1,8 @@
 package models.owner
 
+import java.time.{ZoneOffset, ZonedDateTime}
+import java.util.UUID
+
 import models.ModelType
 import models.ModelType.ModelType
 import models.search.Searchable
@@ -18,6 +21,8 @@ case class OwnerInfo(name: String,
                      photoId: String,
                      bio: String,
                      contacts: Map[String, Contact],
+                     atomId: UUID,
+                     updated: ZonedDateTime,
                     ) extends Searchable {
 }
 
@@ -32,7 +37,9 @@ object OwnerInfo {
       (JsPath \ "description").read[String] and
       (JsPath \ "photoId").read[String] and
       (JsPath \ "bio").read[String] and
-      (JsPath \ "contacts").read[Map[String, Contact]])
+      (JsPath \ "contacts").read[Map[String, Contact]] and
+      (JsPath \ "atomId").read[UUID] and
+      (JsPath \ "updated").readWithDefault[ZonedDateTime](ZonedDateTime.now(ZoneOffset.UTC)))
     .apply(OwnerInfo.apply _)
 
 

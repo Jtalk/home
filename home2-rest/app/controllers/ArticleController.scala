@@ -5,7 +5,6 @@ import java.time.Clock
 import controllers.common.{Authenticating, PaginatedResult}
 import db.Database
 import javax.inject._
-import models.authentication
 import models.blog.Article
 import play.api.libs.json.Json
 import play.api.mvc._
@@ -44,7 +43,8 @@ class ArticleController @Inject()(cc: ControllerComponents,
   }
 
   def update(id: String) = AuthenticatedAction.async(Article.jsonParser) { _ => request: Request[Article] =>
-    db.update(id, request.body)
+    val update = request.body.copy(updated = now)
+    db.update(id, update)
       .map(Ok[Article])
   }
 

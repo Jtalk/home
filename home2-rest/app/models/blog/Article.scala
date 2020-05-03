@@ -1,6 +1,7 @@
 package models.blog
 
 import java.time.{ZoneOffset, ZonedDateTime}
+import java.util.UUID
 
 import models.ModelType
 import models.ModelType.ModelType
@@ -19,8 +20,10 @@ case class Article(title: String,
                    id: String,
                    published: Boolean,
                    created: ZonedDateTime,
+                   updated: ZonedDateTime,
                    content: String,
                    tags: Set[String],
+                   atomId: UUID,
                   ) extends Identifiable with Searchable {
 }
 object Article {
@@ -33,8 +36,10 @@ object Article {
       (JsPath \ "id").read(minLength[String](1)) and
       (JsPath \ "published").readWithDefault[Boolean](false) and
       (JsPath \ "created").readWithDefault[ZonedDateTime](ZonedDateTime.now(ZoneOffset.UTC)) and
+      (JsPath \ "updated").readWithDefault[ZonedDateTime](ZonedDateTime.now(ZoneOffset.UTC)) and
       (JsPath \ "content").readWithDefault[String]("")and
-      (JsPath \ "tags").readWithDefault[Set[String]](Set[String]()))
+      (JsPath \ "tags").readWithDefault[Set[String]](Set[String]()) and
+      (JsPath \ "atomId").read[UUID])
     .apply(Article.apply _)
 
   implicit def jsonParser(implicit bodyParsers: PlayBodyParsers, ec: ExecutionContext) = WebUtils.bodyParser[Article]

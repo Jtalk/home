@@ -14,6 +14,7 @@ object Extension {
     def fflatMap[R](f: T => Future[R])(implicit ec: ExecutionContext): Future[Option[R]] = fo.flatMap(o => o.map(f).map(v => v.map(x => Some(x))).getOrElse(Future.apply(None)))
     def foflatMap[R](f: T => Future[Option[R]])(implicit ec: ExecutionContext): Future[Option[R]] = fflatMap(f).map(o => o.flatten)
     def foget(fallback: => T)(implicit ec: ExecutionContext): Future[T] = fo.map(_.getOrElse(fallback))
+    def liftMissing(e: => Throwable)(implicit ec: ExecutionContext): Future[T] = fomap(Future.successful).flatMap(_.getOrElse(Future.failed(e)))
   }
   implicit class Opt[T](val o: Option[T]) extends AnyVal {
     def withValue(f: T => Unit): Option[T] = o.map(v => { f(v); v })

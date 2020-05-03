@@ -7,7 +7,6 @@ import db.Database
 import javax.inject._
 import models.owner.OwnerInfo
 import play.api.Configuration
-import play.api.libs.json.{JsBoolean, JsObject}
 import play.api.mvc._
 import utils.Extension.FutureOption
 import utils.WebUtils
@@ -42,7 +41,8 @@ class OwnerController @Inject()(cc: ControllerComponents,
   }
 
   def update() = AuthenticatedAction.async(OwnerInfo.jsonParser) { _ => request: Request[OwnerInfo] =>
-    db.updateSingle(request.body)
+    val update = request.body.copy(updated = now)
+    db.updateSingle(update)
       .map(Ok[OwnerInfo])
   }
 }
