@@ -27,7 +27,7 @@ class FeedController @Inject()(cc: ControllerComponents,
   implicit private def ec: ExecutionContext = cc.executionContext
   implicit private def parsers: PlayBodyParsers = controllerComponents.parsers
 
-  private lazy val selfUrl = config.get[String]("app.feed.atom.url.base")
+  private lazy val selfUrl = config.get[String]("app.feed.atom.url")
   private lazy val articleUrl = config.get[String]("app.feed.atom.entry.url.base")
 
   def atom: Action[AnyContent] = Action.async { implicit request: Request[AnyContent] =>
