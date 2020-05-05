@@ -227,6 +227,7 @@ jobs:
         with:
           namespace: home-staging
           manifests: |
+            home2-rest/deploy/staging/configmap.yaml
             home2-rest/deploy/deployment.yaml
             home2-rest/deploy/service.yaml
             home2-rest/deploy/staging/ingress.yaml
@@ -333,6 +334,7 @@ jobs:
         with:
           namespace: home
           manifests: |
+            home2-rest/deploy/live/configmap.yaml
             home2-rest/deploy/deployment.yaml
             home2-rest/deploy/service.yaml
             home2-rest/deploy/live/ingress.yaml
