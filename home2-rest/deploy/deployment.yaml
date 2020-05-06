@@ -49,7 +49,8 @@ spec:
                   name: home-api
                   key: mongo-uri
           envFrom:
-            - configMapRef: home-api
+            - configMapRef:
+              - home-api
           startupProbe:
             httpGet:
               path: /status
