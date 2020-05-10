@@ -7,6 +7,7 @@ import {call, put, takeEvery, delay, select} from "redux-saga/effects";
 import {ajaxSelector, fetchAjax, useAjax} from "./ajax";
 import {useDispatch} from "react-redux";
 import {reportError} from "../../utils/error-reporting";
+import storageAvailable from "storage-available";
 
 export const EXISTING_PASSWORD_MISMATCH = "The existing password does not match";
 
@@ -35,8 +36,6 @@ export function authentication(state = DEFAULT, action) {
         case Action.LOGGING_IN:
             return state.merge({login: Login.LOGGING_IN, errorMessage: undefined});
         case Action.LOGIN:
-            window.localStorage.setItem(SESSION_EXPIRY_KEY, action.data.expiry);
-            window.localStorage.setItem(SESSION_USERNAME_KEY, action.data.username);
             return state.merge({
                 login: Login.LOGGED_IN,
                 expiry: dayjs(action.data.expiry),
@@ -44,13 +43,10 @@ export function authentication(state = DEFAULT, action) {
                 errorMessage: undefined
             });
         case Action.REFRESH:
-            window.localStorage.setItem(SESSION_EXPIRY_KEY, action.data.expiry);
             return state.merge({
                 expiry: dayjs(action.data.expiry),
             });
         case Action.LOGOUT:
-            window.localStorage.removeItem(SESSION_EXPIRY_KEY);
-            window.localStorage.removeItem(SESSION_USERNAME_KEY);
             return DEFAULT;
         case Action.ERROR:
             return state.merge({login: Login.ERROR, errorMessage: action.errorMessage});
@@ -61,15 +57,17 @@ export function authentication(state = DEFAULT, action) {
 
 export function* watchAuthentication() {
     yield takeEvery(Action.LOGIN, ({data: {expiry}}) => runTokenRefresh(expiry));
+    yield takeEvery(Action.LOGIN, ({data}) => updateLocalStore(data));
     yield takeEvery(Action.REFRESH, ({data: {expiry}}) => runTokenRefresh(expiry));
+    yield takeEvery(Action.REFRESH, ({data}) => updateLocalStore(data));
     yield takeEvery(Action.LOGOUT, logout);
     yield initAuthentication();
 }
 
 // Pre-load possible authentication state from the local store.
 function* initAuthentication() {
-    let expiry = window.localStorage.getItem(SESSION_EXPIRY_KEY);
-    let username = window.localStorage.getItem(SESSION_USERNAME_KEY);
+    let expiry = localStoreGet(SESSION_EXPIRY_KEY);
+    let username = localStoreGet(SESSION_USERNAME_KEY);
     if (!expiry || !username) {
         console.log("No saved credentials found in local store, unauthenticated");
         return;
@@ -86,8 +84,7 @@ function* initAuthentication() {
     }
     // Else our auth has expired already, cleaning the local store
     console.info("The authentication data in the local store has expired, cleaning it up");
-    window.localStorage.removeItem(SESSION_EXPIRY_KEY);
-    window.localStorage.removeItem(SESSION_USERNAME_KEY);
+    clearLocalStore();
 }
 
 function* refresh() {
@@ -207,9 +204,46 @@ function* logout() {
     let ajax = yield fetchAjax();
     try {
         yield call(ajax.authentication.logout);
+        clearLocalStore();
     } catch (e) {
         console.error("Error while logging out", e);
         reportError(e);
         alert(e.message);
+    }
+}
+
+function updateLocalStore(actionData) {
+    localStoreSet(SESSION_EXPIRY_KEY, actionData.expiry);
+    if (actionData.username) {
+        localStoreSet(SESSION_USERNAME_KEY, actionData.username);
+    }
+}
+
+function clearLocalStore() {
+    localStoreRemove(SESSION_EXPIRY_KEY);
+    localStoreRemove(SESSION_USERNAME_KEY);
+}
+
+function localStoreGet(name) {
+    if (storageAvailable("localStorage")) {
+        return window.localStorage.getItem(name);
+    } else {
+        return undefined;
+    }
+}
+
+function localStoreSet(name, value) {
+    if (storageAvailable("localStorage")) {
+        return window.localStorage.setItem(name, value);
+    } else {
+        console.warn("Local store not available, cannot save authentication information between sessions");
+    }
+}
+
+function localStoreRemove(name) {
+    if (storageAvailable("localStorage")) {
+        return window.localStorage.removeItem(name);
+    } else {
+        console.warn("Local store not available, cannot remove authentication information between sessions");
     }
 }

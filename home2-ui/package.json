@@ -36,6 +36,7 @@
     "semantic-ui-react": "^0.88.2",
     "sleepjs": "^3.0.2",
     "stacktrace-js": "^2.0.2",
+    "storage-available": "^1.1.0",
     "superagent": "^4.1.0",
     "superagent-prefix": "^0.0.2",
     "superagent-suffix": "^0.1.0",
