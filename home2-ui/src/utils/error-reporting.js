@@ -19,7 +19,10 @@ export function setupErrorReporting() {
         maxBreadcrumbs: 50,
         maxEvents: 20,
     })
-    const ErrorBoundary = Bugsnag.getPlugin('react')
+}
+
+export function getErrorBoundary() {
+    const ErrorBoundary = Bugsnag.getPlugin('react');
     return {ErrorBoundary};
 }
 

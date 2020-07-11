@@ -6,6 +6,9 @@ import "./utils/config";
 import {Navigation} from "./navigation/navigation"
 import {RenderMode} from "./navigation/render-context";
 import {OwnerTitled} from "./page/about/owner-titled";
+import {getErrorBoundary} from "./utils/error-reporting";
+
+const ErrorBoundary = getErrorBoundary();
 
 export const App = function () {
     return <div className="main-content-pushable">
@@ -15,6 +18,8 @@ export const App = function () {
                 <Navigation renderMode={RenderMode.ROUTER}/>
             </OwnerTitled>
         </Container>
-        <Footer/>
+        <ErrorBoundary>
+            <Footer/>
+        </ErrorBoundary>
     </div>
 };
