@@ -8,10 +8,9 @@ import {Provider as ReduxProvider} from "react-redux";
 import {FileConverterProvider} from "./utils/file-converter-context";
 import {createBrowserHistory} from "history";
 import {ConnectedRouter} from "connected-react-router"
-import {getErrorBoundary, setupErrorReporting} from "./utils/error-reporting";
+import {setupErrorReporting} from "./utils/error-reporting";
 
-setupErrorReporting();
-const ErrorBoundary = getErrorBoundary();
+const {ErrorBoundary} = setupErrorReporting();
 const history = createBrowserHistory();
 const store = createAppStore(history);
 
