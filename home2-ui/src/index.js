@@ -11,7 +11,7 @@ import {ConnectedRouter} from "connected-react-router"
 import {getErrorBoundary, setupErrorReporting} from "./utils/error-reporting";
 
 setupErrorReporting();
-const {ErrorBoundary} = getErrorBoundary();
+const ErrorBoundary = getErrorBoundary();
 const history = createBrowserHistory();
 const store = createAppStore(history);
 

@@ -22,8 +22,7 @@ export function setupErrorReporting() {
 }
 
 export function getErrorBoundary() {
-    const ErrorBoundary = Bugsnag.getPlugin('react');
-    return {ErrorBoundary};
+    return Bugsnag.getPlugin('react');
 }
 
 export function reportError(e) {
