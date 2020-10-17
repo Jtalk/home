@@ -22,23 +22,22 @@ export const HeaderStateless = function ({ownerName, activeRoute, authenticated}
 
     return <Menu secondary pointing>
         <HeaderOwner/>
-        <HeaderMenuItem active={activeRoute === "/"} title={"About"} href={"/"}/>
-        <HeaderMenuItem active={activeRoute.startsWith("/projects")} title={"Projects"} href={"/projects"}/>
-        <HeaderMenuItem active={activeRoute.startsWith("/blog/articles")} title={"Blog"} href={"/blog/articles"}/>
+        <HeaderMenuItem exact active={activeRoute} title={"About"} href={"/"}/>
+        <HeaderMenuItem active={activeRoute} title={"Projects"} href={"/projects"}/>
+        <HeaderMenuItem active={activeRoute} title={"Blog"} href={"/blog/articles"}/>
         {authenticated && <HeaderMenuDropdownItem title={"Admin"}>
-            <HeaderMenuItem active={activeRoute.startsWith("/admin/bio")} title={"Bio"} href={"/admin/bio"}/>
-            <HeaderMenuItem active={activeRoute.startsWith("/admin/projects")} title={"Projects"} href={"/admin/projects"}/>
-            <HeaderMenuItem active={activeRoute.startsWith("/admin/blog/articles")} title={"Blog"} href={"/admin/blog/articles"}/>
-            <HeaderMenuItem active={activeRoute.startsWith("/admin/images")} title={"Images"} href={"/admin/images"}/>
-            <HeaderMenuItem active={activeRoute.startsWith("/admin/footer")} title={"Footer"} href={"/admin/footer"}/>
+            <HeaderMenuItem active={activeRoute} title={"Bio"} href={"/admin/bio"}/>
+            <HeaderMenuItem active={activeRoute} title={"Projects"} href={"/admin/projects"}/>
+            <HeaderMenuItem active={activeRoute} title={"Blog"} href={"/admin/blog/articles"}/>
+            <HeaderMenuItem active={activeRoute} title={"Images"} href={"/admin/images"}/>
+            <HeaderMenuItem active={activeRoute} title={"Footer"} href={"/admin/footer"}/>
         </HeaderMenuDropdownItem>}
         <Menu.Menu position="right">
             <HeaderSearch/>
             {authenticated && <HeaderMenuDropdownItem icon={"user"}>
                 <Dropdown.Header content={ownerName}/>
                 <Dropdown.Divider/>
-                <HeaderMenuItem active={activeRoute.startsWith("/admin/account")} title={"Account"} icon={"settings"}
-                                href={"/admin/account"}/>
+                <HeaderMenuItem active={activeRoute} title={"Account"} icon={"settings"} href={"/admin/account"}/>
                 <LogoutButton/>
             </HeaderMenuDropdownItem>}
         </Menu.Menu>
