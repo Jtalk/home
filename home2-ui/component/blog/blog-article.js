@@ -2,14 +2,14 @@ import React from "react";
 import {Link} from "react-router-dom";
 import {Button, Divider, Grid, Item, Segment} from "semantic-ui-react";
 import {formatDateTime} from "../../utils/date-time";
-import {ContentPlaceholderOr} from "../../component/placeholder";
+import {ContentPlaceholderOr} from "../placeholder";
 import {Loading} from "../../data/reduce/global/enums";
 import _ from "lodash";
 import {Titled} from "react-titled";
 import {OwnerCard} from "../about/owner-card";
 import {LatestPosts} from "../about/latest-posts";
 import {useArticle, useArticleLoading} from "../../data/reduce/articles";
-import {MarkdownTextArea} from "../../component/text-area";
+import {MarkdownTextArea} from "../text-area";
 import {NotFound} from "../error/not-found";
 
 export const BlogArticle = function (props) {

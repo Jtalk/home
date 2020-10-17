@@ -6,7 +6,7 @@ import _ from "lodash";
 import {PartialRoute} from "../../navigation/route";
 import {Titled} from "react-titled";
 import {NotFound} from "../error/not-found";
-import {ContentPlaceholderOr} from "../../component/placeholder";
+import {ContentPlaceholderOr} from "../placeholder";
 import {editHref, EditProject} from "./edit-project";
 
 const NEW_PROJECT_ID = "new";

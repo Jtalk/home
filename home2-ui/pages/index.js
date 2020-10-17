@@ -1,10 +1,10 @@
 import React from 'react';
 import {Container} from "semantic-ui-react";
-import {Footer} from "../src/component/footer/footer";
-import {Navigation} from "../src/navigation/navigation"
-import {RenderMode} from "../src/navigation/render-context";
-import {OwnerTitled} from "../src/page/about/owner-titled";
-import {setupErrorReporting} from "../src/utils/error-reporting";
+import {Footer} from "../component/footer/footer";
+import {Navigation} from "../navigation/navigation"
+import {RenderMode} from "../navigation/render-context";
+import {OwnerTitled} from "../component/about/owner-titled";
+import {setupErrorReporting} from "../utils/error-reporting";
 
 const {ErrorBoundary} = setupErrorReporting();
 

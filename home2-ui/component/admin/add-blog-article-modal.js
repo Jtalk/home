@@ -1,6 +1,6 @@
 import React, {useMemo} from "react";
 import {Button, Form, Icon, Modal} from "semantic-ui-react";
-import {ErrorMessage} from "../../component/form-message";
+import {ErrorMessage} from "../form-message";
 import {useForm} from "./common/use-form";
 import {useArticlesError, useArticleUpdater} from "../../data/reduce/articles";
 import {editHref} from "./edit-blog-article";

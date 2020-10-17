@@ -12,10 +12,10 @@ import {
     ViewImages
 } from "./edit-images";
 import {MemoryRouter} from "react-router"
-import ImageUploader from "../../component/3rdparty/react-image-upload";
-import {Pagination} from "../../component/pagination";
+import ImageUploader from "../3rdparty/react-image-upload";
+import {Pagination} from "../pagination";
 import {formatDateTime} from "../../utils/date-time";
-import {ErrorMessage} from "../../component/form-message";
+import {ErrorMessage} from "../form-message";
 import {Loading, Uploading} from "../../data/reduce/global/enums";
 import {ImageUploadPreview} from "./common/image-upload-preview";
 import {useDataUrl} from "../../utils/file-converter-context";

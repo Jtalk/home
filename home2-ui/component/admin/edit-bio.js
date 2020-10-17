@@ -4,7 +4,7 @@ import {useForm} from "./common/use-form";
 import {Loading, Updating} from "../../data/reduce/global/enums";
 import {Button, Divider, Form, Grid, Input, Segment, TextArea} from "semantic-ui-react";
 import _ from "lodash";
-import {ErrorMessage, SuccessMessage} from "../../component/form-message";
+import {ErrorMessage, SuccessMessage} from "../form-message";
 import {imageUrl} from "../../utils/image";
 import {ImageUploadPreview} from "./common/image-upload-preview";
 import {Titled} from "react-titled";

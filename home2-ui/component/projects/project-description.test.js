@@ -1,8 +1,8 @@
 import React from 'react';
 import {shallow} from "enzyme";
 import {ProjectDescription} from "./project-description";
-import {MarkdownTextArea} from "../../component/text-area";
-import {OptionalImage} from "../../component/image";
+import {MarkdownTextArea} from "../text-area";
+import {OptionalImage} from "../image";
 
   describe("<ProjectDescription/>", () => {
   let project = {

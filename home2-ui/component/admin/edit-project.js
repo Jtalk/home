@@ -8,13 +8,13 @@ import {
     useProjectUpdating
 } from "../../data/reduce/projects";
 import {useForm} from "./common/use-form";
-import {ContentPlaceholderOr} from "../../component/placeholder";
+import {ContentPlaceholderOr} from "../placeholder";
 import React, {useState} from "react";
 import {Button, Divider, Form, Grid, Icon, Input, List, Message} from "semantic-ui-react";
 import {Deleting, Loading, Updating} from "../../data/reduce/global/enums";
-import {ErrorMessage} from "../../component/form-message";
+import {ErrorMessage} from "../form-message";
 import {useFormErrors} from "./common/use-errors";
-import {OptionalImage} from "../../component/image";
+import {OptionalImage} from "../image";
 
 export const EditProject = function ({projectId}) {
 

@@ -1,9 +1,9 @@
 import React, {useState} from "react";
 import {Button, Card, Container, Divider, Form, Grid, Image, Loader, Segment} from "semantic-ui-react";
-import {Pagination} from "../../component/pagination";
+import {Pagination} from "../pagination";
 import {checkTruthy} from "../../utils/validation";
 import {formatDateTime} from "../../utils/date-time";
-import ImageUploader from "../../component/3rdparty/react-image-upload";
+import ImageUploader from "../3rdparty/react-image-upload";
 import {
     useImageDeleter,
     useImages,
@@ -13,7 +13,7 @@ import {
     useImagesUploadingError,
     useImageUploader
 } from "../../data/reduce/images";
-import {ErrorMessage, SuccessMessage} from "../../component/form-message";
+import {ErrorMessage, SuccessMessage} from "../form-message";
 import "./edit-images.module.css";
 import {ImageUploadPreview} from "./common/image-upload-preview";
 import {Titled} from "react-titled";

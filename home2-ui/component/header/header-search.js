@@ -5,8 +5,8 @@ import {useSearch, useSearchQuery, useSearchResults, useSearchStatus} from "../.
 import {reportError} from "../../utils/error-reporting";
 import Fuse from "fuse.js";
 import _ from "lodash";
-import {blogArticleHref} from "../../page/blog/blog-article";
-import {projectHref} from "../../page/projects/projects";
+import {blogArticleHref} from "../blog/blog-article";
+import {projectHref} from "../projects/projects";
 import {Link} from "react-router-dom";
 
 export const HeaderSearch = function () {

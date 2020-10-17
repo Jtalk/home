@@ -2,7 +2,7 @@ import {shallow} from "enzyme";
 import {ImageUploadPreview} from "./image-upload-preview";
 import {useDataUrl} from "../../../utils/file-converter-context";
 import React from "react";
-import {OptionalImage} from "../../../component/image";
+import {OptionalImage} from "../../image";
 
 jest.mock("../../../utils/file-converter-context");
 useDataUrl.mockImplementation(v => v);

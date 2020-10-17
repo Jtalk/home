@@ -1,8 +1,8 @@
 import React from "react";
 import {Grid, Menu} from "semantic-ui-react";
-import {MarkdownTextArea} from "../../component/text-area";
-import {OptionalImage} from "../../component/image";
-import {ContentPlaceholderOr, ImagePlaceholderOr} from "../../component/placeholder";
+import {MarkdownTextArea} from "../text-area";
+import {OptionalImage} from "../image";
+import {ContentPlaceholderOr, ImagePlaceholderOr} from "../placeholder";
 
 export const ProjectDescription = function (project) {
     let {loading} = project;

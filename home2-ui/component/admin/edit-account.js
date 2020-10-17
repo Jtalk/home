@@ -1,7 +1,7 @@
 import {Divider, Form, Grid, Segment} from "semantic-ui-react";
 import {Titled} from "react-titled";
 import {Updating} from "../../data/reduce/global/enums";
-import {ErrorMessage, SuccessMessage} from "../../component/form-message";
+import {ErrorMessage, SuccessMessage} from "../form-message";
 import React, {useState, useMemo} from "react";
 import {EXISTING_PASSWORD_MISMATCH, usePasswordChanger, useUsername} from "../../data/reduce/authentication";
 import {useForm} from "./common/use-form";

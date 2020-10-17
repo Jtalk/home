@@ -2,11 +2,11 @@ import React from "react";
 import {Grid} from "semantic-ui-react";
 import {OwnerCard} from "./owner-card";
 import {LatestPosts} from "./latest-posts";
-import {ContentPlaceholderOr} from "../../component/placeholder";
+import {ContentPlaceholderOr} from "../placeholder";
 import {Loading} from "../../data/reduce/global/enums";
 import {useOwner, useOwnerLoading} from "../../data/reduce/owner";
 import {Titled} from "react-titled";
-import {MarkdownTextArea} from "../../component/text-area";
+import {MarkdownTextArea} from "../text-area";
 
 export const About = function () {
 

@@ -1,6 +1,6 @@
 import React from "react";
 import {Button, Dropdown, Form, Grid, Segment, TextArea} from "semantic-ui-react";
-import {ErrorMessage, SuccessMessage} from "../../component/form-message";
+import {ErrorMessage, SuccessMessage} from "../form-message";
 import {useAvailableTags} from "../../data/reduce/tags";
 import {useForm} from "./common/use-form";
 import {Loading, Updating} from "../../data/reduce/global/enums";

@@ -5,7 +5,7 @@ import {ActiveRouteProvider, useActiveRoute, useCurrentRouteMatch} from "./activ
 import {RenderMode, useRenderMode} from "./render-context";
 import {HeaderMenuDropdownItem} from "../component/header/header-menu-dropdown-item";
 import {useLoggedIn} from "../data/reduce/authentication";
-import {NotFound} from "../page/error/not-found";
+import {NotFound} from "../component/error/not-found";
 
 export const PartialRoute = function (props) {
     let currentRoute = useActiveRoute(props.path);
