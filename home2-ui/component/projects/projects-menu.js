@@ -1,6 +1,7 @@
 import React from "react";
 import {Menu} from "semantic-ui-react";
-import {Link} from "react-router-dom";
+import Link from "next/link";
+import {PathPrefix} from "../../pages/projects";
 
 export const ProjectsMenu = function ({projects = [], selectedProjectId}) {
 
@@ -19,6 +20,8 @@ export const ProjectTab = function ({project, active}) {
     if (active) {
         return <div className="active item">{project.title}</div>
     } else {
-        return <Link className="item" to={`/projects/${project.id}`}>{project.title}</Link>
+        return <Link shallow href={`${PathPrefix}/${project.id}`}>
+            <a className="item">{project.title}</a>
+        </Link>
     }
 };

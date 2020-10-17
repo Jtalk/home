@@ -1,10 +1,10 @@
 import React from "react";
 import {Button, Dropdown, Form, Grid, Segment, TextArea} from "semantic-ui-react";
-import {ErrorMessage, SuccessMessage} from "../form-message";
-import {useAvailableTags} from "../../data/reduce/tags";
-import {useForm} from "./common/use-form";
-import {Loading, Updating} from "../../data/reduce/global/enums";
-import {DatePicker} from "./common/date-picker";
+import {ErrorMessage, SuccessMessage} from "../../../../component/form-message";
+import {useAvailableTags} from "../../../../data/reduce/tags";
+import {useForm} from "../../../../component/admin/common/use-form";
+import {Loading, Updating} from "../../../../data/reduce/global/enums";
+import {DatePicker} from "../../../../component/admin/common/date-picker";
 import _ from "lodash";
 import {
     useArticle,
@@ -12,10 +12,14 @@ import {
     useArticlesError,
     useArticlesUpdating,
     useArticleUpdater
-} from "../../data/reduce/articles";
-import {NotFound} from "../error/not-found";
+} from "../../../../data/reduce/articles";
+import {NotFound} from "../../../../component/error/not-found";
+import {useRouter} from "next/router";
 
-export const EditBlogArticle = function ({articleId}) {
+export default function EditBlogArticle() {
+
+    const router = useRouter();
+    const {articleId} = router.query;
 
     let article = useArticle(articleId);
     let knownTags = useAvailableTags();

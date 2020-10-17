@@ -161,7 +161,7 @@ class ReactImageUploadComponent extends React.Component {
    */
   renderIcon() {
     if (this.props.withIcon) {
-      return <img src={"/images/react-images-upload.svg"} className="uploadIcon" alt="Upload Icon" />;
+      return <img src={"/images/react-image-upload-icon.svg"} className="uploadIcon" alt="Upload Icon" />;
     }
   }
 

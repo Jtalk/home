@@ -8,6 +8,10 @@ import {FileConverterProvider} from "../utils/file-converter-context";
 import {createBrowserHistory, createMemoryHistory} from "history";
 import {ConnectedRouter} from "connected-react-router"
 import {setupErrorReporting} from "../utils/error-reporting";
+import {Container} from "semantic-ui-react";
+import {OwnerTitled} from "../component/about/owner-titled";
+import {Footer} from "../component/footer/footer";
+import {Header} from "../component/header/header";
 
 const {ErrorBoundary} = setupErrorReporting();
 const history = process.browser ? createBrowserHistory() : createMemoryHistory();
@@ -18,7 +22,17 @@ export default function _App({Component, pageProps}) {
         <ReduxProvider store={store}>
             <ConnectedRouter history={history}>
                 <FileConverterProvider>
-                    <Component {...pageProps}/>
+                    <div className="main-content-pushable">
+                        <Container className="main-content-pusher framed">
+                            <OwnerTitled>
+                                <Header/>
+                                <Component {...pageProps}/>
+                            </OwnerTitled>
+                        </Container>
+                        <ErrorBoundary FallbackComponent={<div/>}>
+                            <Footer/>
+                        </ErrorBoundary>
+                    </div>
                 </FileConverterProvider>
             </ConnectedRouter>
         </ReduxProvider>

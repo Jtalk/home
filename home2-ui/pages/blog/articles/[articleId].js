@@ -1,28 +1,34 @@
 import React from "react";
-import {Link} from "react-router-dom";
+import Link from "next/link";
 import {Button, Divider, Grid, Item, Segment} from "semantic-ui-react";
-import {formatDateTime} from "../../utils/date-time";
-import {ContentPlaceholderOr} from "../placeholder";
-import {Loading} from "../../data/reduce/global/enums";
+import {formatDateTime} from "../../../utils/date-time";
+import {ContentPlaceholderOr} from "../../../component/placeholder";
+import {Loading} from "../../../data/reduce/global/enums";
 import _ from "lodash";
 import {Titled} from "react-titled";
-import {OwnerCard} from "../about/owner-card";
-import {LatestPosts} from "../about/latest-posts";
-import {useArticle, useArticleLoading} from "../../data/reduce/articles";
-import {MarkdownTextArea} from "../text-area";
-import {NotFound} from "../error/not-found";
+import {OwnerCard} from "../../../component/about/owner-card";
+import {LatestPosts} from "../../../component/about/latest-posts";
+import {useArticle, useArticleLoading} from "../../../data/reduce/articles";
+import {MarkdownTextArea} from "../../../component/text-area";
+import {NotFound} from "../../../component/error/not-found";
+import {useRouter} from "next/router";
+import {PathPrefix} from "./index";
 
-export const BlogArticle = function (props) {
+export default function ArticleId() {
 
-    let article = useArticle(props.id);
-    let loading = useArticleLoading(props.id) || Loading.LOADING;
+    let router = useRouter();
+    let {articleId} = router.query;
+    let href = `${PathPrefix}/${articleId}`;
+
+    let article = useArticle(articleId);
+    let loading = useArticleLoading(articleId) || Loading.LOADING;
     if (!article && loading !== Loading.LOADING) {
         return <NotFound/>
     }
     return <Grid centered stackable columns={2}>
         <Grid.Row>
             <Grid.Column width={11}>
-                <ArticleView article={article || {}} loading={loading} {...props}/>
+                <ArticleView article={article || {}} loading={loading} href={href}/>
             </Grid.Column>
             <Grid.Column width={3}>
                 <OwnerCard/>
@@ -42,8 +48,8 @@ export const ArticleView = function ({article, loading, href, preview}) {
             <Item.Content>
                 <ContentPlaceholderOr header lines={0} loading={articleLoading}>
                     <Item.Header>
-                        <Link to={href}>
-                            <h1>{article.title}</h1>
+                        <Link href={href}>
+                            <a><h1>{article.title}</h1></a>
                         </Link>
                     </Item.Header>
                 </ContentPlaceholderOr>
@@ -55,8 +61,8 @@ export const ArticleView = function ({article, loading, href, preview}) {
                     <Item.Description>
                         <MarkdownTextArea preview={preview}>{article.content || ''}</MarkdownTextArea>
                         {preview && <p/>}
-                        {preview && <Link to={href} className="ui compact basic small button">
-                            Read further
+                        {preview && <Link href={href}>
+                            <a className="ui compact basic small button">Read further</a>
                         </Link>}
                     </Item.Description>
                     <Item.Extra>

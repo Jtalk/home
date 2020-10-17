@@ -1,10 +1,8 @@
 import React from "react";
 import {Grid, Icon, Menu, Segment} from "semantic-ui-react";
-import {Link, useParams} from "react-router-dom";
+import Link from "next/link";
 import {useProject, useProjectError, useProjects, useProjectUpdater} from "../../data/reduce/projects";
 import _ from "lodash";
-import {PartialRoute} from "../../navigation/route";
-import {Titled} from "react-titled";
 import {NotFound} from "../error/not-found";
 import {ContentPlaceholderOr} from "../placeholder";
 import {editHref, EditProject} from "./edit-project";
@@ -19,23 +17,6 @@ const MAKE_NEW_PROJECT = (order) => ({
     description: "",
     links: [],
 });
-
-export const EditProjectsRouter = function () {
-    return <React.Fragment>
-        <Titled title={t => "Edit Projects | " + t}/>
-        <PartialRoute exact path="/">
-            <EditProjectsRoute/>
-        </PartialRoute>
-        <PartialRoute path="/:projectId">
-            <EditProjectsRoute/>
-        </PartialRoute>
-    </React.Fragment>
-};
-
-export const EditProjectsRoute = function () {
-    let projectId = useParams().projectId;
-    return <EditProjects currentProjectId={projectId}/>
-};
 
 export const EditProjects = function ({currentProjectId}) {
 
@@ -96,8 +77,9 @@ export const EditProjectsStateless = function ({projects, currentProject, curren
                         {
                             (projects || []).map(project => project.id === currentProjectId
                                 ? <Menu.Item active key={project.id}>{project.title}</Menu.Item>
-                                : <Link className="item" to={editHref(project.id)}
-                                        key={project.id}>{project.title}</Link>)
+                                : <Link href={editHref(project.id)} key={project.id}>
+                                    <a className="item">{project.title}</a>
+                                </Link>)
                         }
                         <Menu.Item>
                             <Icon link name="plus" disabled={!projects || (currentProject && currentProject.id === NEW_PROJECT_ID)}

@@ -19,5 +19,25 @@ module.exports = {
                 template: `${api}/images/{}`
             }
         }
-    }
+    },
+    async redirects() {
+        return [
+            {
+                source: '/home',
+                destination: '/',
+                permanent: true,
+            },
+            {
+                source: '/home/projects.xhtml',
+                destination: '/projects',
+                permanent: true,
+            },
+            {
+                source: '/home/blog/post.xhtml',
+                destination: '/blog/articles',
+                permanent: true,
+            },
+
+        ]
+    },
 }

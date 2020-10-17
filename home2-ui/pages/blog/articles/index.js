@@ -1,35 +1,35 @@
 import React from "react";
-import {ArticleView} from "./blog-article";
+import {ArticleView} from "./[articleId]";
 import {Grid, Menu, Segment} from "semantic-ui-react";
-import {OwnerCard} from "../about/owner-card";
-import {LatestPosts} from "../about/latest-posts";
-import {useHistory} from "react-router-dom";
-import {DEFAULT_PAGE_SIZE, useArticles, useArticlesLoading, useArticlesTotalCount} from "../../data/reduce/articles";
-import {Loading} from "../../data/reduce/global/enums";
+import {OwnerCard} from "../../../component/about/owner-card";
+import {LatestPosts} from "../../../component/about/latest-posts";
+import {DEFAULT_PAGE_SIZE, useArticles, useArticlesLoading, useArticlesTotalCount} from "../../../data/reduce/articles";
+import {Loading} from "../../../data/reduce/global/enums";
 import {Titled} from "react-titled";
-import {routeConcat, useActiveRoute} from "../../navigation/active-route-context";
-import {useQueryParam} from "../../navigation/query";
+import {useRouter} from "next/router";
 
-export const Blog = function () {
+export const PathPrefix = "/blog/articles";
 
-    let history = useHistory();
+export default function Blog() {
 
-    let page = useQueryParam("page", 1);
-    let path = useActiveRoute();
+    let router = useRouter();
+
+    let {page = 1} = router.query;
+    page = parseInt(Array.isArray(page) ? page[0] : page);
 
     let articles = useArticles(page - 1, DEFAULT_PAGE_SIZE);
     let totalCount = useArticlesTotalCount();
     let loading = useArticlesLoading();
 
-    let navigateToPage = (page) => {
-        history.push(path + `?page=${page}`)
+    let navigateToPage = async (page) => {
+        await router.push(`${PathPrefix}?page=${page}`, undefined, { shallow: true });
     };
 
     return <Grid centered stackable columns={2}>
         <Titled title={t => "Blog | " + t}/>
         <Grid.Row>
             <Grid.Column width={11}>
-                <BlogArticles loading={loading} articles={articles} blogPathPrefix={path}/>
+                <BlogArticles loading={loading} articles={articles}/>
             </Grid.Column>
             <Grid.Column width={3}>
                 <OwnerCard/>
@@ -44,14 +44,14 @@ export const Blog = function () {
     </Grid>
 };
 
-export const BlogArticles = function ({loading, articles, blogPathPrefix}) {
+export const BlogArticles = function ({loading, articles}) {
     if (loading === Loading.LOADING) {
         articles = Array(5).fill({});
     }
     return articles.map((article, i) => <ArticleView preview key={i}
                                                 article={article}
                                                 loading={loading}
-                                                href={routeConcat(blogPathPrefix, article.id)}/>)
+                                                href={`${PathPrefix}/${article.id}`}/>)
 };
 
 export const Pagination = function ({loading, total, page, navigate}) {

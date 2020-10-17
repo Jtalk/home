@@ -1,18 +1,18 @@
 import {Divider, Form, Grid, Segment} from "semantic-ui-react";
 import {Titled} from "react-titled";
 import {Updating} from "../../data/reduce/global/enums";
-import {ErrorMessage, SuccessMessage} from "../form-message";
-import React, {useState, useMemo} from "react";
+import {ErrorMessage, SuccessMessage} from "../../component/form-message";
+import React, {useMemo, useState} from "react";
 import {EXISTING_PASSWORD_MISMATCH, usePasswordChanger, useUsername} from "../../data/reduce/authentication";
-import {useForm} from "./common/use-form";
-import {useFormErrors} from "./common/use-errors";
+import {useForm} from "../../component/admin/common/use-form";
+import {useFormErrors} from "../../component/admin/common/use-errors";
 import {reportError} from "../../utils/error-reporting";
 
 const PASSWORD_FORM = () => ({
     password: {}
 });
 
-export const EditAccount = function () {
+export default function EditAccount() {
 
     let username = useUsername();
     let changer = usePasswordChanger();

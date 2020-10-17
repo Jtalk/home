@@ -1,6 +1,6 @@
 import React from "react";
 import {act} from "react-dom/test-utils";
-import {BioTextArea, EditBio, EditBioStateless, PhotoUpload} from "./edit-bio";
+import {BioTextArea, Bio, EditBioStateless, PhotoUpload} from "./edit-bio";
 import {mount, shallow} from "enzyme";
 import {Button, Form, Image, Input, TextArea} from "semantic-ui-react";
 import {imageUrl} from "../../utils/image";
@@ -8,7 +8,7 @@ import {Loading, Updating} from "../../data/reduce/global/enums";
 import {Provider as ReduxProvider} from "react-redux";
 import {createTestStore} from "../../data/redux";
 import {owner as ownerReducer, watchOwner} from "../../data/reduce/owner";
-import {ImageUploadPreview} from "./common/image-upload-preview";
+import {ImageUploadPreview} from "../../component/admin/common/image-upload-preview";
 import {FileConverterProvider} from "../../utils/file-converter-context";
 import {END} from "redux-saga";
 
@@ -65,7 +65,7 @@ describe("<EditBio/>", () => {
         let result = await mount(
             <ReduxProvider store={store}>
                 <FileConverterProvider fileConverter={fileConverter}>
-                    <EditBio/>
+                    <Bio/>
                 </FileConverterProvider>
             </ReduxProvider>
         );

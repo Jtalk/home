@@ -4,8 +4,9 @@ import {formatDateTime} from "../../utils/date-time";
 import {useLatestArticles, useLatestArticlesLoading} from "../../data/reduce/latest-articles";
 import {ContentPlaceholderOr} from "../placeholder";
 import {Loading} from "../../data/reduce/global/enums";
-import {Link} from "react-router-dom";
+import Link from "next/link";
 import "./latest-posts.module.css";
+import {PathPrefix as BlogPathPrefix} from "../../pages/blog/articles";
 
 export const LatestPosts = function () {
 
@@ -34,7 +35,9 @@ function createPostItem(post) {
     return <List.Item key={post.title}>
         <List.Content>
             <List.Header as="h4">
-                <Link to={`/blog/articles/${post.id}`}>{post.title}</Link>
+                <Link href={`${BlogPathPrefix}/${post.id}`}>
+                    <a>{post.title}</a>
+                </Link>
             </List.Header>
             <List.Description>
                 <div className="datetime">{formatDateTime(post.created)}</div>

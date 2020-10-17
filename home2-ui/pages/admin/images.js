@@ -1,9 +1,9 @@
 import React, {useState} from "react";
 import {Button, Card, Container, Divider, Form, Grid, Image, Loader, Segment} from "semantic-ui-react";
-import {Pagination} from "../pagination";
+import {Pagination} from "../../component/pagination";
 import {checkTruthy} from "../../utils/validation";
 import {formatDateTime} from "../../utils/date-time";
-import ImageUploader from "../3rdparty/react-image-upload";
+import ImageUploader from "../../component/3rdparty/react-image-upload";
 import {
     useImageDeleter,
     useImages,
@@ -13,15 +13,16 @@ import {
     useImagesUploadingError,
     useImageUploader
 } from "../../data/reduce/images";
-import {ErrorMessage, SuccessMessage} from "../form-message";
-import "./edit-images.module.css";
-import {ImageUploadPreview} from "./common/image-upload-preview";
+import {ErrorMessage, SuccessMessage} from "../../component/form-message";
+import "./images.module.css";
+import {ImageUploadPreview} from "../../component/admin/common/image-upload-preview";
 import {Titled} from "react-titled";
 import {Loading, Uploading} from "../../data/reduce/global/enums";
-import {useQueryParam} from "../../navigation/query";
+import {useRouter} from "next/router";
 
-export const EditImagesRouter = function () {
-    let page = useQueryParam("page", 0);
+export default function EditImagesPage() {
+    const router = useRouter();
+    const {page = 1} = router.query;
     return <EditImages page={page}/>
 };
 

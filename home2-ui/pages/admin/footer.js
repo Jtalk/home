@@ -1,15 +1,21 @@
 import React, {useMemo} from "react";
 import {Divider, Form, Grid, Icon, Image, List, Segment} from "semantic-ui-react";
-import {ErrorMessage} from "../form-message";
-import {useFooter, useFooterError, useFooterLoading, useFooterUpdater, useFooterUpdating} from "../../data/reduce/footer";
-import {useForm} from "./common/use-form";
+import {ErrorMessage} from "../../component/form-message";
+import {
+    useFooter,
+    useFooterError,
+    useFooterLoading,
+    useFooterUpdater,
+    useFooterUpdating
+} from "../../data/reduce/footer";
+import {useForm} from "../../component/admin/common/use-form";
 import {Loading, Updating} from "../../data/reduce/global/enums";
 import {Titled} from "react-titled";
 
 let EMPTY_LINK = () => ({caption: '', href: ''});
 let EMPTY_LOGO = () => ({name: '', src: ''});
 
-export const EditFooter = function () {
+export default function Footer() {
 
     let footer = useFooter();
     let errorMessage = useFooterError();

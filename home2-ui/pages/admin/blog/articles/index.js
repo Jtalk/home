@@ -1,19 +1,18 @@
 import React from "react";
 import {Button, Grid, Icon, List, Segment} from "semantic-ui-react";
-import {formatDateTime} from "../../utils/date-time";
-import {Link} from "react-router-dom";
-import {AddBlogArticleModal} from "./add-blog-article-modal";
-import {useArticles, useArticlesDeleter} from "../../data/reduce/articles";
-import {editHref} from "./edit-blog-article";
+import {formatDateTime} from "../../../../utils/date-time";
+import Link from "next/link";
+import {AddBlogArticleModal} from "../../../../component/admin/add-blog-article-modal";
+import {useArticles, useArticlesDeleter} from "../../../../data/reduce/articles";
+import {editHref} from "./[articleId]";
 
 const DEFAULT_PAGE_SIZE = 100;
 
-export const EditBlog = function ({page = 0, pageSize = DEFAULT_PAGE_SIZE}) {
-
+export default function EditBlog() {
     let articles = useArticles(0, DEFAULT_PAGE_SIZE, true); // TODO: Add pagination to blog editor
     let onDelete = useArticlesDeleter();
 
-    return <EditBlogStateless {...{articles, page, onDelete}}/>
+    return <EditBlogStateless page={1} {...{articles, onDelete}}/>
 };
 
 export const EditBlogStateless = function ({articles, page, onDelete}) {
@@ -37,12 +36,16 @@ export const EditBlogStateless = function ({articles, page, onDelete}) {
 export const EditBlogItem = function ({article, onDelete}) {
     return <List.Item>
         <List.Content floated="right">
-            <Link className="ui button" to={editHref(article.id)}>Edit</Link>
+            <Link href={editHref(article.id)}>
+                <a className="ui button">Edit</a>
+            </Link>
             <Button size="small" color="red" onClick={onDelete}>Delete</Button>
         </List.Content>
         <List.Content>
             <List.Header as="h3">
-                <Link to={href(article.id)}>{article.title}</Link>
+                <Link href={href(article.id)}>
+                    <a>{article.title}</a>
+                </Link>
             </List.Header>
             <List.Description>
                 Created {formatDateTime(article.created)}
