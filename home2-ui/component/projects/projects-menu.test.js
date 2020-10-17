@@ -31,6 +31,6 @@ describe("<ProjectTab/>", () => {
   });
   it('renders inactive item as a link', () => {
     let result = shallow(<ProjectTab project={project}/>);
-    expect(result.find(Link).props()).toMatchObject({to: "/projects" + project.href, children: project.title});
+    expect(result.find(Link).props()).toMatchObject({href: "/projects" + project.href, children: <a>{project.title}</a>});
   });
 });
