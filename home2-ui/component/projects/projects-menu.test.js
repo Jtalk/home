@@ -1,7 +1,7 @@
 import React from 'react';
 import {shallow} from "enzyme";
 
-import {Link} from "react-router-dom";
+import Link from "next/link";
 import {ProjectsMenu, ProjectTab} from "./projects-menu";
 import {Menu} from "semantic-ui-react";
 
