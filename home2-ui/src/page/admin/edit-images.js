@@ -3,7 +3,7 @@ import {Button, Card, Container, Divider, Form, Grid, Image, Loader, Segment} fr
 import {Pagination} from "../../component/pagination";
 import {checkTruthy} from "../../utils/validation";
 import {formatDateTime} from "../../utils/date-time";
-import ImageUploader from "react-images-upload";
+import ImageUploader from "../../component/3rdparty/react-image-upload";
 import {
     useImageDeleter,
     useImages,
@@ -14,7 +14,7 @@ import {
     useImageUploader
 } from "../../data/reduce/images";
 import {ErrorMessage, SuccessMessage} from "../../component/form-message";
-import "./edit-images.css";
+import "./edit-images.module.css";
 import {ImageUploadPreview} from "./common/image-upload-preview";
 import {Titled} from "react-titled";
 import {Loading, Uploading} from "../../data/reduce/global/enums";

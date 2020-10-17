@@ -1,5 +1,5 @@
 import React from "react";
-import "./flat-logo-list.css";
+import "./flat-logo-list.module.css";
 
 const LOGO_HEIGHT = '40px';
 

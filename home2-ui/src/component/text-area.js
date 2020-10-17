@@ -1,9 +1,6 @@
 import React, {useEffect, useRef} from "react";
 import Markdown from "markdown-to-jsx";
 import hljs from "highlight.js/lib/highlight";
-
-import "highlight.js/styles/idea.css";
-
 import javascript from "highlight.js/lib/languages/javascript";
 import cpp from "highlight.js/lib/languages/cpp";
 import java from "highlight.js/lib/languages/java";

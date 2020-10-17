@@ -1,9 +1,12 @@
-import config from "react-global-configuration";
 import prefix from "superagent-prefix";
 import {sleep} from "sleepjs";
+import getConfig from "next/config";
+import Duration from "duration-js";
+
+const {publicRuntimeConfig: config} = getConfig();
 
 export default function api(request) {
-    let apiPrefix = config.get("api.prefix");
+    let apiPrefix = config.api.prefix;
     request = request
         .use(prefix(apiPrefix))
         .withCredentials();
@@ -25,7 +28,7 @@ function delayed(saRequest) {
 }
 
 async function apiDelay() {
-    let delay = config.get("api.debug.delay");
+    let delay = Duration.parse(config.api.debug.delay);
     if (delay) {
         console.debug("Simulating a loading delay for debug");
         await sleep(delay.milliseconds());
@@ -33,6 +36,6 @@ async function apiDelay() {
 }
 
 function isApiDelayEnabled() {
-    let delayValue = config.get("api.debug.delay");
+    let delayValue = Duration.parse(config.api.debug.delay);
     return !!delayValue && !!delayValue.milliseconds();
 }

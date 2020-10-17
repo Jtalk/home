@@ -3,7 +3,7 @@ import {Container, Segment} from "semantic-ui-react";
 import {FlatLinksList} from "./flat-links-list";
 import {FlatLogoList} from "./flat-logo-list";
 import {useFooter} from "../../data/reduce/footer";
-import "./footer.css";
+import "./footer.module.css";
 
 export const Footer = function () {
     let {links, logos} = useFooter();

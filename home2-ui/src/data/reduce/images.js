@@ -1,6 +1,5 @@
 import {fromJS} from "immutable";
 import {action, error} from "./global/actions";
-import config from 'react-global-configuration';
 import {Deleting, Loading, Uploading} from "./global/enums";
 import {useDeleter2, useLastError, useLoader, useLoading, useUpdater2, useUpdating} from "./global/hook-barebone";
 import {useImmutableSelector} from "../redux-store";
@@ -8,6 +7,9 @@ import {call, put, takeEvery, takeLatest} from "redux-saga/effects";
 import {fetchAjax} from "./ajax";
 import {addPage, defaultPages} from "./global/paginated-data";
 import {useMemo} from "react";
+import getConfig from "next/config";
+
+const {publicRuntimeConfig: config} = getConfig();
 
 const initialState = fromJS({
     upload: {
@@ -140,7 +142,7 @@ function* delete_(id) {
 }
 
 function asImgSrc(id) {
-    let apiPrefix = config.get("api.prefix");
+    let apiPrefix = config.api.prefix;
     return `${apiPrefix}/images/${id}`;
 }
 

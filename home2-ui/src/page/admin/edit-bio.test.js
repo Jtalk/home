@@ -4,7 +4,6 @@ import {BioTextArea, EditBio, EditBioStateless, PhotoUpload} from "./edit-bio";
 import {mount, shallow} from "enzyme";
 import {Button, Form, Image, Input, TextArea} from "semantic-ui-react";
 import {imageUrl} from "../../utils/image";
-import config from "react-global-configuration";
 import {Loading, Updating} from "../../data/reduce/global/enums";
 import {Provider as ReduxProvider} from "react-redux";
 import {createTestStore} from "../../data/redux";
@@ -137,7 +136,7 @@ describe("<BioTextArea/>", () => {
 });
 
 describe("<PhotoUpload/>", () => {
-    config.set({image: {url: {template: "/images/{}"}}});
+    // config.set({image: {url: {template: "/images/{}"}}});
     it("upload with no prior photo shows input", () => {
         let result = shallow(<PhotoUpload existingPhotoId={undefined} onPhotoSelected={() => {}}/>);
         expect(result.find(Input).find({type: "file"}).exists()).toBe(true);

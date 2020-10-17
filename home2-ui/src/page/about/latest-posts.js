@@ -5,7 +5,7 @@ import {useLatestArticles, useLatestArticlesLoading} from "../../data/reduce/lat
 import {ContentPlaceholderOr} from "../../component/placeholder";
 import {Loading} from "../../data/reduce/global/enums";
 import {Link} from "react-router-dom";
-import "./latest-posts.css";
+import "./latest-posts.module.css";
 
 export const LatestPosts = function () {
 

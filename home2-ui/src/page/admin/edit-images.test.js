@@ -12,7 +12,7 @@ import {
     ViewImages
 } from "./edit-images";
 import {MemoryRouter} from "react-router"
-import ImageUploader from "react-images-upload";
+import ImageUploader from "../../component/3rdparty/react-image-upload";
 import {Pagination} from "../../component/pagination";
 import {formatDateTime} from "../../utils/date-time";
 import {ErrorMessage} from "../../component/form-message";
