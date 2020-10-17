@@ -10,7 +10,7 @@ import {
     LoadingViewImages,
     ViewImage,
     ViewImages
-} from "./images";
+} from "../../pages/admin/images";
 import {MemoryRouter} from "react-router"
 import ImageUploader from "../../component/3rdparty/react-image-upload";
 import {Pagination} from "../../component/pagination";

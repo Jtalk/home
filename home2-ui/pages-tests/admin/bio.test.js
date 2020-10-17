@@ -1,6 +1,6 @@
 import React from "react";
 import {act} from "react-dom/test-utils";
-import Bio, {BioTextArea, EditBioStateless, PhotoUpload} from "./bio";
+import Bio, {BioTextArea, EditBioStateless, PhotoUpload} from "../../pages/admin/bio";
 import {mount, shallow} from "enzyme";
 import {Button, Form, Image, Input, TextArea} from "semantic-ui-react";
 import {imageUrl} from "../../utils/image";
