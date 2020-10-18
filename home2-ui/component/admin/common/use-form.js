@@ -1,7 +1,10 @@
 import {useCallback, useMemo, useState} from "react";
-import _ from "lodash";
 import {useDependentState} from "./state";
 import {reportError} from "../../../utils/error-reporting";
+import get from "lodash/get";
+import set from "lodash/set";
+import isEqual from "lodash/isEqual";
+import cloneDeep from "lodash/cloneDeep";
 
 const FILES_PATH = "__files";
 
@@ -64,13 +67,13 @@ class Updater {
 
     change = (...path) => {
         return (e, {value}) => {
-            let oldValue = _.get(this.data, path);
-            if (_.isEqual(oldValue, value)) {
+            let oldValue = get(this.data, path);
+            if (isEqual(oldValue, value)) {
                 console.debug(`Not changing value at path:`, path, showSecurely(oldValue, this.secure), showSecurely(value, this.secure));
             } else {
                 console.debug(`Changing value at path:`, path, showSecurely(oldValue, this.secure), showSecurely(value, this.secure));
-                let newData = _.cloneDeep(this.data);
-                _.set(newData, path, value);
+                let newData = cloneDeep(this.data);
+                set(newData, path, value);
                 this.setData(newData);
                 this.autoSubmit(newData);
             }
@@ -85,7 +88,7 @@ class Updater {
 
     reorder = (fromIndex, toIndex, ...path) => {
         return (e) => {
-            let collection = _.get(this.data, path) || [];
+            let collection = get(this.data, path) || [];
             if (fromIndex < 0 || fromIndex >= collection.length) {
                 throw Error(`Cannot move from an invalid index ${fromIndex}, collection ${collection.length}`);
             }
@@ -103,7 +106,7 @@ class Updater {
 
     addItem = (item, ...path) => {
         return e => {
-            let collection = _.get(this.data, path);
+            let collection = get(this.data, path);
             let copy = [...collection, item];
             this.change(path)(e, {value: copy});
         };
@@ -111,7 +114,7 @@ class Updater {
 
     changeItem = (index, ...path) => {
         return (e, {value}) => {
-            let collection = _.get(this.data, path);
+            let collection = get(this.data, path);
             if (index < 0 || index >= collection.length) {
                 throw Error(`Cannot replace an item at invalid index ${index}, collection ${collection.length}`);
             }
@@ -123,7 +126,7 @@ class Updater {
 
     removeItem = (index, ...path) => {
         return (e) => {
-            let collection = _.get(this.data, path) || [];
+            let collection = get(this.data, path) || [];
             if (index < 0 || index >= collection.length) {
                 throw Error(`Cannot remove item from an invalid index ${index}, collection ${collection.length}`);
             }

@@ -3,11 +3,11 @@ import {useOwner, useOwnerError, useOwnerLoading, useOwnerUpdater, useOwnerUpdat
 import {useForm} from "../../component/admin/common/use-form";
 import {Loading, Updating} from "../../data/reduce/global/enums";
 import {Button, Divider, Form, Grid, Input, Segment, TextArea} from "semantic-ui-react";
-import _ from "lodash";
 import {ErrorMessage, SuccessMessage} from "../../component/form-message";
 import {imageUrl} from "../../utils/image";
 import {ImageUploadPreview} from "../../component/admin/common/image-upload-preview";
 import {Titled} from "react-titled";
+import get from "lodash/get";
 
 export default function EditBio() {
 
@@ -49,7 +49,7 @@ export const EditBioStateless = function ({data, onSubmit, updater, loading, upd
                                             onChange={updater.change("nickname")}/>
                                 <Form.Input label="Owner E-Mail"
                                             placeholder="E-Mail"
-                                            value={_.get(data, ["contacts", "email", "value"], '')}
+                                            value={get(data, ["contacts", "email", "value"], '')}
                                             onChange={updater.change("contacts", "email", "value")}/>
                                 <Form.Input label="Owner Short Bio"
                                             placeholder="Description"

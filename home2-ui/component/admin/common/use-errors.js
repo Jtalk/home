@@ -1,5 +1,7 @@
 import {useEffect, useState} from "react";
-import _ from "lodash";
+import get from "lodash/get";
+import set from "lodash/set";
+import uniq from "lodash/uniq";
 
 export function useFormErrors(errorsFor) {
     let [errors, setErrors] = useState();
@@ -18,28 +20,29 @@ export class FormErrors {
         this.knownPaths = new Set();
         this.onUpdate = onUpdate || (() => {});
     }
+
     get message() {
-        return _.chain([...this.knownPaths])
+        const paths = [...this.knownPaths]
             .map(p => p.split("|"))
             .map(p => this.errorFor(...p))
-            .filter(v => !!v)
-            .uniq()
-            .join(", ")
-            .value();
+            .filter(v => !!v);
+        return uniq(paths)
+            .join(", ");
     }
+
     hasErrors = (...path) => {
         return !!this.errorFor(...path);
     }
     errorFor = (...path) => {
         if (path.length) {
-            return _.get(this.store, path);
+            return get(this.store, path);
         } else {
             return this.message;
         }
     }
     report = message => {
         let result = (...path) => {
-            _.set(this.store, path, message);
+            set(this.store, path, message);
             this.knownPaths.add(path.join("|"));
             this.onUpdate(this);
             return result;
@@ -56,7 +59,7 @@ export class FormErrors {
         }
     }
     reset = (...path) => {
-        _.set(this.store, path, null);
+        set(this.store, path, null);
         this.knownPaths.delete(path.join("|"));
         this.onUpdate(this);
         return this.reset;

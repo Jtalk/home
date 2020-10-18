@@ -4,7 +4,6 @@ import {Button, Divider, Grid, Item, Segment} from "semantic-ui-react";
 import {formatDateTime} from "../../../utils/date-time";
 import {ContentPlaceholderOr} from "../../../component/placeholder";
 import {Loading} from "../../../data/reduce/global/enums";
-import _ from "lodash";
 import {Titled} from "react-titled";
 import {OwnerCard} from "../../../component/about/owner-card";
 import {LatestPosts} from "../../../component/about/latest-posts";
@@ -17,6 +16,7 @@ import {reduxWrapper} from "../../../data/redux";
 import {ownerActions} from "../../../data/reduce/owner";
 import {footerActions} from "../../../data/reduce/footer";
 import {latestArticlesActions} from "../../../data/reduce/latest-articles";
+import isEmpty from "lodash/isEmpty";
 
 export default function ArticleId() {
 
@@ -30,7 +30,7 @@ export default function ArticleId() {
         return <NotFound/>
     }
     return <>
-        <Titled title={t => (article.title ? article.title + " | " : "") + "Blog | " + t}/>
+        <Titled title={t => (article?.title ? article.title + " | " : "") + "Blog | " + t}/>
         <Grid centered stackable columns={2}>
             <Grid.Row>
                 <Grid.Column width={11}>
@@ -47,7 +47,7 @@ export default function ArticleId() {
 
 export const ArticleView = function ({article, loading, href, preview}) {
 
-    let articleLoading = _.isEmpty(article) && loading !== Loading.READY;
+    let articleLoading = isEmpty(article) && loading !== Loading.READY;
 
     return <Segment className="items">
         <Item>

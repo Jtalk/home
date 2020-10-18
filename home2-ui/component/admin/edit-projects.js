@@ -2,10 +2,11 @@ import React from "react";
 import {Grid, Icon, Menu, Segment} from "semantic-ui-react";
 import Link from "next/link";
 import {useProject, useProjectError, useProjects, useProjectUpdater} from "../../data/reduce/projects";
-import _ from "lodash";
 import {NotFound} from "../error/not-found";
 import {ContentPlaceholderOr} from "../placeholder";
 import {editHref, EditProject} from "./edit-project";
+import maxBy from "lodash/maxBy";
+import findIndex from "lodash/findIndex";
 
 const NEW_PROJECT_ID = "new";
 const MAKE_NEW_PROJECT = (order) => ({
@@ -36,14 +37,14 @@ export const EditProjects = function ({currentProjectId}) {
 
 export const EditProjectsStateless = function ({projects, currentProject, currentProjectId, submit}) {
     let add = () => {
-        let maxOrderProject = _.maxBy(projects, p => p.order);
+        let maxOrderProject = maxBy(projects, p => p.order);
         let maxOrder = (maxOrderProject && maxOrderProject.order) || -1;
         let newProject = MAKE_NEW_PROJECT(maxOrder + 1);
         submit(newProject.id, editHref(newProject.id), newProject, {});
     };
     let move = (shift) => {
         return () => {
-            let currentProjectIndex = _.findIndex(projects, p => p.id === currentProjectId);
+            let currentProjectIndex = findIndex(projects, p => p.id === currentProjectId);
             if (currentProjectIndex === -1) {
                 throw Error("Attempting to move a non-existent project id " + currentProjectId);
             }

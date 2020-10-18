@@ -14,11 +14,11 @@ import {ajaxSelector, fetchAjax} from "./ajax";
 import {call, put, takeLatest} from "redux-saga/effects";
 import {publishableData, useAllData, usePublishedData} from "./global/publishable-data";
 import {useMemo} from "react";
-import _ from "lodash";
 import {useRouter} from "next/router";
 import {HYDRATE} from "next-redux-wrapper";
 import {hydrate} from "../redux-store";
 import {ERROR_ACTION, WAIT_FOR_ACTION} from "redux-wait-for-action";
+import find from "lodash/find";
 
 export const Action = {
     LOAD: "projects load",
@@ -95,7 +95,7 @@ export function useProjects(withUnpublished = false) {
 export function useProject(id, withUnpublished = false) {
     let projects = useProjects(withUnpublished) || [];
     if (id) {
-        return _.find(projects, p => p.id === id);
+        return find(projects, p => p.id === id);
     } else {
         return projects && projects[0];
     }
@@ -146,16 +146,13 @@ function* load(publishedOnly) {
     }
 }
 
-function update(update, {id, logo, redirectTo}) {
+function update(update, {id, logo}) {
     return async (dispatch, getState) => {
         let ajax = ajaxSelector(getState());
         try {
             let result = await ajax.projects.update(id, update, logo);
             let reloaded = await ajax.projects.load(false);
             dispatch(action(Action.UPDATED, {projects: reloaded, publishedOnly: false}));
-            if (redirectTo) {
-                dispatch(push(redirectTo));
-            }
             return result;
         } catch (e) {
             console.error(`Exception while updating project ${id}`, update, e);
@@ -165,16 +162,13 @@ function update(update, {id, logo, redirectTo}) {
     };
 }
 
-function remove(projectId, {redirectTo}) {
+function remove(projectId) {
     return async (dispatch, getState) => {
         let ajax = ajaxSelector(getState());
         try {
             await ajax.projects.remove(projectId);
             let reloaded = await ajax.projects.load(false);
             dispatch(action(Action.DELETED, {projects: reloaded, publishedOnly: false}));
-            if (redirectTo) {
-                dispatch(push(redirectTo));
-            }
             return projectId;
         } catch (e) {
             console.error(`Exception while deleting project ${projectId}`, e);
