@@ -17,7 +17,6 @@ export default class MyDocument extends Document {
                 <title>Homepage</title>
             </Head>
             <body className="pushable">
-                <noscript>You need to enable JavaScript to run this app.</noscript>
                 <div className="pusher">
                     <Main/>
                 </div>
