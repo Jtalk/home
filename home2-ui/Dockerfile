@@ -1,10 +1,12 @@
 FROM node:13-alpine
-RUN npm install -g serve
 WORKDIR /app
-COPY build ./
+COPY node_modules ./node_modules
+COPY .next ./.next
+COPY package*.json ./
 ENV PORT=80
 ENV NODE_ENV=production
+RUN npm rebuild
 # To be set by the build process
 # ENV REACT_APP_API_URL=...
 # ENV REACT_APP_TEST_DURATION=0
-CMD ["serve", "-s", "."]
+CMD ["npm", "start"]

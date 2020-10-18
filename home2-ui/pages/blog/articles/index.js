@@ -17,8 +17,7 @@ import {reduxWrapper} from "../../../data/redux";
 import {ownerActions} from "../../../data/reduce/owner";
 import {latestArticlesActions} from "../../../data/reduce/latest-articles";
 import {footerActions} from "../../../data/reduce/footer";
-
-export const PathPrefix = "/blog/articles";
+import {BlogPath} from "../../../utils/paths";
 
 export default function Blog() {
 
@@ -32,7 +31,7 @@ export default function Blog() {
     let loading = useArticlesLoading();
 
     let navigateToPage = async (page) => {
-        await router.push(`${PathPrefix}?page=${page}`, undefined, { shallow: true });
+        await router.push(`${BlogPath}?page=${page}`, undefined, { shallow: true });
     };
 
     return <Grid centered stackable columns={2}>
@@ -61,7 +60,7 @@ export const BlogArticles = function ({loading, articles}) {
     return articles.map((article, i) => <ArticleView preview key={i}
                                                 article={article}
                                                 loading={loading}
-                                                href={`${PathPrefix}/${article.id}`}/>)
+                                                href={`${BlogPath}/${article.id}`}/>)
 };
 
 export const Pagination = function ({loading, total, page, navigate}) {

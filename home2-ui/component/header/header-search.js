@@ -5,10 +5,9 @@ import {useSearch, useSearchQuery, useSearchResults, useSearchStatus} from "../.
 import {reportError} from "../../utils/error-reporting";
 import Fuse from "fuse.js";
 import Link from "next/link";
-import {PathPrefix as BlogPathPrefix} from "../../pages/blog/articles";
-import {PathPrefix as ProjectPathPrefix} from "../../pages/projects";
 import maxBy from "lodash/maxBy";
 import throttle from "lodash/throttle";
+import {BlogPath, ProjectsPath} from "../../utils/paths";
 
 export const HeaderSearch = function () {
 
@@ -51,13 +50,13 @@ function toVisualResult(query, type, value) {
     switch (type) {
         case "article":
             return {
-                url: `${BlogPathPrefix}/${value.id}`,
+                url: `${BlogPath}/${value.id}`,
                 title: value.title,
                 description: toVisualResultDescription(query, value.title, value.id, value.content, ...(value.tags)),
             }
         case "project":
             return {
-                url: `${ProjectPathPrefix}/${value.id}`,
+                url: `${ProjectsPath}/${value.id}`,
                 title: value.title,
                 description: toVisualResultDescription(query, value.title, value.id, value.description, ...(value.links || []).map(v => v.name)),
             }

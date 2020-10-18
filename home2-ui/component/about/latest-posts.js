@@ -6,7 +6,7 @@ import {ContentPlaceholderOr} from "../placeholder";
 import {Loading} from "../../data/reduce/global/enums";
 import Link from "next/link";
 import "./latest-posts.module.css";
-import {PathPrefix as BlogPathPrefix} from "../../pages/blog/articles";
+import {BlogPath} from "../../utils/paths";
 
 export const LatestPosts = function () {
 
@@ -35,7 +35,7 @@ function createPostItem(post) {
     return <List.Item key={post.title}>
         <List.Content>
             <List.Header as="h4">
-                <Link href={`${BlogPathPrefix}/${post.id}`}>
+                <Link href={`${BlogPath}/${post.id}`}>
                     <a>{post.title}</a>
                 </Link>
             </List.Header>

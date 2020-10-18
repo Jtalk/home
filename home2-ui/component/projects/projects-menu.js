@@ -1,7 +1,7 @@
 import React from "react";
 import {Menu} from "semantic-ui-react";
 import Link from "next/link";
-import {PathPrefix} from "../../pages/projects";
+import {ProjectsPath} from "../../utils/paths";
 
 export const ProjectsMenu = function ({projects = [], selectedProjectId}) {
 
@@ -20,7 +20,7 @@ export const ProjectTab = function ({project, active}) {
     if (active) {
         return <div className="active item">{project.title}</div>
     } else {
-        return <Link shallow href={`${PathPrefix}/${project.id}`}>
+        return <Link shallow href={`${ProjectsPath}/${project.id}`}>
             <a className="item">{project.title}</a>
         </Link>
     }

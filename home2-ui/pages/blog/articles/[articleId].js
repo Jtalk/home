@@ -11,18 +11,18 @@ import {articleActions, useArticle, useArticleLoading} from "../../../data/reduc
 import {MarkdownTextArea} from "../../../component/text-area";
 import {NotFound} from "../../../component/error/not-found";
 import {useRouter} from "next/router";
-import {PathPrefix} from "./index";
 import {reduxWrapper} from "../../../data/redux";
 import {ownerActions} from "../../../data/reduce/owner";
 import {footerActions} from "../../../data/reduce/footer";
 import {latestArticlesActions} from "../../../data/reduce/latest-articles";
 import isEmpty from "lodash/isEmpty";
+import {BlogPath} from "../../../utils/paths";
 
 export default function ArticleId() {
 
     let router = useRouter();
     let {articleId} = router.query;
-    let href = `${PathPrefix}/${articleId}`;
+    let href = `${BlogPath}/${articleId}`;
 
     let article = useArticle(articleId);
     let loading = useArticleLoading(articleId) || Loading.LOADING;
@@ -81,10 +81,6 @@ export const ArticleView = function ({article, loading, href, preview}) {
         </Item>
     </Segment>
 };
-
-export function blogArticleHref(id) {
-    return `/blog/articles/${id}`;
-}
 
 export const getServerSideProps = reduxWrapper.getServerSideProps(async ({store, query}) => {
     const {articleId} = query;
