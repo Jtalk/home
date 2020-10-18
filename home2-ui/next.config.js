@@ -1,5 +1,7 @@
 const api = process.env.REACT_APP_API_URL || "http://localhost:8090";
 const debugDelay = process.env["REACT_APP_TEST_DURATION"] || "0s";
+const APP_VERSION = process.env.REACT_APP_VERSION || undefined;
+const API_KEY = process.env.REACT_APP_BUGSNAG_API_KEY;
 
 console.debug("API server is set to", api);
 console.debug("API debug response delay is set to", debugDelay);
@@ -18,6 +20,10 @@ module.exports = {
             url: {
                 template: `${api}/images/{}`
             }
+        },
+        bugsnag: {
+            key: API_KEY,
+            version: APP_VERSION
         }
     },
     async redirects() {
