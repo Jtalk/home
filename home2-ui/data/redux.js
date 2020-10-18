@@ -5,41 +5,39 @@ import thunk from "redux-thunk";
 import createReduxWaitForMiddleware from "redux-wait-for-action";
 import {createLogger} from "redux-logger";
 import promiseMiddleware from "redux-promise-middleware";
-import {images} from "./reduce/images";
+import * as images from "./reduce/images";
 import * as projects from "./reduce/projects";
 import * as articles from "./reduce/articles";
-import {tags} from "./reduce/tags";
+import * as tags from "./reduce/tags";
 import * as latestArticles from "./reduce/latest-articles";
-import {authentication} from "./reduce/authentication";
+import * as authentication from "./reduce/authentication";
 import createSagaMiddleware from "redux-saga";
 import {rootSaga} from "./saga";
-import {ajax} from "./reduce/ajax";
+import * as ajax from "./reduce/ajax";
 import {emptySaga} from "../utils/testing/test-saga";
 import {fromJS, Map} from "immutable";
 import {reportError} from "../utils/error-reporting";
-import {search} from "./reduce/search";
+import * as search from "./reduce/search";
 import {createWrapper} from "next-redux-wrapper";
 import mapValues from "lodash/mapValues";
 import keyBy from "lodash/keyBy";
 
 const modules = [
+    ajax,
     articles,
+    authentication,
+    footer,
+    images,
+    latestArticles,
     owner,
     projects,
-    latestArticles,
-    footer,
+    search,
+    tags,
 ]
 
 const modulesBySegment = keyBy(modules, "segment");
 
-export const reducers = {
-    ajax,
-    authentication,
-    tags,
-    images,
-    search,
-    ...(mapValues(modulesBySegment, m => m.reducer))
-};
+export const reducers = mapValues(modulesBySegment, m => m.reducer);
 
 export const reduxWrapper = createWrapper(createAppStore, {
     debug: false,

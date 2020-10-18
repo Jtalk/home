@@ -3,13 +3,24 @@ import {Ajax} from "../ajax-requests";
 import {useImmutableSelector} from "../redux-store";
 import {HYDRATE} from "next-redux-wrapper";
 
-export function ajax(state = new Ajax(), action) {
+export const segment = "ajax";
+
+export function reducer(state = new Ajax(), action) {
     switch (action.type) {
         case HYDRATE:
-            // Do nothing, fall through
+            // No need to reconcile, each side has its own.
+            return state;
         default:
             return state;
     }
+}
+
+export function serialiseJSON(state) {
+    return {};
+}
+
+export function deserialiseJSON(json) {
+    return {};
 }
 
 export function* fetchAjax() {

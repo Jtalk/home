@@ -5,6 +5,7 @@ import {useDispatch} from "react-redux";
 import {useCallback} from "react";
 import {action, error} from "./global/actions";
 import {ajaxSelector} from "./ajax";
+import {HYDRATE} from "next-redux-wrapper";
 
 const Action = {
     LOADING: "search loading",
@@ -12,7 +13,9 @@ const Action = {
     ERROR: "search error",
 };
 
-export function search(state = Map({activeCount: 0, results: List()}), action) {
+export const segment = "search";
+
+export function reduce(state = Map({activeCount: 0, results: List()}), action) {
     switch (action.type) {
         case Action.LOADING:
             return state.merge({activeCount: state.get("activeCount") + 1});
@@ -27,6 +30,9 @@ export function search(state = Map({activeCount: 0, results: List()}), action) {
                 results: List(),
                 errorMessage: action.errorMessage,
             });
+        case HYDRATE:
+            // Admin-only activity, no server-side rendering involved
+            return state;
         default:
             return state;
     }
@@ -38,21 +44,21 @@ export function useSearch() {
 }
 
 export function useSearchResults() {
-    return useImmutableSelector("search", "results", "results");
+    return useImmutableSelector(segment, "results", "results");
 }
 
 export function useSearchQuery() {
-    return useImmutableSelector("search", "results", "query");
+    return useImmutableSelector(segment, "results", "query");
 }
 
 export function useSearchStatus() {
-    return useImmutableSelector("search", "activeCount") > 0
+    return useImmutableSelector(segment, "activeCount") > 0
         ? Loading.LOADING
         : Loading.READY
 }
 
 export function useSearchError() {
-    return useImmutableSelector("search", "errorMessage");
+    return useImmutableSelector(segment, "errorMessage");
 }
 
 function doSearch(query, maxResults) {

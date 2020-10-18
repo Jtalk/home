@@ -8,6 +8,7 @@ import {ajaxSelector, fetchAjax, useAjax} from "./ajax";
 import {useDispatch} from "react-redux";
 import {reportError} from "../../utils/error-reporting";
 import storageAvailable from "storage-available";
+import {HYDRATE} from "next-redux-wrapper";
 
 export const EXISTING_PASSWORD_MISMATCH = "The existing password does not match";
 
@@ -31,7 +32,7 @@ const SESSION_EXPIRY_KEY = "session-expiry";
 const SESSION_USERNAME_KEY = "session-username";
 const DEFAULT = Map({login: null, updating: null});
 
-export function authentication(state = DEFAULT, action) {
+export function reducer(state = DEFAULT, action) {
     switch (action.type) {
         case Action.LOGGING_IN:
             return state.merge({login: Login.LOGGING_IN, errorMessage: null});
@@ -50,6 +51,8 @@ export function authentication(state = DEFAULT, action) {
             return DEFAULT;
         case Action.ERROR:
             return state.merge({login: Login.ERROR, errorMessage: action.errorMessage});
+        case HYDRATE:
+            return state; // No server-side activity around authentication.
         default:
             return state;
     }
@@ -61,7 +64,9 @@ export function* watchAuthentication() {
     yield takeEvery(Action.REFRESH, ({data: {expiry}}) => runTokenRefresh(expiry));
     yield takeEvery(Action.REFRESH, ({data}) => updateLocalStore(data));
     yield takeEvery(Action.LOGOUT, logout);
-    yield initAuthentication();
+    if (process.browser) {
+        yield initAuthentication();
+    }
 }
 
 // Pre-load possible authentication state from the local store.

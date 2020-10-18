@@ -6,6 +6,7 @@ import {fetchAjax} from "./ajax";
 import {call, put, takeLatest} from "redux-saga/effects";
 import {useImmutableSelector} from "../redux-store";
 import {useMemo} from "react";
+import {HYDRATE} from "next-redux-wrapper";
 
 export const Action = {
     LOAD: "tags load",
@@ -13,7 +14,9 @@ export const Action = {
     LOAD_ERROR: "tags loading error",
 };
 
-export function tags(state = Map({loading: Loading.LOADING, data: null}), action) {
+export const segment = "tags";
+
+export function reduce(state = Map({loading: Loading.LOADING, data: null}), action) {
     switch (action.type) {
         case Action.LOAD:
             return state.merge({loading: Loading.LOADING});
@@ -21,6 +24,9 @@ export function tags(state = Map({loading: Loading.LOADING, data: null}), action
             return state.merge({loading: Loading.READY, data: action.data});
         case Action.LOAD_ERROR:
             return state.merge({loading: Loading.ERROR, errorMessage: action.errorMessage});
+        case HYDRATE:
+            // Admin-only activity, no server-side rendering involved
+            return state;
         default:
             return state;
     }
@@ -31,7 +37,7 @@ export function* watchTags() {
 }
 
 export function useAvailableTags() {
-    let tags = useImmutableSelector("tags", "data");
+    let tags = useImmutableSelector(segment, "data");
     let loadAction = useMemo(() => action(Action.LOAD), []);
     useLoader(loadAction, !tags);
     return tags || [];

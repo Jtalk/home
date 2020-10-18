@@ -8,6 +8,7 @@ import {fetchAjax} from "./ajax";
 import {addPage, defaultPages} from "./global/paginated-data";
 import {useMemo} from "react";
 import getConfig from "next/config";
+import {HYDRATE} from "next-redux-wrapper";
 
 const {publicRuntimeConfig: config} = getConfig();
 
@@ -36,7 +37,9 @@ const Action = {
     DELETE_ERROR: "images delete error",
 };
 
-export function images(state = initialState, action) {
+export const segment = "images";
+
+export function reduce(state = initialState, action) {
     switch (action.type) {
         case Action.INIT:
             return state.merge(fromJS({loading: null, uploading: null, deletion: null}));
@@ -65,6 +68,9 @@ export function images(state = initialState, action) {
                     status: Deleting.DELETE_ERROR, error: {message: action.errorMessage}
                 }
             }));
+        case HYDRATE:
+            // Admin-only activity, no server-side rendering involved
+            return state;
         default:
             return state;
     }
@@ -77,26 +83,26 @@ export function* watchImages() {
 }
 
 export function useImages(page) {
-    let images = useImmutableSelector("images", "data", "pages");
+    let images = useImmutableSelector(segment, "data", "pages");
     let loadAction = useMemo(() => action(Action.LOAD, page), [page]);
     useLoader(loadAction, !images[page]);
     return images[page] || [];
 }
 
 export function useImagesTotalCount() {
-    return useImmutableSelector("images", "data", "total") || 0;
+    return useImmutableSelector(segment, "data", "total") || 0;
 }
 
 export function useImagesLoading() {
-    return useLoading("images", ["loading", "status"]);
+    return useLoading(segment, ["loading", "status"]);
 }
 
 export function useImagesUploading() {
-    return useUpdating("images", ["uploading", "status"]);
+    return useUpdating(segment, ["uploading", "status"]);
 }
 
 export function useImagesUploadingError() {
-    return useLastError("images", ["uploading", "error", "message"]);
+    return useLastError(segment, ["uploading", "error", "message"]);
 }
 
 export function useImageUploader() {
