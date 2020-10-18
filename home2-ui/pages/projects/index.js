@@ -7,6 +7,8 @@ import {reduxWrapper} from "../../data/redux";
 import {ownerActions} from "../../data/reduce/owner";
 import {latestArticlesActions} from "../../data/reduce/latest-articles";
 import {footerActions} from "../../data/reduce/footer";
+import {Titled} from "react-titled";
+import {Segment} from "semantic-ui-react";
 
 export const PathPrefix = "/projects";
 
@@ -17,6 +19,7 @@ export default function Projects() {
     let selectedProject = projects[0] || {};
 
     return <div>
+        <Titled title={t => "Projects | " + t}/>
         <ProjectsMenu projects={projects}/>
         <ProjectDescription loading={loading === Loading.LOADING} {...selectedProject}/>
     </div>

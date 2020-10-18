@@ -9,6 +9,7 @@ import {NotFound} from "../../component/error/not-found";
 import {reduxWrapper} from "../../data/redux";
 import {ownerActions} from "../../data/reduce/owner";
 import {footerActions} from "../../data/reduce/footer";
+import {Titled} from "react-titled";
 
 export default function Project() {
     let router = useRouter();
@@ -24,6 +25,7 @@ export default function Project() {
     selectedProject = selectedProject || projects[0] || {};
 
     return <div>
+        <Titled title={t => "Projects | " + t}/>
         <ProjectsMenu projects={projects} selectedProjectId={projectId}/>
         <ProjectDescription loading={loading === Loading.LOADING} {...selectedProject}/>
     </div>

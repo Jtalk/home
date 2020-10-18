@@ -29,17 +29,20 @@ export default function ArticleId() {
     if (!article && loading !== Loading.LOADING) {
         return <NotFound/>
     }
-    return <Grid centered stackable columns={2}>
-        <Grid.Row>
-            <Grid.Column width={11}>
-                <ArticleView article={article || {}} loading={loading} href={href}/>
-            </Grid.Column>
-            <Grid.Column width={3}>
-                <OwnerCard/>
-                <LatestPosts/>
-            </Grid.Column>
-        </Grid.Row>
-    </Grid>
+    return <>
+        <Titled title={t => (article.title ? article.title + " | " : "") + "Blog | " + t}/>
+        <Grid centered stackable columns={2}>
+            <Grid.Row>
+                <Grid.Column width={11}>
+                    <ArticleView article={article || {}} loading={loading} href={href}/>
+                </Grid.Column>
+                <Grid.Column width={3}>
+                    <OwnerCard/>
+                    <LatestPosts/>
+                </Grid.Column>
+            </Grid.Row>
+        </Grid>
+    </>
 };
 
 export const ArticleView = function ({article, loading, href, preview}) {
@@ -47,7 +50,6 @@ export const ArticleView = function ({article, loading, href, preview}) {
     let articleLoading = _.isEmpty(article) && loading !== Loading.READY;
 
     return <Segment className="items">
-        <Titled title={t => (article.title ? article.title + " | " : "") + " | Blog | " + t}/>
         <Item>
             <Item.Content>
                 <ContentPlaceholderOr header lines={0} loading={articleLoading}>
