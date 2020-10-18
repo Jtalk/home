@@ -3,12 +3,13 @@ import {action, error} from "./global/actions";
 import dayjs from "dayjs";
 import {immutableSelector, useImmutableSelector} from "../redux-store";
 import {useLastError, useUpdater2} from "./global/hook-barebone";
-import {call, put, takeEvery, delay, select} from "redux-saga/effects";
+import {call, delay, put, select, takeEvery} from "redux-saga/effects";
 import {ajaxSelector, fetchAjax, useAjax} from "./ajax";
 import {useDispatch} from "react-redux";
 import {reportError} from "../../utils/error-reporting";
 import storageAvailable from "storage-available";
 import {HYDRATE} from "next-redux-wrapper";
+import {useCallback} from "react";
 
 export const EXISTING_PASSWORD_MISMATCH = "The existing password does not match";
 
@@ -31,6 +32,8 @@ export const Login = {
 const SESSION_EXPIRY_KEY = "session-expiry";
 const SESSION_USERNAME_KEY = "session-username";
 const DEFAULT = Map({login: null, updating: null});
+
+export const segment = "authentication";
 
 export function reducer(state = DEFAULT, action) {
     switch (action.type) {
@@ -64,6 +67,7 @@ export function* watchAuthentication() {
     yield takeEvery(Action.REFRESH, ({data: {expiry}}) => runTokenRefresh(expiry));
     yield takeEvery(Action.REFRESH, ({data}) => updateLocalStore(data));
     yield takeEvery(Action.LOGOUT, logout);
+
     if (process.browser) {
         yield initAuthentication();
     }
@@ -123,7 +127,7 @@ function* runTokenRefresh(expiry) {
 }
 
 export function useLoginStatus() {
-    return useImmutableSelector("authentication", "login");
+    return useImmutableSelector(segment, "login");
 }
 
 export function useLoggedIn() {
@@ -131,18 +135,18 @@ export function useLoggedIn() {
 }
 
 export function useUsername() {
-    return useImmutableSelector("authentication", "username");
+    return useImmutableSelector(segment, "username");
 }
 
 export function useLoginError() {
-    return useLastError("authentication");
+    return useLastError(segment);
 }
 
 export function useLoginHandler() {
     let dispatch = useDispatch();
-    return async form => {
+    return useCallback(async form => {
         return await dispatch(login(form));
-    };
+    }, [dispatch]);
 }
 
 export function useLogoutHandler() {

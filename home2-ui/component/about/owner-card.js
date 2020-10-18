@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useCallback, useState} from "react";
 import {Card} from "semantic-ui-react";
 import {ContentPlaceholderOr, ImagePlaceholderOr, LinePlaceholderOr} from "../placeholder";
 import {Loading} from "../../data/reduce/global/enums";
@@ -16,14 +16,15 @@ export const OwnerCard = function () {
 
     let [loggingIn, setLoggingIn] = useState(false);
 
-    let showLogin = () => {
+    const showLogin = useCallback(() => {
         loggedIn || setLoggingIn(true);
-    };
+    }, [loggedIn]);
+    const onCloseHandler = useCallback(() => setLoggingIn(false), []);
 
-    return <React.Fragment>
+    return <>
         <CardStateless {...{loading, owner, showLogin}} />
-        <LoginModal enabled={loggingIn} onClose={() => setLoggingIn(false)}/>
-    </React.Fragment>
+        <LoginModal enabled={loggingIn} onClose={onCloseHandler}/>
+    </>
 };
 
 export const CardStateless = function({loading, owner, showLogin}) {

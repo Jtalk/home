@@ -15,7 +15,7 @@ const Action = {
 
 export const segment = "search";
 
-export function reduce(state = Map({activeCount: 0, results: List()}), action) {
+export function reducer(state = Map({activeCount: 0, results: List()}), action) {
     switch (action.type) {
         case Action.LOADING:
             return state.merge({activeCount: state.get("activeCount") + 1});

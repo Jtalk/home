@@ -16,7 +16,7 @@ export const Action = {
 
 export const segment = "tags";
 
-export function reduce(state = Map({loading: Loading.LOADING, data: null}), action) {
+export function reducer(state = Map({loading: Loading.LOADING, data: null}), action) {
     switch (action.type) {
         case Action.LOAD:
             return state.merge({loading: Loading.LOADING});

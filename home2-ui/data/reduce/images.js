@@ -39,7 +39,7 @@ const Action = {
 
 export const segment = "images";
 
-export function reduce(state = initialState, action) {
+export function reducer(state = initialState, action) {
     switch (action.type) {
         case Action.INIT:
             return state.merge(fromJS({loading: null, uploading: null, deletion: null}));

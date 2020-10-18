@@ -1,5 +1,5 @@
 import {Menu} from "semantic-ui-react";
-import {Link} from "react-router-dom";
+import Link from "next/link";
 import React from "react";
 
 export const Pagination = function ({current, total}) {
@@ -13,7 +13,9 @@ export const Pagination = function ({current, total}) {
                 if (current === i) {
                     return <Menu.Item key={i} active>{i + 1}</Menu.Item>
                 } else {
-                    return <Link key={i} className="item" to={"/admin/images/?page=" + i}>{i + 1}</Link>
+                    return <Link key={i} href={"/admin/images/?page=" + i}>
+                        <a className="item">{i + 1}</a>
+                    </Link>
                 }
             })
         }
