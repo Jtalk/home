@@ -3,7 +3,6 @@ import {Deleting, Loading, Updating} from "./global/enums";
 import {action, error} from "./global/actions";
 import {addPage, defaultPages, pageSizeSelector, usePage, usePageSize, useTotalCount} from "./global/paginated-data";
 import {call, put, select, takeEvery, takeLatest} from "redux-saga/effects";
-import {push} from "connected-react-router";
 import {
     useDeleter2,
     useDeleting,
@@ -17,6 +16,7 @@ import {allSelector, publishableData, publishedSelector} from "./global/publisha
 import {fetchAjax} from "./ajax";
 import {useMemo} from "react";
 import {useImmutableSelector} from "../redux-store";
+import {useRouter} from "next/router";
 
 export const DEFAULT_PAGE_SIZE = 20;
 const MAX_PAGE_SIZE = 100;
@@ -143,8 +143,12 @@ export function useArticlesError() {
 }
 
 export function useArticleUpdater() {
-    let updater = useUpdater2(Action.UPDATE);
-    return async (id, redirectTo, update, extra = {}) => await updater(update, {...extra, id, redirectTo});
+    const router = useRouter();
+    const updater = useUpdater2(Action.UPDATE);
+    return async (id, redirectTo, update, extra = {}) => {
+        await updater(update, {...extra, id});
+        await router.push(redirectTo);
+    }
 }
 
 export function useArticlesDeleter() {
@@ -189,12 +193,11 @@ function* loadOne(articleId) {
     }
 }
 
-function* update(articleId, update, redirectTo) {
+function* update(articleId, update) {
     let ajax = yield fetchAjax();
     try {
         let updated = yield call(ajax.articles.update, articleId, update);
         yield put(action(Action.UPDATED, updated));
-        yield put(push(redirectTo));
     } catch (e) {
         console.error(`Exception while updating article ${articleId}`, update, e);
         yield put(error(Action.UPDATE_ERROR, e.toLocaleString(), {error: e}));

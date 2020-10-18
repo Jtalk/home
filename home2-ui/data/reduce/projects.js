@@ -1,7 +1,6 @@
 import {Map} from "immutable";
 import {Deleting, Loading, Updating} from "./global/enums";
 import {action, error} from "./global/actions";
-import {push} from "connected-react-router";
 import {
     useDeleting,
     useDirectDeleter,
@@ -16,6 +15,7 @@ import {call, put, takeLatest} from "redux-saga/effects";
 import {publishableData, useAllData, usePublishedData} from "./global/publishable-data";
 import {useMemo} from "react";
 import _ from "lodash";
+import {useRouter} from "next/router";
 
 export const Action = {
     LOAD: Symbol("projects load"),
@@ -107,13 +107,21 @@ export function useProjectError() {
 }
 
 export function useProjectUpdater() {
-    let updater = useDirectUpdater(update);
-    return async (id, redirectTo, update, {logo} = {}) => await updater(update, {id, logo, redirectTo});
+    const router = useRouter();
+    const updater = useDirectUpdater(update);
+    return async (id, redirectTo, update, {logo} = {}) => {
+        await updater(update, {id, logo});
+        await router.push(redirectTo);
+    }
 }
 
 export function useProjectDeleter() {
-    let deleter = useDirectDeleter(remove);
-    return async (id, redirectTo) => deleter(id, {redirectTo});
+    const router = useRouter();
+    const deleter = useDirectDeleter(remove);
+    return async (id, redirectTo) => {
+        await deleter(id);
+        await router.push(redirectTo);
+    }
 }
 
 function* load(publishedOnly) {

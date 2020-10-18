@@ -13,7 +13,6 @@ import {authentication} from "./reduce/authentication";
 import createSagaMiddleware from "redux-saga";
 import {rootSaga} from "./saga";
 import {ajax} from "./reduce/ajax";
-import {routerMiddleware, connectRouter} from "connected-react-router"
 import {createMemoryHistory} from "history";
 import {emptySaga} from "../utils/testing/test-saga";
 import {Map} from "immutable";
@@ -33,16 +32,15 @@ export const reducers = {
     search,
 };
 
-export function createAppStore(history) {
-    let [mw, saga] = middleware(history);
+export function createAppStore({ isServer, req = null }) {
+    let [mw, saga] = middleware();
     let result = createStore(
-        combineReducers({
-            router: connectRouter(history),
-            ...reducers
-        }),
+        combineReducers(reducers),
         mw
     );
-    saga.run(rootSaga);
+    if (req || !isServer) {
+        result.sagaTask = saga.run(rootSaga);
+    }
     return result;
 }
 
@@ -57,7 +55,7 @@ export function createTestStore(reducers, rootSaga) {
     return [result, sagaTask];
 }
 
-function middleware(history) {
+function middleware() {
     let saga = createSagaMiddleware({
         onError(e, {sagaStack}) {
             console.error("Unhandled error in Saga:", sagaStack, e);
@@ -69,7 +67,6 @@ function middleware(history) {
         saga,
         thunk,
         promiseMiddleware,
-        routerMiddleware(history),
         createLogger(reduxLoggerOpts())
     );
     return [result, saga];

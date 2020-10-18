@@ -1,17 +1,16 @@
 import React, {useMemo} from "react";
 import {Button, Form, Icon, Modal} from "semantic-ui-react";
 import {useForm} from "../admin/common/use-form";
-import {useHistory, useLocation} from "react-router";
 import {ErrorMessage} from "../form-message";
 import {Login, useLoginError, useLoginHandler, useLoginStatus} from "../../data/reduce/authentication";
 import {useFormErrors} from "../admin/common/use-errors";
+import {useRouter} from "next/router";
 
 const EMPTY_FORM = () => ({login: '', password: ''});
 
 export const LoginModal = function ({enabled, onClose}) {
 
-    let history = useHistory();
-    let location = useLocation();
+    const router = useRouter();
     let errorMessage = useLoginError();
     let loginStatus = useLoginStatus();
 
@@ -20,7 +19,7 @@ export const LoginModal = function ({enabled, onClose}) {
         let result = await submitLogin(form);
         if (result) {
             onClose();
-            history.push(location);
+            router.reload();
         }
         return result;
     }

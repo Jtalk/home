@@ -1,9 +1,9 @@
 import React from "react";
 import {WebError} from "./web-error";
-import {useLocation} from "react-router";
+import {useRouter} from "next/router";
 
 export const NotFound = function () {
-    let location = useLocation();
-    console.error("Page not found", location);
+    const router = useRouter();
+    console.error("Page not found", router.asPath);
     return <WebError httpCode={404} message="Not Found"/>
 };
