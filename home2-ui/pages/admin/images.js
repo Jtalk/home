@@ -16,9 +16,9 @@ import {
 import {ErrorMessage, SuccessMessage} from "../../component/form-message";
 import "./images.module.css";
 import {ImageUploadPreview} from "../../component/admin/common/image-upload-preview";
-import {Titled} from "react-titled";
 import {Loading, Uploading} from "../../data/reduce/global/enums";
 import {useRouter} from "next/router";
+import {OwnerTitled} from "../../component/about/owner-titled";
 
 export default function EditImagesPage() {
     const router = useRouter();
@@ -42,7 +42,7 @@ export const EditImages = function ({page}) {
 
 export const EditImagesStateless = function ({loadingStatus, uploadStatus, errorMessage, images, page, totalCount, deleteImage, uploadImage}) {
     return <Grid centered>
-        <Titled title={t => "Edit Images | " + t}/>
+        <OwnerTitled title={"Edit Images"}/>
         <Grid.Column width={16}>
             <Segment basic>
                 <h1>Uploaded Images</h1>

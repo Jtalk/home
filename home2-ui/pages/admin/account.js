@@ -1,5 +1,4 @@
 import {Divider, Form, Grid, Segment} from "semantic-ui-react";
-import {Titled} from "react-titled";
 import {Updating} from "../../data/reduce/global/enums";
 import {ErrorMessage, SuccessMessage} from "../../component/form-message";
 import React, {useMemo, useState} from "react";
@@ -7,6 +6,7 @@ import {EXISTING_PASSWORD_MISMATCH, usePasswordChanger, useUsername} from "../..
 import {useForm} from "../../component/admin/common/use-form";
 import {useFormErrors} from "../../component/admin/common/use-errors";
 import {reportError} from "../../utils/error-reporting";
+import {OwnerTitled} from "../../component/about/owner-titled";
 
 const PASSWORD_FORM = () => ({
     password: {}
@@ -62,7 +62,7 @@ export const EditAccountStateless = function ({onSubmit, updating, username, err
     }
 
     return <Grid centered>
-        <Titled title={t => "Edit Account | " + t}/>
+        <OwnerTitled title={"Edit Account"}/>
         <Grid.Column width={11}>
             <Segment raised>
                 <h2>Edit Account</h2>

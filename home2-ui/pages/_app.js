@@ -6,7 +6,6 @@ import {reduxWrapper} from "../data/redux";
 import {FileConverterProvider} from "../utils/file-converter-context";
 import {setupErrorReporting} from "../utils/error-reporting";
 import {Container} from "semantic-ui-react";
-import {OwnerTitled} from "../component/about/owner-titled";
 import {Footer} from "../component/footer/footer";
 import {Header} from "../component/header/header";
 import withReduxSaga from "next-redux-saga";
@@ -22,7 +21,7 @@ function App({Component, pageProps}) {
     const router = useRouter();
     const disableSSR = !process.browser && router.pathname.startsWith("/admin");
     if (disableSSR) {
-        Component = dynamic(() => Promise.resolve(Component), { ssr: false })
+        Component = dynamic(() => Promise.resolve(Component), {ssr: false})
     }
     if (process.browser && router.pathname.startsWith("/admin") && !isLoggedIn) {
         Component = NotFound;
@@ -31,10 +30,8 @@ function App({Component, pageProps}) {
         <FileConverterProvider>
             <div className="main-content-pushable">
                 <Container className="main-content-pusher framed">
-                    <OwnerTitled>
-                        <Header/>
-                        <Component {...pageProps}/>
-                    </OwnerTitled>
+                    <Header/>
+                    <Component {...pageProps}/>
                 </Container>
                 <ErrorBoundary FallbackComponent={<div/>}>
                     <Footer/>

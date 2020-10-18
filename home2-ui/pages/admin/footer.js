@@ -10,7 +10,7 @@ import {
 } from "../../data/reduce/footer";
 import {useForm} from "../../component/admin/common/use-form";
 import {Loading, Updating} from "../../data/reduce/global/enums";
-import {Titled} from "react-titled";
+import {OwnerTitled} from "../../component/about/owner-titled";
 
 let EMPTY_LINK = () => ({caption: '', href: ''});
 let EMPTY_LOGO = () => ({name: '', src: ''});
@@ -27,7 +27,7 @@ export default function Footer() {
     let {updater, data} = useForm({init: footer, autoSubmit: submit});
 
     return <Grid centered>
-        <Titled title={t => "Edit Footer | " + t}/>
+        <OwnerTitled title={"Edit Footer"}/>
         <Grid.Column width={13}>
             <Segment raised>
                 <EditLinks footer={data} {...{submit, updater, loading, updating, errorMessage}}/>

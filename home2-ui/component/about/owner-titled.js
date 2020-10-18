@@ -1,10 +1,10 @@
 import {useOwner} from "../../data/reduce/owner";
-import {Titled} from "react-titled";
 import React from "react";
+import Head from "next/head";
 
-export const OwnerTitled = function ({children}) {
+export const OwnerTitled = function ({title, subtitle}) {
     let {name} = useOwner();
-    return <Titled title={() => name || "Home"}>
-        {children}
-    </Titled>
+    return <Head>
+        <title>{subtitle ? `${subtitle} | ` : null}{title}{name ? ` | ${name}` : null}</title>
+    </Head>
 };

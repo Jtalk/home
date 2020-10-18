@@ -5,6 +5,7 @@ import Link from "next/link";
 import {AddBlogArticleModal} from "../../../../component/admin/add-blog-article-modal";
 import {useArticles, useArticlesDeleter} from "../../../../data/reduce/articles";
 import {editHref} from "./[articleId]";
+import {OwnerTitled} from "../../../../component/about/owner-titled";
 
 const DEFAULT_PAGE_SIZE = 100;
 
@@ -12,7 +13,10 @@ export default function EditBlog() {
     let articles = useArticles(0, DEFAULT_PAGE_SIZE, true); // TODO: Add pagination to blog editor
     let onDelete = useArticlesDeleter();
 
-    return <EditBlogStateless page={1} {...{articles, onDelete}}/>
+    return <>
+        <OwnerTitled title={"Edit Article"}/>
+        <EditBlogStateless page={1} {...{articles, onDelete}}/>
+    </>
 };
 
 export const EditBlogStateless = function ({articles, page, onDelete}) {

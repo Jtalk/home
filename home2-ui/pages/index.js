@@ -5,19 +5,19 @@ import {LatestPosts} from "../component/about/latest-posts";
 import {ContentPlaceholderOr} from "../component/placeholder";
 import {Loading} from "../data/reduce/global/enums";
 import {ownerActions, useOwner, useOwnerLoading} from "../data/reduce/owner";
-import {Titled} from "react-titled";
 import {MarkdownTextArea} from "../component/text-area";
 import {reduxWrapper} from "../data/redux";
 import {footerActions} from "../data/reduce/footer";
 import {latestArticlesActions} from "../data/reduce/latest-articles";
+import {OwnerTitled} from "../component/about/owner-titled";
 
 export default function About() {
 
-    let {bio} = useOwner();
-    let loading = useOwnerLoading();
+    const {bio} = useOwner();
+    const loading = useOwnerLoading();
 
     return <Grid stackable centered>
-        <Titled title={t => "About | " + t}/>
+        <OwnerTitled title={"About"}/>
         <Grid.Row>
             <Grid.Column width={10} as="main">
                 <ContentPlaceholderOr header lines={30} loading={loading === Loading.LOADING}>

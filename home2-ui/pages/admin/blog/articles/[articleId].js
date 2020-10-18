@@ -18,6 +18,7 @@ import uniq from "lodash/uniq";
 import uniqBy from "lodash/uniqBy";
 import toLower from "lodash/toLower";
 import keyBy from "lodash/keyBy";
+import {OwnerTitled} from "../../../../component/about/owner-titled";
 
 export default function EditBlogArticle() {
 
@@ -44,9 +45,12 @@ export default function EditBlogArticle() {
         return <NotFound/>
     }
 
-    return <EditBlogArticleStateless article={data} submit={onSubmit(submit)} {...{
-        knownTags, reset, updater, canSubmit, loading, updating, errorMessage
-    }}/>
+    return <>
+        <OwnerTitled title={"Edit Article"}/>
+        <EditBlogArticleStateless article={data} submit={onSubmit(submit)} {...{
+            knownTags, reset, updater, canSubmit, loading, updating, errorMessage
+        }}/>
+    </>
 };
 
 export const EditBlogArticleStateless = function ({article, knownTags = [], submit, reset, updater, canSubmit, loading, updating, errorMessage}) {

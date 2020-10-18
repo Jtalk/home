@@ -4,7 +4,6 @@ import {Button, Divider, Grid, Item, Segment} from "semantic-ui-react";
 import {formatDateTime} from "../../../utils/date-time";
 import {ContentPlaceholderOr} from "../../../component/placeholder";
 import {Loading} from "../../../data/reduce/global/enums";
-import {Titled} from "react-titled";
 import {OwnerCard} from "../../../component/about/owner-card";
 import {LatestPosts} from "../../../component/about/latest-posts";
 import {articleActions, useArticle, useArticleLoading} from "../../../data/reduce/articles";
@@ -12,11 +11,12 @@ import {MarkdownTextArea} from "../../../component/text-area";
 import {NotFound} from "../../../component/error/not-found";
 import {useRouter} from "next/router";
 import {reduxWrapper} from "../../../data/redux";
-import {ownerActions} from "../../../data/reduce/owner";
+import {ownerActions, useOwner} from "../../../data/reduce/owner";
 import {footerActions} from "../../../data/reduce/footer";
 import {latestArticlesActions} from "../../../data/reduce/latest-articles";
 import isEmpty from "lodash/isEmpty";
 import {BlogPath} from "../../../utils/paths";
+import {OwnerTitled} from "../../../component/about/owner-titled";
 
 export default function ArticleId() {
 
@@ -30,7 +30,7 @@ export default function ArticleId() {
         return <NotFound/>
     }
     return <>
-        <Titled title={t => (article?.title ? article.title + " | " : "") + "Blog | " + t}/>
+        <OwnerTitled title={"Articles"} subtitle={article?.title}/>
         <Grid centered stackable columns={2}>
             <Grid.Row>
                 <Grid.Column width={11}>

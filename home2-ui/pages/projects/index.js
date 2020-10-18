@@ -6,7 +6,7 @@ import {Loading} from "../../data/reduce/global/enums";
 import {reduxWrapper} from "../../data/redux";
 import {ownerActions} from "../../data/reduce/owner";
 import {footerActions} from "../../data/reduce/footer";
-import {Titled} from "react-titled";
+import {OwnerTitled} from "../../component/about/owner-titled";
 
 export default function Projects() {
 
@@ -15,7 +15,7 @@ export default function Projects() {
     let selectedProject = projects[0] || {};
 
     return <div>
-        <Titled title={t => "Projects | " + t}/>
+        <OwnerTitled title={"Projects"}/>
         <ProjectsMenu projects={projects}/>
         <ProjectDescription loading={loading === Loading.LOADING} {...selectedProject}/>
     </div>

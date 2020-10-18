@@ -6,8 +6,8 @@ import {Button, Divider, Form, Grid, Input, Segment, TextArea} from "semantic-ui
 import {ErrorMessage, SuccessMessage} from "../../component/form-message";
 import {imageUrl} from "../../utils/image";
 import {ImageUploadPreview} from "../../component/admin/common/image-upload-preview";
-import {Titled} from "react-titled";
 import get from "lodash/get";
+import {OwnerTitled} from "../../component/about/owner-titled";
 
 export default function EditBio() {
 
@@ -27,7 +27,7 @@ export default function EditBio() {
 
 export const EditBioStateless = function ({data, onSubmit, updater, loading, updateStatus, errorMessage, canSubmit}) {
     return <Grid centered>
-        <Titled title={t => "Edit Bio | " + t}/>
+        <OwnerTitled title={"Edit Bio"}/>
         <Grid.Column width={11}>
             <Segment raised>
                 <h2>Edit bio</h2>

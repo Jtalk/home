@@ -11,13 +11,13 @@ import {
     useArticlesTotalCount
 } from "../../../data/reduce/articles";
 import {Loading} from "../../../data/reduce/global/enums";
-import {Titled} from "react-titled";
 import {useRouter} from "next/router";
 import {reduxWrapper} from "../../../data/redux";
 import {ownerActions} from "../../../data/reduce/owner";
 import {latestArticlesActions} from "../../../data/reduce/latest-articles";
 import {footerActions} from "../../../data/reduce/footer";
 import {BlogPath} from "../../../utils/paths";
+import {OwnerTitled} from "../../../component/about/owner-titled";
 
 export default function Blog() {
 
@@ -35,7 +35,7 @@ export default function Blog() {
     };
 
     return <Grid centered stackable columns={2}>
-        <Titled title={t => "Blog | " + t}/>
+        <OwnerTitled title={"Articles"}/>
         <Grid.Row>
             <Grid.Column width={11}>
                 <BlogArticles loading={loading} articles={articles}/>
