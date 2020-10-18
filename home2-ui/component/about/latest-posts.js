@@ -40,7 +40,7 @@ function createPostItem(post) {
                 </Link>
             </List.Header>
             <List.Description>
-                <div className="datetime">{formatDateTime(post.created)}</div>
+                <div suppressHydrationWarning className="datetime">{formatDateTime(post.created)}</div>
             </List.Description>
         </List.Content>
     </List.Item>

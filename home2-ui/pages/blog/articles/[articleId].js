@@ -8,11 +8,15 @@ import _ from "lodash";
 import {Titled} from "react-titled";
 import {OwnerCard} from "../../../component/about/owner-card";
 import {LatestPosts} from "../../../component/about/latest-posts";
-import {useArticle, useArticleLoading} from "../../../data/reduce/articles";
+import {articleActions, useArticle, useArticleLoading} from "../../../data/reduce/articles";
 import {MarkdownTextArea} from "../../../component/text-area";
 import {NotFound} from "../../../component/error/not-found";
 import {useRouter} from "next/router";
 import {PathPrefix} from "./index";
+import {reduxWrapper} from "../../../data/redux";
+import {ownerActions} from "../../../data/reduce/owner";
+import {footerActions} from "../../../data/reduce/footer";
+import {latestArticlesActions} from "../../../data/reduce/latest-articles";
 
 export default function ArticleId() {
 
@@ -65,7 +69,7 @@ export const ArticleView = function ({article, loading, href, preview}) {
                             <a className="ui compact basic small button">Read further</a>
                         </Link>}
                     </Item.Description>
-                    <Item.Extra>
+                    <Item.Extra suppressHydrationWarning>
                         {/*<Icon name="comment outline"/>*/}
                         {/*{this.props.comments.length} comments | */}
                         Created {formatDateTime(article.created)}
@@ -79,3 +83,14 @@ export const ArticleView = function ({article, loading, href, preview}) {
 export function blogArticleHref(id) {
     return `/blog/articles/${id}`;
 }
+
+export const getServerSideProps = reduxWrapper.getServerSideProps(async ({store, query}) => {
+    const {articleId} = query;
+    await Promise.all([
+        store.dispatch(ownerActions.load()),
+        store.dispatch(articleActions.loadOne(articleId)),
+        store.dispatch(latestArticlesActions.load()),
+        store.dispatch(footerActions.load()),
+    ])
+    return {props: {}}
+})

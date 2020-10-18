@@ -49,6 +49,15 @@ export function useLoading(segment, path = ["loading"]) {
     return useImmutableSelector(segment, ...path);
 }
 
+export function useLazyLoader(loadAction, segment, path = ["data"], loadingPath = ["loading"]) {
+    const dispatch = useDispatch();
+    const loading = useLoading(segment, loadingPath);
+    useEffect(() => {
+        if (!loading) dispatch({ type: loadAction });
+    }, [loadAction, loading, dispatch]);
+    return useImmutableSelector(segment, path);
+}
+
 export function useUpdating(segment, path = ["updating"]) {
     return useImmutableSelector(segment, ...path);
 }

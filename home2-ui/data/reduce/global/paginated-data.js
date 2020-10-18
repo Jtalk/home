@@ -2,7 +2,7 @@ import {fromJS, List, Map} from "immutable";
 import {immutableSelector, useImmutableSelector} from "../../redux-store";
 
 export function defaultPages() {
-    return Map({pages: List(), total: undefined, pageSize: undefined});
+    return Map({pages: List(), total: null, pageSize: null});
 }
 
 export function usePage(pageN, segment, ...dataPath) {
@@ -42,8 +42,8 @@ export function addPage(data, newPage, pagination) {
             newPage, pagination);
         return data.merge({
             pages: withNewPage(List(), newPage, pagination.current),
-            total: pagination.total,
-            pageSize: pagination.pageSize
+            total: pagination.total || null,
+            pageSize: pagination.pageSize || null
         })
     }
 }

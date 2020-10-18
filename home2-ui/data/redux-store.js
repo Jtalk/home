@@ -22,6 +22,12 @@ export function immutableSelector(storeSegment, ...path) {
     };
 }
 
+export function hydrate(state, action, segment) {
+    const payload = action.payload?.[segment];
+    console.info(`Hydrate ${segment}: `, payload?.toJS())
+    return state.merge(payload);
+}
+
 function asJs(immutableValue) {
     return (immutableValue && immutableValue.toJS && immutableValue.toJS()) || immutableValue;
 }

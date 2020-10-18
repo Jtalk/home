@@ -3,10 +3,20 @@ import {ArticleView} from "./[articleId]";
 import {Grid, Menu, Segment} from "semantic-ui-react";
 import {OwnerCard} from "../../../component/about/owner-card";
 import {LatestPosts} from "../../../component/about/latest-posts";
-import {DEFAULT_PAGE_SIZE, useArticles, useArticlesLoading, useArticlesTotalCount} from "../../../data/reduce/articles";
+import {
+    articleActions,
+    DEFAULT_PAGE_SIZE,
+    useArticles,
+    useArticlesLoading,
+    useArticlesTotalCount
+} from "../../../data/reduce/articles";
 import {Loading} from "../../../data/reduce/global/enums";
 import {Titled} from "react-titled";
 import {useRouter} from "next/router";
+import {reduxWrapper} from "../../../data/redux";
+import {ownerActions} from "../../../data/reduce/owner";
+import {latestArticlesActions} from "../../../data/reduce/latest-articles";
+import {footerActions} from "../../../data/reduce/footer";
 
 export const PathPrefix = "/blog/articles";
 
@@ -68,3 +78,13 @@ export const Pagination = function ({loading, total, page, navigate}) {
         }
     </Menu>
 };
+
+export const getServerSideProps = reduxWrapper.getServerSideProps(async ({store}) => {
+    await Promise.all([
+        store.dispatch(ownerActions.load()),
+        store.dispatch(articleActions.load()),
+        store.dispatch(latestArticlesActions.load()),
+        store.dispatch(footerActions.load()),
+    ])
+    return {props: {}}
+})

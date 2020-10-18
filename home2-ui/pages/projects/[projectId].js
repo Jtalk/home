@@ -1,4 +1,4 @@
-import {useProjectLoading, useProjects} from "../../data/reduce/projects";
+import {projectActions, useProjectLoading, useProjects} from "../../data/reduce/projects";
 import {Loading} from "../../data/reduce/global/enums";
 import {ProjectsMenu} from "../../component/projects/projects-menu";
 import {ProjectDescription} from "../../component/projects/project-description";
@@ -6,6 +6,9 @@ import React from "react";
 import * as _ from "lodash";
 import {useRouter} from "next/router";
 import {NotFound} from "../../component/error/not-found";
+import {reduxWrapper} from "../../data/redux";
+import {ownerActions} from "../../data/reduce/owner";
+import {footerActions} from "../../data/reduce/footer";
 
 export default function Project() {
     let router = useRouter();
@@ -25,3 +28,12 @@ export default function Project() {
         <ProjectDescription loading={loading === Loading.LOADING} {...selectedProject}/>
     </div>
 }
+
+export const getServerSideProps = reduxWrapper.getServerSideProps(async ({store}) => {
+    await Promise.all([
+        store.dispatch(ownerActions.load()), // for menubar
+        store.dispatch(projectActions.load()),
+        store.dispatch(footerActions.load()),
+    ])
+    return {props: {}}
+})

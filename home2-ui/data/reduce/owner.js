@@ -1,10 +1,12 @@
 import {fromJS, Map} from "immutable";
 import {Loading, Updating} from "./global/enums";
 import {action, error} from "./global/actions";
-import {useLastError, useLoading, useUpdater2, useUpdating} from "./global/hook-barebone";
+import {useLastError, useLazyLoader, useLoading, useUpdater2, useUpdating} from "./global/hook-barebone";
 import {call, put, takeEvery} from "redux-saga/effects";
 import {fetchAjax} from "./ajax";
-import {useImmutableSelector} from "../redux-store";
+import {HYDRATE} from "next-redux-wrapper";
+import {ERROR_ACTION, WAIT_FOR_ACTION} from "redux-wait-for-action";
+import {hydrate} from "../redux-store";
 
 let defaultOwner = fromJS({
     name: "",
@@ -16,21 +18,23 @@ let defaultOwner = fromJS({
 });
 
 export const Action = {
-    LOAD: Symbol("owner load"),
-    LOADED: Symbol("owner loaded"),
-    LOAD_ERROR: Symbol("owner load error"),
-    UPDATE: Symbol("owner update"),
-    UPDATED: Symbol("owner updated"),
-    UPDATE_ERROR: Symbol("owner update error"),
+    LOAD: "owner load",
+    LOADED: "owner loaded",
+    LOAD_ERROR: "owner load error",
+    UPDATE: "owner update",
+    UPDATED: "owner updated",
+    UPDATE_ERROR: "owner update error",
 };
 
-export function owner(state = Map({loading: Loading.LOADING, data: defaultOwner, version: 1}), action) {
+export const segment = "owner";
+
+export function reducer(state = Map({loading: null, data: defaultOwner, version: 1}), action) {
     switch (action.type) {
         case Action.LOAD:
             return state.merge({loading: Loading.LOADING});
         case Action.LOADED:
             return state.merge({
-                loading: Loading.READY, errorMessage: undefined,
+                loading: Loading.READY, errorMessage: null,
                 data: fromJS(action.data),
             });
         case Action.LOAD_ERROR:
@@ -39,45 +43,45 @@ export function owner(state = Map({loading: Loading.LOADING, data: defaultOwner,
             return state.merge({updating: Updating.UPDATING});
         case Action.UPDATED:
             return state.merge({
-                updating: Updating.UPDATED, errorMessage: undefined,
+                updating: Updating.UPDATED, errorMessage: null,
                 data: fromJS(action.data),
             });
         case Action.UPDATE_ERROR:
             return state.merge({updating: Updating.ERROR, errorMessage: action.errorMessage});
+        case HYDRATE:
+            return hydrate(state, action, segment);
         default:
             return state;
     }
 }
 
+export const ownerActions = {
+    load: () => ({ type: Action.LOAD, [WAIT_FOR_ACTION]: Action.LOADED, [ERROR_ACTION]: Action.LOAD_ERROR })
+}
+
 export function* watchOwner() {
-    console.log("Setting up the owner saga");
-    yield preload();
+    yield takeEvery(Action.LOAD, () => load());
     yield takeEvery(Action.UPDATE, ({data}) => update(data.update, data.extra.photo));
 }
 
 export function useOwner() {
-    return useImmutableSelector("owner", "data") || {};
+    return useLazyLoader(Action.LOAD, segment) || {};
 }
 
 export function useOwnerLoading() {
-    return useLoading("owner");
+    return useLoading(segment) || Loading.LOADING;
 }
 
 export function useOwnerUpdating() {
-    return useUpdating("owner");
+    return useUpdating(segment);
 }
 
 export function useOwnerError() {
-    return useLastError("owner");
+    return useLastError(segment);
 }
 
 export function useOwnerUpdater() {
     return useUpdater2(Action.UPDATE);
-}
-
-function* preload() {
-    yield put(action(Action.LOAD));
-    yield call(load);
 }
 
 function* load() {

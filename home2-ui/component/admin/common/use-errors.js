@@ -56,7 +56,7 @@ export class FormErrors {
         }
     }
     reset = (...path) => {
-        _.set(this.store, path, undefined);
+        _.set(this.store, path, null);
         this.knownPaths.delete(path.join("|"));
         this.onUpdate(this);
         return this.reset;

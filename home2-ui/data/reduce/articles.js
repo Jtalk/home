@@ -15,8 +15,11 @@ import {
 import {allSelector, publishableData, publishedSelector} from "./global/publishable-data";
 import {fetchAjax} from "./ajax";
 import {useMemo} from "react";
-import {useImmutableSelector} from "../redux-store";
+import {hydrate, useImmutableSelector} from "../redux-store";
 import {useRouter} from "next/router";
+import {HYDRATE} from "next-redux-wrapper";
+import {ERROR_ACTION, WAIT_FOR_ACTION} from "redux-wait-for-action";
+import mapValues from "lodash/mapValues";
 
 export const DEFAULT_PAGE_SIZE = 20;
 const MAX_PAGE_SIZE = 100;
@@ -36,15 +39,17 @@ export const Action = {
     DELETE_ERROR: Symbol("articles delete error"),
 };
 
-export function articles(state = fromJS({
-    loading: Loading.LOADING, loadings: Map(), data: Map(), pages: defaultPages()
+export const segment = "articles";
+
+export function reducer(state = fromJS({
+    loading: null, loadings: Map(), data: Map(), pages: defaultPages()
 }), action) {
     switch (action.type) {
         case Action.LOAD:
             return state.merge({loading: Loading.LOADING});
         case Action.LOADED:
             return state.merge({
-                loading: Loading.READY, errorMessage: undefined,
+                loading: Loading.READY, errorMessage: null,
                 data: mergeCache(state.get("data"), action.data.articles),
                 pages: addPage(state.get("pages"), publishableIds(action.data.articles, !action.data.publishedOnly), action.data.pagination),
             });
@@ -54,7 +59,7 @@ export function articles(state = fromJS({
             return state.merge({loadings: state.get("loadings").set(action.data, Loading.LOADING)});
         case Action.LOADED_ONE:
             return state.merge({
-                loadings: state.get("loadings").set(action.data.id, Loading.READY), errorMessage: undefined,
+                loadings: state.get("loadings").set(action.data.id, Loading.READY), errorMessage: null,
                 data: mergeCache(state.get("data"), [action.data])
             });
         case Action.LOAD_ONE_ERROR:
@@ -62,10 +67,10 @@ export function articles(state = fromJS({
                 loadings: state.get("loadings").set(action.ctx.id, Loading.ERROR), errorMessage: action.errorMessage
             });
         case Action.UPDATE:
-            return state.merge({updating: Updating.UPDATING, errorMessage: undefined});
+            return state.merge({updating: Updating.UPDATING, errorMessage: null});
         case Action.UPDATED:
             return state.merge({
-                updating: Updating.UPDATED, errorMessage: undefined,
+                updating: Updating.UPDATED, errorMessage: null,
                 data: mergeCache(Map(), [action.data]),
                 pages: defaultPages(),
             });
@@ -75,15 +80,46 @@ export function articles(state = fromJS({
             return state.merge({deleting: Deleting.DELETING});
         case Action.DELETED:
             return state.merge({
-                deleting: Deleting.DELETED, errorMessage: undefined,
+                deleting: Deleting.DELETED, errorMessage: null,
                 data: mergeCache(Map(), action.data.articles),
                 pages: addPage(defaultPages(), publishableIds(action.data.articles, !action.data.publishedOnly), action.data.pagination),
             });
         case Action.DELETE_ERROR:
             return state.merge({deleting: Deleting.DELETE_ERROR, errorMessage: action.errorMessage});
+        case HYDRATE:
+            return hydrate(state, action, segment);
         default:
             return state;
     }
+}
+
+export const articleActions = {
+    load: () => ({
+        type: Action.LOAD,
+        data: {
+            page: 0,
+            pageSize: DEFAULT_PAGE_SIZE,
+            publishedOnly: true,
+        },
+        [WAIT_FOR_ACTION]: Action.LOADED,
+        [ERROR_ACTION]: Action.LOAD_ERROR }),
+    loadOne: (id) => ({ type: Action.LOAD_ONE, data: id, [WAIT_FOR_ACTION]: Action.LOADED_ONE, [ERROR_ACTION]: Action.LOAD_ONE_ERROR }),
+}
+
+export function serialiseJSON(state) {
+    const result = state.toJS();
+    if (result?.data) {
+        result.data = mapValues(result.data, v => ({...v, created: v.created?.getTime()}));
+    }
+    return result;
+}
+
+export function deserialiseJSON(json) {
+    const result = {...json};
+    if (result?.data) {
+        result.data = mapValues(result.data, v => ({...v, created: v.created && new Date(v.created)}));
+    }
+    return fromJS(result);
 }
 
 export function* watchArticles() {
@@ -95,8 +131,8 @@ export function* watchArticles() {
 
 export function useArticles(page, pageSize, withUnpublished = false) {
     let existingSize = useArticlesPageSize();
-    let existingPage = usePage(page, "articles", "pages");
-    let data = useImmutableSelector("articles", "data");
+    let existingPage = usePage(page, segment, "pages");
+    let data = useImmutableSelector(segment, "data");
     let publishedPage = publishedSelector(null)(fromJS(existingPage));
     let allPage = allSelector(null)(fromJS(existingPage));
     let loadAction = useMemo(
@@ -108,38 +144,38 @@ export function useArticles(page, pageSize, withUnpublished = false) {
 }
 
 export function useArticle(id) {
-    let found = useImmutableSelector("articles", "data", id);
+    let found = useImmutableSelector(segment, "data", id);
     let loadAction = useMemo(() => action(Action.LOAD_ONE, id), [id]);
     useLoader(loadAction, !found);
     return found;
 }
 
 export function useArticlesPageSize() {
-    return usePageSize("articles", "pages");
+    return usePageSize(segment, "pages");
 }
 
 export function useArticlesTotalCount() {
-    return useTotalCount("articles", "pages");
+    return useTotalCount(segment, "pages");
 }
 
 export function useArticlesLoading() {
-    return useLoading("articles");
+    return useLoading(segment);
 }
 
 export function useArticleLoading(id) {
-    return useImmutableSelector("articles", "loadings", id);
+    return useImmutableSelector(segment, "loadings", id);
 }
 
 export function useArticlesUpdating() {
-    return useUpdating("articles");
+    return useUpdating(segment);
 }
 
 export function useArticlesDeleting() {
-    return useDeleting("articles");
+    return useDeleting(segment);
 }
 
 export function useArticlesError() {
-    return useLastError("articles");
+    return useLastError(segment);
 }
 
 export function useArticleUpdater() {

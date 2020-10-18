@@ -8,12 +8,12 @@ import {useImmutableSelector} from "../redux-store";
 import {useMemo} from "react";
 
 export const Action = {
-    LOAD: Symbol("tags load"),
-    LOADED: Symbol("tags loaded"),
-    LOAD_ERROR: Symbol("tags loading error"),
+    LOAD: "tags load",
+    LOADED: "tags loaded",
+    LOAD_ERROR: "tags loading error",
 };
 
-export function tags(state = Map({loading: Loading.LOADING, data: undefined}), action) {
+export function tags(state = Map({loading: Loading.LOADING, data: null}), action) {
     switch (action.type) {
         case Action.LOAD:
             return state.merge({loading: Loading.LOADING});

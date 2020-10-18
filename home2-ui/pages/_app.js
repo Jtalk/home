@@ -2,7 +2,7 @@ import React from 'react';
 import './index.css';
 import 'semantic-ui-css/semantic.css';
 import "highlight.js/styles/idea.css";
-import {createAppStore} from "../data/redux";
+import {createAppStore, reduxWrapper} from "../data/redux";
 import {FileConverterProvider} from "../utils/file-converter-context";
 import {setupErrorReporting} from "../utils/error-reporting";
 import {Container} from "semantic-ui-react";
@@ -32,5 +32,4 @@ function App({Component, pageProps}) {
     </ErrorBoundary>
 }
 
-const wrapper = createWrapper(createAppStore, {debug: true});
-export default wrapper.withRedux(withReduxSaga(App));
+export default reduxWrapper.withRedux(withReduxSaga(App));

@@ -12,35 +12,35 @@ import storageAvailable from "storage-available";
 export const EXISTING_PASSWORD_MISMATCH = "The existing password does not match";
 
 let Action = {
-    INIT: Symbol("authentication init"),
-    LOGGING_IN: Symbol("authentication logging in"),
-    LOGIN: Symbol("authentication login"),
-    TRIGGER_REFRESH: Symbol("authentication trigger refresh"),
-    REFRESH: Symbol("authentication refresh"),
-    LOGOUT: Symbol("authentication logout"),
-    ERROR: Symbol("authentication error"),
+    INIT: "authentication init",
+    LOGGING_IN: "authentication logging in",
+    LOGIN: "authentication login",
+    TRIGGER_REFRESH: "authentication trigger refresh",
+    REFRESH: "authentication refresh",
+    LOGOUT: "authentication logout",
+    ERROR: "authentication error",
 };
 
 export const Login = {
-    LOGGING_IN: Symbol("logging_in"),
-    LOGGED_IN: Symbol("logged_in"),
-    ERROR: Symbol("error"),
+    LOGGING_IN: "logging_in",
+    LOGGED_IN: "logged_in",
+    ERROR: "error",
 };
 
 const SESSION_EXPIRY_KEY = "session-expiry";
 const SESSION_USERNAME_KEY = "session-username";
-const DEFAULT = Map({login: undefined, updating: undefined});
+const DEFAULT = Map({login: null, updating: null});
 
 export function authentication(state = DEFAULT, action) {
     switch (action.type) {
         case Action.LOGGING_IN:
-            return state.merge({login: Login.LOGGING_IN, errorMessage: undefined});
+            return state.merge({login: Login.LOGGING_IN, errorMessage: null});
         case Action.LOGIN:
             return state.merge({
                 login: Login.LOGGED_IN,
                 expiry: dayjs(action.data.expiry),
                 username: action.data.username,
-                errorMessage: undefined
+                errorMessage: null
             });
         case Action.REFRESH:
             return state.merge({

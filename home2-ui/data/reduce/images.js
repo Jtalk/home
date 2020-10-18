@@ -13,33 +13,33 @@ const {publicRuntimeConfig: config} = getConfig();
 
 const initialState = fromJS({
     upload: {
-        status: undefined,
-        error: undefined,
+        status: null,
+        error: null,
     },
     loading: {
-        status: undefined,
-        error: undefined,
+        status: null,
+        error: null,
     },
     data: defaultPages(),
 });
 
 const Action = {
-    INIT: Symbol("images init"),
-    LOAD: Symbol("images loading"),
-    LOADED: Symbol("images loaded"),
-    LOAD_ERROR: Symbol("images load error"),
-    UPLOAD: Symbol("images uploading"),
-    UPLOADED: Symbol("images uploaded"),
-    UPLOAD_ERROR: Symbol("images upload error"),
-    DELETE: Symbol("images delete"),
-    DELETED: Symbol("images deleted"),
-    DELETE_ERROR: Symbol("images delete error"),
+    INIT: "images init",
+    LOAD: "images loading",
+    LOADED: "images loaded",
+    LOAD_ERROR: "images load error",
+    UPLOAD: "images uploading",
+    UPLOADED: "images uploaded",
+    UPLOAD_ERROR: "images upload error",
+    DELETE: "images delete",
+    DELETED: "images deleted",
+    DELETE_ERROR: "images delete error",
 };
 
 export function images(state = initialState, action) {
     switch (action.type) {
         case Action.INIT:
-            return state.merge(fromJS({loading: undefined, uploading: undefined, deletion: undefined}));
+            return state.merge(fromJS({loading: null, uploading: null, deletion: null}));
         case Action.LOAD:
             return state.merge(fromJS({loading: {status: Loading.LOADING}}));
         case Action.LOADED:
@@ -50,13 +50,13 @@ export function images(state = initialState, action) {
         case Action.LOAD_ERROR:
             return state.merge(fromJS({loading: {status: Loading.ERROR, error: {message: action.errorMessage}}}));
         case Action.UPLOAD:
-            return state.merge(fromJS({uploading: {status: Uploading.UPLOADING}, deleting: undefined}));
+            return state.merge(fromJS({uploading: {status: Uploading.UPLOADING}, deleting: null}));
         case Action.UPLOADED:
             return state.merge(fromJS({uploading: {status: Uploading.UPLOADED}, data: defaultPages()}));
         case Action.UPLOAD_ERROR:
             return state.merge(fromJS({uploading: {status: Uploading.ERROR, error: {message: action.errorMessage}}}));
         case Action.DELETE:
-            return state.merge(fromJS({deletion: {status: Deleting.DELETING}, uploading: undefined}));
+            return state.merge(fromJS({deletion: {status: Deleting.DELETING}, uploading: null}));
         case Action.DELETED:
             return state.merge(fromJS({deletion: {status: Deleting.DELETED}, data: defaultPages()}));
         case Action.DELETE_ERROR:

@@ -7,9 +7,9 @@ import {action, error} from "./global/actions";
 import {ajaxSelector} from "./ajax";
 
 const Action = {
-    LOADING: Symbol("search loading"),
-    COMPLETE: Symbol("search complete"),
-    ERROR: Symbol("search error"),
+    LOADING: "search loading",
+    COMPLETE: "search complete",
+    ERROR: "search error",
 };
 
 export function search(state = Map({activeCount: 0, results: List()}), action) {

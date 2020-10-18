@@ -16,52 +16,63 @@ import {publishableData, useAllData, usePublishedData} from "./global/publishabl
 import {useMemo} from "react";
 import _ from "lodash";
 import {useRouter} from "next/router";
+import {HYDRATE} from "next-redux-wrapper";
+import {hydrate} from "../redux-store";
+import {ERROR_ACTION, WAIT_FOR_ACTION} from "redux-wait-for-action";
 
 export const Action = {
-    LOAD: Symbol("projects load"),
-    LOADED: Symbol("projects loaded"),
-    LOAD_ERROR: Symbol("projects load error"),
-    RELOAD_UNPUBLISHED: Symbol("projects reload with unpublished"),
-    UPDATE: Symbol("projects update"),
-    UPDATED: Symbol("projects updated"),
-    UPDATE_ERROR: Symbol("projects update error"),
-    DELETE: Symbol("projects delete"),
-    DELETED: Symbol("projects deleted"),
-    DELETE_ERROR: Symbol("projects delete error"),
+    LOAD: "projects load",
+    LOADED: "projects loaded",
+    LOAD_ERROR: "projects load error",
+    RELOAD_UNPUBLISHED: "projects reload with unpublished",
+    UPDATE: "projects update",
+    UPDATED: "projects updated",
+    UPDATE_ERROR: "projects update error",
+    DELETE: "projects delete",
+    DELETED: "projects deleted",
+    DELETE_ERROR: "projects delete error",
 };
 
-export function projects(state = Map({loading: Loading.LOADING, data: Map(), version: 1}), action) {
+export const segment = "projects";
+
+export function reducer(state = Map({loading: null, data: Map(), version: 1}), action) {
     switch (action.type) {
         case Action.LOAD:
-            return Map({loading: Loading.LOADING, errorMessage: undefined, uploading: undefined});
+            return Map({loading: Loading.LOADING, errorMessage: null, uploading: null});
         case Action.LOADED:
             return state.merge({
-                loading: Loading.READY, errorMessage: undefined,
+                loading: Loading.READY, errorMessage: null,
                 data: publishableData(action.data.projects, !action.data.publishedOnly),
             });
         case Action.LOAD_ERROR:
             return state.merge({loading: Loading.ERROR, errorMessage: action.errorMessage});
         case Action.UPDATE:
-            return state.merge({updating: Updating.UPDATING, errorMessage: undefined});
+            return state.merge({updating: Updating.UPDATING, errorMessage: null});
         case Action.UPDATED:
             return state.merge({
-                updating: Updating.UPDATED, errorMessage: undefined,
+                updating: Updating.UPDATED, errorMessage: null,
                 data: publishableData(action.data.projects, !action.data.publishedOnly),
             });
         case Action.UPDATE_ERROR:
             return state.merge({updating: Updating.ERROR, errorMessage: action.errorMessage});
         case Action.DELETE:
-            return state.merge({deleting: Deleting.DELETING, errorMessage: undefined});
+            return state.merge({deleting: Deleting.DELETING, errorMessage: null});
         case Action.DELETED:
             return state.merge({
-                deleting: Deleting.DELETED, errorMessage: undefined,
+                deleting: Deleting.DELETED, errorMessage: null,
                 data: publishableData(action.data.projects, !action.data.publishedOnly),
             });
         case Action.DELETE_ERROR:
             return state.merge({deleting: Deleting.DELETE_ERROR, errorMessage: action.data});
+        case HYDRATE:
+            return hydrate(state, action, segment);
         default:
             return state;
     }
+}
+
+export const projectActions = {
+    load: () => ({ type: Action.LOAD, [WAIT_FOR_ACTION]: Action.LOADED, [ERROR_ACTION]: Action.LOAD_ERROR })
 }
 
 export function* watchProjects() {

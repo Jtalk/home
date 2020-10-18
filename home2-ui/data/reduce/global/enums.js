@@ -1,20 +1,20 @@
 export const Uploading = {
-    UPLOADING: Symbol('uploading'),
-    UPLOADED: Symbol('uploaded'),
-    ERROR: Symbol('upload_error'),
+    UPLOADING: 'uploading',
+    UPLOADED: 'uploaded',
+    ERROR: 'upload_error',
 };
 export const Updating = {
-    UPDATING: Symbol('updating'),
-    UPDATED: Symbol('update_ready'),
-    ERROR: Symbol('update_error'),
+    UPDATING: 'updating',
+    UPDATED: 'update_ready',
+    ERROR: 'update_error',
 };
 export const Loading = {
-    LOADING: Symbol('loading'),
-    READY: Symbol('data_ready'),
-    ERROR: Symbol('data_error'),
+    LOADING: 'loading',
+    READY: 'data_ready',
+    ERROR: 'data_error',
 };
 export const Deleting = {
-    DELETING: Symbol('deleting'),
-    DELETED: Symbol('deleted'),
-    DELETE_ERROR: Symbol('delete_error'),
+    DELETING: 'deleting',
+    DELETED: 'deleted',
+    DELETE_ERROR: 'delete_error',
 };

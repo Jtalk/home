@@ -1,15 +1,12 @@
 import {select} from "redux-saga/effects";
 import {Ajax} from "../ajax-requests";
 import {useImmutableSelector} from "../redux-store";
-
-const Action = {
-    INIT: Symbol("ajax init")
-};
+import {HYDRATE} from "next-redux-wrapper";
 
 export function ajax(state = new Ajax(), action) {
     switch (action.type) {
-        case Action.INIT:
-            return action.data;
+        case HYDRATE:
+            // Do nothing, fall through
         default:
             return state;
     }
