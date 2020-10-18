@@ -6,7 +6,7 @@ import {reportError} from "../../utils/error-reporting";
 export const WebError = function ({httpCode, message}) {
     console.error("Showing error page", httpCode, message);
     reportError({errorClass: "error-page", errorMessage: `Showing error page: ${httpCode} ${message}`});
-    return <Titled title={() => httpCode}>
+    return <Titled title={() => message}>
         <Container text textAlign="center">
             {httpCode}: {message}
         </Container>
