@@ -87,7 +87,7 @@ function middleware() {
         thunk,
         promiseMiddleware,
         createReduxWaitForMiddleware(),
-        // createLogger(reduxLoggerOpts())
+        createLogger(reduxLoggerOpts())
     );
     return [result, saga];
 }
