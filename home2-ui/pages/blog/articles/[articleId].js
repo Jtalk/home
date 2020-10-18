@@ -54,7 +54,7 @@ export const ArticleView = function ({article, loading, href, preview}) {
             <Item.Content>
                 <ContentPlaceholderOr header lines={0} loading={articleLoading}>
                     <Item.Header>
-                        <Link href={href}>
+                        <Link shallow={!preview} href={href}>
                             <a><h1>{article.title}</h1></a>
                         </Link>
                     </Item.Header>
