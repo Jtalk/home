@@ -22,7 +22,7 @@ import {useRouter} from "next/router";
 
 export default function EditImagesPage() {
     const router = useRouter();
-    const {page = 1} = router.query;
+    const {page = 0} = router.query;
     return <EditImages page={page}/>
 };
 
