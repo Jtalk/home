@@ -74,7 +74,7 @@ export const EditAccountStateless = function ({onSubmit, updating, username, err
                         <Grid.Row>
                             <Grid.Column width={16}>
                                 {/*Helping password managers determine which account to edit*/}
-                                <input readOnly autoComplete="username" value={username} style={{display: "none"}}/>
+                                <input readOnly autoComplete="username" value={username || ''} style={{display: "none"}}/>
                                 <Form.Input label="Old password"
                                             placeholder="Current password"
                                             autoComplete="current-password"
