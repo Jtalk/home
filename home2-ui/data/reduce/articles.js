@@ -1,4 +1,3 @@
-import {fromJS, Map} from "immutable";
 import {Deleting, Loading, Updating} from "./global/enums";
 import {action, error} from "./global/actions";
 import {addPage, defaultPages, pageSizeSelector, usePage, usePageSize, useTotalCount} from "./global/paginated-data";
@@ -20,6 +19,7 @@ import {useRouter} from "next/router";
 import {HYDRATE} from "next-redux-wrapper";
 import {ERROR_ACTION, WAIT_FOR_ACTION} from "redux-wait-for-action";
 import mapValues from "lodash/mapValues";
+import merge from "lodash/merge";
 
 export const DEFAULT_PAGE_SIZE = 20;
 const MAX_PAGE_SIZE = 100;
@@ -41,51 +41,53 @@ export const Action = {
 
 export const segment = "articles";
 
-export function reducer(state = fromJS({
-    loading: null, loadings: Map(), data: Map(), pages: defaultPages()
-}), action) {
+export function reducer(state = {
+    loading: null, loadings: {}, data: {}, pages: defaultPages()
+}, action) {
     switch (action.type) {
         case Action.LOAD:
-            return state.merge({loading: Loading.LOADING});
+            return merge({}, state, {loading: Loading.LOADING});
         case Action.LOADED:
-            return state.merge({
+            return merge({}, state, {
                 loading: Loading.READY, errorMessage: null,
-                data: mergeCache(state.get("data"), action.data.articles),
-                pages: addPage(state.get("pages"), publishableIds(action.data.articles, !action.data.publishedOnly), action.data.pagination),
+                data: mergeCache(state.data, action.data.articles),
+                pages: addPage(state.pages, publishableIds(action.data.articles, !action.data.publishedOnly), action.data.pagination),
             });
         case Action.LOAD_ERROR:
-            return state.merge({loading: Loading.ERROR, errorMessage: action.errorMessage});
+            return merge({}, state, {loading: Loading.ERROR, errorMessage: action.errorMessage});
         case Action.LOAD_ONE:
-            return state.merge({loadings: state.get("loadings").set(action.data, Loading.LOADING)});
+            return merge({}, state, {
+                loadings: {...state.loadings, [action.data]: Loading.LOADING}
+            });
         case Action.LOADED_ONE:
-            return state.merge({
-                loadings: state.get("loadings").set(action.data.id, Loading.READY), errorMessage: null,
-                data: mergeCache(state.get("data"), [action.data])
+            return merge({}, state, {
+                loadings: {...state.loadings, [action.data.id]: Loading.READY}, errorMessage: null,
+                data: mergeCache(state.data, [action.data])
             });
         case Action.LOAD_ONE_ERROR:
-            return state.merge({
-                loadings: state.get("loadings").set(action.ctx.id, Loading.ERROR), errorMessage: action.errorMessage
+            return merge({}, state, {
+                loadings: {...state.loadings, [action.ctx.id]: Loading.ERROR}, errorMessage: action.errorMessage
             });
         case Action.UPDATE:
-            return state.merge({updating: Updating.UPDATING, errorMessage: null});
+            return merge({}, state, {updating: Updating.UPDATING, errorMessage: null});
         case Action.UPDATED:
-            return state.merge({
+            return merge({}, state, {
                 updating: Updating.UPDATED, errorMessage: null,
-                data: mergeCache(Map(), [action.data]),
+                data: mergeCache({}, [action.data]),
                 pages: defaultPages(),
             });
         case Action.UPDATE_ERROR:
-            return state.merge({updating: Updating.ERROR, errorMessage: action.errorMessage});
+            return merge({}, state, {updating: Updating.ERROR, errorMessage: action.errorMessage});
         case Action.DELETE:
-            return state.merge({deleting: Deleting.DELETING});
+            return merge({}, state, {deleting: Deleting.DELETING});
         case Action.DELETED:
-            return state.merge({
+            return merge({}, state, {
                 deleting: Deleting.DELETED, errorMessage: null,
-                data: mergeCache(Map(), action.data.articles),
+                data: mergeCache({}, action.data.articles),
                 pages: addPage(defaultPages(), publishableIds(action.data.articles, !action.data.publishedOnly), action.data.pagination),
             });
         case Action.DELETE_ERROR:
-            return state.merge({deleting: Deleting.DELETE_ERROR, errorMessage: action.errorMessage});
+            return merge({}, state, {deleting: Deleting.DELETE_ERROR, errorMessage: action.errorMessage});
         case HYDRATE:
             return hydrate(state, action, segment);
         default:
@@ -102,12 +104,15 @@ export const articleActions = {
             publishedOnly: true,
         },
         [WAIT_FOR_ACTION]: Action.LOADED,
-        [ERROR_ACTION]: Action.LOAD_ERROR }),
-    loadOne: (id) => ({ type: Action.LOAD_ONE, data: id, [WAIT_FOR_ACTION]: Action.LOADED_ONE, [ERROR_ACTION]: Action.LOAD_ONE_ERROR }),
+        [ERROR_ACTION]: Action.LOAD_ERROR
+    }),
+    loadOne: (id) => ({
+        type: Action.LOAD_ONE, data: id, [WAIT_FOR_ACTION]: Action.LOADED_ONE, [ERROR_ACTION]: Action.LOAD_ONE_ERROR
+    }),
 }
 
 export function serialiseJSON(state) {
-    const result = state.toJS();
+    const result = {...state};
     if (result?.data) {
         result.data = mapValues(result.data, v => ({...v, created: v.created?.getTime()}));
     }
@@ -119,7 +124,7 @@ export function deserialiseJSON(json) {
     if (result?.data) {
         result.data = mapValues(result.data, v => ({...v, created: v.created && new Date(v.created)}));
     }
-    return fromJS(result);
+    return result;
 }
 
 export function* watchArticles() {
@@ -133,8 +138,8 @@ export function useArticles(page, pageSize, withUnpublished = false) {
     let existingSize = useArticlesPageSize();
     let existingPage = usePage(page, segment, "pages");
     let data = useImmutableSelector(segment, "data");
-    let publishedPage = publishedSelector(null)(fromJS(existingPage));
-    let allPage = allSelector(null)(fromJS(existingPage));
+    let publishedPage = publishedSelector(null)(existingPage);
+    let allPage = allSelector(null)(existingPage);
     let loadAction = useMemo(
         () => action(Action.LOAD, {page, pageSize, publishedOnly: !withUnpublished}),
         [page, pageSize, withUnpublished]);
@@ -241,10 +246,11 @@ function* update(articleId, update) {
 }
 
 function mergeCache(iCache, articles) {
+    const result = {...iCache};
     articles.forEach(a => {
-        iCache = iCache.set(a.id, fromJS(a));
+        result[a.id] = a;
     });
-    return iCache;
+    return result;
 }
 
 function pageContent(ids, cache) {

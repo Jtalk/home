@@ -15,12 +15,12 @@ import createSagaMiddleware from "redux-saga";
 import {rootSaga} from "./saga";
 import * as ajax from "./reduce/ajax";
 import {emptySaga} from "../utils/testing/test-saga";
-import {fromJS, Map} from "immutable";
 import {reportError} from "../utils/error-reporting";
 import * as search from "./reduce/search";
 import {createWrapper} from "next-redux-wrapper";
 import mapValues from "lodash/mapValues";
 import keyBy from "lodash/keyBy";
+import identity from "lodash/identity";
 
 const modules = [
     ajax,
@@ -43,11 +43,10 @@ export const reduxWrapper = createWrapper(createAppStore, {
     debug: false,
     serializeState: state => {
         const result = {...state};
-        delete result.ajax;
-        return mapValues(result, (v, k) => (modulesBySegment?.[k]?.serialiseJSON || (n => n.toJS()))(v));
+        return mapValues(result, (v, k) => (modulesBySegment?.[k]?.serialiseJSON || identity)(v));
     },
     deserializeState: state => {
-        return mapValues(state, (v, k) => (modulesBySegment?.[k]?.deserialiseJSON || fromJS)(v));
+        return mapValues(state, (v, k) => (modulesBySegment?.[k]?.deserialiseJSON || identity)(v));
     }
 });
 
@@ -93,8 +92,5 @@ function middleware() {
 }
 
 function reduxLoggerOpts() {
-    return {
-        stateTransformer: state => Map(state).toJS(),
-        actionTransformer: action => Map(action).toJS(),
-    }
+    return {};
 }

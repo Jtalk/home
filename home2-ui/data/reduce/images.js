@@ -1,4 +1,3 @@
-import {fromJS} from "immutable";
 import {action, error} from "./global/actions";
 import {Deleting, Loading, Uploading} from "./global/enums";
 import {useDeleter2, useLastError, useLoader, useLoading, useUpdater2, useUpdating} from "./global/hook-barebone";
@@ -9,10 +8,11 @@ import {addPage, defaultPages} from "./global/paginated-data";
 import {useMemo} from "react";
 import getConfig from "next/config";
 import {HYDRATE} from "next-redux-wrapper";
+import merge from "lodash/merge";
 
 const {publicRuntimeConfig: config} = getConfig();
 
-const initialState = fromJS({
+const initialState = {
     upload: {
         status: null,
         error: null,
@@ -22,7 +22,7 @@ const initialState = fromJS({
         error: null,
     },
     data: defaultPages(),
-});
+};
 
 const Action = {
     INIT: "images init",
@@ -42,32 +42,32 @@ export const segment = "images";
 export function reducer(state = initialState, action) {
     switch (action.type) {
         case Action.INIT:
-            return state.merge(fromJS({loading: null, uploading: null, deletion: null}));
+            return merge({}, state, {loading: null, uploading: null, deletion: null});
         case Action.LOAD:
-            return state.merge(fromJS({loading: {status: Loading.LOADING}}));
+            return merge({}, state, {loading: {status: Loading.LOADING}});
         case Action.LOADED:
-            return state.merge(fromJS({
+            return merge({}, state, {
                 loading: {status: Loading.READY},
-                data: addPage(state.get("data"), action.data.images, action.data.pagination),
-            }));
+                data: addPage(state.data, action.data.images, action.data.pagination),
+            });
         case Action.LOAD_ERROR:
-            return state.merge(fromJS({loading: {status: Loading.ERROR, error: {message: action.errorMessage}}}));
+            return merge({}, state, {loading: {status: Loading.ERROR, error: {message: action.errorMessage}}});
         case Action.UPLOAD:
-            return state.merge(fromJS({uploading: {status: Uploading.UPLOADING}, deleting: null}));
+            return merge({}, state, {uploading: {status: Uploading.UPLOADING}, deleting: null});
         case Action.UPLOADED:
-            return state.merge(fromJS({uploading: {status: Uploading.UPLOADED}, data: defaultPages()}));
+            return merge({}, state, {uploading: {status: Uploading.UPLOADED}, data: defaultPages()});
         case Action.UPLOAD_ERROR:
-            return state.merge(fromJS({uploading: {status: Uploading.ERROR, error: {message: action.errorMessage}}}));
+            return merge({}, state, {uploading: {status: Uploading.ERROR, error: {message: action.errorMessage}}});
         case Action.DELETE:
-            return state.merge(fromJS({deletion: {status: Deleting.DELETING}, uploading: null}));
+            return merge({}, state, {deletion: {status: Deleting.DELETING}, uploading: null});
         case Action.DELETED:
-            return state.merge(fromJS({deletion: {status: Deleting.DELETED}, data: defaultPages()}));
+            return merge({}, state, {deletion: {status: Deleting.DELETED}, data: defaultPages()});
         case Action.DELETE_ERROR:
-            return state.merge(fromJS({
+            return merge({}, state, {
                 deletion: {
                     status: Deleting.DELETE_ERROR, error: {message: action.errorMessage}
                 }
-            }));
+            });
         case HYDRATE:
             // Admin-only activity, no server-side rendering involved
             return state;

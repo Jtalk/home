@@ -5,7 +5,6 @@ import {FlatLogoList} from "./flat-logo-list";
 import {Container, Segment} from "semantic-ui-react";
 import {Footer, StatelessFooter} from "./footer";
 import {Provider} from "react-redux";
-import {fromJS} from "immutable";
 import {createTestStore} from "../../data/redux";
 import {watchFooter} from "../../data/reduce/footer";
 import {END} from "redux-saga";
@@ -53,7 +52,7 @@ describe("<Footer/>", () => {
   let ajaxMock;
   let store;
   beforeEach(() => {
-    let footerReducer = () => fromJS({
+    let footerReducer = () => ({
       data: {
         links: links,
         logos: logos,

@@ -1,4 +1,3 @@
-import {fromJS, Map} from "immutable";
 import {Loading, Updating} from "./global/enums";
 import {action, error} from "./global/actions";
 import {useLastError, useLazyLoader, useLoading, useUpdater2, useUpdating} from "./global/hook-barebone";
@@ -7,15 +6,16 @@ import {fetchAjax} from "./ajax";
 import {HYDRATE} from "next-redux-wrapper";
 import {ERROR_ACTION, WAIT_FOR_ACTION} from "redux-wait-for-action";
 import {hydrate} from "../redux-store";
+import merge from "lodash/merge";
 
-let defaultOwner = fromJS({
+let defaultOwner = {
     name: "",
     photoId: "",
     nickname: "",
     description: "",
     contacts: {},
     bio: ""
-});
+};
 
 export const Action = {
     LOAD: "owner load",
@@ -28,26 +28,26 @@ export const Action = {
 
 export const segment = "owner";
 
-export function reducer(state = Map({loading: null, data: defaultOwner, version: 1}), action) {
+export function reducer(state = {loading: null, data: defaultOwner, version: 1}, action) {
     switch (action.type) {
         case Action.LOAD:
-            return state.merge({loading: Loading.LOADING});
+            return merge({}, state, {loading: Loading.LOADING});
         case Action.LOADED:
-            return state.merge({
+            return merge({}, state, {
                 loading: Loading.READY, errorMessage: null,
-                data: fromJS(action.data),
+                data: action.data,
             });
         case Action.LOAD_ERROR:
-            return state.merge({loading: Loading.ERROR, errorMessage: action.errorMessage});
+            return merge({}, state, {loading: Loading.ERROR, errorMessage: action.errorMessage});
         case Action.UPDATE:
-            return state.merge({updating: Updating.UPDATING});
+            return merge({}, state, {updating: Updating.UPDATING});
         case Action.UPDATED:
-            return state.merge({
+            return merge({}, state, {
                 updating: Updating.UPDATED, errorMessage: null,
-                data: fromJS(action.data),
+                data: action.data,
             });
         case Action.UPDATE_ERROR:
-            return state.merge({updating: Updating.ERROR, errorMessage: action.errorMessage});
+            return merge({}, state, {updating: Updating.ERROR, errorMessage: action.errorMessage});
         case HYDRATE:
             return hydrate(state, action, segment);
         default:

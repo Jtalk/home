@@ -1,4 +1,3 @@
-import {Map} from "immutable";
 import {Deleting, Loading, Updating} from "./global/enums";
 import {action, error} from "./global/actions";
 import {
@@ -13,12 +12,13 @@ import {
 import {ajaxSelector, fetchAjax} from "./ajax";
 import {call, put, takeLatest} from "redux-saga/effects";
 import {publishableData, useAllData, usePublishedData} from "./global/publishable-data";
-import {useMemo} from "react";
+import {useCallback, useMemo} from "react";
 import {useRouter} from "next/router";
 import {HYDRATE} from "next-redux-wrapper";
 import {hydrate} from "../redux-store";
 import {ERROR_ACTION, WAIT_FOR_ACTION} from "redux-wait-for-action";
 import find from "lodash/find";
+import merge from "lodash/merge";
 
 export const Action = {
     LOAD: "projects load",
@@ -35,35 +35,35 @@ export const Action = {
 
 export const segment = "projects";
 
-export function reducer(state = Map({loading: null, data: Map(), version: 1}), action) {
+export function reducer(state = {loading: null, data: {}, version: 1}, action) {
     switch (action.type) {
         case Action.LOAD:
-            return Map({loading: Loading.LOADING, errorMessage: null, uploading: null});
+            return {loading: Loading.LOADING, errorMessage: null, uploading: null};
         case Action.LOADED:
-            return state.merge({
+            return merge({}, state, {
                 loading: Loading.READY, errorMessage: null,
                 data: publishableData(action.data.projects, !action.data.publishedOnly),
             });
         case Action.LOAD_ERROR:
-            return state.merge({loading: Loading.ERROR, errorMessage: action.errorMessage});
+            return merge({}, state, {loading: Loading.ERROR, errorMessage: action.errorMessage});
         case Action.UPDATE:
-            return state.merge({updating: Updating.UPDATING, errorMessage: null});
+            return merge({}, state, {updating: Updating.UPDATING, errorMessage: null});
         case Action.UPDATED:
-            return state.merge({
+            return merge({}, state, {
                 updating: Updating.UPDATED, errorMessage: null,
                 data: publishableData(action.data.projects, !action.data.publishedOnly),
             });
         case Action.UPDATE_ERROR:
-            return state.merge({updating: Updating.ERROR, errorMessage: action.errorMessage});
+            return merge({}, state, {updating: Updating.ERROR, errorMessage: action.errorMessage});
         case Action.DELETE:
-            return state.merge({deleting: Deleting.DELETING, errorMessage: null});
+            return merge({}, state, {deleting: Deleting.DELETING, errorMessage: null});
         case Action.DELETED:
-            return state.merge({
+            return merge({}, state, {
                 deleting: Deleting.DELETED, errorMessage: null,
                 data: publishableData(action.data.projects, !action.data.publishedOnly),
             });
         case Action.DELETE_ERROR:
-            return state.merge({deleting: Deleting.DELETE_ERROR, errorMessage: action.data});
+            return merge({}, state, {deleting: Deleting.DELETE_ERROR, errorMessage: action.data});
         case HYDRATE:
             return hydrate(state, action, segment);
         default:
@@ -120,19 +120,23 @@ export function useProjectError() {
 export function useProjectUpdater() {
     const router = useRouter();
     const updater = useDirectUpdater(update);
-    return async (id, redirectTo, update, {logo} = {}) => {
+    return useCallback(async (id, redirectTo, update, {logo} = {}) => {
         await updater(update, {id, logo});
-        await router.push(redirectTo);
-    }
+        if (redirectTo) {
+            await router.push(redirectTo);
+        }
+    }, [router, updater]);
 }
 
 export function useProjectDeleter() {
     const router = useRouter();
     const deleter = useDirectDeleter(remove);
-    return async (id, redirectTo) => {
+    return useCallback(async (id, redirectTo) => {
         await deleter(id);
-        await router.push(redirectTo);
-    }
+        if (redirectTo) {
+            await router.push(redirectTo);
+        }
+    }, [router, deleter]);
 }
 
 function* load(publishedOnly) {

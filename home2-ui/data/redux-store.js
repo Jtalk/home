@@ -1,5 +1,8 @@
 import {useSelector} from "react-redux";
 import {useMemo} from "react";
+import merge from "lodash/merge";
+import cloneDeep from "lodash/cloneDeep";
+import get from "lodash/get";
 
 export function useImmutableSelector(storeSegment, ...path) {
     // Support deprecated use with supplying an array as path
@@ -9,7 +12,7 @@ export function useImmutableSelector(storeSegment, ...path) {
     let result = useSelector(store => {
         return store && loadAsObj(store[storeSegment], path)
     });
-    return useMemo(() => asJs(result), [result]);
+    return useMemo(() => cloneDeep(result), [result]);
 }
 
 export function immutableSelector(storeSegment, ...path) {
@@ -17,28 +20,16 @@ export function immutableSelector(storeSegment, ...path) {
         if (storeSegment) {
             store = store[storeSegment];
         }
-        let result = store && loadAsObj(store, path);
-        return asJs(result);
+        return store && loadAsObj(store, path);
     };
 }
 
 export function hydrate(state, action, segment) {
     const payload = action.payload?.[segment];
-    console.info(`Hydrate ${segment}: `, payload?.toJS())
-    return state.merge(payload);
-}
-
-function asJs(immutableValue) {
-    return (immutableValue && immutableValue.toJS && immutableValue.toJS()) || immutableValue;
+    console.info(`Hydrate ${segment}: `, payload)
+    return merge({}, state, payload);
 }
 
 function loadAsObj(store, pathArray) {
-    let current = store;
-    pathArray.forEach(item => {
-        if (current && !current.get) {
-            console.error("Current without a get!", current, store, pathArray);
-        }
-        current = current && current.get(item)
-    });
-    return current;
+    return get(store, pathArray);
 }

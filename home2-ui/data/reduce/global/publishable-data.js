@@ -1,4 +1,3 @@
-import {fromJS} from "immutable";
 import {immutableSelector, useImmutableSelector} from "../../redux-store";
 
 export function publishableData(items, withUnpublished, mapping = v => v) {
@@ -8,14 +7,14 @@ export function publishableData(items, withUnpublished, mapping = v => v) {
             .filter(i => i.published)
             .map(mapping);
         console.debug(`Filtering publishable data:`, items, "to", published);
-        return fromJS({
+        return {
             all: mappedItems,
             published
-        });
+        };
     } else {
-        return fromJS({
+        return {
             published: mappedItems
-        });
+        };
     }
 }
 

@@ -1,4 +1,3 @@
-import {Map} from "immutable";
 import {action, error} from "./global/actions";
 import dayjs from "dayjs";
 import {immutableSelector, useImmutableSelector} from "../redux-store";
@@ -10,6 +9,7 @@ import {reportError} from "../../utils/error-reporting";
 import storageAvailable from "storage-available";
 import {HYDRATE} from "next-redux-wrapper";
 import {useCallback} from "react";
+import merge from "lodash/merge";
 
 export const EXISTING_PASSWORD_MISMATCH = "The existing password does not match";
 
@@ -31,29 +31,29 @@ export const Login = {
 
 const SESSION_EXPIRY_KEY = "session-expiry";
 const SESSION_USERNAME_KEY = "session-username";
-const DEFAULT = Map({login: null, updating: null});
+const DEFAULT = {login: null, updating: null};
 
 export const segment = "authentication";
 
 export function reducer(state = DEFAULT, action) {
     switch (action.type) {
         case Action.LOGGING_IN:
-            return state.merge({login: Login.LOGGING_IN, errorMessage: null});
+            return merge({}, state, {login: Login.LOGGING_IN, errorMessage: null});
         case Action.LOGIN:
-            return state.merge({
+            return merge({}, state, {
                 login: Login.LOGGED_IN,
                 expiry: dayjs(action.data.expiry),
                 username: action.data.username,
                 errorMessage: null
             });
         case Action.REFRESH:
-            return state.merge({
+            return merge({}, state, {
                 expiry: dayjs(action.data.expiry),
             });
         case Action.LOGOUT:
             return DEFAULT;
         case Action.ERROR:
-            return state.merge({login: Login.ERROR, errorMessage: action.errorMessage});
+            return merge({}, state, {login: Login.ERROR, errorMessage: action.errorMessage});
         case HYDRATE:
             return state; // No server-side activity around authentication.
         default:

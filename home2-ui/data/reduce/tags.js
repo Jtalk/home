@@ -1,4 +1,3 @@
-import {Map} from "immutable";
 import {action, error} from "./global/actions";
 import {Loading} from "./global/enums";
 import {useLoader} from "./global/hook-barebone";
@@ -7,6 +6,7 @@ import {call, put, takeLatest} from "redux-saga/effects";
 import {useImmutableSelector} from "../redux-store";
 import {useMemo} from "react";
 import {HYDRATE} from "next-redux-wrapper";
+import merge from "lodash/merge";
 
 export const Action = {
     LOAD: "tags load",
@@ -16,14 +16,14 @@ export const Action = {
 
 export const segment = "tags";
 
-export function reducer(state = Map({loading: Loading.LOADING, data: null}), action) {
+export function reducer(state = {loading: Loading.LOADING, data: null}, action) {
     switch (action.type) {
         case Action.LOAD:
-            return state.merge({loading: Loading.LOADING});
+            return merge({}, state, {loading: Loading.LOADING});
         case Action.LOADED:
-            return state.merge({loading: Loading.READY, data: action.data});
+            return merge({}, state, {loading: Loading.READY, data: action.data});
         case Action.LOAD_ERROR:
-            return state.merge({loading: Loading.ERROR, errorMessage: action.errorMessage});
+            return merge({}, state, {loading: Loading.ERROR, errorMessage: action.errorMessage});
         case HYDRATE:
             // Admin-only activity, no server-side rendering involved
             return state;

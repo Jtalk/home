@@ -1,11 +1,11 @@
 import {useImmutableSelector} from "../redux-store";
-import {fromJS, List, Map} from "immutable";
 import {Loading} from "./global/enums";
 import {useDispatch} from "react-redux";
 import {useCallback} from "react";
 import {action, error} from "./global/actions";
 import {ajaxSelector} from "./ajax";
 import {HYDRATE} from "next-redux-wrapper";
+import merge from "lodash/merge";
 
 const Action = {
     LOADING: "search loading",
@@ -15,19 +15,19 @@ const Action = {
 
 export const segment = "search";
 
-export function reducer(state = Map({activeCount: 0, results: List()}), action) {
+export function reducer(state = {activeCount: 0, results: []}, action) {
     switch (action.type) {
         case Action.LOADING:
-            return state.merge({activeCount: state.get("activeCount") + 1});
+            return merge({}, state, {activeCount: state.activeCount + 1});
         case Action.COMPLETE:
-            return state.merge({
-                activeCount: Math.max(state.get("activeCount") - 1, 0),
-                results: fromJS(action.data),
+            return merge({}, state, {
+                activeCount: Math.max(state.activeCount - 1, 0),
+                results: action.data,
             });
         case Action.ERROR:
-            return state.merge({
-                activeCount: Math.max(state.get("activeCount") - 1, 0),
-                results: List(),
+            return merge({}, state, {
+                activeCount: Math.max(state.activeCount - 1, 0),
+                results: [],
                 errorMessage: action.errorMessage,
             });
         case HYDRATE:

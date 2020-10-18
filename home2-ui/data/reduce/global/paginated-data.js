@@ -1,8 +1,8 @@
-import {fromJS, List, Map} from "immutable";
 import {immutableSelector, useImmutableSelector} from "../../redux-store";
+import merge from "lodash/merge";
 
 export function defaultPages() {
-    return Map({pages: List(), total: null, pageSize: null});
+    return {pages: [], total: null, pageSize: null};
 }
 
 export function usePage(pageN, segment, ...dataPath) {
@@ -23,16 +23,16 @@ export function pageSizeSelector(segment, ...dataPath) {
 }
 
 export function addPage(data, newPage, pagination) {
-    let existingPageSize = data.get("pageSize");
-    let total = data.get("total");
+    let existingPageSize = data.pageSize;
+    let total = data.total;
     if (pagination.total === total && existingPageSize === pagination.pageSize) {
         // Same size, no change to existing pages
         console.debug(
             `Updating store page ${pagination.current} without size change`,
             `(existing page size=${existingPageSize}, total=${total}`,
             newPage, pagination);
-        return data.merge({
-            pages: withNewPage(data.get("pages"), newPage, pagination.current),
+        return merge({}, data, {
+            pages: withNewPage(data.pages, newPage, pagination.current),
         })
     } else {
         // Page size has changed, we need to reset existing pages
@@ -40,8 +40,8 @@ export function addPage(data, newPage, pagination) {
             `Updating store page ${pagination.current}`,
             `without size change (existing page size=${existingPageSize}, total=${total}`,
             newPage, pagination);
-        return data.merge({
-            pages: withNewPage(List(), newPage, pagination.current),
+        return merge({}, data, {
+            pages: withNewPage([], newPage, pagination.current),
             total: pagination.total || null,
             pageSize: pagination.pageSize || null
         })
@@ -49,5 +49,7 @@ export function addPage(data, newPage, pagination) {
 }
 
 function withNewPage(pages, newPage, pageN) {
-    return pages.set(pageN, fromJS(newPage));
+    const result = [...pages];
+    result[pageN] = newPage;
+    return result;
 }

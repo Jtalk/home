@@ -1,15 +1,13 @@
-import {fromJS, Map} from "immutable";
 import {Loading} from "./global/enums";
 import {action, error} from "./global/actions";
 import {useLastError, useLazyLoader, useLoading} from "./global/hook-barebone";
 import {call, put} from "redux-saga/effects";
 import {fetchAjax} from "./ajax";
-import {hydrate, useImmutableSelector} from "../redux-store";
+import {hydrate} from "../redux-store";
 import {HYDRATE} from "next-redux-wrapper";
 import {takeEvery} from "@redux-saga/core/effects";
-import {useEffect} from "react";
-import {useDispatch} from "react-redux";
 import {ERROR_ACTION, WAIT_FOR_ACTION} from "redux-wait-for-action";
+import merge from "lodash/merge";
 
 const MAX_PAGE_SIZE = 100;
 
@@ -21,14 +19,14 @@ export const Action = {
 
 export const segment = "latest-articles";
 
-export function reducer(state = fromJS({loading: null, data: []}), action) {
+export function reducer(state = {loading: null, data: []}, action) {
     switch (action.type) {
         case Action.LOAD:
-            return fromJS({loading: Loading.LOADING, errorMessage: null, data: []});
+            return {loading: Loading.LOADING, errorMessage: null, data: []};
         case Action.LOADED:
-            return Map({loading: Loading.READY, errorMessage: null, data: fromJS(action.data)});
+            return {loading: Loading.READY, errorMessage: null, data: action.data};
         case Action.LOAD_ERROR:
-            return state.merge({loading: Loading.ERROR, errorMessage: action.errorMessage});
+            return merge({}, state, {loading: Loading.ERROR, errorMessage: action.errorMessage});
         case HYDRATE:
             return hydrate(state, action, segment);
         default:
@@ -41,7 +39,7 @@ export const latestArticlesActions = {
 }
 
 export function serialiseJSON(state) {
-    const result = state.toJS();
+    const result = {...state};
     if (result.data) {
         result.data = result.data.map(v => ({...v, created: v.created?.getTime()}));
     }
@@ -53,7 +51,7 @@ export function deserialiseJSON(json) {
     if (result.data) {
         result.data = result.data.map(v => ({...v, created: v.created && new Date(v.created)}));
     }
-    return fromJS(result);
+    return result;
 }
 
 export function* watchLatestArticles() {
