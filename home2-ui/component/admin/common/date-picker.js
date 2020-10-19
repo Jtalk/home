@@ -1,8 +1,7 @@
-
 import React from "react";
 import {useState} from "react";
-import {Form} from "semantic-ui-react";
 import dayjs from "dayjs";
+import Form from "semantic-ui-react/dist/commonjs/collections/Form";
 import customParseFormat from "dayjs/plugin/customParseFormat"
 import isEqual from "lodash/isEqual";
 

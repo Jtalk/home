@@ -1,5 +1,5 @@
 import React from "react";
-import {Menu} from "semantic-ui-react";
+import Menu from "semantic-ui-react/dist/commonjs/collections/Menu";
 import {useOwner} from "../../data/reduce/owner";
 
 export const HeaderOwner = function () {

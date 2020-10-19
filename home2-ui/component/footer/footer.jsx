@@ -1,5 +1,6 @@
 import React from "react";
-import {Container, Segment} from "semantic-ui-react";
+import Container from "semantic-ui-react/dist/commonjs/elements/Container"
+import Segment from "semantic-ui-react/dist/commonjs/elements/Segment"
 import {FlatLinksList} from "./flat-links-list";
 import {FlatLogoList} from "./flat-logo-list";
 import "./footer.module.css";

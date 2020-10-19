@@ -1,10 +1,8 @@
 import React from 'react';
 import {shallow} from "enzyme";
-
-import Link from "next/link";
 import {ProjectsMenu} from "./projects-menu";
-import {Menu} from "semantic-ui-react";
 import {ProjectTab} from "./projects-menu-tab";
+import Menu from "semantic-ui-react/dist/commonjs/collections/Menu";
 
 describe("<ProjectsMenu/>", () => {
   let projects = [

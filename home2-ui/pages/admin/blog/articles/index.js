@@ -1,11 +1,15 @@
 import React from "react";
-import {Button, Grid, Icon, List, Segment} from "semantic-ui-react";
 import {formatDateTime} from "../../../../utils/date-time";
 import Link from "next/link";
 import {AddBlogArticleModal} from "../../../../component/admin/add-blog-article-modal";
 import {useArticles, useArticlesDeleter} from "../../../../data/reduce/articles";
 import {editHref} from "./[articleId]";
 import {OwnerTitled} from "../../../../component/about/owner-titled";
+import Grid from "semantic-ui-react/dist/commonjs/collections/Grid";
+import Segment from "semantic-ui-react/dist/commonjs/elements/Segment";
+import List from "semantic-ui-react/dist/commonjs/elements/List";
+import Button from "semantic-ui-react/dist/commonjs/elements/Button";
+import Icon from "semantic-ui-react/dist/commonjs/elements/Icon";
 
 const DEFAULT_PAGE_SIZE = 100;
 

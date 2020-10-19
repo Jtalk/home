@@ -1,5 +1,4 @@
 import React from "react";
-import {Grid} from "semantic-ui-react";
 import {OwnerCard} from "../component/about/owner-card";
 import {LatestPosts} from "../component/about/latest-posts";
 import {Loading} from "../data/reduce/global/enums";
@@ -10,6 +9,7 @@ import {OwnerTitled} from "../component/about/owner-titled";
 import {ContentPlaceholderOr} from "../component/placeholder/content-placeholder";
 import {footerActions} from "../data/reduce/footer/actions";
 import {latestArticlesActions} from "../data/reduce/latest-articles/actions";
+import Grid from "semantic-ui-react/dist/commonjs/collections/Grid";
 
 export default function About() {
 

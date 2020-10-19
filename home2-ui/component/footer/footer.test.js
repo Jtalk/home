@@ -2,12 +2,13 @@ import React from 'react';
 import {mount, shallow} from "enzyme";
 import {FlatLinksList} from "./flat-links-list";
 import {FlatLogoList} from "./flat-logo-list";
-import {Container, Segment} from "semantic-ui-react";
 import {Footer, StatelessFooter} from "./footer";
 import {Provider} from "react-redux";
 import {createTestStore} from "../../data/redux";
 import {END} from "redux-saga";
 import {watchFooter} from "../../data/reduce/footer/saga";
+import Segment from "semantic-ui-react/dist/commonjs/elements/Segment";
+import Container from "semantic-ui-react/dist/commonjs/elements/Container";
 
 let links = [
   {caption: "Link1", href: "/test/link1"},

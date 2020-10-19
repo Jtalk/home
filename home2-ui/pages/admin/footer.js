@@ -1,5 +1,4 @@
 import React, {useMemo} from "react";
-import {Divider, Form, Grid, Icon, Image, List, Segment} from "semantic-ui-react";
 import {useForm} from "../../component/admin/common/use-form";
 import {Loading, Updating} from "../../data/reduce/global/enums";
 import {OwnerTitled} from "../../component/about/owner-titled";
@@ -11,6 +10,13 @@ import {
     useFooterUpdater,
     useFooterUpdating
 } from "../../data/reduce/footer/hooks";
+import Grid from "semantic-ui-react/dist/commonjs/collections/Grid";
+import Segment from "semantic-ui-react/dist/commonjs/elements/Segment";
+import Divider from "semantic-ui-react/dist/commonjs/elements/Divider";
+import Icon from "semantic-ui-react/dist/commonjs/elements/Icon";
+import Image from "semantic-ui-react/dist/commonjs/elements/Image";
+import Form from "semantic-ui-react/dist/commonjs/collections/Form";
+import List from "semantic-ui-react/dist/commonjs/elements/List";
 
 let EMPTY_LINK = () => ({caption: '', href: ''});
 let EMPTY_LOGO = () => ({name: '', src: ''});

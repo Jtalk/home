@@ -1,5 +1,4 @@
 import React, {useState} from "react";
-import {Button, Card, Container, Divider, Form, Grid, Image, Loader, Segment} from "semantic-ui-react";
 import {Pagination} from "../../component/pagination";
 import {checkTruthy} from "../../utils/validation";
 import {formatDateTime} from "../../utils/date-time";
@@ -20,6 +19,15 @@ import {useRouter} from "next/router";
 import {OwnerTitled} from "../../component/about/owner-titled";
 import {SuccessMessage} from "../../component/message/success-message";
 import {ErrorMessage} from "../../component/message/error-message";
+import Grid from "semantic-ui-react/dist/commonjs/collections/Grid";
+import Divider from "semantic-ui-react/dist/commonjs/elements/Divider";
+import Segment from "semantic-ui-react/dist/commonjs/elements/Segment";
+import Image from "semantic-ui-react/dist/commonjs/elements/Image";
+import Card from "semantic-ui-react/dist/commonjs/views/Card";
+import Button from "semantic-ui-react/dist/commonjs/elements/Button";
+import Form from "semantic-ui-react/dist/commonjs/collections/Form";
+import Loader from "semantic-ui-react/dist/commonjs/elements/Loader";
+import Container from "semantic-ui-react/dist/commonjs/elements/Container";
 
 export default function EditImagesPage() {
     const router = useRouter();

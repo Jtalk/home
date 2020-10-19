@@ -1,5 +1,5 @@
 import React, {useMemo, useState} from "react";
-import {Search} from "semantic-ui-react";
+import Search from "semantic-ui-react/dist/commonjs/modules/Search";
 import {Loading} from "../../data/reduce/global/enums";
 import {useSearch, useSearchQuery, useSearchResults, useSearchStatus} from "../../data/reduce/search";
 import {reportError} from "../../utils/error-reporting";

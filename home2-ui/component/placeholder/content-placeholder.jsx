@@ -1,5 +1,5 @@
-import {Placeholder} from "semantic-ui-react";
 import React from "react";
+import Placeholder from "semantic-ui-react/dist/commonjs/elements/Placeholder";
 
 export const ContentPlaceholderOr = function ({loading, children, header, lines}) {
 

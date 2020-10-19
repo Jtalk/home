@@ -1,4 +1,4 @@
-import {Placeholder} from "semantic-ui-react";
+import Placeholder from "semantic-ui-react/dist/commonjs/elements/Placeholder";
 import React from "react";
 
 export const ImagePlaceholderOr = function ({loading, children, square, rectangular}) {

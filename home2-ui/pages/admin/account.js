@@ -1,4 +1,3 @@
-import {Divider, Form, Grid, Segment} from "semantic-ui-react";
 import {Updating} from "../../data/reduce/global/enums";
 import React, {useMemo, useState} from "react";
 import {useForm} from "../../component/admin/common/use-form";
@@ -9,6 +8,10 @@ import {SuccessMessage} from "../../component/message/success-message";
 import {ErrorMessage} from "../../component/message/error-message";
 import {usePasswordChanger, useUsername} from "../../data/reduce/authentication/hooks";
 import {EXISTING_PASSWORD_MISMATCH} from "../../data/reduce/authentication/messages";
+import Grid from "semantic-ui-react/dist/commonjs/collections/Grid";
+import Segment from "semantic-ui-react/dist/commonjs/elements/Segment";
+import Form from "semantic-ui-react/dist/commonjs/collections/Form";
+import Divider from "semantic-ui-react/dist/commonjs/elements/Divider";
 
 const PASSWORD_FORM = () => ({
     password: {}

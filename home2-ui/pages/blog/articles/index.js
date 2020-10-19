@@ -1,5 +1,4 @@
 import React from "react";
-import {Grid, Menu, Segment} from "semantic-ui-react";
 import {OwnerCard} from "../../../component/about/owner-card";
 import {LatestPosts} from "../../../component/about/latest-posts";
 import {
@@ -18,6 +17,9 @@ import {OwnerTitled} from "../../../component/about/owner-titled";
 import {ArticleView} from "../../../component/article/article-view";
 import {footerActions} from "../../../data/reduce/footer/actions";
 import {latestArticlesActions} from "../../../data/reduce/latest-articles/actions";
+import Grid from "semantic-ui-react/dist/commonjs/collections/Grid";
+import Segment from "semantic-ui-react/dist/commonjs/elements/Segment";
+import Menu from "semantic-ui-react/dist/commonjs/collections/Menu";
 
 export default function Blog() {
 

@@ -9,13 +9,20 @@ import {
 } from "../../data/reduce/projects";
 import {useForm} from "./common/use-form";
 import React, {useState} from "react";
-import {Button, Divider, Form, Grid, Icon, Input, List, Message} from "semantic-ui-react";
 import {Deleting, Loading, Updating} from "../../data/reduce/global/enums";
 import {useFormErrors} from "./common/use-errors";
 import {ContentPlaceholderOr} from "../placeholder/content-placeholder";
 import {ErrorMessage} from "../message/error-message";
 import {OptionalImage} from "../image/optional-image";
 import {EditProjectsPath} from "../../utils/paths";
+import Grid from "semantic-ui-react/dist/commonjs/collections/Grid";
+import Divider from "semantic-ui-react/dist/commonjs/elements/Divider";
+import Form from "semantic-ui-react/dist/commonjs/collections/Form";
+import Input from "semantic-ui-react/dist/commonjs/elements/Input";
+import Button from "semantic-ui-react/dist/commonjs/elements/Button";
+import Icon from "semantic-ui-react/dist/commonjs/elements/Icon";
+import List from "semantic-ui-react/dist/commonjs/elements/List";
+import Message from "semantic-ui-react/dist/commonjs/collections/Message";
 
 export const EditProject = function ({projectId}) {
 

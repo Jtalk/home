@@ -1,8 +1,8 @@
 import React from 'react';
 import {shallow} from "enzyme";
-import {Menu} from "semantic-ui-react";
 import {Link} from "react-router-dom";
 import {Pagination} from "./pagination";
+import Menu from "semantic-ui-react/dist/commonjs/collections/Menu";
 
 describe("<Pagination/>", () => {
   it('renders without errors', () => {

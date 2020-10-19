@@ -1,11 +1,10 @@
 import React from 'react';
 import './index.css';
-import 'semantic-ui-css/semantic.css';
+import 'semantic-ui-css/semantic.min.css';
 import "highlight.js/styles/idea.css";
 import {reduxWrapper} from "../data/redux";
 import {FileConverterProvider} from "../utils/file-converter-context";
 import {setupErrorReporting} from "../utils/error-reporting";
-import {Container} from "semantic-ui-react";
 import {Footer} from "../component/footer/footer";
 import {Header} from "../component/header/header";
 import withReduxSaga from "next-redux-saga";
@@ -13,6 +12,7 @@ import {useRouter} from "next/router";
 import {NotFound} from "../component/error/not-found";
 import dynamic from "next/dynamic";
 import {useLoggedIn} from "../data/reduce/authentication/hooks";
+import Container from "semantic-ui-react/dist/commonjs/elements/Container";
 
 const {ErrorBoundary} = setupErrorReporting();
 

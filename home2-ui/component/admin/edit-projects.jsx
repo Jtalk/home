@@ -1,5 +1,4 @@
 import React from "react";
-import {Grid, Icon, Menu, Segment} from "semantic-ui-react";
 import Link from "next/link";
 import {useProject, useProjectError, useProjects, useProjectUpdater} from "../../data/reduce/projects";
 import {NotFound} from "../error/not-found";
@@ -8,6 +7,10 @@ import maxBy from "lodash/maxBy";
 import findIndex from "lodash/findIndex";
 import {ContentPlaceholderOr} from "../placeholder/content-placeholder";
 import {EditProjectsPath} from "../../utils/paths";
+import Grid from "semantic-ui-react/dist/commonjs/collections/Grid";
+import Segment from "semantic-ui-react/dist/commonjs/elements/Segment";
+import Menu from "semantic-ui-react/dist/commonjs/collections/Menu";
+import Icon from "semantic-ui-react/dist/commonjs/elements/Icon";
 
 const NEW_PROJECT_ID = "new";
 const MAKE_NEW_PROJECT = (order) => ({

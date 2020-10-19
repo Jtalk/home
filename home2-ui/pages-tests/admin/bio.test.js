@@ -2,7 +2,6 @@ import React from "react";
 import {act} from "react-dom/test-utils";
 import Bio, {BioTextArea, EditBioStateless, PhotoUpload} from "../../pages/admin/bio";
 import {mount, shallow} from "enzyme";
-import {Button, Form, Image, Input, TextArea} from "semantic-ui-react";
 import {imageUrl} from "../../utils/image";
 import {Loading, Updating} from "../../data/reduce/global/enums";
 import {Provider as ReduxProvider} from "react-redux";
@@ -11,6 +10,10 @@ import {owner as ownerReducer, watchOwner} from "../../data/reduce/owner";
 import {ImageUploadPreview} from "../../component/admin/common/image-upload-preview";
 import {FileConverterProvider} from "../../utils/file-converter-context";
 import {END} from "redux-saga";
+import Form from "semantic-ui-react/src/collections/Form";
+import TextArea from "semantic-ui-react/src/addons/TextArea";
+import Input from "semantic-ui-react/src/elements/Input";
+import Button from "semantic-ui-react/src/elements/Button";
 
 describe("<EditBio/>", () => {
 

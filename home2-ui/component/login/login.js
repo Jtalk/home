@@ -1,5 +1,8 @@
 import React, {useCallback, useMemo} from "react";
-import {Button, Form, Icon, Modal} from "semantic-ui-react";
+import Button from "semantic-ui-react/dist/commonjs/elements/Button";
+import Form from "semantic-ui-react/dist/commonjs/collections/Form";
+import Icon from "semantic-ui-react/dist/commonjs/elements/Icon";
+import Modal from "semantic-ui-react/dist/commonjs/modules/Modal";
 import {useForm} from "../admin/common/use-form";
 import {useFormErrors} from "../admin/common/use-errors";
 import {ErrorMessage} from "../message/error-message";

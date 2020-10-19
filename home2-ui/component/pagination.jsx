@@ -1,6 +1,6 @@
-import {Menu} from "semantic-ui-react";
 import Link from "next/link";
 import React from "react";
+import Menu from "semantic-ui-react/dist/commonjs/collections/Menu";
 
 export const Pagination = function ({current, total}) {
 

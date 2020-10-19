@@ -1,4 +1,5 @@
-import {Icon, Menu} from "semantic-ui-react";
+import Icon from "semantic-ui-react/dist/commonjs/elements/Icon";
+import Menu from "semantic-ui-react/dist/commonjs/collections/Menu";
 import React from "react";
 import {useLoggedIn, useLogoutHandler} from "../../data/reduce/authentication/hooks";
 

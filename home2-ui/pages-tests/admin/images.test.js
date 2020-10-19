@@ -1,7 +1,6 @@
 import React from 'react';
 import {mount, shallow} from "enzyme";
 import {act} from "react-dom/test-utils";
-import {Button, Card, CardContent, CardDescription, Form, Image, Loader} from "semantic-ui-react";
 import {
     EditImagesStateless,
     ImageUpload,
@@ -19,6 +18,12 @@ import {Loading, Uploading} from "../../data/reduce/global/enums";
 import {ImageUploadPreview} from "../../component/admin/common/image-upload-preview";
 import {useDataUrl} from "../../utils/file-converter-context";
 import {ErrorMessage} from "../../component/message/error-message";
+import Loader from "semantic-ui-react/dist/commonjs/elements/Loader";
+import Form from "semantic-ui-react/dist/commonjs/collections/Form";
+import Button from "semantic-ui-react/dist/commonjs/elements/Button";
+import CardContent from "semantic-ui-react/dist/commonjs/views/Card/CardContent";
+import CardDescription from "semantic-ui-react/dist/commonjs/views/Card/CardDescription";
+import Card from "semantic-ui-react/dist/commonjs/views/Card";
 
 jest.mock("../../utils/file-converter-context");
 useDataUrl.mockImplementation(v => v.dataUrl);

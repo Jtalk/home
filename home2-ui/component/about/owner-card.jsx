@@ -1,5 +1,4 @@
 import React, {useCallback, useState} from "react";
-import {Card} from "semantic-ui-react";
 import {Loading} from "../../data/reduce/global/enums";
 import {useOwner, useOwnerLoading} from "../../data/reduce/owner";
 import {LoginModal} from "../login/login";
@@ -9,6 +8,7 @@ import {LinePlaceholderOr} from "../placeholder/line-placeholder";
 import {ImagePlaceholderOr} from "../placeholder/image-placeholder";
 import {OptionalImage} from "../image/optional-image";
 import {useLoggedIn} from "../../data/reduce/authentication/hooks";
+import Card from "semantic-ui-react/dist/commonjs/views/Card";
 
 export const OwnerCard = function () {
 

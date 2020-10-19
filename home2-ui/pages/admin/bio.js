@@ -2,13 +2,19 @@ import React from "react";
 import {useOwner, useOwnerError, useOwnerLoading, useOwnerUpdater, useOwnerUpdating} from "../../data/reduce/owner";
 import {useForm} from "../../component/admin/common/use-form";
 import {Loading, Updating} from "../../data/reduce/global/enums";
-import {Button, Divider, Form, Grid, Input, Segment, TextArea} from "semantic-ui-react";
 import {imageUrl} from "../../utils/image";
 import {ImageUploadPreview} from "../../component/admin/common/image-upload-preview";
 import get from "lodash/get";
 import {OwnerTitled} from "../../component/about/owner-titled";
 import {SuccessMessage} from "../../component/message/success-message";
 import {ErrorMessage} from "../../component/message/error-message";
+import Segment from "semantic-ui-react/dist/commonjs/elements/Segment";
+import Grid from "semantic-ui-react/dist/commonjs/collections/Grid";
+import Form from "semantic-ui-react/dist/commonjs/collections/Form";
+import Divider from "semantic-ui-react/dist/commonjs/elements/Divider";
+import Button from "semantic-ui-react/dist/commonjs/elements/Button";
+import Input from "semantic-ui-react/dist/commonjs/elements/Input";
+import TextArea from "semantic-ui-react/dist/commonjs/addons/TextArea";
 
 export default function EditBio() {
 

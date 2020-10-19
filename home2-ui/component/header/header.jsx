@@ -1,6 +1,7 @@
 import React from "react";
 import {HeaderOwner} from "./header-owner";
-import {Dropdown, Menu} from "semantic-ui-react";
+import Dropdown from "semantic-ui-react/dist/commonjs/modules/Dropdown";
+import Menu from "semantic-ui-react/dist/commonjs/collections/Menu";
 import {HeaderMenuItem} from "./header-menu-item";
 import {useRouter} from "next/router";
 import {HeaderSearch} from "./header-search";

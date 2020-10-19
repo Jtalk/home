@@ -1,5 +1,7 @@
 import React from "react";
-import {Card, Divider, List} from "semantic-ui-react";
+import Card from "semantic-ui-react/dist/commonjs/views/Card";
+import Divider from "semantic-ui-react/dist/commonjs/elements/Divider";
+import List from "semantic-ui-react/dist/commonjs/elements/List";
 import {formatDateTime} from "../../utils/date-time";
 import {Loading} from "../../data/reduce/global/enums";
 import Link from "next/link";

@@ -1,11 +1,14 @@
 import isEmpty from "lodash/isEmpty";
 import {Loading} from "../../data/reduce/global/enums";
-import {Button, Divider, Item, Segment} from "semantic-ui-react";
 import {ContentPlaceholderOr} from "../placeholder/content-placeholder";
 import Link from "next/link";
 import {MarkdownTextArea} from "../text-area";
 import {formatDateTime} from "../../utils/date-time";
 import React from "react";
+import Segment from "semantic-ui-react/dist/commonjs/elements/Segment";
+import Item from "semantic-ui-react/dist/commonjs/views/Item";
+import Divider from "semantic-ui-react/dist/commonjs/elements/Divider";
+import Button from "semantic-ui-react/dist/commonjs/elements/Button";
 
 export const ArticleView = function ({article, loading, href, preview}) {
 

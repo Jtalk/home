@@ -1,5 +1,4 @@
 import React from "react";
-import {Button, Dropdown, Form, Grid, Segment, TextArea} from "semantic-ui-react";
 import {useAvailableTags} from "../../../../data/reduce/tags";
 import {useForm} from "../../../../component/admin/common/use-form";
 import {Loading, Updating} from "../../../../data/reduce/global/enums";
@@ -20,6 +19,12 @@ import keyBy from "lodash/keyBy";
 import {OwnerTitled} from "../../../../component/about/owner-titled";
 import {SuccessMessage} from "../../../../component/message/success-message";
 import {ErrorMessage} from "../../../../component/message/error-message";
+import Grid from "semantic-ui-react/dist/commonjs/collections/Grid";
+import Form from "semantic-ui-react/dist/commonjs/collections/Form";
+import Segment from "semantic-ui-react/dist/commonjs/elements/Segment";
+import Button from "semantic-ui-react/dist/commonjs/elements/Button";
+import TextArea from "semantic-ui-react/dist/commonjs/addons/TextArea";
+import Dropdown from "semantic-ui-react/dist/commonjs/modules/Dropdown";
 
 export default function EditBlogArticle() {
 

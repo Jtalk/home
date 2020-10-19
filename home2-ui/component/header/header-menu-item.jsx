@@ -1,6 +1,6 @@
 import React from "react";
-import {Icon} from "semantic-ui-react";
 import Link from "next/link";
+import Icon from "semantic-ui-react/dist/commonjs/elements/Icon";
 
 export const HeaderMenuItem = function ({title, href, active, exact, icon}) {
     icon = icon || null;

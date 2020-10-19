@@ -1,9 +1,12 @@
 import React, {useMemo} from "react";
-import {Button, Form, Icon, Modal} from "semantic-ui-react";
 import {useForm} from "./common/use-form";
 import {useArticlesError, useArticleUpdater} from "../../data/reduce/articles";
 import {editHref} from "../../pages/admin/blog/articles/[articleId]";
 import {ErrorMessage} from "../message/error-message";
+import Modal from "semantic-ui-react/dist/commonjs/modules/Modal";
+import Button from "semantic-ui-react/dist/commonjs/elements/Button";
+import Icon from "semantic-ui-react/dist/commonjs/elements/Icon";
+import Form from "semantic-ui-react/dist/commonjs/collections/Form";
 
 const INITIAL = () => ({title: '', id: '', });
 

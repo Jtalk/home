@@ -1,5 +1,4 @@
 import React from "react";
-import {Grid} from "semantic-ui-react";
 import {Loading} from "../../../data/reduce/global/enums";
 import {OwnerCard} from "../../../component/about/owner-card";
 import {LatestPosts} from "../../../component/about/latest-posts";
@@ -13,6 +12,7 @@ import {OwnerTitled} from "../../../component/about/owner-titled";
 import {ArticleView} from "../../../component/article/article-view";
 import {footerActions} from "../../../data/reduce/footer/actions";
 import {latestArticlesActions} from "../../../data/reduce/latest-articles/actions";
+import Grid from "semantic-ui-react/dist/commonjs/collections/Grid";
 
 export default function ArticleId() {
 

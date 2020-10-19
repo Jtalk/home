@@ -1,4 +1,4 @@
-import {Placeholder} from "semantic-ui-react";
+import Placeholder from "semantic-ui-react/dist/commonjs/elements/Placeholder";
 import React from "react";
 
 export const LinePlaceholderOr = function ({loading, length, children}) {

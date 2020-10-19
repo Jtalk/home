@@ -1,4 +1,4 @@
-import {Image} from "semantic-ui-react";
+import Image from "semantic-ui-react/dist/commonjs/elements/Image";
 import React from "react";
 import {IdImage} from "./id-image";
 

@@ -1,6 +1,6 @@
 import React from "react";
-import {Menu} from "semantic-ui-react";
 import {ProjectTab} from "./projects-menu-tab";
+import Menu from "semantic-ui-react/dist/commonjs/collections/Menu";
 
 export const ProjectsMenu = function ({projects = [], selectedProjectId}) {
 
