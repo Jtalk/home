@@ -1,39 +1,60 @@
 import React, {useEffect, useRef} from "react";
 import Markdown from "markdown-to-jsx";
-import hljs from "highlight.js/lib/highlight";
-import javascript from "highlight.js/lib/languages/javascript";
-import cpp from "highlight.js/lib/languages/cpp";
-import java from "highlight.js/lib/languages/java";
-import scala from "highlight.js/lib/languages/scala";
-import kotlin from "highlight.js/lib/languages/kotlin";
-import erlang from "highlight.js/lib/languages/erlang";
-import python from "highlight.js/lib/languages/python";
-import perl from "highlight.js/lib/languages/perl";
-import bash from "highlight.js/lib/languages/bash";
-import asm86 from "highlight.js/lib/languages/x86asm";
-import yaml from "highlight.js/lib/languages/yaml";
-import json from "highlight.js/lib/languages/json";
-import xml from "highlight.js/lib/languages/xml";
-import properties from "highlight.js/lib/languages/properties";
-import ini from "highlight.js/lib/languages/ini";
 import {InfoMessage} from "./messages";
 import {IdImage} from "./image";
 
-hljs.registerLanguage("javascript", javascript);
-hljs.registerLanguage("cpp", cpp);
-hljs.registerLanguage("java", java);
-hljs.registerLanguage("scala", scala);
-hljs.registerLanguage("kotlin", kotlin);
-hljs.registerLanguage("erlang", erlang);
-hljs.registerLanguage("python", python);
-hljs.registerLanguage("perl", perl);
-hljs.registerLanguage("bash", bash);
-hljs.registerLanguage("asm86", asm86);
-hljs.registerLanguage("yaml", yaml);
-hljs.registerLanguage("json", json);
-hljs.registerLanguage("xml", xml);
-hljs.registerLanguage("properties", properties);
-hljs.registerLanguage("ini", ini);
+const languages = {
+    javascript: async () => import("highlight.js/lib/languages/javascript"),
+    cpp: async () => import("highlight.js/lib/languages/cpp"),
+    java: async () => import("highlight.js/lib/languages/java"),
+    scala: async () => import("highlight.js/lib/languages/scala"),
+    kotlin: async () => import("highlight.js/lib/languages/kotlin"),
+    erlang: async () => import("highlight.js/lib/languages/erlang"),
+    python: async () => import("highlight.js/lib/languages/python"),
+    perl: async () => import("highlight.js/lib/languages/perl"),
+    bash: async () => import("highlight.js/lib/languages/bash"),
+    x86asm: async () => import("highlight.js/lib/languages/x86asm"),
+    yaml: async () => import("highlight.js/lib/languages/yaml"),
+    json: async () => import("highlight.js/lib/languages/json"),
+    xml: async () => import("highlight.js/lib/languages/xml"),
+    properties: async () => import("highlight.js/lib/languages/properties"),
+    ini: async () => import("highlight.js/lib/languages/ini"),
+};
+
+async function highlight(targetRef, languagesInText) {
+    console.info(`Loading highlighting for`, languagesInText);
+    if (languagesInText.length > 0) {
+        const hljs = await import("highlight.js/lib/highlight");
+        const promises = languagesInText
+            .map(language => [language, languages[language]])
+            .filter(loader => !!loader[1])
+            .map(async ([language, loader]) => {
+                const module = await loader();
+                hljs.registerLanguage(language, module.default);
+            });
+        await Promise.all(promises);
+        if (languagesInText.length > 0) {
+            targetRef.current.querySelectorAll("pre code").forEach((block) => {
+                hljs.highlightBlock(block);
+            })
+        }
+    }
+}
+
+function useHighlightJS(targetRef, text) {
+    useEffect(() => {
+        if (!text) return;
+        if (typeof text !== "string") {
+            console.error(`Unexpected markdown child: expected string, but found`, typeof text, text);
+            return;
+        }
+        const matches = text.matchAll(/```(\w+)/g);
+        const languagesInText = [...matches].map(match => match[1])
+        highlight(targetRef, languagesInText).catch(err => {
+            console.error(`Could not load highlighting for`, languagesInText, err);
+        })
+    }, [targetRef, text]);
+}
 
 // We're using a random string to wrap our text. This way we can still utilise the power of
 // <Markdown/> and keep our article preview system nice to work with.
@@ -53,12 +74,7 @@ export const MarkdownTextArea = function ({children, preview}) {
         }
     };
     const rootRef = useRef();
-    useEffect(() => {
-        rootRef.current.querySelectorAll("pre code").forEach((block) => {
-            hljs.highlightBlock(block);
-        });
-    }, [children]);
-
+    useHighlightJS(rootRef, children);
     if (typeof children !== "string") {
         throw Error("Markdown text area can only render textual content, but was " + typeof children);
     }
@@ -72,7 +88,7 @@ export const MarkdownTextArea = function ({children, preview}) {
 
 
 export const Preview = function ({children}) {
-    return children;
+    return children || "";
 };
 
 export const PreviewOnly = function ({children}) {

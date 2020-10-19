@@ -6,7 +6,11 @@ const API_KEY = process.env.REACT_APP_BUGSNAG_API_KEY;
 console.debug("API server is set to", api);
 console.debug("API debug response delay is set to", debugDelay);
 
-module.exports = {
+const withBundleAnalyzer = require('@next/bundle-analyzer')({
+    enabled: process.env.ANALYZE === 'true'
+})
+
+module.exports = withBundleAnalyzer({
     serverRuntimeConfig: {
     },
     publicRuntimeConfig: {
@@ -46,4 +50,5 @@ module.exports = {
 
         ]
     },
-}
+    excludeFile: (str) => /\*.{spec,test}.js/.test(str)
+});
