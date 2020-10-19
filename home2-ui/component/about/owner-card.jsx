@@ -1,12 +1,14 @@
 import React, {useCallback, useState} from "react";
 import {Card} from "semantic-ui-react";
-import {ContentPlaceholderOr, ImagePlaceholderOr, LinePlaceholderOr} from "../placeholder";
 import {Loading} from "../../data/reduce/global/enums";
 import {useOwner, useOwnerLoading} from "../../data/reduce/owner";
 import {LoginModal} from "../login/login";
-import {useLoggedIn} from "../../data/reduce/authentication";
-import {OptionalImage} from "../image";
 import get from "lodash/get";
+import {ContentPlaceholderOr} from "../placeholder/content-placeholder";
+import {LinePlaceholderOr} from "../placeholder/line-placeholder";
+import {ImagePlaceholderOr} from "../placeholder/image-placeholder";
+import {OptionalImage} from "../image/optional-image";
+import {useLoggedIn} from "../../data/reduce/authentication/hooks";
 
 export const OwnerCard = function () {
 

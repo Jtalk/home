@@ -1,9 +1,10 @@
 import React, {useCallback, useMemo} from "react";
 import {Button, Form, Icon, Modal} from "semantic-ui-react";
 import {useForm} from "../admin/common/use-form";
-import {ErrorMessage} from "../form-message";
-import {Login, useLoginError, useLoginHandler, useLoginStatus} from "../../data/reduce/authentication";
 import {useFormErrors} from "../admin/common/use-errors";
+import {ErrorMessage} from "../message/error-message";
+import {Login} from "../../data/reduce/authentication/login-state";
+import {useLoginError, useLoginHandler, useLoginStatus} from "../../data/reduce/authentication/hooks";
 
 const EMPTY_FORM = () => ({login: '', password: ''});
 

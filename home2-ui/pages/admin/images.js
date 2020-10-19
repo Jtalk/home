@@ -13,12 +13,13 @@ import {
     useImagesUploadingError,
     useImageUploader
 } from "../../data/reduce/images";
-import {ErrorMessage, SuccessMessage} from "../../component/form-message";
 import "./images.module.css";
 import {ImageUploadPreview} from "../../component/admin/common/image-upload-preview";
 import {Loading, Uploading} from "../../data/reduce/global/enums";
 import {useRouter} from "next/router";
 import {OwnerTitled} from "../../component/about/owner-titled";
+import {SuccessMessage} from "../../component/message/success-message";
+import {ErrorMessage} from "../../component/message/error-message";
 
 export default function EditImagesPage() {
     const router = useRouter();

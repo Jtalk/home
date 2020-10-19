@@ -1,7 +1,9 @@
 import React, {useEffect, useRef} from "react";
+import {InfoMessage} from "../messages/info-message";
+import {IdImage} from "../image/id-image";
 import Markdown from "markdown-to-jsx";
-import {InfoMessage} from "./messages";
-import {IdImage} from "./image";
+import {Preview} from "./text-area-preview";
+import {PreviewOnly} from "./text-area-preview-only";
 
 const languages = {
     javascript: async () => import("highlight.js/lib/languages/javascript"),
@@ -84,25 +86,4 @@ export const MarkdownTextArea = function ({children, preview}) {
             {`<${WRAPPER_COMPONENT_NAME}>${children}</${WRAPPER_COMPONENT_NAME}>`}
         </Markdown>
     </div>
-};
-
-
-export const Preview = function ({children}) {
-    return children || "";
-};
-
-export const PreviewOnly = function ({children}) {
-    let previewChildren = [];
-    React.Children.forEach(children, child => {
-        if (child.type === Preview) {
-            previewChildren.push(child);
-        }
-    });
-    if (previewChildren.length <= 0) {
-        console.warn("Cannot find a preview tag among", children, "using a default preview");
-        return <p>
-            <i>No preview available for this entry</i>
-        </p>
-    }
-    return previewChildren;
 };

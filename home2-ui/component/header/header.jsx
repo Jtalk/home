@@ -1,12 +1,13 @@
 import React from "react";
 import {HeaderOwner} from "./header-owner";
-import {Dropdown, Icon, Menu} from "semantic-ui-react";
-import {useLoggedIn, useLogoutHandler} from "../../data/reduce/authentication";
+import {Dropdown, Menu} from "semantic-ui-react";
 import {HeaderMenuItem} from "./header-menu-item";
 import {useRouter} from "next/router";
 import {HeaderSearch} from "./header-search";
 import {HeaderMenuDropdownItem} from "./header-menu-dropdown-item";
 import {useOwner} from "../../data/reduce/owner";
+import {LogoutButton} from "./logout-button";
+import {useLoggedIn} from "../../data/reduce/authentication/hooks";
 
 export const Header = function () {
     const router = useRouter();
@@ -44,13 +45,3 @@ export const HeaderStateless = function ({ownerName, activeRoute, authenticated}
     </Menu>
 };
 
-export const LogoutButton = function () {
-    let loggedIn = useLoggedIn();
-    let logoutHandler = useLogoutHandler();
-    let onClick = () => {
-        loggedIn && logoutHandler();
-    };
-    return <Menu.Item onClick={onClick} tooltip="Logout">
-        <Icon name="sign-out"/>Sign out
-    </Menu.Item>
-};

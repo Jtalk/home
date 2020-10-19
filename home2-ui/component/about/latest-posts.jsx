@@ -1,12 +1,12 @@
 import React from "react";
 import {Card, Divider, List} from "semantic-ui-react";
 import {formatDateTime} from "../../utils/date-time";
-import {useLatestArticles, useLatestArticlesLoading} from "../../data/reduce/latest-articles";
-import {ContentPlaceholderOr} from "../placeholder";
 import {Loading} from "../../data/reduce/global/enums";
 import Link from "next/link";
 import "./latest-posts.module.css";
 import {BlogPath} from "../../utils/paths";
+import {ContentPlaceholderOr} from "../placeholder/content-placeholder";
+import {useLatestArticles, useLatestArticlesLoading} from "../../data/reduce/latest-articles/hooks";
 
 export const LatestPosts = function () {
 

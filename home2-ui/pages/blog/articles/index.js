@@ -1,5 +1,4 @@
 import React from "react";
-import {ArticleView} from "./[articleId]";
 import {Grid, Menu, Segment} from "semantic-ui-react";
 import {OwnerCard} from "../../../component/about/owner-card";
 import {LatestPosts} from "../../../component/about/latest-posts";
@@ -14,10 +13,11 @@ import {Loading} from "../../../data/reduce/global/enums";
 import {useRouter} from "next/router";
 import {reduxWrapper} from "../../../data/redux";
 import {ownerActions} from "../../../data/reduce/owner";
-import {latestArticlesActions} from "../../../data/reduce/latest-articles";
-import {footerActions} from "../../../data/reduce/footer";
 import {BlogPath} from "../../../utils/paths";
 import {OwnerTitled} from "../../../component/about/owner-titled";
+import {ArticleView} from "../../../component/article/article-view";
+import {footerActions} from "../../../data/reduce/footer/actions";
+import {latestArticlesActions} from "../../../data/reduce/latest-articles/actions";
 
 export default function Blog() {
 
@@ -53,7 +53,7 @@ export default function Blog() {
     </Grid>
 };
 
-export const BlogArticles = function ({loading, articles}) {
+const BlogArticles = function ({loading, articles}) {
     if (loading === Loading.LOADING) {
         articles = Array(5).fill({});
     }
@@ -63,7 +63,7 @@ export const BlogArticles = function ({loading, articles}) {
                                                 href={`${BlogPath}/${article.id}`}/>)
 };
 
-export const Pagination = function ({loading, total, page, navigate}) {
+const Pagination = function ({loading, total, page, navigate}) {
     if (loading) {
         return null;
     }

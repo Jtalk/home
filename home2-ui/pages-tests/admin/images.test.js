@@ -15,10 +15,10 @@ import {MemoryRouter} from "react-router"
 import ImageUploader from "../../component/3rdparty/react-image-upload";
 import {Pagination} from "../../component/pagination";
 import {formatDateTime} from "../../utils/date-time";
-import {ErrorMessage} from "../../component/form-message";
 import {Loading, Uploading} from "../../data/reduce/global/enums";
 import {ImageUploadPreview} from "../../component/admin/common/image-upload-preview";
 import {useDataUrl} from "../../utils/file-converter-context";
+import {ErrorMessage} from "../../component/message/error-message";
 
 jest.mock("../../utils/file-converter-context");
 useDataUrl.mockImplementation(v => v.dataUrl);

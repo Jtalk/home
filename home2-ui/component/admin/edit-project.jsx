@@ -8,13 +8,14 @@ import {
     useProjectUpdating
 } from "../../data/reduce/projects";
 import {useForm} from "./common/use-form";
-import {ContentPlaceholderOr} from "../placeholder";
 import React, {useState} from "react";
 import {Button, Divider, Form, Grid, Icon, Input, List, Message} from "semantic-ui-react";
 import {Deleting, Loading, Updating} from "../../data/reduce/global/enums";
-import {ErrorMessage} from "../form-message";
 import {useFormErrors} from "./common/use-errors";
-import {OptionalImage} from "../image";
+import {ContentPlaceholderOr} from "../placeholder/content-placeholder";
+import {ErrorMessage} from "../message/error-message";
+import {OptionalImage} from "../image/optional-image";
+import {EditProjectsPath} from "../../utils/paths";
 
 export const EditProject = function ({projectId}) {
 
@@ -31,9 +32,9 @@ export const EditProject = function ({projectId}) {
     let update = useProjectUpdater();
     let deleter = useProjectDeleter();
 
-    let submit = onSubmit(async (updated, extra) => await update(projectId, editHref(data.id), updated, extra));
+    let submit = onSubmit(async (updated, extra) => await update(projectId, `${EditProjectsPath}/${data.id || ""}`, updated, extra));
     let reset = async () => await updater.reload(project);
-    let remove = async () => await deleter(projectId, editHref(""));
+    let remove = async () => await deleter(projectId, `${EditProjectsPath}/${projectId || ""}`);
 
     return <ContentPlaceholderOr loading={!project} lines={20}>
         <EditProjectStateless {...{
@@ -86,7 +87,7 @@ export const EditProjectStateless = function ({loading, updating, deleting, erro
     </React.Fragment>
 };
 
-export const ProjectLinks = function ({links, className, updater}) {
+const ProjectLinks = function ({links, className, updater}) {
 
     let reorder = (index, direction) => updater.reorder(index, index + direction, "links");
     let add = updater.addItem(emptyLink(), "links");
@@ -106,7 +107,7 @@ export const ProjectLinks = function ({links, className, updater}) {
     </div>
 };
 
-export const EditableProjectLink = function ({link, index, links, reorder, update, remove}) {
+const EditableProjectLink = function ({link, index, links, reorder, update, remove}) {
 
     let [editing, setEditing] = useState();
 
@@ -136,7 +137,7 @@ export const EditableProjectLink = function ({link, index, links, reorder, updat
     }
 };
 
-export const ProjectEditLink = function ({link, updateLink, cancelEdit}) {
+const ProjectEditLink = function ({link, updateLink, cancelEdit}) {
 
     let {data, updater} = useForm({init: link});
     let errors = useFormErrors(link);
@@ -178,7 +179,7 @@ export const ProjectEditLink = function ({link, updateLink, cancelEdit}) {
     </List.Item>;
 };
 
-export const ProjectLink = function ({link, canMoveUp, canMoveDown, edit, reorder, remove}) {
+const ProjectLink = function ({link, canMoveUp, canMoveDown, edit, reorder, remove}) {
     return <List.Item key={link.name}>
         <List.Content floated="right">
             <Icon link name="edit" onClick={edit}/>
@@ -201,7 +202,7 @@ export const ProjectLink = function ({link, canMoveUp, canMoveDown, edit, reorde
     </List.Item>;
 };
 
-export const LockableIcon = function ({locked, children}) {
+const LockableIcon = function ({locked, children}) {
     if (locked) {
         return <Icon link name="lock"/>
     } else {
@@ -213,8 +214,3 @@ function emptyLink() {
     return {name: '', href: ''};
 }
 
-const BASE_HREF = "/admin/projects";
-export function editHref(id) {
-    id = id || "";
-    return `${BASE_HREF}/${id}`;
-}

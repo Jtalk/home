@@ -3,11 +3,12 @@ import {useOwner, useOwnerError, useOwnerLoading, useOwnerUpdater, useOwnerUpdat
 import {useForm} from "../../component/admin/common/use-form";
 import {Loading, Updating} from "../../data/reduce/global/enums";
 import {Button, Divider, Form, Grid, Input, Segment, TextArea} from "semantic-ui-react";
-import {ErrorMessage, SuccessMessage} from "../../component/form-message";
 import {imageUrl} from "../../utils/image";
 import {ImageUploadPreview} from "../../component/admin/common/image-upload-preview";
 import get from "lodash/get";
 import {OwnerTitled} from "../../component/about/owner-titled";
+import {SuccessMessage} from "../../component/message/success-message";
+import {ErrorMessage} from "../../component/message/error-message";
 
 export default function EditBio() {
 

@@ -1,22 +1,18 @@
 import React from "react";
-import Link from "next/link";
-import {Button, Divider, Grid, Item, Segment} from "semantic-ui-react";
-import {formatDateTime} from "../../../utils/date-time";
-import {ContentPlaceholderOr} from "../../../component/placeholder";
+import {Grid} from "semantic-ui-react";
 import {Loading} from "../../../data/reduce/global/enums";
 import {OwnerCard} from "../../../component/about/owner-card";
 import {LatestPosts} from "../../../component/about/latest-posts";
 import {articleActions, useArticle, useArticleLoading} from "../../../data/reduce/articles";
-import {MarkdownTextArea} from "../../../component/text-area";
 import {NotFound} from "../../../component/error/not-found";
 import {useRouter} from "next/router";
 import {reduxWrapper} from "../../../data/redux";
-import {ownerActions, useOwner} from "../../../data/reduce/owner";
-import {footerActions} from "../../../data/reduce/footer";
-import {latestArticlesActions} from "../../../data/reduce/latest-articles";
-import isEmpty from "lodash/isEmpty";
+import {ownerActions} from "../../../data/reduce/owner";
 import {BlogPath} from "../../../utils/paths";
 import {OwnerTitled} from "../../../component/about/owner-titled";
+import {ArticleView} from "../../../component/article/article-view";
+import {footerActions} from "../../../data/reduce/footer/actions";
+import {latestArticlesActions} from "../../../data/reduce/latest-articles/actions";
 
 export default function ArticleId() {
 
@@ -43,43 +39,6 @@ export default function ArticleId() {
             </Grid.Row>
         </Grid>
     </>
-};
-
-export const ArticleView = function ({article, loading, href, preview}) {
-
-    let articleLoading = isEmpty(article) && loading !== Loading.READY;
-
-    return <Segment className="items">
-        <Item>
-            <Item.Content>
-                <ContentPlaceholderOr header lines={0} loading={articleLoading}>
-                    <Item.Header>
-                        <Link shallow={!preview} href={href}>
-                            <a><h1>{article.title}</h1></a>
-                        </Link>
-                    </Item.Header>
-                </ContentPlaceholderOr>
-                <Divider/>
-                <ContentPlaceholderOr header lines={10} loading={articleLoading}>
-                    {article.tags && article.tags.length > 0 && <Item.Meta>
-                        {article.tags.map(tag => <Button compact key={tag} size="mini">{tag}</Button>)}
-                    </Item.Meta>}
-                    <Item.Description>
-                        <MarkdownTextArea preview={preview}>{article.content || ''}</MarkdownTextArea>
-                        {preview && <p/>}
-                        {preview && <Link href={href}>
-                            <a className="ui compact basic small button">Read further</a>
-                        </Link>}
-                    </Item.Description>
-                    <Item.Extra suppressHydrationWarning>
-                        {/*<Icon name="comment outline"/>*/}
-                        {/*{this.props.comments.length} comments | */}
-                        Created {formatDateTime(article.created)}
-                    </Item.Extra>
-                </ContentPlaceholderOr>
-            </Item.Content>
-        </Item>
-    </Segment>
 };
 
 export const getServerSideProps = reduxWrapper.getServerSideProps(async ({store, query}) => {

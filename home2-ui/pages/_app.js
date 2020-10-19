@@ -9,10 +9,10 @@ import {Container} from "semantic-ui-react";
 import {Footer} from "../component/footer/footer";
 import {Header} from "../component/header/header";
 import withReduxSaga from "next-redux-saga";
-import {useLoggedIn} from "../data/reduce/authentication";
 import {useRouter} from "next/router";
 import {NotFound} from "../component/error/not-found";
 import dynamic from "next/dynamic";
+import {useLoggedIn} from "../data/reduce/authentication/hooks";
 
 const {ErrorBoundary} = setupErrorReporting();
 

@@ -1,7 +1,6 @@
 import React from "react";
 import {Menu} from "semantic-ui-react";
-import Link from "next/link";
-import {ProjectsPath} from "../../utils/paths";
+import {ProjectTab} from "./projects-menu-tab";
 
 export const ProjectsMenu = function ({projects = [], selectedProjectId}) {
 
@@ -16,12 +15,3 @@ export const ProjectsMenu = function ({projects = [], selectedProjectId}) {
     </Menu>
 };
 
-export const ProjectTab = function ({project, active}) {
-    if (active) {
-        return <div className="active item">{project.title}</div>
-    } else {
-        return <Link shallow href={`${ProjectsPath}/${project.id}`}>
-            <a className="item">{project.title}</a>
-        </Link>
-    }
-};

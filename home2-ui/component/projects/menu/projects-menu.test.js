@@ -2,8 +2,9 @@ import React from 'react';
 import {shallow} from "enzyme";
 
 import Link from "next/link";
-import {ProjectsMenu, ProjectTab} from "./projects-menu";
+import {ProjectsMenu} from "./projects-menu";
 import {Menu} from "semantic-ui-react";
+import {ProjectTab} from "./projects-menu-tab";
 
 describe("<ProjectsMenu/>", () => {
   let projects = [
@@ -20,17 +21,5 @@ describe("<ProjectsMenu/>", () => {
   it('renders when no projects', () => {
     let result = shallow(<ProjectsMenu/>);
     expect(result.find(Menu).exists()).toBe(true);
-  });
-});
-
-describe("<ProjectTab/>", () => {
-  let project = { id: "project-1", title: "Project 1", href: "/project-1"};
-  it('renders active item as a div', () => {
-    let result = shallow(<ProjectTab active project={project}/>);
-    expect(result.find("div.active.item").prop("children")).toBe(project.title);
-  });
-  it('renders inactive item as a link', () => {
-    let result = shallow(<ProjectTab project={project}/>);
-    expect(result.find(Link).props()).toMatchObject({href: "/projects" + project.href, children: <a>{project.title}</a>});
   });
 });

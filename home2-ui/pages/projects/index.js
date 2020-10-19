@@ -1,12 +1,12 @@
 import React from "react";
-import {ProjectsMenu} from "../../component/projects/projects-menu";
+import {ProjectsMenu} from "../../component/projects/menu/projects-menu";
 import {ProjectDescription} from "../../component/projects/project-description";
 import {projectActions, useProjectLoading, useProjects} from "../../data/reduce/projects";
 import {Loading} from "../../data/reduce/global/enums";
 import {reduxWrapper} from "../../data/redux";
 import {ownerActions} from "../../data/reduce/owner";
-import {footerActions} from "../../data/reduce/footer";
 import {OwnerTitled} from "../../component/about/owner-titled";
+import {footerActions} from "../../data/reduce/footer/actions";
 
 export default function Projects() {
 

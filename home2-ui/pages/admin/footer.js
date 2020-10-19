@@ -1,16 +1,16 @@
 import React, {useMemo} from "react";
 import {Divider, Form, Grid, Icon, Image, List, Segment} from "semantic-ui-react";
-import {ErrorMessage} from "../../component/form-message";
+import {useForm} from "../../component/admin/common/use-form";
+import {Loading, Updating} from "../../data/reduce/global/enums";
+import {OwnerTitled} from "../../component/about/owner-titled";
+import {ErrorMessage} from "../../component/message/error-message";
 import {
     useFooter,
     useFooterError,
     useFooterLoading,
     useFooterUpdater,
     useFooterUpdating
-} from "../../data/reduce/footer";
-import {useForm} from "../../component/admin/common/use-form";
-import {Loading, Updating} from "../../data/reduce/global/enums";
-import {OwnerTitled} from "../../component/about/owner-titled";
+} from "../../data/reduce/footer/hooks";
 
 let EMPTY_LINK = () => ({caption: '', href: ''});
 let EMPTY_LOGO = () => ({name: '', src: ''});

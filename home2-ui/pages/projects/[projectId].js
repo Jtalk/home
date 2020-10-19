@@ -1,15 +1,15 @@
 import {projectActions, useProjectLoading, useProjects} from "../../data/reduce/projects";
 import {Loading} from "../../data/reduce/global/enums";
-import {ProjectsMenu} from "../../component/projects/projects-menu";
+import {ProjectsMenu} from "../../component/projects/menu/projects-menu";
 import {ProjectDescription} from "../../component/projects/project-description";
 import React from "react";
 import {useRouter} from "next/router";
 import {NotFound} from "../../component/error/not-found";
 import {reduxWrapper} from "../../data/redux";
 import {ownerActions} from "../../data/reduce/owner";
-import {footerActions} from "../../data/reduce/footer";
 import find from "lodash/find";
 import {OwnerTitled} from "../../component/about/owner-titled";
+import {footerActions} from "../../data/reduce/footer/actions";
 
 export default function Project() {
     let router = useRouter();

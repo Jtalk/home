@@ -3,10 +3,11 @@ import {Grid, Icon, Menu, Segment} from "semantic-ui-react";
 import Link from "next/link";
 import {useProject, useProjectError, useProjects, useProjectUpdater} from "../../data/reduce/projects";
 import {NotFound} from "../error/not-found";
-import {ContentPlaceholderOr} from "../placeholder";
-import {editHref, EditProject} from "./edit-project";
+import {EditProject} from "./edit-project";
 import maxBy from "lodash/maxBy";
 import findIndex from "lodash/findIndex";
+import {ContentPlaceholderOr} from "../placeholder/content-placeholder";
+import {EditProjectsPath} from "../../utils/paths";
 
 const NEW_PROJECT_ID = "new";
 const MAKE_NEW_PROJECT = (order) => ({
@@ -40,7 +41,7 @@ export const EditProjectsStateless = function ({projects, currentProject, curren
         let maxOrderProject = maxBy(projects, p => p.order);
         let maxOrder = (maxOrderProject && maxOrderProject.order) || -1;
         let newProject = MAKE_NEW_PROJECT(maxOrder + 1);
-        submit(newProject.id, editHref(newProject.id), newProject, {});
+        submit(newProject.id, `${EditProjectsPath}/${newProject.id || ""}`, newProject, {});
     };
     let move = (shift) => {
         return () => {
@@ -78,7 +79,7 @@ export const EditProjectsStateless = function ({projects, currentProject, curren
                         {
                             (projects || []).map(project => project.id === currentProjectId
                                 ? <Menu.Item active key={project.id}>{project.title}</Menu.Item>
-                                : <Link href={editHref(project.id)} key={project.id}>
+                                : <Link href={`${EditProjectsPath}/${project.id || ""}`} key={project.id}>
                                     <a className="item">{project.title}</a>
                                 </Link>)
                         }

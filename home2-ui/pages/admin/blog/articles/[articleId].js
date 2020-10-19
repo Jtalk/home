@@ -1,6 +1,5 @@
 import React from "react";
 import {Button, Dropdown, Form, Grid, Segment, TextArea} from "semantic-ui-react";
-import {ErrorMessage, SuccessMessage} from "../../../../component/form-message";
 import {useAvailableTags} from "../../../../data/reduce/tags";
 import {useForm} from "../../../../component/admin/common/use-form";
 import {Loading, Updating} from "../../../../data/reduce/global/enums";
@@ -19,6 +18,8 @@ import uniqBy from "lodash/uniqBy";
 import toLower from "lodash/toLower";
 import keyBy from "lodash/keyBy";
 import {OwnerTitled} from "../../../../component/about/owner-titled";
+import {SuccessMessage} from "../../../../component/message/success-message";
+import {ErrorMessage} from "../../../../component/message/error-message";
 
 export default function EditBlogArticle() {
 
