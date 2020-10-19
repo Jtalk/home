@@ -1,12 +1,12 @@
 import {action, error} from "./global/actions";
 import {Loading} from "./global/enums";
 import {useLoader} from "./global/hook-barebone";
-import {fetchAjax} from "./ajax";
 import {call, put, takeLatest} from "redux-saga/effects";
 import {useImmutableSelector} from "../redux-store";
 import {useMemo} from "react";
 import {HYDRATE} from "next-redux-wrapper";
 import merge from "lodash/merge";
+import TagRequests from "../ajax/tags-requests";
 
 export const Action = {
     LOAD: "tags load",
@@ -44,9 +44,8 @@ export function useAvailableTags() {
 }
 
 function* load() {
-    let ajax = yield fetchAjax();
     try {
-        let tags = yield call(ajax.tags.load);
+        let tags = yield call(TagRequests.load);
         yield put(action(Action.LOADED, tags));
     } catch (e) {
         console.error("Cannot load tags info", e);

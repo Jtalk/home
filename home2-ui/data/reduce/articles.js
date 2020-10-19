@@ -12,7 +12,6 @@ import {
     useUpdating
 } from "./global/hook-barebone";
 import {allSelector, publishableData, publishedSelector} from "./global/publishable-data";
-import {fetchAjax} from "./ajax";
 import {useMemo} from "react";
 import {hydrate, useImmutableSelector} from "../redux-store";
 import {useRouter} from "next/router";
@@ -20,6 +19,7 @@ import {HYDRATE} from "next-redux-wrapper";
 import {ERROR_ACTION, WAIT_FOR_ACTION} from "redux-wait-for-action";
 import mapValues from "lodash/mapValues";
 import merge from "lodash/merge";
+import ArticlesRequests from "../ajax/articles-requests";
 
 export const DEFAULT_PAGE_SIZE = 20;
 const MAX_PAGE_SIZE = 100;
@@ -200,9 +200,8 @@ function* load(page, pageSize, publishedOnly) {
     if (pageSize > MAX_PAGE_SIZE) {
         throw Error(`The requested page size ${pageSize} exceeds max ${MAX_PAGE_SIZE}`);
     }
-    let ajax = yield fetchAjax();
     try {
-        let articlesResult = yield call(ajax.articles.load, page, pageSize, publishedOnly);
+        let articlesResult = yield call(ArticlesRequests.load, page, pageSize, publishedOnly);
         yield put(action(Action.LOADED, {publishedOnly, ...articlesResult}));
     } catch (e) {
         console.error(`Cannot load article info page = ${page}, page size = ${pageSize}`, e);
@@ -211,11 +210,10 @@ function* load(page, pageSize, publishedOnly) {
 }
 
 function* remove(articleId, page) {
-    let ajax = yield fetchAjax();
     try {
-        yield call(ajax.articles.remove, articleId);
+        yield call(ArticlesRequests.remove, articleId);
         let pageSize = yield select(pageSizeSelector("articles", "pages"));
-        let updatedList = yield call(ajax.articles.load, page, pageSize, false);
+        let updatedList = yield call(ArticlesRequests.load, page, pageSize, false);
         yield put(action(Action.DELETED, {...updatedList, deletedId: articleId}));
     } catch (e) {
         console.error(`Exception while deleting article ${articleId}`, e);
@@ -224,9 +222,8 @@ function* remove(articleId, page) {
 }
 
 function* loadOne(articleId) {
-    let ajax = yield fetchAjax();
     try {
-        let article = yield call(ajax.articles.loadOne, articleId);
+        let article = yield call(ArticlesRequests.loadOne, articleId);
         yield put(action(Action.LOADED_ONE, article));
     } catch (e) {
         console.error(`Cannot load article info ${articleId}`, e);
@@ -235,9 +232,8 @@ function* loadOne(articleId) {
 }
 
 function* update(articleId, update) {
-    let ajax = yield fetchAjax();
     try {
-        let updated = yield call(ajax.articles.update, articleId, update);
+        let updated = yield call(ArticlesRequests.update, articleId, update);
         yield put(action(Action.UPDATED, updated));
     } catch (e) {
         console.error(`Exception while updating article ${articleId}`, update, e);

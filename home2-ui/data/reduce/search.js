@@ -3,9 +3,9 @@ import {Loading} from "./global/enums";
 import {useDispatch} from "react-redux";
 import {useCallback} from "react";
 import {action, error} from "./global/actions";
-import {ajaxSelector} from "./ajax";
 import {HYDRATE} from "next-redux-wrapper";
 import merge from "lodash/merge";
+import SearchRequests from "../ajax/search-requests";
 
 const Action = {
     LOADING: "search loading",
@@ -63,10 +63,9 @@ export function useSearchError() {
 
 function doSearch(query, maxResults) {
     return async (dispatch, getStore) => {
-        let ajax = ajaxSelector(getStore());
         dispatch(action(Action.LOADING, query));
         try {
-            let results = await ajax.search.search(query, maxResults);
+            let results = await SearchRequests.search(query, maxResults);
             dispatch(action(Action.COMPLETE, {results, query}));
         } catch (e) {
             console.error(`Error running search for '${query}'`, e);

@@ -2,11 +2,11 @@ import {Loading, Updating} from "./global/enums";
 import {action, error} from "./global/actions";
 import {useLastError, useLazyLoader, useLoading, useUpdater2, useUpdating} from "./global/hook-barebone";
 import {call, put, takeEvery} from "redux-saga/effects";
-import {fetchAjax} from "./ajax";
 import {HYDRATE} from "next-redux-wrapper";
 import {ERROR_ACTION, WAIT_FOR_ACTION} from "redux-wait-for-action";
 import {hydrate} from "../redux-store";
 import merge from "lodash/merge";
+import {load as ownerLoad, update as ownerUpdate} from "../ajax/owner-requests";
 
 let defaultOwner = {
     name: "",
@@ -86,9 +86,8 @@ export function useOwnerUpdater() {
 
 function* load() {
     console.debug("Loading owner");
-    let ajax = yield fetchAjax();
     try {
-        let owner = yield call(ajax.owner.load);
+        let owner = yield call(ownerLoad);
         console.debug("Owner loaded", owner);
         yield put(action(Action.LOADED, owner));
     } catch (e) {
@@ -99,9 +98,8 @@ function* load() {
 
 function* update(update, photo) {
     console.info("Updating owner with", update);
-    let ajax = yield fetchAjax();
     try {
-        let newOwner = yield call(ajax.owner.update, update, photo);
+        let newOwner = yield call(ownerUpdate, update, photo);
         console.info("Owner updated", newOwner);
         yield put(action(Action.UPDATED, newOwner));
     } catch (e) {

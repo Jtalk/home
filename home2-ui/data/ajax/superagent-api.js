@@ -5,6 +5,10 @@ import Duration from "duration-js";
 
 const {publicRuntimeConfig: config} = getConfig();
 
+export async function superagent() {
+    return await import("superagent");
+}
+
 export default function api(request) {
     let apiPrefix = config.api.prefix;
     request = request

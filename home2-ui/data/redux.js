@@ -1,5 +1,5 @@
 import * as owner from "./reduce/owner";
-import * as footer from "./reduce/footer";
+import * as footer from "./reduce/footer/reducer";
 import {applyMiddleware, combineReducers, createStore} from "redux";
 import thunk from "redux-thunk";
 import createReduxWaitForMiddleware from "redux-wait-for-action";
@@ -9,11 +9,10 @@ import * as images from "./reduce/images";
 import * as projects from "./reduce/projects";
 import * as articles from "./reduce/articles";
 import * as tags from "./reduce/tags";
-import * as latestArticles from "./reduce/latest-articles";
-import * as authentication from "./reduce/authentication";
+import * as latestArticles from "./reduce/latest-articles/reducer";
+import * as authentication from "./reduce/authentication/reducer";
 import createSagaMiddleware from "redux-saga";
 import {rootSaga} from "./saga";
-import * as ajax from "./reduce/ajax";
 import {emptySaga} from "../utils/testing/test-saga";
 import {reportError} from "../utils/error-reporting";
 import * as search from "./reduce/search";
@@ -23,7 +22,6 @@ import keyBy from "lodash/keyBy";
 import identity from "lodash/identity";
 
 const modules = [
-    ajax,
     articles,
     authentication,
     footer,
@@ -66,7 +64,6 @@ export function createTestStore(reducers, rootSaga) {
     if (!rootSaga) {
         rootSaga = emptySaga;
     }
-    reducers = {ajax, ...reducers};
     let [mw, saga] = middleware();
     let result = createStore(combineReducers(reducers), mw);
     let sagaTask = saga.run(rootSaga);

@@ -3,12 +3,12 @@ import {Deleting, Loading, Uploading} from "./global/enums";
 import {useDeleter2, useLastError, useLoader, useLoading, useUpdater2, useUpdating} from "./global/hook-barebone";
 import {useImmutableSelector} from "../redux-store";
 import {call, put, takeEvery, takeLatest} from "redux-saga/effects";
-import {fetchAjax} from "./ajax";
 import {addPage, defaultPages} from "./global/paginated-data";
 import {useMemo} from "react";
 import getConfig from "next/config";
 import {HYDRATE} from "next-redux-wrapper";
 import merge from "lodash/merge";
+import ImageRequests from "../ajax/images-requests";
 
 const {publicRuntimeConfig: config} = getConfig();
 
@@ -114,9 +114,8 @@ export function useImageDeleter() {
 }
 
 function* load(page) {
-    let ajax = yield fetchAjax();
     try {
-        let imagesData = yield call(ajax.images.load, page);
+        let imagesData = yield call(ImageRequests.load, page);
         imagesData = toInternalImagesData(imagesData);
         yield put(action(Action.LOADED, imagesData));
     } catch (e) {
@@ -126,9 +125,8 @@ function* load(page) {
 }
 
 function* upload(description, file) {
-    let ajax = yield fetchAjax();
     try {
-        let result = yield call(ajax.images.upload, description, file);
+        let result = yield call(ImageRequests.upload, description, file);
         yield put(action(Action.UPLOADED, toInternalImageData(result)));
     } catch (e) {
         console.error(`Cannot upload image "${description}"`, e);
@@ -137,9 +135,8 @@ function* upload(description, file) {
 }
 
 function* delete_(id) {
-    let ajax = yield fetchAjax();
     try {
-        yield call(ajax.images.delete, id);
+        yield call(ImageRequests.delete, id);
         yield put(action(Action.DELETED, id));
     } catch (e) {
         console.error(`Cannot delete image ${id}`, e);

@@ -9,7 +9,6 @@ import {
     useLoading,
     useUpdating
 } from "./global/hook-barebone";
-import {ajaxSelector, fetchAjax} from "./ajax";
 import {call, put, takeLatest} from "redux-saga/effects";
 import {publishableData, useAllData, usePublishedData} from "./global/publishable-data";
 import {useCallback, useMemo} from "react";
@@ -19,6 +18,7 @@ import {hydrate} from "../redux-store";
 import {ERROR_ACTION, WAIT_FOR_ACTION} from "redux-wait-for-action";
 import find from "lodash/find";
 import merge from "lodash/merge";
+import ProjectRequests from "../ajax/projects-requests";
 
 export const Action = {
     LOAD: "projects load",
@@ -140,9 +140,8 @@ export function useProjectDeleter() {
 }
 
 function* load(publishedOnly) {
-    let ajax = yield fetchAjax();
     try {
-        let projects = yield call(ajax.projects.load, publishedOnly);
+        let projects = yield call(ProjectRequests.load, publishedOnly);
         yield put(action(Action.LOADED, {projects, publishedOnly}));
     } catch (e) {
         console.error("Cannot load project info", e);
@@ -151,11 +150,10 @@ function* load(publishedOnly) {
 }
 
 function update(update, {id, logo}) {
-    return async (dispatch, getState) => {
-        let ajax = ajaxSelector(getState());
+    return async (dispatch) => {
         try {
-            let result = await ajax.projects.update(id, update, logo);
-            let reloaded = await ajax.projects.load(false);
+            let result = await ProjectRequests.update(id, update, logo);
+            let reloaded = await ProjectRequests.load(false);
             dispatch(action(Action.UPDATED, {projects: reloaded, publishedOnly: false}));
             return result;
         } catch (e) {
@@ -167,11 +165,10 @@ function update(update, {id, logo}) {
 }
 
 function remove(projectId) {
-    return async (dispatch, getState) => {
-        let ajax = ajaxSelector(getState());
+    return async (dispatch) => {
         try {
-            await ajax.projects.remove(projectId);
-            let reloaded = await ajax.projects.load(false);
+            await ProjectRequests.remove(projectId);
+            let reloaded = await ProjectRequests.load(false);
             dispatch(action(Action.DELETED, {projects: reloaded, publishedOnly: false}));
             return projectId;
         } catch (e) {

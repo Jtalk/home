@@ -1,65 +1,15 @@
-import {action, error} from "./global/actions";
-import dayjs from "dayjs";
-import {immutableSelector, useImmutableSelector} from "../redux-store";
-import {useLastError, useUpdater2} from "./global/hook-barebone";
 import {call, delay, put, select, takeEvery} from "redux-saga/effects";
-import {ajaxSelector, fetchAjax, useAjax} from "./ajax";
-import {useDispatch} from "react-redux";
-import {reportError} from "../../utils/error-reporting";
+import AuthenticationRequests from "../../ajax/authentication-requests";
+import {action, error} from "../global/actions";
+import {Action} from "./reducer";
+import dayjs from "dayjs";
+import {immutableSelector} from "../../redux-store";
+import {reportError} from "../../../utils/error-reporting";
 import storageAvailable from "storage-available";
-import {HYDRATE} from "next-redux-wrapper";
-import {useCallback} from "react";
-import merge from "lodash/merge";
-
-export const EXISTING_PASSWORD_MISMATCH = "The existing password does not match";
-
-let Action = {
-    INIT: "authentication init",
-    LOGGING_IN: "authentication logging in",
-    LOGIN: "authentication login",
-    TRIGGER_REFRESH: "authentication trigger refresh",
-    REFRESH: "authentication refresh",
-    LOGOUT: "authentication logout",
-    ERROR: "authentication error",
-};
-
-export const Login = {
-    LOGGING_IN: "logging_in",
-    LOGGED_IN: "logged_in",
-    ERROR: "error",
-};
 
 const SESSION_EXPIRY_KEY = "session-expiry";
 const SESSION_USERNAME_KEY = "session-username";
-const DEFAULT = {login: null, updating: null};
 
-export const segment = "authentication";
-
-export function reducer(state = DEFAULT, action) {
-    switch (action.type) {
-        case Action.LOGGING_IN:
-            return merge({}, state, {login: Login.LOGGING_IN, errorMessage: null});
-        case Action.LOGIN:
-            return merge({}, state, {
-                login: Login.LOGGED_IN,
-                expiry: dayjs(action.data.expiry),
-                username: action.data.username,
-                errorMessage: null
-            });
-        case Action.REFRESH:
-            return merge({}, state, {
-                expiry: dayjs(action.data.expiry),
-            });
-        case Action.LOGOUT:
-            return DEFAULT;
-        case Action.ERROR:
-            return merge({}, state, {login: Login.ERROR, errorMessage: action.errorMessage});
-        case HYDRATE:
-            return state; // No server-side activity around authentication.
-        default:
-            return state;
-    }
-}
 
 export function* watchAuthentication() {
     yield takeEvery(Action.LOGIN, ({data: {expiry}}) => runTokenRefresh(expiry));
@@ -126,82 +76,9 @@ function* runTokenRefresh(expiry) {
     }
 }
 
-export function useLoginStatus() {
-    return useImmutableSelector(segment, "login");
-}
-
-export function useLoggedIn() {
-    return useLoginStatus() === Login.LOGGED_IN;
-}
-
-export function useUsername() {
-    return useImmutableSelector(segment, "username");
-}
-
-export function useLoginError() {
-    return useLastError(segment);
-}
-
-export function useLoginHandler() {
-    let dispatch = useDispatch();
-    return useCallback(async form => {
-        return await dispatch(login(form));
-    }, [dispatch]);
-}
-
-export function useLogoutHandler() {
-    return useUpdater2(Action.LOGOUT);
-}
-
-export function usePasswordChanger() {
-    let ajax = useAjax();
-    return async passwords => {
-        return await changePassword(ajax, passwords.new, passwords.current);
-    };
-}
-
-function login(form) {
-    return async (dispatch, getState) => {
-        let ajax = ajaxSelector(getState());
-        dispatch(action(Action.LOGGING_IN));
-        try {
-            let result = await ajax.authentication.login(form);
-            console.info("Login success");
-            dispatch(action(Action.LOGIN, {expiry: result.expiry, username: form.login}));
-            return true;
-        } catch (e) {
-            console.error("Error logging in", e);
-            if (e.status >= 400 && e.status < 500) {
-                console.warn("Login failure:", e.response.body.errors);
-                dispatch(error(Action.ERROR, (e.response.body.errors || ["unknown"]).join(" | "), {error: e}));
-            } else {
-                console.error("Server error", e.response);
-                dispatch(error(Action.ERROR, "Unknown error while trying to log in", {error: e}));
-            }
-            return false;
-        }
-    }
-}
-
-async function changePassword(ajax, newPassword, oldPassword) {
-    try {
-        await ajax.authentication.changePassword(oldPassword, newPassword);
-    } catch (e) {
-        console.error("Error while changing password", e);
-        if (e.status === 409) {
-            throw Error(EXISTING_PASSWORD_MISMATCH)
-        }
-        if (e.response && e.response.body) {
-            throw Error("Error: " + e.response.body);
-        }
-        throw e;
-    }
-}
-
 function* refreshAuthentication() {
-    let ajax = yield fetchAjax();
     try {
-        let response = yield call(ajax.authentication.refresh);
+        let response = yield call(AuthenticationRequests.refresh);
         return response.expiry;
     } catch (e) {
         console.error("Error refreshing authentication", e);
@@ -210,9 +87,8 @@ function* refreshAuthentication() {
 }
 
 function* logout() {
-    let ajax = yield fetchAjax();
     try {
-        yield call(ajax.authentication.logout);
+        yield call(AuthenticationRequests.logout);
         clearLocalStore();
     } catch (e) {
         console.error("Error while logging out", e);
