@@ -1,4 +1,4 @@
-import {Action} from "./reducer";
+import {Action} from "./index";
 import {ERROR_ACTION, WAIT_FOR_ACTION} from "redux-wait-for-action";
 
 export const latestArticlesActions = {

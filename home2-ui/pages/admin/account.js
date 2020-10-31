@@ -12,12 +12,19 @@ import Grid from "semantic-ui-react/dist/commonjs/collections/Grid";
 import Segment from "semantic-ui-react/dist/commonjs/elements/Segment";
 import Form from "semantic-ui-react/dist/commonjs/collections/Form";
 import Divider from "semantic-ui-react/dist/commonjs/elements/Divider";
+import {useReducers} from "../../data/redux-dynamic";
+import ownerReducer from "../../data/reduce/owner";
+import authenticationReducer from "../../data/reduce/authentication";
+import searchReducer from "../../data/reduce/search";
+import footerReducer from "../../data/reduce/footer";
 
 const PASSWORD_FORM = () => ({
     password: {}
 });
 
 export default function EditAccount() {
+
+    useReducers(ownerReducer, authenticationReducer, searchReducer, footerReducer);
 
     let username = useUsername();
     let changer = usePasswordChanger();

@@ -2,22 +2,22 @@ import {useLastError, useLazyLoader, useLoading, useUpdater2, useUpdating} from 
 import {Action, segment} from "./index";
 import {Loading} from "../global/enums";
 
-export function useFooter() {
-    return useLazyLoader(Action.LOAD, segment);
+export function useOwner() {
+    return useLazyLoader(Action.LOAD, segment) || {};
 }
 
-export function useFooterError() {
-    return useLastError(segment);
-}
-
-export function useFooterLoading() {
+export function useOwnerLoading() {
     return useLoading(segment) || Loading.LOADING;
 }
 
-export function useFooterUpdating() {
+export function useOwnerUpdating() {
     return useUpdating(segment);
 }
 
-export function useFooterUpdater() {
+export function useOwnerError() {
+    return useLastError(segment);
+}
+
+export function useOwnerUpdater() {
     return useUpdater2(Action.UPDATE);
 }

@@ -3,6 +3,10 @@ import merge from "lodash/merge";
 import {HYDRATE} from "next-redux-wrapper";
 import {hydrate} from "../../redux-store";
 
+export * from "./actions";
+export * from "./hooks";
+export * from "./saga";
+
 export const Action = {
     LOAD: "latest articles load",
     LOADED: "latest articles loaded",
@@ -10,7 +14,7 @@ export const Action = {
 };
 export const segment = "latest-articles";
 
-export function reducer(state = {loading: null, data: []}, action) {
+export default function latestArticles(state = {loading: null, data: []}, action) {
     switch (action.type) {
         case Action.LOAD:
             return {loading: Loading.LOADING, errorMessage: null, data: []};
@@ -23,20 +27,4 @@ export function reducer(state = {loading: null, data: []}, action) {
         default:
             return state;
     }
-}
-
-export function serialiseJSON(state) {
-    const result = {...state};
-    if (result.data) {
-        result.data = result.data.map(v => ({...v, created: v.created?.getTime()}));
-    }
-    return result;
-}
-
-export function deserialiseJSON(json) {
-    const result = {...json};
-    if (result.data) {
-        result.data = result.data.map(v => ({...v, created: v.created && new Date(v.created)}));
-    }
-    return result;
 }

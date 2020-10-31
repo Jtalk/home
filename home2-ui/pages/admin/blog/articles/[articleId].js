@@ -3,7 +3,7 @@ import {useAvailableTags} from "../../../../data/reduce/tags";
 import {useForm} from "../../../../component/admin/common/use-form";
 import {Loading, Updating} from "../../../../data/reduce/global/enums";
 import {DatePicker} from "../../../../component/admin/common/date-picker";
-import {
+import articlesReducer, {
     useArticle,
     useArticleLoading,
     useArticlesError,
@@ -25,8 +25,14 @@ import Segment from "semantic-ui-react/dist/commonjs/elements/Segment";
 import Button from "semantic-ui-react/dist/commonjs/elements/Button";
 import TextArea from "semantic-ui-react/dist/commonjs/addons/TextArea";
 import Dropdown from "semantic-ui-react/dist/commonjs/modules/Dropdown";
+import {useReducers} from "../../../../data/redux-dynamic";
+import authenticationReducer from "../../../../data/reduce/authentication";
+import searchReducer from "../../../../data/reduce/search";
+import footerReducer from "../../../../data/reduce/footer";
 
 export default function EditBlogArticle() {
+
+    useReducers(authenticationReducer, searchReducer, footerReducer, articlesReducer);
 
     const router = useRouter();
     const {articleId} = router.query;

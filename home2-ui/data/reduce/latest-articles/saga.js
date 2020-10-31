@@ -1,5 +1,5 @@
 import {takeEvery} from "@redux-saga/core/effects";
-import {Action} from "./reducer";
+import {Action} from "./index";
 import {call, put} from "redux-saga/effects";
 import {load as loadArticles} from "../../ajax/articles-requests";
 import {action, error} from "../global/actions";

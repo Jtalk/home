@@ -10,9 +10,16 @@ import {ContentPlaceholderOr} from "../component/placeholder/content-placeholder
 import {footerActions} from "../data/reduce/footer/actions";
 import {latestArticlesActions} from "../data/reduce/latest-articles/actions";
 import Grid from "semantic-ui-react/dist/commonjs/collections/Grid";
+import {useReducers} from "../data/redux-dynamic";
+import ownerReducer from "../data/reduce/owner"
+import latestArticlesReducer from "../data/reduce/latest-articles"
+import searchReducer from "../data/reduce/search"
+import footerReducer from "../data/reduce/footer"
+import authenticationReducer from "../data/reduce/authentication"
 
 export default function About() {
 
+    useReducers(ownerReducer, latestArticlesReducer, authenticationReducer, searchReducer, footerReducer);
     const {bio} = useOwner();
     const loading = useOwnerLoading();
 

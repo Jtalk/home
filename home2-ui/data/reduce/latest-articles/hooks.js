@@ -1,5 +1,5 @@
 import {useLastError, useLazyLoader, useLoading} from "../global/hook-barebone";
-import {Action, segment} from "./reducer";
+import {Action, segment} from "./index";
 import {Loading} from "../global/enums";
 
 export function useLatestArticles() {

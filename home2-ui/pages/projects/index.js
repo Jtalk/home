@@ -4,11 +4,19 @@ import {ProjectDescription} from "../../component/projects/project-description";
 import {projectActions, useProjectLoading, useProjects} from "../../data/reduce/projects";
 import {Loading} from "../../data/reduce/global/enums";
 import {reduxWrapper} from "../../data/redux";
-import {ownerActions} from "../../data/reduce/owner";
+import ownerReducer, {ownerActions} from "../../data/reduce/owner";
 import {OwnerTitled} from "../../component/about/owner-titled";
 import {footerActions} from "../../data/reduce/footer/actions";
+import {useReducers} from "../../data/redux-dynamic";
+import latestArticlesReducer from "../../data/reduce/latest-articles";
+import authenticationReducer from "../../data/reduce/authentication";
+import searchReducer from "../../data/reduce/search";
+import footerReducer from "../../data/reduce/footer";
+import projectsReducer from "../../data/reduce/projects";
 
 export default function Projects() {
+
+    useReducers(ownerReducer, latestArticlesReducer, authenticationReducer, searchReducer, footerReducer, projectsReducer);
 
     let projects = useProjects();
     let loading = useProjectLoading();

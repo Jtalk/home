@@ -13,10 +13,17 @@ import {NotFound} from "../component/error/not-found";
 import dynamic from "next/dynamic";
 import {useLoggedIn} from "../data/reduce/authentication/hooks";
 import Container from "semantic-ui-react/dist/commonjs/elements/Container";
+import {useReducers} from "../data/redux-dynamic";
+import authenticationReducer from "../data/reduce/authentication";
+import searchReducer from "../data/reduce/search";
+import footerReducer from "../data/reduce/footer";
 
 const {ErrorBoundary} = setupErrorReporting();
 
 function App({Component, pageProps}) {
+
+    useReducers(authenticationReducer, searchReducer, footerReducer);
+
     const isLoggedIn = useLoggedIn();
     const router = useRouter();
     const disableSSR = !process.browser && router.pathname.startsWith("/admin");

@@ -3,6 +3,10 @@ import {Loading, Updating} from "../global/enums";
 import {HYDRATE} from "next-redux-wrapper";
 import {hydrate} from "../../redux-store";
 
+export * from "./actions";
+export * from "./hooks";
+export * from "./saga";
+
 export const Action = {
     LOAD: "footer load",
     LOADED: "footer loaded",
@@ -19,7 +23,7 @@ const defaultFooter = {
 
 export const segment = "footer";
 
-export function reducer(state = {loading: null, data: defaultFooter}, action) {
+export default function footer(state = {loading: null, data: defaultFooter}, action) {
     switch (action.type) {
         case Action.LOAD:
             return merge({}, state, {loading: Loading.LOADING});

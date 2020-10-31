@@ -1,9 +1,9 @@
-import {createTestStore} from "../redux";
-import * as owner from "./owner";
-import {watchOwner} from "./owner";
-import {Loading} from "./global/enums";
+import {createTestStore} from "../../redux";
+import * as owner from "./index";
+import {watchOwner} from "./index";
+import {Loading} from "../global/enums";
 import {END, runSaga} from "redux-saga";
-import {immutableSelector} from "../redux-store";
+import {immutableSelector} from "../../redux-store";
 
 const mockOwner = {
     name: "Vasya Pupkin",

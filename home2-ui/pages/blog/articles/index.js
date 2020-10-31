@@ -11,7 +11,7 @@ import {
 import {Loading} from "../../../data/reduce/global/enums";
 import {useRouter} from "next/router";
 import {reduxWrapper} from "../../../data/redux";
-import {ownerActions} from "../../../data/reduce/owner";
+import ownerReducer, {ownerActions} from "../../../data/reduce/owner";
 import {BlogPath} from "../../../utils/paths";
 import {OwnerTitled} from "../../../component/about/owner-titled";
 import {ArticleView} from "../../../component/article/article-view";
@@ -20,8 +20,16 @@ import {latestArticlesActions} from "../../../data/reduce/latest-articles/action
 import Grid from "semantic-ui-react/dist/commonjs/collections/Grid";
 import Segment from "semantic-ui-react/dist/commonjs/elements/Segment";
 import Menu from "semantic-ui-react/dist/commonjs/collections/Menu";
+import {useReducers} from "../../../data/redux-dynamic";
+import latestArticlesReducer from "../../../data/reduce/latest-articles";
+import authenticationReducer from "../../../data/reduce/authentication";
+import searchReducer from "../../../data/reduce/search";
+import footerReducer from "../../../data/reduce/footer";
+import articlesReducer from "../../../data/reduce/articles";
 
 export default function Blog() {
+
+    useReducers(ownerReducer, latestArticlesReducer, authenticationReducer, searchReducer, footerReducer, articlesReducer);
 
     let router = useRouter();
 

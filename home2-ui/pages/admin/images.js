@@ -28,8 +28,16 @@ import Button from "semantic-ui-react/dist/commonjs/elements/Button";
 import Form from "semantic-ui-react/dist/commonjs/collections/Form";
 import Loader from "semantic-ui-react/dist/commonjs/elements/Loader";
 import Container from "semantic-ui-react/dist/commonjs/elements/Container";
+import {useReducers} from "../../data/redux-dynamic";
+import searchReducer from "../../data/reduce/search";
+import footerReducer from "../../data/reduce/footer";
+import imagesReducer from "../../data/reduce/images";
+import authenticationReducer from "../../data/reduce/authentication";
 
 export default function EditImagesPage() {
+
+    useReducers(searchReducer, footerReducer, authenticationReducer, imagesReducer);
+
     const router = useRouter();
     const {page = 0} = router.query;
     return <EditImages page={page}/>

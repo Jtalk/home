@@ -1,5 +1,5 @@
 import {useImmutableSelector} from "../../redux-store";
-import {Action, segment} from "./reducer";
+import {Action, segment} from "./index";
 import {useLastError, useUpdater2} from "../global/hook-barebone";
 import {useDispatch} from "react-redux";
 import {useCallback} from "react";

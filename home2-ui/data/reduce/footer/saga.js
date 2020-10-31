@@ -1,5 +1,5 @@
 import {call, put, takeEvery} from "redux-saga/effects";
-import {Action} from "./reducer";
+import {Action} from "./index";
 import {load as loadFooter, update as updateFooter} from "../../ajax/footer-requests";
 import {action, error} from "../global/actions";
 

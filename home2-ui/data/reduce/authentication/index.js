@@ -15,7 +15,7 @@ export const Action = {
 export const segment = "authentication";
 
 const DEFAULT = {login: null, updating: null};
-export function reducer(state = DEFAULT, action) {
+export default function authentication(state = DEFAULT, action) {
     switch (action.type) {
         case Action.LOGGING_IN:
             return merge({}, state, {login: Login.LOGGING_IN, errorMessage: null});
