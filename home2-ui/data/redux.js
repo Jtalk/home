@@ -3,7 +3,6 @@ import * as footer from "./reduce/footer/reducer";
 import {applyMiddleware, combineReducers, createStore} from "redux";
 import thunk from "redux-thunk";
 import createReduxWaitForMiddleware from "redux-wait-for-action";
-import {createLogger} from "redux-logger";
 import promiseMiddleware from "redux-promise-middleware";
 import * as images from "./reduce/images";
 import * as projects from "./reduce/projects";
@@ -83,11 +82,31 @@ function middleware() {
         thunk,
         promiseMiddleware,
         createReduxWaitForMiddleware(),
-        createLogger(reduxLoggerOpts())
+        reduxLoggerLoader
     );
     return [result, saga];
 }
 
 function reduxLoggerOpts() {
     return {};
+}
+
+function reduxLoggerLoader(api) {
+    let logger = null;
+    let loggerLoading = false;
+    return next => {
+        return action => {
+            if (!logger) {
+                if (!loggerLoading) {
+                    loggerLoading = true;
+                    import("redux-logger")
+                        .then(logger => logger.createLogger)
+                        .then(cl => { logger = cl(reduxLoggerOpts())(api); })
+                        .catch(err => console.error("Error loading Redux logger", err));
+                }
+                return next(action);
+            }
+            return logger(next)(action);
+        }
+    }
 }

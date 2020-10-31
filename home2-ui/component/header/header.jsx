@@ -1,14 +1,13 @@
 import React from "react";
 import {HeaderOwner} from "./header-owner";
-import Dropdown from "semantic-ui-react/dist/commonjs/modules/Dropdown";
 import Menu from "semantic-ui-react/dist/commonjs/collections/Menu";
 import {HeaderMenuItem} from "./header-menu-item";
 import {useRouter} from "next/router";
 import {HeaderSearch} from "./header-search";
 import {HeaderMenuDropdownItem} from "./header-menu-dropdown-item";
 import {useOwner} from "../../data/reduce/owner";
-import {LogoutButton} from "./logout-button";
 import {useLoggedIn} from "../../data/reduce/authentication/hooks";
+import dynamic from "next/dynamic";
 
 export const Header = function () {
     const router = useRouter();
@@ -21,6 +20,10 @@ export const Header = function () {
 };
 
 export const HeaderStateless = function ({ownerName, activeRoute, authenticated}) {
+
+    const DropdownHeader = dynamic(() => import("semantic-ui-react/dist/commonjs/modules/Dropdown").then(dd => dd.Header));
+    const DropdownDivider = dynamic(() => import("semantic-ui-react/dist/commonjs/modules/Dropdown").then(dd => dd.Divider));
+    const LogoutButton = dynamic(() => import("./logout-button"));
 
     return <Menu secondary pointing>
         <HeaderOwner/>
@@ -37,8 +40,8 @@ export const HeaderStateless = function ({ownerName, activeRoute, authenticated}
         <Menu.Menu position="right">
             <HeaderSearch/>
             {authenticated && <HeaderMenuDropdownItem icon={"user"}>
-                <Dropdown.Header content={ownerName}/>
-                <Dropdown.Divider/>
+                <DropdownHeader content={ownerName}/>
+                <DropdownDivider/>
                 <HeaderMenuItem active={activeRoute} title={"Account"} icon={"settings"} href={"/admin/account"}/>
                 <LogoutButton/>
             </HeaderMenuDropdownItem>}

@@ -1,7 +1,5 @@
 import prefix from "superagent-prefix";
-import {sleep} from "sleepjs";
 import getConfig from "next/config";
-import Duration from "duration-js";
 
 const {publicRuntimeConfig: config} = getConfig();
 
@@ -32,14 +30,16 @@ function delayed(saRequest) {
 }
 
 async function apiDelay() {
+    if (!config.api.debug.delay) return;
+    const Duration = await import("duration-js");
     let delay = Duration.parse(config.api.debug.delay);
     if (delay) {
         console.debug("Simulating a loading delay for debug");
+        const sleep = await import("sleepjs");
         await sleep(delay.milliseconds());
     }
 }
 
 function isApiDelayEnabled() {
-    let delayValue = Duration.parse(config.api.debug.delay);
-    return !!delayValue && !!delayValue.milliseconds();
+    return !!config.api.debug.delay;
 }

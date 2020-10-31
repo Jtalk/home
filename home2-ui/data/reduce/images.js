@@ -8,7 +8,6 @@ import {useMemo} from "react";
 import getConfig from "next/config";
 import {HYDRATE} from "next-redux-wrapper";
 import merge from "lodash/merge";
-import ImageRequests from "../ajax/images-requests";
 
 const {publicRuntimeConfig: config} = getConfig();
 
@@ -115,6 +114,7 @@ export function useImageDeleter() {
 
 function* load(page) {
     try {
+        const ImageRequests = yield call(() => import("../ajax/images-requests"));
         let imagesData = yield call(ImageRequests.load, page);
         imagesData = toInternalImagesData(imagesData);
         yield put(action(Action.LOADED, imagesData));
@@ -126,6 +126,7 @@ function* load(page) {
 
 function* upload(description, file) {
     try {
+        const ImageRequests = yield call(() => import("../ajax/images-requests"));
         let result = yield call(ImageRequests.upload, description, file);
         yield put(action(Action.UPLOADED, toInternalImageData(result)));
     } catch (e) {
@@ -136,6 +137,7 @@ function* upload(description, file) {
 
 function* delete_(id) {
     try {
+        const ImageRequests = yield call(() => import("../ajax/images-requests"));
         yield call(ImageRequests.delete, id);
         yield put(action(Action.DELETED, id));
     } catch (e) {

@@ -13,10 +13,10 @@ import {
 import Grid from "semantic-ui-react/dist/commonjs/collections/Grid";
 import Segment from "semantic-ui-react/dist/commonjs/elements/Segment";
 import Divider from "semantic-ui-react/dist/commonjs/elements/Divider";
-import Icon from "semantic-ui-react/dist/commonjs/elements/Icon";
 import Image from "semantic-ui-react/dist/commonjs/elements/Image";
 import Form from "semantic-ui-react/dist/commonjs/collections/Form";
 import List from "semantic-ui-react/dist/commonjs/elements/List";
+import LazyIcon from "../../component/lazy-icon";
 
 let EMPTY_LINK = () => ({caption: '', href: ''});
 let EMPTY_LOGO = () => ({name: '', src: ''});
@@ -72,11 +72,11 @@ export const EditLogos = function ({errorMessage, loading, updating, footer, upd
                 footer.logos.map((logo, i, logos) => {
                     return <List.Item key={logo.name}>
                         <List.Content floated="right">
-                            <Icon link={i === 0} name={i === 0 ? "lock" : "up arrow"}
+                            <LazyIcon link={i === 0} name={i === 0 ? "lock" : "up arrow"}
                                   onClick={updater.reorder(i, i - 1, "logos")}/>
-                            <Icon link={i === logos.length - 1} name={i === logos.length - 1 ? "lock" : "down arrow"}
+                            <LazyIcon link={i === logos.length - 1} name={i === logos.length - 1 ? "lock" : "down arrow"}
                                   onClick={updater.reorder(i, i + 1, "logos")}/>
-                            <Icon link color="red" name="remove" onClick={updater.removeItem(i, "logos")}/>
+                            <LazyIcon link color="red" name="remove" onClick={updater.removeItem(i, "logos")}/>
                         </List.Content>
                         <List.Content>
                             <List.Header as="h3">
@@ -124,11 +124,11 @@ export const EditLinks = function ({errorMessage, updating, loading, footer, upd
                 footer.links.map((link, i, links) => {
                     return <List.Item key={link.caption}>
                         <List.Content floated="right">
-                            <Icon link={i === 0} name={i === 0 ? "lock" : "up arrow"}
+                            <LazyIcon link={i === 0} name={i === 0 ? "lock" : "up arrow"}
                                   onClick={updater.reorder(i, i - 1, "links")}/>
-                            <Icon link={i === links.length - 1} name={i === links.length - 1 ? "lock" : "down arrow"}
+                            <LazyIcon link={i === links.length - 1} name={i === links.length - 1 ? "lock" : "down arrow"}
                                   onClick={updater.reorder(i, i + 1, "links")}/>
-                            <Icon link color="red" name="remove" onClick={updater.removeItem(i, "links")}/>
+                            <LazyIcon link color="red" name="remove" onClick={updater.removeItem(i, "links")}/>
                         </List.Content>
                         <List.Content>
                             <List.Header as="h3">

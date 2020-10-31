@@ -1,6 +1,4 @@
 import api, {superagent} from "./superagent-api";
-import ImageRequests from "./images-requests";
-
 
 export async function load() {
     console.debug(`Owner info loading`);
@@ -24,6 +22,7 @@ export async function update(update, photo) {
 
 export async function updatePhoto(photo) {
     try {
+        const ImageRequests = await import("../ajax/images-requests")
         let result = await ImageRequests.upload("owner photo", photo);
         console.info(`Photo updated, new photo ID is ${result.id}`);
         return result.id;

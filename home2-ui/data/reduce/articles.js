@@ -12,7 +12,7 @@ import {
     useUpdating
 } from "./global/hook-barebone";
 import {allSelector, publishableData, publishedSelector} from "./global/publishable-data";
-import {useMemo} from "react";
+import {useCallback, useMemo} from "react";
 import {hydrate, useImmutableSelector} from "../redux-store";
 import {useRouter} from "next/router";
 import {HYDRATE} from "next-redux-wrapper";
@@ -186,10 +186,10 @@ export function useArticlesError() {
 export function useArticleUpdater() {
     const router = useRouter();
     const updater = useUpdater2(Action.UPDATE);
-    return async (id, redirectTo, update, extra = {}) => {
+    return useCallback(async (id, redirectTo, update, extra = {}) => {
         await updater(update, {...extra, id});
         await router.push(redirectTo);
-    }
+    }, [router, updater]);
 }
 
 export function useArticlesDeleter() {

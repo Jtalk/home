@@ -1,7 +1,6 @@
 import React, {useCallback, useState} from "react";
 import {Loading} from "../../data/reduce/global/enums";
 import {useOwner, useOwnerLoading} from "../../data/reduce/owner";
-import {LoginModal} from "../login/login";
 import get from "lodash/get";
 import {ContentPlaceholderOr} from "../placeholder/content-placeholder";
 import {LinePlaceholderOr} from "../placeholder/line-placeholder";
@@ -9,6 +8,7 @@ import {ImagePlaceholderOr} from "../placeholder/image-placeholder";
 import {OptionalImage} from "../image/optional-image";
 import {useLoggedIn} from "../../data/reduce/authentication/hooks";
 import Card from "semantic-ui-react/dist/commonjs/views/Card";
+import dynamic from "next/dynamic";
 
 export const OwnerCard = function () {
 
@@ -22,6 +22,8 @@ export const OwnerCard = function () {
         loggedIn || setLoggingIn(true);
     }, [loggedIn]);
     const onCloseHandler = useCallback(() => setLoggingIn(false), []);
+
+    const LoginModal = dynamic(() => import("../login/login"));
 
     return <>
         <CardStateless {...{loading, owner, showLogin}} />

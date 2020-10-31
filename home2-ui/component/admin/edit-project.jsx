@@ -20,9 +20,9 @@ import Divider from "semantic-ui-react/dist/commonjs/elements/Divider";
 import Form from "semantic-ui-react/dist/commonjs/collections/Form";
 import Input from "semantic-ui-react/dist/commonjs/elements/Input";
 import Button from "semantic-ui-react/dist/commonjs/elements/Button";
-import Icon from "semantic-ui-react/dist/commonjs/elements/Icon";
 import List from "semantic-ui-react/dist/commonjs/elements/List";
 import Message from "semantic-ui-react/dist/commonjs/collections/Message";
+import LazyIcon from "../lazy-icon";
 
 export const EditProject = function ({projectId}) {
 
@@ -102,7 +102,7 @@ const ProjectLinks = function ({links, className, updater}) {
     let remove = (index) => updater.removeItem(index, "links");
 
     return <div className={className}>
-        <label>Project links <Icon link name="plus" onClick={add}/></label>
+        <label>Project links <LazyIcon link name="plus" onClick={add}/></label>
         Edit and rearrange links shown at the left panel
         <List celled verticalAlign="middle" ordered>
             {
@@ -159,8 +159,8 @@ const ProjectEditLink = function ({link, updateLink, cancelEdit}) {
 
     return <List.Item key={link.name}>
         <List.Content floated="right">
-            <Icon link color="green" name="thumbs up outline" onClick={applyEdit}/>
-            <Icon link color="red" name="thumbs down outline" onClick={cancelEdit}/>
+            <LazyIcon link color="green" name="thumbs up outline" onClick={applyEdit}/>
+            <LazyIcon link color="red" name="thumbs down outline" onClick={cancelEdit}/>
         </List.Content>
         <List.Content>
             <List.Header>
@@ -189,14 +189,14 @@ const ProjectEditLink = function ({link, updateLink, cancelEdit}) {
 const ProjectLink = function ({link, canMoveUp, canMoveDown, edit, reorder, remove}) {
     return <List.Item key={link.name}>
         <List.Content floated="right">
-            <Icon link name="edit" onClick={edit}/>
+            <LazyIcon link name="edit" onClick={edit}/>
             <LockableIcon locked={!canMoveUp}>
-                <Icon link name="angle up" onClick={reorder(-1)}/>
+                <LazyIcon link name="angle up" onClick={reorder(-1)}/>
             </LockableIcon>
             <LockableIcon locked={!canMoveDown}>
-                <Icon link name="angle down" onClick={reorder(+1)}/>
+                <LazyIcon link name="angle down" onClick={reorder(+1)}/>
             </LockableIcon>
-            <Icon link name="remove"
+            <LazyIcon link name="remove"
                   color="red"
                   onClick={remove}/>
         </List.Content>
@@ -211,7 +211,7 @@ const ProjectLink = function ({link, canMoveUp, canMoveDown, edit, reorder, remo
 
 const LockableIcon = function ({locked, children}) {
     if (locked) {
-        return <Icon link name="lock"/>
+        return <LazyIcon link name="lock"/>
     } else {
         return children;
     }

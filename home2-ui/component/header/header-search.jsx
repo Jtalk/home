@@ -1,13 +1,12 @@
-import React, {useMemo, useState} from "react";
-import Search from "semantic-ui-react/dist/commonjs/modules/Search";
+import React, {useEffect, useMemo, useState} from "react";
 import {Loading} from "../../data/reduce/global/enums";
 import {useSearch, useSearchQuery, useSearchResults, useSearchStatus} from "../../data/reduce/search";
 import {reportError} from "../../utils/error-reporting";
-import Fuse from "fuse.js";
 import Link from "next/link";
 import maxBy from "lodash/maxBy";
 import throttle from "lodash/throttle";
 import {BlogPath, ProjectsPath} from "../../utils/paths";
+import dynamic from "next/dynamic";
 
 export const HeaderSearch = function () {
 
@@ -15,7 +14,7 @@ export const HeaderSearch = function () {
     let loading = useSearchStatus();
     let query = useSearchQuery() || "";
     let rawResults = useSearchResults() || [];
-    let results = useMemo(() => toVisualResults(query, rawResults), [query, rawResults]);
+    let results = useVisualResults(query, rawResults);
     console.debug(`Showing search results for term '${query}':`, results);
 
     let onSearchChange = throttle(onSearch, 300, {leading: true});
@@ -29,6 +28,7 @@ export const HeaderSearchStateless = function ({loading, results, onSearchChange
         setQuery(value);
         onSearchChange(value);
     };
+    const Search = dynamic(() => import("semantic-ui-react/dist/commonjs/modules/Search"));
     return <Search category size="mini" aligned="right"
                    className="item"
                    loading={loading === Loading.LOADING}
@@ -46,25 +46,25 @@ export const HeaderSearchResult = ({ title, description, url }) =>
         </a>
     </Link>
 
-function toVisualResult(query, type, value) {
+function toVisualResult(fuse, query, type, value) {
     switch (type) {
         case "article":
             return {
                 url: `${BlogPath}/${value.id}`,
                 title: value.title,
-                description: toVisualResultDescription(query, value.title, value.id, value.content, ...(value.tags)),
+                description: toVisualResultDescription(fuse, query, value.title, value.id, value.content, ...(value.tags)),
             }
         case "project":
             return {
                 url: `${ProjectsPath}/${value.id}`,
                 title: value.title,
-                description: toVisualResultDescription(query, value.title, value.id, value.description, ...(value.links || []).map(v => v.name)),
+                description: toVisualResultDescription(fuse, query, value.title, value.id, value.description, ...(value.links || []).map(v => v.name)),
             }
         case "owner":
             return {
                 url: "/",
                 title: "Owner",
-                description: toVisualResultDescription(query, value.name, value.nickname, value.description, value.bio),
+                description: toVisualResultDescription(fuse, query, value.name, value.nickname, value.description, value.bio),
             }
         default:
             console.error(`Unknown search result type ${type} when visualising for the search field`);
@@ -73,8 +73,9 @@ function toVisualResult(query, type, value) {
     }
 }
 
-function toVisualResultDescription(query, ...candidates) {
-    let result = new Fuse(candidates, {includeScore: true}).search(query);
+function toVisualResultDescription(fuse, query, ...candidates) {
+    if (!fuse) return "preview unavailable";
+    let result = new fuse(candidates, {includeScore: true}).search(query);
     if (!result.length) {
         return "preview unavailable";
     }
@@ -86,12 +87,17 @@ function toVisualResultDescription(query, ...candidates) {
     }
 }
 
-function toVisualResults(query, raw) {
-    let result = {};
-    raw.forEach(({value, type}) => {
-        let content = toVisualResult(query, type, value);
-        result[type] = result[type] || {name: type, results: []}
-        result[type].results.push(content);
-    });
-    return result;
+function useVisualResults(query, raw) {
+    const [fuse, setFuse] = useState(null);
+    useEffect(() => {
+        import("fuse.js").then(setFuse);
+    }, []);
+    return useMemo(() => {
+        let result = {};
+        raw.forEach(({value, type}) => {
+            let content = toVisualResult(fuse, query, type, value);
+            result[type] = result[type] || {name: type, results: []}
+            result[type].results.push(content);
+        });
+    }, [fuse, query, raw]);
 }

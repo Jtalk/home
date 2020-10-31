@@ -1,17 +1,17 @@
 import React, {useCallback, useMemo} from "react";
 import Button from "semantic-ui-react/dist/commonjs/elements/Button";
 import Form from "semantic-ui-react/dist/commonjs/collections/Form";
-import Icon from "semantic-ui-react/dist/commonjs/elements/Icon";
 import Modal from "semantic-ui-react/dist/commonjs/modules/Modal";
 import {useForm} from "../admin/common/use-form";
 import {useFormErrors} from "../admin/common/use-errors";
 import {ErrorMessage} from "../message/error-message";
 import {Login} from "../../data/reduce/authentication/login-state";
 import {useLoginError, useLoginHandler, useLoginStatus} from "../../data/reduce/authentication/hooks";
+import LazyIcon from "../lazy-icon";
 
 const EMPTY_FORM = () => ({login: '', password: ''});
 
-export const LoginModal = function ({enabled, onClose}) {
+export default function LoginModal({enabled, onClose}) {
 
     let errorMessage = useLoginError();
     let loginStatus = useLoginStatus();
@@ -71,7 +71,7 @@ export const LoginModalStateless = function ({enabled, onClose, errorMessage, lo
             </Form>
         </Modal.Content>
         <Modal.Actions>
-            <Button primary disabled={!canSubmit} onClick={onSubmit(submit)}>Login &nbsp; <Icon
+            <Button primary disabled={!canSubmit} onClick={onSubmit(submit)}>Login &nbsp; <LazyIcon
                 name="sign in"/></Button>
             <Button color="red" onClick={cleanAndClose}>Cancel</Button>
         </Modal.Actions>

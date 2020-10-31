@@ -3,7 +3,7 @@ import Menu from "semantic-ui-react/dist/commonjs/collections/Menu";
 import React from "react";
 import {useLoggedIn, useLogoutHandler} from "../../data/reduce/authentication/hooks";
 
-export const LogoutButton = function () {
+export default function LogoutButton() {
     let loggedIn = useLoggedIn();
     let logoutHandler = useLogoutHandler();
     let onClick = () => {

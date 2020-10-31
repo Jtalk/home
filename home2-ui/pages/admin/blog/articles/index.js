@@ -9,7 +9,7 @@ import Grid from "semantic-ui-react/dist/commonjs/collections/Grid";
 import Segment from "semantic-ui-react/dist/commonjs/elements/Segment";
 import List from "semantic-ui-react/dist/commonjs/elements/List";
 import Button from "semantic-ui-react/dist/commonjs/elements/Button";
-import Icon from "semantic-ui-react/dist/commonjs/elements/Icon";
+import LazyIcon from "../../../../component/lazy-icon";
 
 const DEFAULT_PAGE_SIZE = 100;
 
@@ -58,7 +58,7 @@ export const EditBlogItem = function ({article, onDelete}) {
             <List.Description>
                 Created {formatDateTime(article.created)}
                 &nbsp;|&nbsp;
-                {article.published ? <Icon name="check" color="green"/> : <Icon name="remove" color="red"/>}
+                {article.published ? <LazyIcon name="check" color="green"/> : <LazyIcon name="remove" color="red"/>}
                 &nbsp;
                 {article.published ? "Published" : "Not published"}
             </List.Description>

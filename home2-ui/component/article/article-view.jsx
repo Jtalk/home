@@ -37,7 +37,7 @@ export const ArticleView = function ({article, loading, href, preview}) {
                         </Link>}
                     </Item.Description>
                     <Item.Extra suppressHydrationWarning>
-                        {/*<Icon name="comment outline"/>*/}
+                        {/*<LazyIcon name="comment outline"/>*/}
                         {/*{this.props.comments.length} comments | */}
                         Created {formatDateTime(article.created)}
                     </Item.Extra>

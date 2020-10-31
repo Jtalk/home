@@ -10,7 +10,7 @@ import {EditProjectsPath} from "../../utils/paths";
 import Grid from "semantic-ui-react/dist/commonjs/collections/Grid";
 import Segment from "semantic-ui-react/dist/commonjs/elements/Segment";
 import Menu from "semantic-ui-react/dist/commonjs/collections/Menu";
-import Icon from "semantic-ui-react/dist/commonjs/elements/Icon";
+import LazyIcon from "../lazy-icon";
 
 const NEW_PROJECT_ID = "new";
 const MAKE_NEW_PROJECT = (order) => ({
@@ -87,15 +87,15 @@ export const EditProjectsStateless = function ({projects, currentProject, curren
                                 </Link>)
                         }
                         <Menu.Item>
-                            <Icon link name="plus" disabled={!projects || (currentProject && currentProject.id === NEW_PROJECT_ID)}
+                            <LazyIcon link name="plus" disabled={!projects || (currentProject && currentProject.id === NEW_PROJECT_ID)}
                                   onClick={add}/>
                         </Menu.Item>
                         {currentProject && <Menu.Menu position="right">
                             <Menu.Item>
-                                <Icon link name="left arrow" onClick={move(-1)}/>
+                                <LazyIcon link name="left arrow" onClick={move(-1)}/>
                             </Menu.Item>
                             <Menu.Item>
-                                <Icon link name="right arrow" onClick={move(1)}/>
+                                <LazyIcon link name="right arrow" onClick={move(1)}/>
                             </Menu.Item>
                         </Menu.Menu>}
                     </Menu>

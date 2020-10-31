@@ -5,8 +5,8 @@ import {editHref} from "../../pages/admin/blog/articles/[articleId]";
 import {ErrorMessage} from "../message/error-message";
 import Modal from "semantic-ui-react/dist/commonjs/modules/Modal";
 import Button from "semantic-ui-react/dist/commonjs/elements/Button";
-import Icon from "semantic-ui-react/dist/commonjs/elements/Icon";
 import Form from "semantic-ui-react/dist/commonjs/collections/Form";
+import LazyIcon from "../lazy-icon";
 
 const INITIAL = () => ({title: '', id: '', });
 
@@ -25,7 +25,7 @@ export const AddBlogArticleModal = function () {
         updater.reload(INITIAL());
     };
 
-    return <Modal size="small" closeIcon onClose={clear} trigger={<Button><Icon name="plus"/>Add entry</Button>}>
+    return <Modal size="small" closeIcon onClose={clear} trigger={<Button><LazyIcon name="plus"/>Add entry</Button>}>
         <Modal.Header>Add entry</Modal.Header>
         <Modal.Content>
             <Form error={!!errorMessage}>
