@@ -1,7 +1,7 @@
 import {call, put, takeEvery} from "redux-saga/effects";
 import {load as ownerLoad, update as ownerUpdate} from "../../ajax/owner-requests";
 import {action, error} from "../global/actions";
-import {Action} from "./index";
+import {Action} from "./action";
 
 export function* watchOwner() {
     yield takeEvery(Action.LOAD, () => load());

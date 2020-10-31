@@ -2,26 +2,19 @@ import merge from "lodash/merge";
 import {Loading, Updating} from "../global/enums";
 import {HYDRATE} from "next-redux-wrapper";
 import {hydrate} from "../../redux-store";
+import {Action} from "./action";
+import {segment} from "./segment";
 
+export * from "./action";
 export * from "./actions";
 export * from "./hooks";
 export * from "./saga";
-
-export const Action = {
-    LOAD: "footer load",
-    LOADED: "footer loaded",
-    LOAD_ERROR: "footer load error",
-    UPDATE: "footer update",
-    UPDATED: "footer updated",
-    UPDATE_ERROR: "footer update error",
-};
+export * from "./segment";
 
 const defaultFooter = {
     links: [],
     logos: [],
 };
-
-export const segment = "footer";
 
 export default function footer(state = {loading: null, data: defaultFooter}, action) {
     switch (action.type) {

@@ -9,11 +9,11 @@ import {
 } from "../global/hook-barebone";
 import ProjectRequests from "../../ajax/projects-requests";
 import {action, error} from "../global/actions";
-import {Action} from "./index";
 import find from "lodash/find";
 import {useRouter} from "next/router";
 import {useCallback, useMemo} from "react";
 import {useAllData, usePublishedData} from "../global/publishable-data";
+import {Action} from "./action";
 
 export function useProjects(withUnpublished = false) {
     let published = usePublishedData("projects", "data");

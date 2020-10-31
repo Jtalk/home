@@ -1,5 +1,4 @@
 import {useImmutableSelector} from "../../redux-store";
-import {Action, segment} from "./index";
 import {useLastError, useUpdater2} from "../global/hook-barebone";
 import {useDispatch} from "react-redux";
 import {useCallback} from "react";
@@ -7,6 +6,8 @@ import {Login} from "./login-state";
 import {action, error} from "../global/actions";
 import AuthenticationRequests from "../../ajax/authentication-requests";
 import {EXISTING_PASSWORD_MISMATCH} from "./messages";
+import {Action} from "./action";
+import {segment} from "./segment";
 
 export function useLoginStatus() {
     return useImmutableSelector(segment, "login");

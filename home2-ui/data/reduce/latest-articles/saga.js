@@ -1,8 +1,8 @@
 import {takeEvery} from "@redux-saga/core/effects";
-import {Action} from "./index";
 import {call, put} from "redux-saga/effects";
 import {load as loadArticles} from "../../ajax/articles-requests";
 import {action, error} from "../global/actions";
+import {Action} from "./action";
 
 const MAX_PAGE_SIZE = 100;
 

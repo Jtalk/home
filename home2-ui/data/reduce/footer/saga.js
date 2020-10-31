@@ -1,7 +1,7 @@
 import {call, put, takeEvery} from "redux-saga/effects";
-import {Action} from "./index";
 import {load as loadFooter, update as updateFooter} from "../../ajax/footer-requests";
 import {action, error} from "../global/actions";
+import {Action} from "./action";
 
 export function* watchFooter() {
     yield takeEvery(Action.LOAD, () => load());

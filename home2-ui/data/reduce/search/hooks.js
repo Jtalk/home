@@ -1,10 +1,11 @@
 import {useImmutableSelector} from "../../redux-store";
-import {Action, segment} from "./index";
 import {useDispatch} from "react-redux";
 import {useCallback} from "react";
 import {action, error} from "../global/actions";
 import SearchRequests from "../../ajax/search-requests";
 import {Loading} from "../global/enums";
+import {Action} from "./action";
+import {segment} from "./segment";
 
 export function useSearch() {
     let dispatch = useDispatch();

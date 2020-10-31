@@ -1,5 +1,4 @@
 import {usePage, usePageSize, useTotalCount} from "../global/paginated-data";
-import {Action, segment} from "./index";
 import {useImmutableSelector} from "../../redux-store";
 import {allSelector, publishedSelector} from "../global/publishable-data";
 import {useCallback, useMemo} from "react";
@@ -14,6 +13,8 @@ import {
     useUpdating
 } from "../global/hook-barebone";
 import {useRouter} from "next/router";
+import {Action} from "./action";
+import {segment} from "./segment";
 
 export function useArticles(page, pageSize, withUnpublished = false) {
     let existingSize = useArticlesPageSize();

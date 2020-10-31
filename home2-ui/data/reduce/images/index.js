@@ -2,9 +2,12 @@ import merge from "lodash/merge";
 import {Deleting, Loading, Uploading} from "../global/enums";
 import {addPage, defaultPages} from "../global/paginated-data";
 import {HYDRATE} from "next-redux-wrapper";
+import {Action} from "./action";
 
+export * from "./action";
 export * from "./hooks";
 export * from "./saga";
+export * from "./segment";
 
 const initialState = {
     upload: {
@@ -17,19 +20,6 @@ const initialState = {
     },
     data: defaultPages(),
 };
-export const Action = {
-    INIT: "images init",
-    LOAD: "images loading",
-    LOADED: "images loaded",
-    LOAD_ERROR: "images load error",
-    UPLOAD: "images uploading",
-    UPLOADED: "images uploaded",
-    UPLOAD_ERROR: "images upload error",
-    DELETE: "images delete",
-    DELETED: "images deleted",
-    DELETE_ERROR: "images delete error",
-};
-export const segment = "images";
 
 export default function images(state = initialState, action) {
     switch (action.type) {

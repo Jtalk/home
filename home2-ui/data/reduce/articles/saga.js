@@ -1,8 +1,8 @@
 import {call, put, select, takeEvery, takeLatest} from "redux-saga/effects";
 import ArticlesRequests from "../../ajax/articles-requests";
 import {action, error} from "../global/actions";
-import {Action} from "./index";
 import {pageSizeSelector} from "../global/paginated-data";
+import {Action} from "./action";
 
 const MAX_PAGE_SIZE = 100;
 

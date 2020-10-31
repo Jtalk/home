@@ -1,7 +1,7 @@
 import getConfig from "next/config";
 import {call, put, takeEvery, takeLatest} from "redux-saga/effects";
-import {Action} from "./index";
 import {action, error} from "../global/actions";
+import {Action} from "./action";
 
 const {publicRuntimeConfig: config} = getConfig();
 

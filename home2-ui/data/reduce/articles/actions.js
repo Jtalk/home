@@ -1,6 +1,6 @@
-import {Action} from "./index";
 import {ERROR_ACTION, WAIT_FOR_ACTION} from "redux-wait-for-action";
 import {DEFAULT_PAGE_SIZE} from "../articles";
+import {Action} from "./action";
 
 export const articleActions = {
     load: () => ({

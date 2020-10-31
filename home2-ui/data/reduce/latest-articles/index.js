@@ -2,17 +2,14 @@ import {Loading} from "../global/enums";
 import merge from "lodash/merge";
 import {HYDRATE} from "next-redux-wrapper";
 import {hydrate} from "../../redux-store";
+import {Action} from "./action";
+import {segment} from "./segment";
 
+export * from "./action";
 export * from "./actions";
 export * from "./hooks";
 export * from "./saga";
-
-export const Action = {
-    LOAD: "latest articles load",
-    LOADED: "latest articles loaded",
-    LOAD_ERROR: "latest articles load error",
-};
-export const segment = "latest-articles";
+export * from "./segment";
 
 export default function latestArticles(state = {loading: null, data: []}, action) {
     switch (action.type) {

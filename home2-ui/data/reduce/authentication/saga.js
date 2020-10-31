@@ -1,11 +1,11 @@
 import {call, delay, put, select, takeEvery} from "redux-saga/effects";
 import AuthenticationRequests from "../../ajax/authentication-requests";
 import {action, error} from "../global/actions";
-import {Action} from "./index";
 import dayjs from "dayjs";
 import {immutableSelector} from "../../redux-store";
 import {reportError} from "../../../utils/error-reporting";
 import storageAvailable from "storage-available";
+import {Action} from "./action";
 
 const SESSION_EXPIRY_KEY = "session-expiry";
 const SESSION_USERNAME_KEY = "session-username";

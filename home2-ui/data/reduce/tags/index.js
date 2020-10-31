@@ -1,16 +1,12 @@
 import {Loading} from "../global/enums";
 import merge from "lodash/merge";
 import {HYDRATE} from "next-redux-wrapper";
+import {Action} from "./action";
 
+export * from "./action";
 export * from "./hooks";
 export * from "./saga";
-
-export const Action = {
-    LOAD: "tags load",
-    LOADED: "tags loaded",
-    LOAD_ERROR: "tags loading error",
-};
-export const segment = "tags";
+export * from "./segment";
 
 export default function tags(state = {loading: Loading.LOADING, data: null}, action) {
     switch (action.type) {

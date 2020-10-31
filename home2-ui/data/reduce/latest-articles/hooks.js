@@ -1,6 +1,7 @@
 import {useLastError, useLazyLoader, useLoading} from "../global/hook-barebone";
-import {Action, segment} from "./index";
 import {Loading} from "../global/enums";
+import {Action} from "./action";
+import {segment} from "./segment";
 
 export function useLatestArticles() {
     return useLazyLoader(Action.LOAD, segment);

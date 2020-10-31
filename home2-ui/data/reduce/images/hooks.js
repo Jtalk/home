@@ -1,8 +1,9 @@
 import {useDeleter2, useLastError, useLoader, useLoading, useUpdater2, useUpdating} from "../global/hook-barebone";
-import {Action, segment} from "./index";
 import {useImmutableSelector} from "../../redux-store";
 import {useMemo} from "react";
 import {action} from "../global/actions";
+import {Action} from "./action";
+import {segment} from "./segment";
 
 export function useImages(page) {
     let images = useImmutableSelector(segment, "data", "pages");

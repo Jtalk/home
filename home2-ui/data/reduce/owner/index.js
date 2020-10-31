@@ -2,10 +2,14 @@ import merge from "lodash/merge";
 import {Loading, Updating} from "../global/enums";
 import {HYDRATE} from "next-redux-wrapper";
 import {hydrate} from "../../redux-store";
+import {Action} from "./action";
+import {segment} from "./segment";
 
+export * from "./action";
 export * from "./actions";
 export * from "./hooks";
 export * from "./saga";
+export * from "./segment";
 
 let defaultOwner = {
     name: "",
@@ -15,15 +19,6 @@ let defaultOwner = {
     contacts: {},
     bio: ""
 };
-export const Action = {
-    LOAD: "owner load",
-    LOADED: "owner loaded",
-    LOAD_ERROR: "owner load error",
-    UPDATE: "owner update",
-    UPDATED: "owner updated",
-    UPDATE_ERROR: "owner update error",
-};
-export const segment = "owner";
 
 export default function owner(state = {loading: null, data: defaultOwner, version: 1}, action) {
     switch (action.type) {

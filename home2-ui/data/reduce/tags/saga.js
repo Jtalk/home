@@ -1,7 +1,7 @@
 import {call, put, takeLatest} from "redux-saga/effects";
 import TagRequests from "../../ajax/tags-requests";
 import {action, error} from "../global/actions";
-import {Action} from "./index";
+import {Action} from "./action";
 
 export function* watchTags() {
     yield takeLatest(Action.LOAD, load);

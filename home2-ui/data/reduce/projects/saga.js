@@ -1,7 +1,7 @@
 import {call, put, takeLatest} from "redux-saga/effects";
-import {Action} from "./index";
 import ProjectRequests from "../../ajax/projects-requests";
 import {action, error} from "../global/actions";
+import {Action} from "./action";
 
 export function* watchProjects() {
     yield takeLatest(Action.LOAD, () => load(true));

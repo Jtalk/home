@@ -1,14 +1,10 @@
 import merge from "lodash/merge";
 import {HYDRATE} from "next-redux-wrapper";
+import {Action} from "./action";
 
+export * from "./action";
 export * from "./hooks";
-
-export const Action = {
-    LOADING: "search loading",
-    COMPLETE: "search complete",
-    ERROR: "search error",
-};
-export const segment = "search";
+export * from "./segment";
 
 export default function search(state = {activeCount: 0, results: []}, action) {
     switch (action.type) {

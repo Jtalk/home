@@ -2,17 +2,12 @@ import merge from "lodash/merge";
 import dayjs from "dayjs";
 import {HYDRATE} from "next-redux-wrapper";
 import {Login} from "./login-state";
+import {Action} from "./action";
 
-export const Action = {
-    INIT: "authentication init",
-    LOGGING_IN: "authentication logging in",
-    LOGIN: "authentication login",
-    TRIGGER_REFRESH: "authentication trigger refresh",
-    REFRESH: "authentication refresh",
-    LOGOUT: "authentication logout",
-    ERROR: "authentication error",
-};
-export const segment = "authentication";
+export * from "./action";
+export * from "./hooks";
+export * from "./saga";
+export * from "./segment";
 
 const DEFAULT = {login: null, updating: null};
 export default function authentication(state = DEFAULT, action) {
