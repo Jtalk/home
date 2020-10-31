@@ -5,7 +5,6 @@ import "highlight.js/styles/idea.css";
 import {reduxWrapper} from "../data/redux";
 import {FileConverterProvider} from "../utils/file-converter-context";
 import {setupErrorReporting} from "../utils/error-reporting";
-import {Footer} from "../component/footer/footer";
 import {Header} from "../component/header/header";
 import withReduxSaga from "next-redux-saga";
 import {useRouter} from "next/router";
@@ -33,6 +32,9 @@ function App({Component, pageProps}) {
     if (process.browser && router.pathname.startsWith("/admin") && !isLoggedIn) {
         Component = NotFound;
     }
+
+    const Footer = dynamic(() => import("../component/footer/footer"));
+
     return <ErrorBoundary>
         <FileConverterProvider>
             <div className="main-content-pushable">

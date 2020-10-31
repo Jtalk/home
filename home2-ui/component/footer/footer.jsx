@@ -4,9 +4,9 @@ import Segment from "semantic-ui-react/dist/commonjs/elements/Segment"
 import {FlatLinksList} from "./flat-links-list";
 import {FlatLogoList} from "./flat-logo-list";
 import "./footer.module.css";
-import {useFooter} from "../../data/reduce/footer/hooks";
+import {useFooter} from "../../data/reduce/footer";
 
-export const Footer = function () {
+export default function Footer() {
     let {links, logos} = useFooter();
     return <StatelessFooter {...{links, logos}}/>
 };
