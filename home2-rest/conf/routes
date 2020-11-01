@@ -13,7 +13,7 @@ POST        /logout                    controllers.AuthenticationController.logo
 
 GET         /owner/name                controllers.OwnerController.name
 GET         /owner                     controllers.OwnerController.info
-POST        /owner                     controllers.OwnerController.update
+PUT         /owner                     controllers.OwnerController.update
 GET         /owner/bio                 controllers.OwnerController.bio
 
 GET         /projects                  controllers.ProjectController.all(published: Boolean ?= true)
