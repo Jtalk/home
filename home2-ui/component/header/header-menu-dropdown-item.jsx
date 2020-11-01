@@ -1,8 +1,7 @@
 import React from "react";
-import dynamic from "next/dynamic";
+import Dropdown from "semantic-ui-react/dist/commonjs/modules/Dropdown";
 
-export const HeaderMenuDropdownItem = function ({title, icon, children}) {
-    const Dropdown = dynamic(() => import("semantic-ui-react/dist/commonjs/modules/Dropdown"));
+export default function HeaderMenuDropdownItem({title, icon, children}) {
     return <Dropdown item icon={icon} text={title}>
         <Dropdown.Menu>
             {children}

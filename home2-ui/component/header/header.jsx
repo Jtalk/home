@@ -3,10 +3,9 @@ import {HeaderOwner} from "./header-owner";
 import Menu from "semantic-ui-react/dist/commonjs/collections/Menu";
 import {HeaderMenuItem} from "./header-menu-item";
 import {useRouter} from "next/router";
-import {HeaderSearch} from "./header-search";
-import {HeaderMenuDropdownItem} from "./header-menu-dropdown-item";
+import HeaderMenuDropdownItem from "./header-menu-dropdown-item";
 import {useOwner} from "../../data/reduce/owner";
-import {useLoggedIn} from "../../data/reduce/authentication/hooks";
+import {useLoggedIn} from "../../data/reduce/authentication";
 import dynamic from "next/dynamic";
 
 export const Header = function () {
@@ -23,7 +22,9 @@ export const HeaderStateless = function ({ownerName, activeRoute, authenticated}
 
     const DropdownHeader = dynamic(() => import("semantic-ui-react/dist/commonjs/modules/Dropdown").then(dd => dd.Header));
     const DropdownDivider = dynamic(() => import("semantic-ui-react/dist/commonjs/modules/Dropdown").then(dd => dd.Divider));
+    const HeaderMenuDropdownItem = dynamic(() => import("./header-menu-dropdown-item"));
     const LogoutButton = dynamic(() => import("./logout-button"));
+    const HeaderSearch = dynamic(() => import("./header-search"));
 
     return <Menu secondary pointing>
         <HeaderOwner/>
