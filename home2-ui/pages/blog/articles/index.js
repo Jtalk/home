@@ -14,7 +14,6 @@ import {reduxWrapper} from "../../../data/redux";
 import {BlogPath} from "../../../utils/paths";
 import {OwnerTitled} from "../../../component/about/owner-titled";
 import {ArticleView} from "../../../component/article/article-view";
-import {latestArticlesActions} from "../../../data/reduce/latest-articles/actions";
 import Grid from "semantic-ui-react/dist/commonjs/collections/Grid";
 import Segment from "semantic-ui-react/dist/commonjs/elements/Segment";
 import Menu from "semantic-ui-react/dist/commonjs/collections/Menu";
@@ -81,7 +80,6 @@ const Pagination = function ({loading, total, page, navigate}) {
 export const getServerSideProps = reduxWrapper.getServerSideProps(async ({store}) => {
     await Promise.all([
         store.dispatch(articleActions.load()),
-        store.dispatch(latestArticlesActions.load()),
     ])
     return {props: {}}
 })

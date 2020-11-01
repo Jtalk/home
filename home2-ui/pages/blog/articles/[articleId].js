@@ -9,7 +9,6 @@ import {reduxWrapper} from "../../../data/redux";
 import {BlogPath} from "../../../utils/paths";
 import {OwnerTitled} from "../../../component/about/owner-titled";
 import {ArticleView} from "../../../component/article/article-view";
-import {latestArticlesActions} from "../../../data/reduce/latest-articles/actions";
 import Grid from "semantic-ui-react/dist/commonjs/collections/Grid";
 
 export default function ArticleId() {
@@ -43,7 +42,6 @@ export const getServerSideProps = reduxWrapper.getServerSideProps(async ({store,
     const {articleId} = query;
     await Promise.all([
         store.dispatch(articleActions.loadOne(articleId)),
-        store.dispatch(latestArticlesActions.load()),
     ])
     return {props: {}}
 })

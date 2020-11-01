@@ -4,7 +4,6 @@ import {watchTags} from "./reduce/tags/saga";
 import {watchImages} from "./reduce/images/saga";
 import {watchArticles} from "./reduce/articles/saga";
 import {reportError} from "../utils/error-reporting";
-import {watchLatestArticles} from "./reduce/latest-articles/saga";
 
 export function* rootSaga() {
     yield all([
@@ -13,7 +12,6 @@ export function* rootSaga() {
         watchImages(),
         watchArticles(),
         watchProjects(),
-        watchLatestArticles(),
     ]);
 }
 

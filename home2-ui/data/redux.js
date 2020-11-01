@@ -13,12 +13,10 @@ import * as images from "./reduce/images";
 import * as projects from "./reduce/projects";
 import * as articles from "./reduce/articles";
 import * as tags from "./reduce/tags";
-import * as latestArticles from "./reduce/latest-articles";
 
 const modules = [
     articles,
     images,
-    latestArticles,
     projects,
     tags,
 ]

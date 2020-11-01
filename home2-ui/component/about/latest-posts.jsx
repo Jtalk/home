@@ -8,12 +8,14 @@ import Link from "next/link";
 import "./latest-posts.module.css";
 import {BlogPath} from "../../utils/paths";
 import {ContentPlaceholderOr} from "../placeholder/content-placeholder";
-import {useLatestArticles, useLatestArticlesLoading} from "../../data/reduce/latest-articles/hooks";
+import {useLatestArticles, useLatestArticlesLoading} from "../../data/reduce/latest-articles";
+
+const PREVIEW_SIZE = 3;
 
 export const LatestPosts = function () {
 
-    let posts = useLatestArticles() || [];
-    let loading = useLatestArticlesLoading();
+    let posts = useLatestArticles(PREVIEW_SIZE) || [];
+    let loading = useLatestArticlesLoading(PREVIEW_SIZE);
 
     let latestPostElements = posts.map(post =>
         createPostItem(post)
