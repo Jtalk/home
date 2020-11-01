@@ -6,7 +6,6 @@ import createSagaMiddleware from "redux-saga";
 import {rootSaga} from "./saga";
 import {reportError} from "../utils/error-reporting";
 import {createWrapper} from "next-redux-wrapper";
-import * as search from "./reduce/search";
 import mapValues from "lodash/mapValues";
 import keyBy from "lodash/keyBy";
 import {deserialiseJSON, serialiseJSON} from "./reduce/global/json-io";
@@ -21,7 +20,6 @@ const modules = [
     images,
     latestArticles,
     projects,
-    search,
     tags,
 ]
 

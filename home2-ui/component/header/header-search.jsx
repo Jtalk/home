@@ -1,41 +1,33 @@
 import React, {useEffect, useMemo, useState} from "react";
 import {Loading} from "../../data/reduce/global/enums";
-import {useSearch, useSearchQuery, useSearchResults, useSearchStatus} from "../../data/reduce/search";
+import {useSearch} from "../../data/reduce/search";
 import {reportError} from "../../utils/error-reporting";
 import Link from "next/link";
 import maxBy from "lodash/maxBy";
-import throttle from "lodash/throttle";
 import {BlogPath, ProjectsPath} from "../../utils/paths";
 import Fuse from "fuse.js";
 import Search from "semantic-ui-react/dist/commonjs/modules/Search";
 
 export default function HeaderSearch() {
 
-    let onSearch = useSearch();
-    let loading = useSearchStatus();
-    let query = useSearchQuery() || "";
-    let rawResults = useSearchResults() || [];
-    let results = useVisualResults(query, rawResults);
+    const [query, setQuery] = useState("");
+    const { results: rawResults, loading } = useSearch(query);
+    const results = useVisualResults(query, rawResults);
     useEffect(() => {
-        console.debug(`Showing search results for term '${query}':`, results);
+        if (query && results) {
+            console.debug(`Showing search results for term '${query}':`, results);
+        }
     }, [query, results]);
 
-    let onSearchChange = throttle(onSearch, 300, {leading: true});
-
-    return <HeaderSearchStateless {...{loading, results, onSearchChange}}/>
+    return <HeaderSearchStateless query={query} onQueryChange={setQuery} {...{loading, results}}/>
 };
 
-export const HeaderSearchStateless = function ({loading, results, onSearchChange}) {
-    let [query, setQuery] = useState("");
-    let onChange = (e, {value}) => {
-        setQuery(value);
-        onSearchChange(value);
-    };
+export const HeaderSearchStateless = function ({query, loading, results, onQueryChange}) {
     return <Search category size="mini" aligned="right"
                    className="item"
                    loading={loading === Loading.LOADING}
                    results={results}
-                   onSearchChange={onChange}
+                   onSearchChange={onQueryChange}
                    resultRenderer={HeaderSearchResult}
                    value={query} />
 };
