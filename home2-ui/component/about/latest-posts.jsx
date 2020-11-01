@@ -12,7 +12,7 @@ import {useLatestArticles, useLatestArticlesLoading} from "../../data/reduce/lat
 
 export const LatestPosts = function () {
 
-    let posts = useLatestArticles();
+    let posts = useLatestArticles() || [];
     let loading = useLatestArticlesLoading();
 
     let latestPostElements = posts.map(post =>

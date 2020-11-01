@@ -36,7 +36,7 @@ function* upload(description, file) {
 
 function* delete_(id) {
     try {
-        const ImageRequests = yield call(() => import("../../ajax/images-requests"));
+        const ImageRequests = yield call(() => import("../../ajax/images-requests").then(i => i.default));
         yield call(ImageRequests.delete, id);
         yield put(action(Action.DELETED, id));
     } catch (e) {

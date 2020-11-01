@@ -6,20 +6,12 @@ import React from "react";
 import {useRouter} from "next/router";
 import {NotFound} from "../../component/error/not-found";
 import {reduxWrapper} from "../../data/redux";
-import ownerReducer, {ownerActions} from "../../data/reduce/owner";
+import {ownerActions} from "../../data/reduce/owner";
 import find from "lodash/find";
 import {OwnerTitled} from "../../component/about/owner-titled";
 import {footerActions} from "../../data/reduce/footer/actions";
-import {useReducers} from "../../data/redux-dynamic";
-import latestArticlesReducer from "../../data/reduce/latest-articles";
-import authenticationReducer from "../../data/reduce/authentication";
-import searchReducer from "../../data/reduce/search";
-import footerReducer from "../../data/reduce/footer";
-import projectsReducer from "../../data/reduce/projects";
 
 export default function Project() {
-
-    useReducers(ownerReducer, latestArticlesReducer, authenticationReducer, searchReducer, footerReducer, projectsReducer);
 
     let router = useRouter();
     let {projectId} = router.query;

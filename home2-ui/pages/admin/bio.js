@@ -1,11 +1,5 @@
 import React from "react";
-import ownerReducer, {
-    useOwner,
-    useOwnerError,
-    useOwnerLoading,
-    useOwnerUpdater,
-    useOwnerUpdating
-} from "../../data/reduce/owner";
+import {useOwner, useOwnerError, useOwnerLoading, useOwnerUpdater, useOwnerUpdating} from "../../data/reduce/owner";
 import {useForm} from "../../component/admin/common/use-form";
 import {Loading, Updating} from "../../data/reduce/global/enums";
 import {imageUrl} from "../../utils/image";
@@ -21,14 +15,8 @@ import Divider from "semantic-ui-react/dist/commonjs/elements/Divider";
 import Button from "semantic-ui-react/dist/commonjs/elements/Button";
 import Input from "semantic-ui-react/dist/commonjs/elements/Input";
 import TextArea from "semantic-ui-react/dist/commonjs/addons/TextArea";
-import {useReducers} from "../../data/redux-dynamic";
-import authenticationReducer from "../../data/reduce/authentication";
-import searchReducer from "../../data/reduce/search";
-import footerReducer from "../../data/reduce/footer";
 
 export default function EditBio() {
-
-    useReducers(ownerReducer, authenticationReducer, searchReducer, footerReducer);
 
     let owner = useOwner();
     let loading = useOwnerLoading();

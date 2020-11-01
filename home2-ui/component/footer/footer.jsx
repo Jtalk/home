@@ -7,7 +7,7 @@ import "./footer.module.css";
 import {useFooter} from "../../data/reduce/footer";
 
 export default function Footer() {
-    let {links, logos} = useFooter();
+    let {links, logos} = useFooter() || {};
     return <StatelessFooter {...{links, logos}}/>
 };
 
@@ -15,8 +15,8 @@ export const StatelessFooter = function (props) {
 
     return <Segment inverted basic className="footer" as="footer" textAlign="center">
         <Container textAlign="center">
-            <FlatLinksList links={props.links} separator="|"/>
-            <FlatLogoList className="logos" logos={props.logos}/>
+            <FlatLinksList links={props.links || []} separator="|"/>
+            <FlatLogoList className="logos" logos={props.logos || []}/>
             <p>Copyright (C) 2020 Roman Nazarenko </p>
         </Container>
     </Segment>

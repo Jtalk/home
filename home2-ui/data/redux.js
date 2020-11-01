@@ -6,7 +6,34 @@ import createSagaMiddleware from "redux-saga";
 import {rootSaga} from "./saga";
 import {reportError} from "../utils/error-reporting";
 import {createWrapper} from "next-redux-wrapper";
+import * as search from "./reduce/search";
+import mapValues from "lodash/mapValues";
+import keyBy from "lodash/keyBy";
 import {deserialiseJSON, serialiseJSON} from "./reduce/global/json-io";
+import * as owner from "./reduce/owner";
+import * as footer from "./reduce/footer";
+import * as images from "./reduce/images";
+import * as projects from "./reduce/projects";
+import * as articles from "./reduce/articles";
+import * as tags from "./reduce/tags";
+import * as latestArticles from "./reduce/latest-articles";
+import * as authentication from "./reduce/authentication";
+
+const modules = [
+    articles,
+    authentication,
+    footer,
+    images,
+    latestArticles,
+    owner,
+    projects,
+    search,
+    tags,
+]
+
+const modulesBySegment = keyBy(modules, "segment");
+
+export const reducers = mapValues(modulesBySegment, m => m.default);
 
 export const reduxWrapper = createWrapper(createAppStore, {
     debug: false,
@@ -17,7 +44,7 @@ export const reduxWrapper = createWrapper(createAppStore, {
 export function createAppStore({isServer, req = null}) {
     let [mw, saga] = middleware();
     let result = createStore(
-        combineReducers([]),
+        combineReducers(reducers),
         mw
     );
     if (req || !isServer) {

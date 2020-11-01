@@ -17,20 +17,11 @@ import Image from "semantic-ui-react/dist/commonjs/elements/Image";
 import Form from "semantic-ui-react/dist/commonjs/collections/Form";
 import List from "semantic-ui-react/dist/commonjs/elements/List";
 import LazyIcon from "../../component/lazy-icon";
-import {useReducers} from "../../data/redux-dynamic";
-import ownerReducer from "../../data/reduce/owner";
-import latestArticlesReducer from "../../data/reduce/latest-articles";
-import authenticationReducer from "../../data/reduce/authentication";
-import searchReducer from "../../data/reduce/search";
-import footerReducer from "../../data/reduce/footer";
-import articlesReducer from "../../data/reduce/articles";
 
 let EMPTY_LINK = () => ({caption: '', href: ''});
 let EMPTY_LOGO = () => ({name: '', src: ''});
 
 export default function Footer() {
-
-    useReducers(ownerReducer, latestArticlesReducer, authenticationReducer, searchReducer, footerReducer, articlesReducer);
 
     let footer = useFooter();
     let errorMessage = useFooterError();

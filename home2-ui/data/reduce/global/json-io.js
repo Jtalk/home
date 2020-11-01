@@ -5,6 +5,7 @@ const SERVICE_OBJECT_MARKER = "__serialised_type__";
 
 export function serialiseJSON(state) {
   return mapDeep(state, v => {
+    if (!v) return v;
     if (v instanceof Date) {
       return { [SERVICE_OBJECT_MARKER]: "date", value: v.toISOString() };
     }
@@ -14,6 +15,7 @@ export function serialiseJSON(state) {
 
 export function deserialiseJSON(json) {
   return mapDeep(json, v => {
+    if (!v) return v;
     if (v[SERVICE_OBJECT_MARKER] === "date") {
       return new Date(v.value);
     }

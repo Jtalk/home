@@ -35,8 +35,8 @@ async function apiDelay() {
     let delay = Duration.parse(config.api.debug.delay);
     if (delay) {
         console.debug("Simulating a loading delay for debug");
-        const sleep = await import("sleepjs");
-        await sleep(delay.milliseconds());
+        const sleepjs = await import("sleepjs");
+        await sleepjs.sleep(delay.milliseconds());
     }
 }
 

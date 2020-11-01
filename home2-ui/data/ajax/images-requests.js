@@ -21,7 +21,7 @@ export async function upload(description, file) {
     return response.body;
 }
 
-export async function delete_(id) {
+async function delete_(id) {
     console.info(`Image ${id} deleting`);
     let response = await (await superagent()).delete(`/images/${id}`)
         .use(api);
