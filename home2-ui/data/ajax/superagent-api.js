@@ -52,6 +52,22 @@ export async function superagentPostForm(url, data, printData = false) {
     }
 }
 
+export async function superagentUploadFile(url, name, file) {
+    try {
+        const sa = await superagent();
+        console.info(`Uploading`, url);
+        let response = await sa.post(url)
+            .attach(name, file)
+            .query({description: name})
+            .use(api);
+        console.info(`Upload complete`, url, response.status, response.body);
+        return response.body;
+    } catch (e) {
+        console.error(`Error uploading`, url, e);
+        throw e;
+    }
+}
+
 export async function superagentPut(url, data) {
     try {
         const sa = await superagent();
@@ -62,6 +78,20 @@ export async function superagentPut(url, data) {
         return response.body;
     } catch (e) {
         console.error(`Error putting`, url, e);
+        throw e;
+    }
+}
+
+export async function superagentDelete(url) {
+    try {
+        const sa = await superagent();
+        console.info(`Deleting`, url);
+        let response = await sa.delete(url)
+            .use(api);
+        console.info(`Delete complete`, url, response.status, response.body);
+        return response.body;
+    } catch (e) {
+        console.error(`Error deleting`, url, e);
         throw e;
     }
 }

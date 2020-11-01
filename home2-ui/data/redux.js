@@ -9,14 +9,11 @@ import {createWrapper} from "next-redux-wrapper";
 import mapValues from "lodash/mapValues";
 import keyBy from "lodash/keyBy";
 import {deserialiseJSON, serialiseJSON} from "./reduce/global/json-io";
-import * as images from "./reduce/images";
 import * as projects from "./reduce/projects";
 import * as articles from "./reduce/articles";
-import * as tags from "./reduce/tags";
 
 const modules = [
     articles,
-    images,
     projects,
 ]
 

@@ -8,8 +8,6 @@ import {
     useImages,
     useImagesLoading,
     useImagesTotalCount,
-    useImagesUploading,
-    useImagesUploadingError,
     useImageUploader
 } from "../../data/reduce/images";
 import "./images.module.css";
@@ -36,16 +34,14 @@ export default function EditImagesPage() {
     return <EditImages page={page}/>
 };
 
-export const EditImages = function ({page}) {
+export const EditImages = function ({page = 0}) {
 
-    let loadingStatus = useImagesLoading();
-    let uploadStatus = useImagesUploading();
-    let errorMessage = useImagesUploadingError();
-    let images = useImages(page || 0);
-    let totalCount = useImagesTotalCount();
+    let loadingStatus = useImagesLoading(page);
+    let images = useImages(page);
+    let totalCount = useImagesTotalCount(page);
 
-    let uploadImage = useImageUploader();
-    let deleteImage = useImageDeleter();
+    let { uploader: uploadImage, status: uploadStatus, error: errorMessage } = useImageUploader();
+    let { deleter: deleteImage } = useImageDeleter();
 
     return <EditImagesStateless {...{loadingStatus, uploadStatus, errorMessage, images, page, totalCount, uploadImage, deleteImage}}/>
 };
