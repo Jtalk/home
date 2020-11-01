@@ -1,6 +1,6 @@
-import {useOwner} from "../../data/hooks/owner";
 import React from "react";
 import Head from "next/head";
+import {useOwner} from "../../data/hooks/owner/get";
 
 export const OwnerTitled = function ({title, subtitle}) {
     let {name} = useOwner() || {};

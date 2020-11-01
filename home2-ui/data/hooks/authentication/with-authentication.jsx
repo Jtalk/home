@@ -3,7 +3,8 @@ import {Login} from "./login-state";
 import dayjs from "dayjs";
 import storageAvailable from "storage-available";
 import {AuthenticationContext} from "./context";
-import {superagentPostForm, superagentPostJson} from "../../ajax";
+import superagentPostJson from "../../ajax/post";
+import superagentPostForm from "../../ajax/post-form";
 
 const SESSION_EXPIRY_KEY = "session-expiry";
 const SESSION_USERNAME_KEY = "session-username";

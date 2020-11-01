@@ -3,10 +3,9 @@ import {HeaderOwner} from "./header-owner";
 import Menu from "semantic-ui-react/dist/commonjs/collections/Menu";
 import {HeaderMenuItem} from "./header-menu-item";
 import {useRouter} from "next/router";
-import HeaderMenuDropdownItem from "./header-menu-dropdown-item";
-import {useOwner} from "../../data/hooks/owner";
 import {useLoggedIn} from "../../data/hooks/authentication";
 import dynamic from "next/dynamic";
+import {useOwner} from "../../data/hooks/owner";
 
 export const Header = function () {
     const router = useRouter();

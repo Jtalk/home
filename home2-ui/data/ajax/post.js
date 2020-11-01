@@ -1,6 +1,6 @@
 import api, {superagent} from "./api";
 
-export async function superagentPostJson(url, data, printData = false) {
+export default async function superagentPostJson(url, data, printData = false) {
     try {
         const sa = await superagent();
         console.info(`Posting`, url, printData ? data : "<secret>");

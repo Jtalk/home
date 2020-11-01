@@ -1,6 +1,6 @@
 import api, {superagent} from "./api";
 
-export async function superagentUploadFile(url, name, file) {
+export default async function superagentUploadFile(url, name, file) {
     try {
         const sa = await superagent();
         console.info(`Uploading`, url);

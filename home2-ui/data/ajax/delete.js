@@ -1,6 +1,6 @@
 import api, {superagent} from "./api";
 
-export async function superagentDelete(url) {
+export default async function superagentDelete(url) {
     try {
         const sa = await superagent();
         console.info(`Deleting`, url);

@@ -3,13 +3,6 @@ import {Pagination} from "../../component/pagination";
 import {checkTruthy} from "../../utils/validation";
 import {formatDateTime} from "../../utils/date-time";
 import ImageUploader from "../../component/3rdparty/react-image-upload";
-import {
-    useImageDeleter,
-    useImages,
-    useImagesLoading,
-    useImagesTotalCount,
-    useImageUploader
-} from "../../data/hooks/images";
 import "./images.module.css";
 import {ImageUploadPreview} from "../../component/admin/common/image-upload-preview";
 import {Loading, Uploading} from "../../data/hooks/global/enums";
@@ -26,6 +19,9 @@ import Button from "semantic-ui-react/dist/commonjs/elements/Button";
 import Form from "semantic-ui-react/dist/commonjs/collections/Form";
 import Loader from "semantic-ui-react/dist/commonjs/elements/Loader";
 import Container from "semantic-ui-react/dist/commonjs/elements/Container";
+import {useImages, useImagesLoading, useImagesTotalCount} from "../../data/hooks/images/get";
+import {useImageUploader} from "../../data/hooks/images/upload";
+import {useImageDeleter} from "../../data/hooks/images/delete";
 
 export default function EditImagesPage() {
 

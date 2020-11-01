@@ -1,6 +1,5 @@
 import React from "react";
 import Link from "next/link";
-import {useProject, useProjects, useProjectUpdater} from "../../data/hooks/projects";
 import {NotFound} from "../error/not-found";
 import {EditProject} from "./edit-project";
 import maxBy from "lodash/maxBy";
@@ -11,6 +10,8 @@ import Grid from "semantic-ui-react/dist/commonjs/collections/Grid";
 import Segment from "semantic-ui-react/dist/commonjs/elements/Segment";
 import Menu from "semantic-ui-react/dist/commonjs/collections/Menu";
 import LazyIcon from "../lazy-icon";
+import {useProject, useProjects} from "../../data/hooks/projects/get";
+import {useProjectUpdater} from "../../data/hooks/projects/update";
 
 const NEW_PROJECT_ID = "new";
 const MAKE_NEW_PROJECT = (order) => ({

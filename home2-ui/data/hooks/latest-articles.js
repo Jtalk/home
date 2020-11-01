@@ -1,6 +1,6 @@
 import useSWR from "swr";
-import {useLoadingStatus} from "./global/swr-common";
 import {superagentFetch} from "../ajax";
+import {useLoadingStatus} from "./global/swr-common";
 
 const latestArticlesApiUrl = "/blog/articles";
 

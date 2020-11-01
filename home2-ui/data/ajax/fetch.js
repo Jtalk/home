@@ -1,6 +1,6 @@
 import api, {superagent} from "./api";
 
-export async function superagentFetch(url) {
+export default async function superagentFetch(url) {
     try {
         const sa = await superagent();
         console.debug(`Loading`, url);

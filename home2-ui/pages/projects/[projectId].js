@@ -1,4 +1,3 @@
-import {useProject, useProjectLoading, useProjects} from "../../data/hooks/projects";
 import {Loading} from "../../data/hooks/global/enums";
 import {ProjectsMenu} from "../../component/projects/menu/projects-menu";
 import {ProjectDescription} from "../../component/projects/project-description";
@@ -6,6 +5,7 @@ import React from "react";
 import {useRouter} from "next/router";
 import {NotFound} from "../../component/error/not-found";
 import {OwnerTitled} from "../../component/about/owner-titled";
+import {useProject, useProjectLoading, useProjects} from "../../data/hooks/projects/get";
 
 export default function Project() {
 

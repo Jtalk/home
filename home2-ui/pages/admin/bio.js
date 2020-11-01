@@ -1,5 +1,4 @@
 import React from "react";
-import {useOwner, useOwnerLoading, useOwnerUpdater} from "../../data/hooks/owner";
 import {useForm} from "../../component/admin/common/use-form";
 import {Loading, Updating} from "../../data/hooks/global/enums";
 import {imageUrl} from "../../utils/image";
@@ -15,6 +14,8 @@ import Divider from "semantic-ui-react/dist/commonjs/elements/Divider";
 import Button from "semantic-ui-react/dist/commonjs/elements/Button";
 import Input from "semantic-ui-react/dist/commonjs/elements/Input";
 import TextArea from "semantic-ui-react/dist/commonjs/addons/TextArea";
+import {useOwner, useOwnerLoading} from "../../data/hooks/owner/get";
+import {useOwnerUpdater} from "../../data/hooks/owner/update";
 
 export default function EditBio() {
 

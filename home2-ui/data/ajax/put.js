@@ -1,6 +1,6 @@
 import api, {superagent} from "./api";
 
-export async function superagentPut(url, data) {
+export default async function superagentPut(url, data) {
     try {
         const sa = await superagent();
         console.info(`Putting`, url, data);

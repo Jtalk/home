@@ -1,6 +1,5 @@
 import React, {useCallback, useState} from "react";
 import {Loading} from "../../data/hooks/global/enums";
-import {useOwner, useOwnerLoading} from "../../data/hooks/owner";
 import get from "lodash/get";
 import {ContentPlaceholderOr} from "../placeholder/content-placeholder";
 import {LinePlaceholderOr} from "../placeholder/line-placeholder";
@@ -9,6 +8,7 @@ import {OptionalImage} from "../image/optional-image";
 import {useLoggedIn} from "../../data/hooks/authentication/hooks";
 import Card from "semantic-ui-react/dist/commonjs/views/Card";
 import dynamic from "next/dynamic";
+import {useOwner, useOwnerLoading} from "../../data/hooks/owner/get";
 
 export const OwnerCard = function () {
 

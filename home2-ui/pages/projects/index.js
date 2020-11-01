@@ -1,9 +1,9 @@
 import React from "react";
 import {ProjectsMenu} from "../../component/projects/menu/projects-menu";
 import {ProjectDescription} from "../../component/projects/project-description";
-import {useProjectLoading, useProjects} from "../../data/hooks/projects";
 import {Loading} from "../../data/hooks/global/enums";
 import {OwnerTitled} from "../../component/about/owner-titled";
+import {useProjectLoading, useProjects} from "../../data/hooks/projects/get";
 
 export default function Projects() {
 

@@ -10,7 +10,9 @@ import Image from "semantic-ui-react/dist/commonjs/elements/Image";
 import Form from "semantic-ui-react/dist/commonjs/collections/Form";
 import List from "semantic-ui-react/dist/commonjs/elements/List";
 import LazyIcon from "../../component/lazy-icon";
-import {useFooter, useFooterError, useFooterLoading, useFooterUpdater} from "../../data/hooks/footer";
+import {useFooter, useFooterError, useFooterLoading} from "../../data/hooks/footer/get";
+import {useFooterUpdater} from "../../data/hooks/footer/update";
+import {LazyImage} from "../../component/image/lazy-image";
 
 let EMPTY_LINK = () => ({caption: '', href: ''});
 let EMPTY_LOGO = () => ({name: '', src: ''});
@@ -76,7 +78,7 @@ export const EditLogos = function ({errorMessage, loading, updating, footer, upd
                                 {logo.name}
                             </List.Header>
                             <List.Description>
-                                <Image src={logo.src} alt={logo.name} href={logo.href}/>
+                                <LazyImage src={logo.src} alt={logo.name} href={logo.href}/>
                             </List.Description>
                         </List.Content>
                     </List.Item>

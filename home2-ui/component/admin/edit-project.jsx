@@ -1,4 +1,3 @@
-import {useProject, useProjectDeleter, useProjectLoading, useProjectUpdater} from "../../data/hooks/projects";
 import {useForm} from "./common/use-form";
 import React, {useCallback, useState} from "react";
 import {Deleting, Loading, Updating} from "../../data/hooks/global/enums";
@@ -16,6 +15,9 @@ import List from "semantic-ui-react/dist/commonjs/elements/List";
 import Message from "semantic-ui-react/dist/commonjs/collections/Message";
 import LazyIcon from "../lazy-icon";
 import {useRouter} from "next/router";
+import {useProject, useProjectLoading} from "../../data/hooks/projects/get";
+import {useProjectUpdater} from "../../data/hooks/projects/update";
+import {useProjectDeleter} from "../../data/hooks/projects/delete";
 
 export const EditProject = function ({projectId}) {
 

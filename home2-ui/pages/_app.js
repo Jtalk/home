@@ -2,11 +2,8 @@ import React from 'react';
 import './index.css';
 import 'semantic-ui-css/semantic.min.css';
 import "highlight.js/styles/idea.css";
-import {FileConverterProvider} from "../utils/file-converter-context";
 import {setupErrorReporting} from "../utils/error-reporting";
-import {Header} from "../component/header/header";
 import {useRouter} from "next/router";
-import {NotFound} from "../component/error/not-found";
 import dynamic from "next/dynamic";
 import {useLoggedIn} from "../data/hooks/authentication";
 import Container from "semantic-ui-react/dist/commonjs/elements/Container";
@@ -23,23 +20,23 @@ function App({Component, pageProps}) {
         Component = dynamic(() => Promise.resolve(Component), {ssr: false})
     }
     if (process.browser && router.pathname.startsWith("/admin") && !isLoggedIn) {
-        Component = NotFound;
+        Component = dynamic(() => import("../component/error/not-found"));
     }
 
+    const Header = dynamic(() => import("../component/header/header"));
     const Footer = dynamic(() => import("../component/footer/footer"));
 
     return <ErrorBoundary>
-        <FileConverterProvider>
-            <div className="main-content-pushable">
-                <Container className="main-content-pusher framed">
-                    <Header/>
-                    <Component {...pageProps}/>
-                </Container>
-                <ErrorBoundary FallbackComponent={<div/>}>
-                    <Footer/>
-                </ErrorBoundary>
-            </div>
-        </FileConverterProvider>
+        <div className="main-content-pushable">
+            <Container className="main-content-pusher framed">
+                <Header/>
+                <Component {...pageProps}/>
+            </Container>
+            <ErrorBoundary FallbackComponent={<div/>}>
+                <Footer/>
+            </ErrorBoundary>
+        </div>
     </ErrorBoundary>
 }
+
 export default withAuthentication(App);

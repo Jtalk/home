@@ -1,6 +1,6 @@
 import useSWR from "swr";
-import {useLoadingStatus} from "./global/swr-common";
-import {superagentFetch} from "../ajax";
+import superagentFetch from "../ajax/fetch";
+import useLoadingStatus from "./global/swr-common/loading-status";
 
 const searchApiUrl = "/search";
 
