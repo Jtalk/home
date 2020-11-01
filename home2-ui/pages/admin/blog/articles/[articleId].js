@@ -32,7 +32,7 @@ export default function EditBlogArticle() {
     const {articleId} = router.query;
 
     let article = useArticle(articleId);
-    let knownTags = useAvailableTags();
+    let knownTags = useAvailableTags() || [];
     let errorMessage = useArticlesError();
     let loading = useArticleLoading(articleId);
     let updating = useArticlesUpdating();

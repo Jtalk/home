@@ -1,6 +1,5 @@
 import {all, takeEvery} from "redux-saga/effects"
 import {watchProjects} from "./reduce/projects/saga";
-import {watchTags} from "./reduce/tags/saga";
 import {watchImages} from "./reduce/images/saga";
 import {watchArticles} from "./reduce/articles/saga";
 import {reportError} from "../utils/error-reporting";
@@ -8,7 +7,6 @@ import {reportError} from "../utils/error-reporting";
 export function* rootSaga() {
     yield all([
         watchErrors(),
-        watchTags(),
         watchImages(),
         watchArticles(),
         watchProjects(),

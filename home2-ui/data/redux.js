@@ -18,7 +18,6 @@ const modules = [
     articles,
     images,
     projects,
-    tags,
 ]
 
 const modulesBySegment = keyBy(modules, "segment");
