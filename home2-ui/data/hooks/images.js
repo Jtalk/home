@@ -1,9 +1,9 @@
-import {useDeleter, useLoadingStatus} from "../swr-common";
+import {useDeleter, useLoadingStatus} from "./global/swr-common";
 import {useCallback, useMemo, useState} from "react";
 import {Uploading} from "./global/enums";
-import {superagentFetch, superagentUploadFile} from "../ajax/superagent-api";
 import useSWR, {mutate} from "swr";
 import getConfig from "next/config";
+import {superagentFetch, superagentUploadFile} from "../ajax";
 
 const {publicRuntimeConfig: config} = getConfig();
 

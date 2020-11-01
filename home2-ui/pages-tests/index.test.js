@@ -1,5 +1,4 @@
 import React from 'react';
-import {createAppStore} from "../data/redux";
 
 describe("<App/>", () => {
     // let store = createAppStore();

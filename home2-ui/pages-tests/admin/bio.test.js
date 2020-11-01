@@ -3,9 +3,8 @@ import {act} from "react-dom/test-utils";
 import Bio, {BioTextArea, EditBioStateless, PhotoUpload} from "../../pages/admin/bio";
 import {mount, shallow} from "enzyme";
 import {imageUrl} from "../../utils/image";
-import {Loading, Updating} from "../../data/reduce/global/enums";
+import {Loading, Updating} from "../../data/hooks/global/enums";
 import {Provider as ReduxProvider} from "react-redux";
-import {createTestStore} from "../../data/redux";
 import {ImageUploadPreview} from "../../component/admin/common/image-upload-preview";
 import {FileConverterProvider} from "../../utils/file-converter-context";
 import {END} from "redux-saga";
@@ -40,9 +39,6 @@ describe("<EditBio/>", () => {
         };
         let rootSaga = function* () {
         };
-        [store, sagaTask] = createTestStore({
-            "ajax": () => ajaxMock
-        }, rootSaga);
         sagaTask.toPromise()
             .catch(e => console.log("Error stopping Saga", e))
             .then(() => console.log("Saga successfully stopped"));

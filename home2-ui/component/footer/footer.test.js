@@ -4,7 +4,6 @@ import {FlatLinksList} from "./flat-links-list";
 import {FlatLogoList} from "./flat-logo-list";
 import {Footer, StatelessFooter} from "./footer";
 import {Provider} from "react-redux";
-import {createTestStore} from "../../data/redux";
 import {END} from "redux-saga";
 import Segment from "semantic-ui-react/dist/commonjs/elements/Segment";
 import Container from "semantic-ui-react/dist/commonjs/elements/Container";
@@ -63,12 +62,6 @@ describe("<Footer/>", () => {
         load: jest.fn(() => {})
       }
     };
-    let rootSaga = function* () {
-    };
-    [store] = createTestStore({
-      "footer": footerReducer,
-      "ajax": () => ajaxMock,
-    }, rootSaga);
   });
   afterEach(async () => {
     await store.dispatch(END);

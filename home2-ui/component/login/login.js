@@ -5,8 +5,8 @@ import Modal from "semantic-ui-react/dist/commonjs/modules/Modal";
 import {useForm} from "../admin/common/use-form";
 import {useFormErrors} from "../admin/common/use-errors";
 import {ErrorMessage} from "../message/error-message";
-import {Login} from "../../data/reduce/authentication/login-state";
-import {useLoginError, useLoginHandler, useLoginStatus} from "../../data/reduce/authentication";
+import {Login} from "../../data/hooks/authentication/login-state";
+import {useLoginError, useLoginHandler, useLoginStatus} from "../../data/hooks/authentication";
 import LazyIcon from "../lazy-icon";
 
 const EMPTY_FORM = () => ({login: '', password: ''});

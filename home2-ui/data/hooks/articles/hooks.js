@@ -1,6 +1,6 @@
 import {useCallback, useMemo} from "react";
-import useSWR from "swr/esm/use-swr";
-import {useDeleter, useLoadingStatus, useUpdater} from "../../swr-common";
+import useSWR from "swr";
+import {useDeleter, useLoadingStatus, useUpdater} from "../global/swr-common";
 
 const articlesApiUrl = "/blog/articles";
 

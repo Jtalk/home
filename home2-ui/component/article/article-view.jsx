@@ -1,5 +1,5 @@
 import isEmpty from "lodash/isEmpty";
-import {Loading} from "../../data/reduce/global/enums";
+import {Loading} from "../../data/hooks/global/enums";
 import {ContentPlaceholderOr} from "../placeholder/content-placeholder";
 import Link from "next/link";
 import {MarkdownTextArea} from "../text-area";

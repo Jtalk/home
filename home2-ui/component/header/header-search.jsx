@@ -1,6 +1,6 @@
 import React, {useEffect, useMemo, useState} from "react";
-import {Loading} from "../../data/reduce/global/enums";
-import {useSearch} from "../../data/reduce/search";
+import {Loading} from "../../data/hooks/global/enums";
+import {useSearch} from "../../data/hooks/search";
 import {reportError} from "../../utils/error-reporting";
 import Link from "next/link";
 import maxBy from "lodash/maxBy";

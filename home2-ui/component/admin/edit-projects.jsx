@@ -1,6 +1,6 @@
 import React from "react";
 import Link from "next/link";
-import {useProject, useProjectError, useProjects, useProjectUpdater} from "../../data/reduce/projects";
+import {useProject, useProjects, useProjectUpdater} from "../../data/hooks/projects";
 import {NotFound} from "../error/not-found";
 import {EditProject} from "./edit-project";
 import maxBy from "lodash/maxBy";

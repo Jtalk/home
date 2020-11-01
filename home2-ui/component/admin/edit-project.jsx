@@ -1,7 +1,7 @@
-import {useProject, useProjectDeleter, useProjectLoading, useProjectUpdater} from "../../data/reduce/projects";
+import {useProject, useProjectDeleter, useProjectLoading, useProjectUpdater} from "../../data/hooks/projects";
 import {useForm} from "./common/use-form";
 import React, {useCallback, useState} from "react";
-import {Deleting, Loading, Updating} from "../../data/reduce/global/enums";
+import {Deleting, Loading, Updating} from "../../data/hooks/global/enums";
 import {useFormErrors} from "./common/use-errors";
 import {ContentPlaceholderOr} from "../placeholder/content-placeholder";
 import {ErrorMessage} from "../message/error-message";

@@ -1,7 +1,7 @@
 import React from "react";
-import {useOwner, useOwnerLoading, useOwnerUpdater} from "../../data/reduce/owner";
+import {useOwner, useOwnerLoading, useOwnerUpdater} from "../../data/hooks/owner";
 import {useForm} from "../../component/admin/common/use-form";
-import {Loading, Updating} from "../../data/reduce/global/enums";
+import {Loading, Updating} from "../../data/hooks/global/enums";
 import {imageUrl} from "../../utils/image";
 import {ImageUploadPreview} from "../../component/admin/common/image-upload-preview";
 import get from "lodash/get";

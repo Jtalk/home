@@ -1,6 +1,6 @@
 import React, {useCallback, useMemo} from "react";
 import {useForm} from "./common/use-form";
-import {useArticleUpdater} from "../../data/reduce/articles";
+import {useArticleUpdater} from "../../data/hooks/articles";
 import {editHref} from "../../pages/admin/blog/articles/[articleId]";
 import {ErrorMessage} from "../message/error-message";
 import Modal from "semantic-ui-react/dist/commonjs/modules/Modal";

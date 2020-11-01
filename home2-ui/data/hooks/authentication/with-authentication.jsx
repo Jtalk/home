@@ -2,8 +2,8 @@ import React, {useCallback, useEffect, useMemo, useReducer} from "react";
 import {Login} from "./login-state";
 import dayjs from "dayjs";
 import storageAvailable from "storage-available";
-import {superagentPostForm, superagentPostJson} from "../../ajax/superagent-api";
 import {AuthenticationContext} from "./context";
+import {superagentPostForm, superagentPostJson} from "../../ajax";
 
 const SESSION_EXPIRY_KEY = "session-expiry";
 const SESSION_USERNAME_KEY = "session-username";

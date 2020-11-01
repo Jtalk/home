@@ -9,10 +9,10 @@ import {
     useImagesLoading,
     useImagesTotalCount,
     useImageUploader
-} from "../../data/reduce/images";
+} from "../../data/hooks/images";
 import "./images.module.css";
 import {ImageUploadPreview} from "../../component/admin/common/image-upload-preview";
-import {Loading, Uploading} from "../../data/reduce/global/enums";
+import {Loading, Uploading} from "../../data/hooks/global/enums";
 import {useRouter} from "next/router";
 import {OwnerTitled} from "../../component/about/owner-titled";
 import {SuccessMessage} from "../../component/message/success-message";

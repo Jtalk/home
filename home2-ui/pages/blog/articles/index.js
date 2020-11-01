@@ -1,10 +1,9 @@
 import React from "react";
 import {OwnerCard} from "../../../component/about/owner-card";
 import {LatestPosts} from "../../../component/about/latest-posts";
-import {DEFAULT_PAGE_SIZE, useArticles, useArticlesLoading, useArticlesTotalCount} from "../../../data/reduce/articles";
-import {Loading} from "../../../data/reduce/global/enums";
+import {DEFAULT_PAGE_SIZE, useArticles, useArticlesLoading, useArticlesTotalCount} from "../../../data/hooks/articles";
+import {Loading} from "../../../data/hooks/global/enums";
 import {useRouter} from "next/router";
-import {reduxWrapper} from "../../../data/redux";
 import {BlogPath} from "../../../utils/paths";
 import {OwnerTitled} from "../../../component/about/owner-titled";
 import {ArticleView} from "../../../component/article/article-view";
@@ -70,7 +69,3 @@ const Pagination = function ({loading, total, page, navigate}) {
         }
     </Menu>
 };
-
-export const getServerSideProps = reduxWrapper.getServerSideProps(async ({store}) => {
-    return {props: {}}
-})

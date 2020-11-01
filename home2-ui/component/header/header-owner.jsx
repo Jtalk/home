@@ -1,6 +1,6 @@
 import React from "react";
 import Menu from "semantic-ui-react/dist/commonjs/collections/Menu";
-import {useOwner} from "../../data/reduce/owner";
+import {useOwner} from "../../data/hooks/owner";
 
 export const HeaderOwner = function () {
     let {name} = useOwner() || {};

@@ -1,12 +1,10 @@
-import {useProjectLoading, useProjects} from "../../data/reduce/projects";
-import {Loading} from "../../data/reduce/global/enums";
+import {useProject, useProjectLoading, useProjects} from "../../data/hooks/projects";
+import {Loading} from "../../data/hooks/global/enums";
 import {ProjectsMenu} from "../../component/projects/menu/projects-menu";
 import {ProjectDescription} from "../../component/projects/project-description";
 import React from "react";
 import {useRouter} from "next/router";
 import {NotFound} from "../../component/error/not-found";
-import {reduxWrapper} from "../../data/redux";
-import find from "lodash/find";
 import {OwnerTitled} from "../../component/about/owner-titled";
 
 export default function Project() {
@@ -14,9 +12,9 @@ export default function Project() {
     let router = useRouter();
     let {projectId} = router.query;
 
-    let projects = useProjects();
+    let projects = useProjects() || [];
     let loading = useProjectLoading();
-    let selectedProject = find(projects, p => p.id === projectId);
+    let selectedProject = useProject(projectId);
 
     if (projects?.length && loading !== Loading.LOADING && !selectedProject) {
         return <NotFound/>
@@ -29,7 +27,3 @@ export default function Project() {
         <ProjectDescription loading={loading === Loading.LOADING} {...selectedProject}/>
     </div>
 }
-
-export const getServerSideProps = reduxWrapper.getServerSideProps(async ({store}) => {
-    return {props: {}}
-})

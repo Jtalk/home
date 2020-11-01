@@ -1,6 +1,6 @@
-import useSWR from "swr/esm/use-swr";
+import useSWR from "swr";
 import find from "lodash/find";
-import {useDeleter, useLoadingStatus, useUpdater} from "../swr-common";
+import {useDeleter, useLoadingStatus, useUpdater} from "./global/swr-common";
 import {useCallback, useMemo} from "react";
 import {useImageUploader} from "./images";
 

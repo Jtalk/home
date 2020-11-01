@@ -1,7 +1,8 @@
-import {Deleting, Loading, Updating} from "./reduce/global/enums";
+import {Deleting, Loading, Updating} from "./enums";
 import {useCallback, useMemo, useState} from "react";
-import {superagentDelete, superagentPut} from "./ajax/superagent-api";
 import {mutate} from "swr";
+import {superagentPut} from "../../ajax/put";
+import {superagentDelete} from "../../ajax/delete";
 
 export function useLoadingStatus(swrState) {
     if (!swrState.data && !swrState.error) {

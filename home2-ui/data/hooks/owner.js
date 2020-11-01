@@ -1,6 +1,6 @@
 import useSWR from "swr";
-import {superagentFetch} from "../ajax/superagent-api";
-import {useLoadingStatus, useUpdater} from "../swr-common";
+import {useLoadingStatus, useUpdater} from "./global/swr-common";
+import {superagentFetch} from "../ajax";
 
 const ownerApiUrl = "/owner";
 

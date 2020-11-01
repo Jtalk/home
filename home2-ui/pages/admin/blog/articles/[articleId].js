@@ -1,9 +1,9 @@
 import React, {useCallback} from "react";
-import {useAvailableTags} from "../../../../data/reduce/tags";
+import {useAvailableTags} from "../../../../data/hooks/tags";
 import {useForm} from "../../../../component/admin/common/use-form";
-import {Loading, Updating} from "../../../../data/reduce/global/enums";
+import {Loading, Updating} from "../../../../data/hooks/global/enums";
 import {DatePicker} from "../../../../component/admin/common/date-picker";
-import {useArticle, useArticleLoading, useArticleUpdater} from "../../../../data/reduce/articles";
+import {useArticle, useArticleLoading, useArticleUpdater} from "../../../../data/hooks/articles";
 import {NotFound} from "../../../../component/error/not-found";
 import {useRouter} from "next/router";
 import uniq from "lodash/uniq";

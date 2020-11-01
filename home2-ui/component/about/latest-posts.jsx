@@ -3,12 +3,12 @@ import Card from "semantic-ui-react/dist/commonjs/views/Card";
 import Divider from "semantic-ui-react/dist/commonjs/elements/Divider";
 import List from "semantic-ui-react/dist/commonjs/elements/List";
 import {formatDateTime} from "../../utils/date-time";
-import {Loading} from "../../data/reduce/global/enums";
+import {Loading} from "../../data/hooks/global/enums";
 import Link from "next/link";
 import "./latest-posts.module.css";
 import {BlogPath} from "../../utils/paths";
 import {ContentPlaceholderOr} from "../placeholder/content-placeholder";
-import {useLatestArticles, useLatestArticlesLoading} from "../../data/reduce/latest-articles";
+import {useLatestArticles, useLatestArticlesLoading} from "../../data/hooks/latest-articles";
 
 const PREVIEW_SIZE = 3;
 

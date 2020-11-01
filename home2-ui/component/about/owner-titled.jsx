@@ -1,4 +1,4 @@
-import {useOwner} from "../../data/reduce/owner";
+import {useOwner} from "../../data/hooks/owner";
 import React from "react";
 import Head from "next/head";
 

@@ -1,11 +1,10 @@
 import React from "react";
-import {Loading} from "../../../data/reduce/global/enums";
+import {Loading} from "../../../data/hooks/global/enums";
 import {OwnerCard} from "../../../component/about/owner-card";
 import {LatestPosts} from "../../../component/about/latest-posts";
-import {useArticle, useArticleLoading} from "../../../data/reduce/articles";
+import {useArticle, useArticleLoading} from "../../../data/hooks/articles";
 import {NotFound} from "../../../component/error/not-found";
 import {useRouter} from "next/router";
-import {reduxWrapper} from "../../../data/redux";
 import {BlogPath} from "../../../utils/paths";
 import {OwnerTitled} from "../../../component/about/owner-titled";
 import {ArticleView} from "../../../component/article/article-view";
@@ -37,7 +36,3 @@ export default function ArticleId() {
         </Grid>
     </>
 };
-
-export const getServerSideProps = reduxWrapper.getServerSideProps(async ({store, query}) => {
-    return {props: {}}
-})

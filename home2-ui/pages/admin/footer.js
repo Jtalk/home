@@ -1,6 +1,6 @@
 import React, {useMemo} from "react";
 import {useForm} from "../../component/admin/common/use-form";
-import {Loading, Updating} from "../../data/reduce/global/enums";
+import {Loading, Updating} from "../../data/hooks/global/enums";
 import {OwnerTitled} from "../../component/about/owner-titled";
 import {ErrorMessage} from "../../component/message/error-message";
 import Grid from "semantic-ui-react/dist/commonjs/collections/Grid";
@@ -10,7 +10,7 @@ import Image from "semantic-ui-react/dist/commonjs/elements/Image";
 import Form from "semantic-ui-react/dist/commonjs/collections/Form";
 import List from "semantic-ui-react/dist/commonjs/elements/List";
 import LazyIcon from "../../component/lazy-icon";
-import {useFooter, useFooterError, useFooterLoading, useFooterUpdater} from "../../data/reduce/footer";
+import {useFooter, useFooterError, useFooterLoading, useFooterUpdater} from "../../data/hooks/footer";
 
 let EMPTY_LINK = () => ({caption: '', href: ''});
 let EMPTY_LOGO = () => ({name: '', src: ''});
