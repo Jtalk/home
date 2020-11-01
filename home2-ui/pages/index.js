@@ -2,7 +2,7 @@ import React from "react";
 import {OwnerCard} from "../component/about/owner-card";
 import {LatestPosts} from "../component/about/latest-posts";
 import {Loading} from "../data/reduce/global/enums";
-import {ownerActions, useOwner, useOwnerLoading} from "../data/reduce/owner";
+import {useOwner, useOwnerLoading} from "../data/reduce/owner";
 import {MarkdownTextArea} from "../component/text-area";
 import {reduxWrapper} from "../data/redux";
 import {OwnerTitled} from "../component/about/owner-titled";
@@ -12,7 +12,7 @@ import Grid from "semantic-ui-react/dist/commonjs/collections/Grid";
 
 export default function About() {
 
-    const {bio} = useOwner();
+    const {bio} = useOwner() || {};
     const loading = useOwnerLoading();
 
     return <Grid stackable centered>
@@ -33,7 +33,6 @@ export default function About() {
 
 export const getServerSideProps = reduxWrapper.getServerSideProps(async ({store}) => {
     await Promise.all([
-        store.dispatch(ownerActions.load()),
         store.dispatch(latestArticlesActions.load()),
     ])
     return {props: {}}

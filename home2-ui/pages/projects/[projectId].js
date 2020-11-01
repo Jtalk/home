@@ -6,7 +6,6 @@ import React from "react";
 import {useRouter} from "next/router";
 import {NotFound} from "../../component/error/not-found";
 import {reduxWrapper} from "../../data/redux";
-import {ownerActions} from "../../data/reduce/owner";
 import find from "lodash/find";
 import {OwnerTitled} from "../../component/about/owner-titled";
 
@@ -33,7 +32,6 @@ export default function Project() {
 
 export const getServerSideProps = reduxWrapper.getServerSideProps(async ({store}) => {
     await Promise.all([
-        store.dispatch(ownerActions.load()), // for menubar
         store.dispatch(projectActions.load()),
     ])
     return {props: {}}

@@ -11,7 +11,6 @@ import {
 import {Loading} from "../../../data/reduce/global/enums";
 import {useRouter} from "next/router";
 import {reduxWrapper} from "../../../data/redux";
-import {ownerActions} from "../../../data/reduce/owner";
 import {BlogPath} from "../../../utils/paths";
 import {OwnerTitled} from "../../../component/about/owner-titled";
 import {ArticleView} from "../../../component/article/article-view";
@@ -81,7 +80,6 @@ const Pagination = function ({loading, total, page, navigate}) {
 
 export const getServerSideProps = reduxWrapper.getServerSideProps(async ({store}) => {
     await Promise.all([
-        store.dispatch(ownerActions.load()),
         store.dispatch(articleActions.load()),
         store.dispatch(latestArticlesActions.load()),
     ])

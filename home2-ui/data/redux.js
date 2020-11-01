@@ -10,7 +10,6 @@ import * as search from "./reduce/search";
 import mapValues from "lodash/mapValues";
 import keyBy from "lodash/keyBy";
 import {deserialiseJSON, serialiseJSON} from "./reduce/global/json-io";
-import * as owner from "./reduce/owner";
 import * as images from "./reduce/images";
 import * as projects from "./reduce/projects";
 import * as articles from "./reduce/articles";
@@ -21,7 +20,6 @@ const modules = [
     articles,
     images,
     latestArticles,
-    owner,
     projects,
     search,
     tags,

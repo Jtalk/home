@@ -12,7 +12,7 @@ export const Header = function () {
     const router = useRouter();
     const activeRoute = router.pathname;
 
-    const owner = useOwner();
+    const owner = useOwner() || {};
     const authenticated = useLoggedIn();
 
     return <HeaderStateless authenticated={authenticated} activeRoute={activeRoute} ownerName={owner?.name || ""}/>

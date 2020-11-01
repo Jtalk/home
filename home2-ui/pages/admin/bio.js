@@ -1,5 +1,5 @@
 import React from "react";
-import {useOwner, useOwnerError, useOwnerLoading, useOwnerUpdater, useOwnerUpdating} from "../../data/reduce/owner";
+import {useOwner, useOwnerLoading, useOwnerUpdater} from "../../data/reduce/owner";
 import {useForm} from "../../component/admin/common/use-form";
 import {Loading, Updating} from "../../data/reduce/global/enums";
 import {imageUrl} from "../../utils/image";
@@ -18,12 +18,10 @@ import TextArea from "semantic-ui-react/dist/commonjs/addons/TextArea";
 
 export default function EditBio() {
 
-    let owner = useOwner();
+    let owner = useOwner() || {};
     let loading = useOwnerLoading();
-    let updateStatus = useOwnerUpdating();
-    let errorMessage = useOwnerError();
 
-    let onUpdate = useOwnerUpdater();
+    let {updater: onUpdate, status: updateStatus, error: errorMessage} = useOwnerUpdater();
 
     let {onSubmit, data, updater, canSubmit} = useForm({
         init: owner,

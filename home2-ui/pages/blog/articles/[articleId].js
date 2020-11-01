@@ -6,7 +6,6 @@ import {articleActions, useArticle, useArticleLoading} from "../../../data/reduc
 import {NotFound} from "../../../component/error/not-found";
 import {useRouter} from "next/router";
 import {reduxWrapper} from "../../../data/redux";
-import {ownerActions} from "../../../data/reduce/owner";
 import {BlogPath} from "../../../utils/paths";
 import {OwnerTitled} from "../../../component/about/owner-titled";
 import {ArticleView} from "../../../component/article/article-view";
@@ -43,7 +42,6 @@ export default function ArticleId() {
 export const getServerSideProps = reduxWrapper.getServerSideProps(async ({store, query}) => {
     const {articleId} = query;
     await Promise.all([
-        store.dispatch(ownerActions.load()),
         store.dispatch(articleActions.loadOne(articleId)),
         store.dispatch(latestArticlesActions.load()),
     ])

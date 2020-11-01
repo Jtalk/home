@@ -6,7 +6,6 @@ import {imageUrl} from "../../utils/image";
 import {Loading, Updating} from "../../data/reduce/global/enums";
 import {Provider as ReduxProvider} from "react-redux";
 import {createTestStore} from "../../data/redux";
-import {owner as ownerReducer, watchOwner} from "../../data/reduce/owner";
 import {ImageUploadPreview} from "../../component/admin/common/image-upload-preview";
 import {FileConverterProvider} from "../../utils/file-converter-context";
 import {END} from "redux-saga";
@@ -40,10 +39,8 @@ describe("<EditBio/>", () => {
             }
         };
         let rootSaga = function* () {
-            yield watchOwner()
         };
         [store, sagaTask] = createTestStore({
-            "owner": ownerReducer,
             "ajax": () => ajaxMock
         }, rootSaga);
         sagaTask.toPromise()

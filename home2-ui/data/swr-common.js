@@ -21,12 +21,16 @@ export function useUpdater(url, updateBody = true) {
         setStatus(Updating.UPDATING);
         try {
             const body = await superagentPut(url, data);
-            await mutate(url, body, false);
+            if (updateBody) {
+                await mutate(url, body, false);
+            } else {
+                await mutate(url);
+            }
             setStatus(Updating.UPDATED);
         } catch (e) {
             setStatus(Updating.ERROR);
-            setError(e);
+            setError(e?.message || e);
         }
-    }, [url]);
+    }, [updateBody, url]);
     return {updater, status, error};
 }

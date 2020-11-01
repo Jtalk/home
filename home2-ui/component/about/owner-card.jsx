@@ -12,7 +12,7 @@ import dynamic from "next/dynamic";
 
 export const OwnerCard = function () {
 
-    let owner = useOwner();
+    let owner = useOwner() || {};
     let loading = useOwnerLoading();
     let loggedIn = useLoggedIn();
 

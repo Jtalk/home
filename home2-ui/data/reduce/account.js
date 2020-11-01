@@ -1,4 +1,3 @@
-import AuthenticationRequests from "../ajax/authentication-requests";
 import {EXISTING_PASSWORD_MISMATCH} from "./authentication/messages";
 import {useCallback} from "react";
 import {superagentPostForm} from "../ajax/superagent-api";
