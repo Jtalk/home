@@ -5,9 +5,9 @@ import {HeaderMenuItem} from "./header-menu-item";
 import {useRouter} from "next/router";
 import {useLoggedIn} from "../../data/hooks/authentication";
 import dynamic from "next/dynamic";
-import {useOwner} from "../../data/hooks/owner";
+import {useOwner} from "../../data/hooks/owner/get";
 
-export const Header = function () {
+export default function Header() {
     const router = useRouter();
     const activeRoute = router.pathname;
 

@@ -2,7 +2,7 @@ import isEmpty from "lodash/isEmpty";
 import {Loading} from "../../data/hooks/global/enums";
 import {ContentPlaceholderOr} from "../placeholder/content-placeholder";
 import Link from "next/link";
-import {MarkdownTextArea} from "../text-area";
+import MarkdownTextArea from "../text-area";
 import {formatDateTime} from "../../utils/date-time";
 import React from "react";
 import Segment from "semantic-ui-react/dist/commonjs/elements/Segment";

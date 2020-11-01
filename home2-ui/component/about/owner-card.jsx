@@ -10,7 +10,7 @@ import Card from "semantic-ui-react/dist/commonjs/views/Card";
 import dynamic from "next/dynamic";
 import {useOwner, useOwnerLoading} from "../../data/hooks/owner/get";
 
-export const OwnerCard = function () {
+export default function OwnerCard() {
 
     let owner = useOwner() || {};
     let loading = useOwnerLoading();

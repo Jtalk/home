@@ -1,14 +1,13 @@
 import React from "react";
 import {Loading} from "../../../data/hooks/global/enums";
-import {OwnerCard} from "../../../component/about/owner-card";
-import {LatestPosts} from "../../../component/about/latest-posts";
-import {useArticle, useArticleLoading} from "../../../data/hooks/articles";
+import {useArticle, useArticleLoading} from "../../../data/hooks/articles/get";
 import {NotFound} from "../../../component/error/not-found";
 import {useRouter} from "next/router";
 import {BlogPath} from "../../../utils/paths";
 import {OwnerTitled} from "../../../component/about/owner-titled";
 import {ArticleView} from "../../../component/article/article-view";
 import Grid from "semantic-ui-react/dist/commonjs/collections/Grid";
+import dynamic from "next/dynamic";
 
 export default function ArticleId() {
 
@@ -21,6 +20,10 @@ export default function ArticleId() {
     if (!article && loading !== Loading.LOADING) {
         return <NotFound/>
     }
+
+    const OwnerCard = dynamic(() => import("../../../component/about/owner-card"));
+    const LatestPosts = dynamic(() => import("../../../component/about/latest-posts"));
+
     return <>
         <OwnerTitled title={"Articles"} subtitle={article?.title}/>
         <Grid centered stackable columns={2}>

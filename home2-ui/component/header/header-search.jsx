@@ -80,7 +80,7 @@ function toVisualResultDescription(fuse, query, ...candidates) {
     }
 }
 
-function useVisualResults(query, raw) {
+function useVisualResults(query, raw = []) {
     return useMemo(() => {
         let result = {};
         raw.forEach(({value, type}) => {

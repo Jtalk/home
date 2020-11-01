@@ -1,6 +1,5 @@
 import React, {useCallback, useEffect, useMemo, useReducer} from "react";
 import {Login} from "./login-state";
-import dayjs from "dayjs";
 import storageAvailable from "storage-available";
 import {AuthenticationContext} from "./context";
 import superagentPostJson from "../../ajax/post";
@@ -82,9 +81,9 @@ function WithAuthentication({children}) {
 
     useEffect(() => {
         if (status !== Login.LOGGED_IN || !state?.expiry) return;
-        const expiry = dayjs(state?.expiry);
-        let now = dayjs();
-        let timeUntilRefresh = expiry.diff(now);
+        const expiry = state?.expiry && new Date(state?.expiry);
+        let now = new Date();
+        let timeUntilRefresh = expiry.getTime() - now.getTime();
         if (timeUntilRefresh <= 0) {
             console.error("Auth token refresh was triggered after the token had already expired", expiry && expiry.toISOString(), ">", now.toISOString());
             return;
@@ -153,8 +152,8 @@ function localstoreAuthentication() {
 }
 
 function needsRefresh(state) {
-    const expiry = dayjs(state.expiry);
-    return expiry && expiry.isAfter(dayjs());
+    const expiry = new Date(state.expiry);
+    return expiry && expiry.getTime() > Date.now();
 }
 
 async function refreshAuthentication() {

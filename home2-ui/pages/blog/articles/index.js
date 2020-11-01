@@ -1,6 +1,4 @@
 import React from "react";
-import {OwnerCard} from "../../../component/about/owner-card";
-import {LatestPosts} from "../../../component/about/latest-posts";
 import {DEFAULT_PAGE_SIZE, useArticles, useArticlesLoading, useArticlesTotalCount} from "../../../data/hooks/articles";
 import {Loading} from "../../../data/hooks/global/enums";
 import {useRouter} from "next/router";
@@ -10,6 +8,7 @@ import {ArticleView} from "../../../component/article/article-view";
 import Grid from "semantic-ui-react/dist/commonjs/collections/Grid";
 import Segment from "semantic-ui-react/dist/commonjs/elements/Segment";
 import Menu from "semantic-ui-react/dist/commonjs/collections/Menu";
+import dynamic from "next/dynamic";
 
 export default function Blog() {
 
@@ -25,6 +24,9 @@ export default function Blog() {
     let navigateToPage = async (page) => {
         await router.push(`${BlogPath}?page=${page}`, undefined, { shallow: true });
     };
+
+    const OwnerCard = dynamic(() => import("../../../component/about/owner-card"));
+    const LatestPosts = dynamic(() => import("../../../component/about/latest-posts"));
 
     return <Grid centered stackable columns={2}>
         <OwnerTitled title={"Articles"}/>

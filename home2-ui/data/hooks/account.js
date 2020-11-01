@@ -1,6 +1,6 @@
 import {EXISTING_PASSWORD_MISMATCH} from "./authentication";
 import {useCallback} from "react";
-import {superagentPostForm} from "../ajax";
+import superagentPostForm from "../ajax/post-form";
 
 export function usePasswordChanger() {
     return useCallback(async passwords => {

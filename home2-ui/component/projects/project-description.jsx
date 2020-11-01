@@ -1,5 +1,5 @@
 import React from "react";
-import {MarkdownTextArea} from "../text-area";
+import MarkdownTextArea from "../text-area";
 import {ContentPlaceholderOr} from "../placeholder/content-placeholder";
 import {ImagePlaceholderOr} from "../placeholder/image-placeholder";
 import {OptionalImage} from "../image/optional-image";

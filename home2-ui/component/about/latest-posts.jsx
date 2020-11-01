@@ -12,7 +12,7 @@ import {useLatestArticles, useLatestArticlesLoading} from "../../data/hooks/late
 
 const PREVIEW_SIZE = 3;
 
-export const LatestPosts = function () {
+export default function LatestPosts() {
 
     let posts = useLatestArticles(PREVIEW_SIZE) || [];
     let loading = useLatestArticlesLoading(PREVIEW_SIZE);
