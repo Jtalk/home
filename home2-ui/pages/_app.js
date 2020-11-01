@@ -10,8 +10,9 @@ import withReduxSaga from "next-redux-saga";
 import {useRouter} from "next/router";
 import {NotFound} from "../component/error/not-found";
 import dynamic from "next/dynamic";
-import {useLoggedIn} from "../data/reduce/authentication/hooks";
+import {useLoggedIn} from "../data/reduce/authentication";
 import Container from "semantic-ui-react/dist/commonjs/elements/Container";
+import withAuthentication from "../data/reduce/authentication/with-authentication";
 
 const {ErrorBoundary} = setupErrorReporting();
 
@@ -44,4 +45,4 @@ function App({Component, pageProps}) {
     </ErrorBoundary>
 }
 
-export default reduxWrapper.withRedux(withReduxSaga(App));
+export default reduxWrapper.withRedux(withReduxSaga(withAuthentication(App)));

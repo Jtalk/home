@@ -6,12 +6,13 @@ import {reportError} from "../../utils/error-reporting";
 import {OwnerTitled} from "../../component/about/owner-titled";
 import {SuccessMessage} from "../../component/message/success-message";
 import {ErrorMessage} from "../../component/message/error-message";
-import {usePasswordChanger, useUsername} from "../../data/reduce/authentication/hooks";
+import {useUsername} from "../../data/reduce/authentication";
 import {EXISTING_PASSWORD_MISMATCH} from "../../data/reduce/authentication/messages";
 import Grid from "semantic-ui-react/dist/commonjs/collections/Grid";
 import Segment from "semantic-ui-react/dist/commonjs/elements/Segment";
 import Form from "semantic-ui-react/dist/commonjs/collections/Form";
 import Divider from "semantic-ui-react/dist/commonjs/elements/Divider";
+import {usePasswordChanger} from "../../data/reduce/account";
 
 const PASSWORD_FORM = () => ({
     password: {}

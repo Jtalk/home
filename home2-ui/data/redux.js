@@ -16,11 +16,9 @@ import * as projects from "./reduce/projects";
 import * as articles from "./reduce/articles";
 import * as tags from "./reduce/tags";
 import * as latestArticles from "./reduce/latest-articles";
-import * as authentication from "./reduce/authentication";
 
 const modules = [
     articles,
-    authentication,
     images,
     latestArticles,
     owner,
