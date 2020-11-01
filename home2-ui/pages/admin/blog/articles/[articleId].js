@@ -1,15 +1,9 @@
-import React from "react";
+import React, {useCallback} from "react";
 import {useAvailableTags} from "../../../../data/reduce/tags";
 import {useForm} from "../../../../component/admin/common/use-form";
 import {Loading, Updating} from "../../../../data/reduce/global/enums";
 import {DatePicker} from "../../../../component/admin/common/date-picker";
-import {
-    useArticle,
-    useArticleLoading,
-    useArticlesError,
-    useArticlesUpdating,
-    useArticleUpdater
-} from "../../../../data/reduce/articles";
+import {useArticle, useArticleLoading, useArticleUpdater} from "../../../../data/reduce/articles";
 import {NotFound} from "../../../../component/error/not-found";
 import {useRouter} from "next/router";
 import uniq from "lodash/uniq";
@@ -33,19 +27,18 @@ export default function EditBlogArticle() {
 
     let article = useArticle(articleId);
     let knownTags = useAvailableTags() || [];
-    let errorMessage = useArticlesError();
     let loading = useArticleLoading(articleId);
-    let updating = useArticlesUpdating();
 
     let {data, updater, onSubmit, canSubmit} = useForm({init: article});
-    let articleUpdater = useArticleUpdater();
+    let {updater: articleUpdater, status: updating, error: errorMessage} = useArticleUpdater();
 
-    let submit = (updatedArticle) => {
-        article && articleUpdater(article.id, editHref(updatedArticle.id), updatedArticle, {});
-    };
-    let reset = () => {
+    let submit = useCallback(() => async (updatedArticle) => {
+        article && await articleUpdater(article.id, updatedArticle);
+        await router.push(editHref(updatedArticle.id));
+    }, [article, articleUpdater, router]);
+    let reset = useCallback(() => {
         article && updater.reload(article);
-    };
+    }, [article, updater]);
 
     if (!article && loading && loading !== Loading.LOADING) {
         return <NotFound/>

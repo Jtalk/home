@@ -34,9 +34,11 @@ export function useImageUploader(page) {
     const [error, setError] = useState();
     const uploader = useCallback(async (name, file) => {
         setStatus(Uploading.UPLOADING);
+        setError(null);
         try {
             const result = await superagentUploadFile(imagesApiUrl, name, file);
             setStatus(Uploading.UPLOADED);
+            setError(null);
             await mutate(pageUrl(page));
             return result;
         } catch (e) {

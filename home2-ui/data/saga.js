@@ -1,11 +1,9 @@
 import {all, takeEvery} from "redux-saga/effects"
-import {watchArticles} from "./reduce/articles/saga";
 import {reportError} from "../utils/error-reporting";
 
 export function* rootSaga() {
     yield all([
         watchErrors(),
-        watchArticles(),
     ]);
 }
 

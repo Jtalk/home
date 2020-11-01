@@ -1,26 +1,28 @@
-import React, {useMemo} from "react";
+import React, {useCallback, useMemo} from "react";
 import {useForm} from "./common/use-form";
-import {useArticlesError, useArticleUpdater} from "../../data/reduce/articles";
+import {useArticleUpdater} from "../../data/reduce/articles";
 import {editHref} from "../../pages/admin/blog/articles/[articleId]";
 import {ErrorMessage} from "../message/error-message";
 import Modal from "semantic-ui-react/dist/commonjs/modules/Modal";
 import Button from "semantic-ui-react/dist/commonjs/elements/Button";
 import Form from "semantic-ui-react/dist/commonjs/collections/Form";
 import LazyIcon from "../lazy-icon";
+import {useRouter} from "next/router";
 
 const INITIAL = () => ({title: '', id: '', });
 
 export const AddBlogArticleModal = function () {
 
-    let errorMessage = useArticlesError();
+    const router = useRouter();
 
-    let articleUpdater = useArticleUpdater();
+    let {updater: articleUpdater, error: errorMessage} = useArticleUpdater();
     let initial = useMemo(INITIAL, []);
     let {data, updater, onSubmit, canSubmit} = useForm({init: initial});
 
-    let submit = (article) => {
-        articleUpdater(article.id, editHref(article.id), article);
-    };
+    let submit = useCallback(async (article) => {
+        await articleUpdater(article.id, article);
+        await router.push(editHref(article.id));
+    }, [articleUpdater, router]);
     let clear = () => {
         updater.reload(INITIAL());
     };

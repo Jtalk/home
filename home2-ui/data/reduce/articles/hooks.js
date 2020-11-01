@@ -1,84 +1,64 @@
-import {usePage, usePageSize, useTotalCount} from "../global/paginated-data";
-import {useImmutableSelector} from "../../redux-store";
-import {allSelector, publishedSelector} from "../global/publishable-data";
 import {useCallback, useMemo} from "react";
-import {action} from "../global/actions";
-import {
-    useDeleter2,
-    useDeleting,
-    useLastError,
-    useLoader,
-    useLoading,
-    useUpdater2,
-    useUpdating
-} from "../global/hook-barebone";
-import {useRouter} from "next/router";
-import {Action} from "./action";
-import {segment} from "./segment";
+import useSWR from "swr/esm/use-swr";
+import {useDeleter, useLoadingStatus, useUpdater} from "../../swr-common";
+
+const articlesApiUrl = "/blog/articles";
 
 export function useArticles(page, pageSize, withUnpublished = false) {
-    let existingSize = useArticlesPageSize();
-    let existingPage = usePage(page, segment, "pages");
-    let data = useImmutableSelector(segment, "data");
-    let publishedPage = publishedSelector(null)(existingPage);
-    let allPage = allSelector(null)(existingPage);
-    let loadAction = useMemo(
-        () => action(Action.LOAD, {page, pageSize, publishedOnly: !withUnpublished}),
-        [page, pageSize, withUnpublished]);
-    useLoader(loadAction, !existingPage || existingSize !== pageSize || (withUnpublished && !allPage));
-    return pageContent(withUnpublished ? allPage : publishedPage, data);
-
+    const {data} = useArticlesLoader(page, pageSize, withUnpublished);
+    return data?.data;
 }
 
 export function useArticle(id) {
-    let found = useImmutableSelector(segment, "data", id);
-    let loadAction = useMemo(() => action(Action.LOAD_ONE, id), [id]);
-    useLoader(loadAction, !found);
-    return found;
+    const {data} = useArticleLoader(id);
+    return data;
 }
 
-export function useArticlesPageSize() {
-    return usePageSize(segment, "pages");
+export function useArticlesTotalCount(page, pageSize, withUnpublished = false) {
+    const {data} = useArticlesLoader(page, pageSize, withUnpublished);
+    return data?.pagination?.total;
 }
 
-export function useArticlesTotalCount() {
-    return useTotalCount(segment, "pages");
-}
-
-export function useArticlesLoading() {
-    return useLoading(segment);
+export function useArticlesLoading(page, pageSize, withUnpublished = false) {
+    const result = useArticlesLoader(page, pageSize, withUnpublished);
+    return useLoadingStatus(result);
 }
 
 export function useArticleLoading(id) {
-    return useImmutableSelector(segment, "loadings", id);
-}
-
-export function useArticlesUpdating() {
-    return useUpdating(segment);
-}
-
-export function useArticlesDeleting() {
-    return useDeleting(segment);
-}
-
-export function useArticlesError() {
-    return useLastError(segment);
+    const result = useArticleLoader(id);
+    return useLoadingStatus(result);
 }
 
 export function useArticleUpdater() {
-    const router = useRouter();
-    const updater = useUpdater2(Action.UPDATE);
-    return useCallback(async (id, redirectTo, update, extra = {}) => {
-        await updater(update, {...extra, id});
-        await router.push(redirectTo);
-    }, [router, updater]);
+    const result = useUpdater(articlesApiUrl);
+    const {updater: nestedUpdater} = result;
+    const updater = useCallback(async (id, update) => {
+        if (!id) {
+            console.error(`Cannot update article without ID`);
+            return;
+        }
+        await nestedUpdater(update, `${articlesApiUrl}/${id}`);
+    }, [nestedUpdater]);
+    return useMemo(() => ({...result, updater}), [result, updater]);
 }
 
 export function useArticlesDeleter() {
-    return useDeleter2(Action.DELETE);
+    const result = useDeleter(articlesApiUrl);
+    const {deleter: nestedDeleter} = result;
+    const deleter = useCallback(async id => {
+        if (!id) {
+            console.error(`Cannot delete article without ID`);
+            return;
+        }
+        return nestedDeleter(`${articlesApiUrl}/${id}`);
+    }, [nestedDeleter]);
+    return useMemo(() => ({...result, deleter}), [deleter, result]);
 }
 
-function pageContent(ids, cache) {
-    ids = ids || [];
-    return ids.map(id => cache[id]);
+function useArticlesLoader(page, pageSize, withUnpublished) {
+    return useSWR(`${articlesApiUrl}?page=${page}&pageSize=${pageSize}&published=${!withUnpublished}`);
+}
+
+function useArticleLoader(id) {
+    return useSWR(id && `${articlesApiUrl}/${id}`);
 }

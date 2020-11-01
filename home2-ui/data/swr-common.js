@@ -19,6 +19,7 @@ export function useUpdater(url, updateBody = true) {
     const [error, setError] = useState(null);
     const updater = useCallback(async (data, updateUrl) => {
         setStatus(Updating.UPDATING);
+        setError(null);
         try {
             const body = await superagentPut(updateUrl || url, data);
             if (updateBody) {
@@ -27,6 +28,7 @@ export function useUpdater(url, updateBody = true) {
                 await mutate(url);
             }
             setStatus(Updating.UPDATED);
+            setError(null);
         } catch (e) {
             setStatus(Updating.ERROR);
             setError(e?.message || e);
@@ -40,10 +42,12 @@ export function useDeleter(url) {
     const [error, setError] = useState(null);
     const deleter = useCallback(async deleteUrl => {
         setStatus(Deleting.DELETING);
+        setError(null);
         try {
             await superagentDelete(deleteUrl || url);
             await mutate(url);
             setStatus(Deleting.DELETED);
+            setError(null);
         } catch (e) {
             setStatus(Deleting.ERROR);
             setError(e?.message || e);

@@ -1,13 +1,7 @@
 import React from "react";
 import {OwnerCard} from "../../../component/about/owner-card";
 import {LatestPosts} from "../../../component/about/latest-posts";
-import {
-    articleActions,
-    DEFAULT_PAGE_SIZE,
-    useArticles,
-    useArticlesLoading,
-    useArticlesTotalCount
-} from "../../../data/reduce/articles";
+import {DEFAULT_PAGE_SIZE, useArticles, useArticlesLoading, useArticlesTotalCount} from "../../../data/reduce/articles";
 import {Loading} from "../../../data/reduce/global/enums";
 import {useRouter} from "next/router";
 import {reduxWrapper} from "../../../data/redux";
@@ -78,8 +72,5 @@ const Pagination = function ({loading, total, page, navigate}) {
 };
 
 export const getServerSideProps = reduxWrapper.getServerSideProps(async ({store}) => {
-    await Promise.all([
-        store.dispatch(articleActions.load()),
-    ])
     return {props: {}}
 })

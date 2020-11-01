@@ -16,7 +16,7 @@ const DEFAULT_PAGE_SIZE = 100;
 export default function EditBlog() {
 
     let articles = useArticles(0, DEFAULT_PAGE_SIZE, true); // TODO: Add pagination to blog editor
-    let onDelete = useArticlesDeleter();
+    let {deleter: onDelete} = useArticlesDeleter();
 
     return <>
         <OwnerTitled title={"Edit Article"}/>
@@ -35,7 +35,7 @@ export const EditBlogStateless = function ({articles, page, onDelete}) {
                 <br/>
                 <List animated celled verticalAlign="middle">
                     {articles.map(article => <EditBlogItem key={article.id} article={article}
-                                                           onDelete={() => onDelete(article.id, {page})}/>)}
+                                                           onDelete={() => onDelete(article.id)}/>)}
                 </List>
             </Segment>
         </Grid.Column>

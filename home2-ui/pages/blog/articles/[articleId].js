@@ -2,7 +2,7 @@ import React from "react";
 import {Loading} from "../../../data/reduce/global/enums";
 import {OwnerCard} from "../../../component/about/owner-card";
 import {LatestPosts} from "../../../component/about/latest-posts";
-import {articleActions, useArticle, useArticleLoading} from "../../../data/reduce/articles";
+import {useArticle, useArticleLoading} from "../../../data/reduce/articles";
 import {NotFound} from "../../../component/error/not-found";
 import {useRouter} from "next/router";
 import {reduxWrapper} from "../../../data/redux";
@@ -39,9 +39,5 @@ export default function ArticleId() {
 };
 
 export const getServerSideProps = reduxWrapper.getServerSideProps(async ({store, query}) => {
-    const {articleId} = query;
-    await Promise.all([
-        store.dispatch(articleActions.loadOne(articleId)),
-    ])
     return {props: {}}
 })
