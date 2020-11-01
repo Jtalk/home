@@ -5,7 +5,6 @@ import {watchTags} from "./reduce/tags/saga";
 import {watchImages} from "./reduce/images/saga";
 import {watchArticles} from "./reduce/articles/saga";
 import {reportError} from "../utils/error-reporting";
-import {watchFooter} from "./reduce/footer/saga";
 import {watchLatestArticles} from "./reduce/latest-articles/saga";
 import {watchAuthentication} from "./reduce/authentication/saga";
 
@@ -14,7 +13,6 @@ export function* rootSaga() {
         watchErrors(),
         watchTags(),
         watchOwner(),
-        watchFooter(),
         watchImages(),
         watchArticles(),
         watchProjects(),

@@ -15,7 +15,6 @@ import {ownerActions} from "../../../data/reduce/owner";
 import {BlogPath} from "../../../utils/paths";
 import {OwnerTitled} from "../../../component/about/owner-titled";
 import {ArticleView} from "../../../component/article/article-view";
-import {footerActions} from "../../../data/reduce/footer/actions";
 import {latestArticlesActions} from "../../../data/reduce/latest-articles/actions";
 import Grid from "semantic-ui-react/dist/commonjs/collections/Grid";
 import Segment from "semantic-ui-react/dist/commonjs/elements/Segment";
@@ -85,7 +84,6 @@ export const getServerSideProps = reduxWrapper.getServerSideProps(async ({store}
         store.dispatch(ownerActions.load()),
         store.dispatch(articleActions.load()),
         store.dispatch(latestArticlesActions.load()),
-        store.dispatch(footerActions.load()),
     ])
     return {props: {}}
 })

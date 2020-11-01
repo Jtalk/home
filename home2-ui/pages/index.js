@@ -7,7 +7,6 @@ import {MarkdownTextArea} from "../component/text-area";
 import {reduxWrapper} from "../data/redux";
 import {OwnerTitled} from "../component/about/owner-titled";
 import {ContentPlaceholderOr} from "../component/placeholder/content-placeholder";
-import {footerActions} from "../data/reduce/footer/actions";
 import {latestArticlesActions} from "../data/reduce/latest-articles/actions";
 import Grid from "semantic-ui-react/dist/commonjs/collections/Grid";
 
@@ -36,7 +35,6 @@ export const getServerSideProps = reduxWrapper.getServerSideProps(async ({store}
     await Promise.all([
         store.dispatch(ownerActions.load()),
         store.dispatch(latestArticlesActions.load()),
-        store.dispatch(footerActions.load()),
     ])
     return {props: {}}
 })

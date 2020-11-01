@@ -1,10 +1,39 @@
 import prefix from "superagent-prefix";
 import getConfig from "next/config";
+import {Loading} from "../reduce/global/enums";
 
 const {publicRuntimeConfig: config} = getConfig();
 
 export async function superagent() {
     return await import("superagent");
+}
+
+export async function superagentFetch(url) {
+    try {
+        const sa = await superagent();
+        console.debug(`Loading`, url);
+        const response = await sa.get(url)
+            .use(api);
+        console.debug(`Loaded`, url, response.status, response.body);
+        return response.body;
+    } catch (e) {
+        console.error(`Error fetching`, url, e);
+        throw e;
+    }
+}
+
+export async function superagentPut(url, data) {
+    try {
+        const sa = await superagent();
+        console.info(`Putting`, url, data);
+        let response = await sa.put(url, data)
+            .use(api);
+        console.info(`Put complete`, url, response.status, response.body);
+        return response.body;
+    } catch (e) {
+        console.error(`Error putting`, url, e);
+        throw e;
+    }
 }
 
 export default function api(request) {

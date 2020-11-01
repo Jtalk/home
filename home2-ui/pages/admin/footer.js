@@ -3,13 +3,6 @@ import {useForm} from "../../component/admin/common/use-form";
 import {Loading, Updating} from "../../data/reduce/global/enums";
 import {OwnerTitled} from "../../component/about/owner-titled";
 import {ErrorMessage} from "../../component/message/error-message";
-import {
-    useFooter,
-    useFooterError,
-    useFooterLoading,
-    useFooterUpdater,
-    useFooterUpdating
-} from "../../data/reduce/footer/hooks";
 import Grid from "semantic-ui-react/dist/commonjs/collections/Grid";
 import Segment from "semantic-ui-react/dist/commonjs/elements/Segment";
 import Divider from "semantic-ui-react/dist/commonjs/elements/Divider";
@@ -17,6 +10,7 @@ import Image from "semantic-ui-react/dist/commonjs/elements/Image";
 import Form from "semantic-ui-react/dist/commonjs/collections/Form";
 import List from "semantic-ui-react/dist/commonjs/elements/List";
 import LazyIcon from "../../component/lazy-icon";
+import {useFooter, useFooterError, useFooterLoading, useFooterUpdater} from "../../data/reduce/footer";
 
 let EMPTY_LINK = () => ({caption: '', href: ''});
 let EMPTY_LOGO = () => ({name: '', src: ''});
@@ -26,9 +20,8 @@ export default function Footer() {
     let footer = useFooter();
     let errorMessage = useFooterError();
     let loading = useFooterLoading();
-    let updating = useFooterUpdating();
 
-    let submit = useFooterUpdater();
+    let {updater: submit, status: updating} = useFooterUpdater();
 
     let {updater, data} = useForm({init: footer, autoSubmit: submit});
 

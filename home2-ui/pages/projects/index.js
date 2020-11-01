@@ -6,7 +6,6 @@ import {Loading} from "../../data/reduce/global/enums";
 import {reduxWrapper} from "../../data/redux";
 import {ownerActions} from "../../data/reduce/owner";
 import {OwnerTitled} from "../../component/about/owner-titled";
-import {footerActions} from "../../data/reduce/footer/actions";
 
 export default function Projects() {
 
@@ -25,7 +24,6 @@ export const getServerSideProps = reduxWrapper.getServerSideProps(async ({store}
     await Promise.all([
         store.dispatch(ownerActions.load()), // for menubar
         store.dispatch(projectActions.load()),
-        store.dispatch(footerActions.load()),
     ])
     return {props: {}}
 })

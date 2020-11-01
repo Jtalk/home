@@ -11,7 +11,6 @@ import mapValues from "lodash/mapValues";
 import keyBy from "lodash/keyBy";
 import {deserialiseJSON, serialiseJSON} from "./reduce/global/json-io";
 import * as owner from "./reduce/owner";
-import * as footer from "./reduce/footer";
 import * as images from "./reduce/images";
 import * as projects from "./reduce/projects";
 import * as articles from "./reduce/articles";
@@ -22,7 +21,6 @@ import * as authentication from "./reduce/authentication";
 const modules = [
     articles,
     authentication,
-    footer,
     images,
     latestArticles,
     owner,
