@@ -1,4 +1,4 @@
-import {projectActions, useProjectLoading, useProjects} from "../../data/reduce/projects";
+import {useProjectLoading, useProjects} from "../../data/reduce/projects";
 import {Loading} from "../../data/reduce/global/enums";
 import {ProjectsMenu} from "../../component/projects/menu/projects-menu";
 import {ProjectDescription} from "../../component/projects/project-description";
@@ -31,8 +31,5 @@ export default function Project() {
 }
 
 export const getServerSideProps = reduxWrapper.getServerSideProps(async ({store}) => {
-    await Promise.all([
-        store.dispatch(projectActions.load()),
-    ])
     return {props: {}}
 })

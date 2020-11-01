@@ -1,3 +1,12 @@
+import {useDeleter, useLoadingStatus} from "../swr-common";
+import {useCallback, useMemo, useState} from "react";
+import {Uploading} from "./global/enums";
+import {superagentFetch, superagentUploadFile} from "../ajax/superagent-api";
+import useSWR, {mutate} from "swr";
+import getConfig from "next/config";
+
+const {publicRuntimeConfig: config} = getConfig();
+
 const imagesApiUrl = "/images";
 const pageUrl = page => page ? `${imagesApiUrl}?page=${page}` : imagesApiUrl;
 
@@ -26,9 +35,10 @@ export function useImageUploader(page) {
     const uploader = useCallback(async (name, file) => {
         setStatus(Uploading.UPLOADING);
         try {
-            await superagentUploadFile(imagesApiUrl, name, file);
+            const result = await superagentUploadFile(imagesApiUrl, name, file);
             setStatus(Uploading.UPLOADED);
             await mutate(pageUrl(page));
+            return result;
         } catch (e) {
             console.error(`Error uploading image ${name}`, e);
             setStatus(Uploading.ERROR);

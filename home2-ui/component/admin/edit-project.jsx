@@ -1,14 +1,6 @@
-import {
-    useProject,
-    useProjectDeleter,
-    useProjectDeleting,
-    useProjectError,
-    useProjectLoading,
-    useProjectUpdater,
-    useProjectUpdating
-} from "../../data/reduce/projects";
+import {useProject, useProjectDeleter, useProjectLoading, useProjectUpdater} from "../../data/reduce/projects";
 import {useForm} from "./common/use-form";
-import React, {useState} from "react";
+import React, {useCallback, useState} from "react";
 import {Deleting, Loading, Updating} from "../../data/reduce/global/enums";
 import {useFormErrors} from "./common/use-errors";
 import {ContentPlaceholderOr} from "../placeholder/content-placeholder";
@@ -23,29 +15,36 @@ import Button from "semantic-ui-react/dist/commonjs/elements/Button";
 import List from "semantic-ui-react/dist/commonjs/elements/List";
 import Message from "semantic-ui-react/dist/commonjs/collections/Message";
 import LazyIcon from "../lazy-icon";
+import {useRouter} from "next/router";
 
 export const EditProject = function ({projectId}) {
 
-    let project = useProject(projectId, true) || {};
-    let loading = useProjectLoading();
-    let updating = useProjectUpdating();
-    let deleting = useProjectDeleting();
-    let errorMessage = useProjectError();
+    const router = useRouter();
 
-    let {onSubmit, data, updater, canSubmit} = useForm({
+    let project = useProject(projectId, true) || {};
+    let loading = useProjectLoading(true);
+
+    let {onSubmit, data, updater: formUpdater, canSubmit} = useForm({
         init: project
     });
 
-    let update = useProjectUpdater();
-    let deleter = useProjectDeleter();
+    let {updater, status: updating, error: uploadError} = useProjectUpdater();
+    let {deleter, status: deleting, error: deleteError} = useProjectDeleter();
+    const errorMessage = uploadError || deleteError;
 
-    let submit = onSubmit(async (updated, extra) => await update(projectId, `${EditProjectsPath}/${data.id || ""}`, updated, extra));
-    let reset = async () => await updater.reload(project);
-    let remove = async () => await deleter(projectId, `${EditProjectsPath}/${projectId || ""}`);
+    let submit = onSubmit(async (updated, extra) => {
+        await updater(projectId, updated, extra?.logo)
+        await router.push(`${EditProjectsPath}/${data.id || ""}`);
+    });
+    let reset = async () => await formUpdater.reload(project);
+    let remove = useCallback(async () => {
+        await deleter(projectId);
+        await router.push(`${EditProjectsPath}/${projectId || ""}`);
+    }, [deleter, projectId, router]);
 
     return <ContentPlaceholderOr loading={!project} lines={20}>
         <EditProjectStateless {...{
-            loading, updating, deleting, errorMessage, updater, data, canSubmit, submit, reset, remove
+            loading, updating, deleting, errorMessage, updater: formUpdater, data, canSubmit, submit, reset, remove
         }}/>
     </ContentPlaceholderOr>
 }

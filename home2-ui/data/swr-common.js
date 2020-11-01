@@ -1,5 +1,5 @@
 import {Deleting, Loading, Updating} from "./reduce/global/enums";
-import {useCallback, useState} from "react";
+import {useCallback, useMemo, useState} from "react";
 import {superagentDelete, superagentPut} from "./ajax/superagent-api";
 import {mutate} from "swr";
 
@@ -32,7 +32,7 @@ export function useUpdater(url, updateBody = true) {
             setError(e?.message || e);
         }
     }, [updateBody, url]);
-    return {updater, status, error};
+    return useMemo(() => ({updater, status, error}), [error, status, updater]);
 }
 
 export function useDeleter(url) {
@@ -49,5 +49,5 @@ export function useDeleter(url) {
             setError(e?.message || e);
         }
     }, [url]);
-    return {deleter, status, error};
+    return useMemo(() => ({deleter, status, error}), [deleter, error, status]);
 }

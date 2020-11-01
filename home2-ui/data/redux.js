@@ -9,12 +9,10 @@ import {createWrapper} from "next-redux-wrapper";
 import mapValues from "lodash/mapValues";
 import keyBy from "lodash/keyBy";
 import {deserialiseJSON, serialiseJSON} from "./reduce/global/json-io";
-import * as projects from "./reduce/projects";
 import * as articles from "./reduce/articles";
 
 const modules = [
     articles,
-    projects,
 ]
 
 const modulesBySegment = keyBy(modules, "segment");
