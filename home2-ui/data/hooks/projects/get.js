@@ -2,6 +2,8 @@ import find from "lodash/find";
 import useSWR from "swr";
 import useLoadingStatus from "../global/swr-common/loading-status";
 import superagentFetch from "../../ajax/fetch";
+import preload from "../../preload/preload";
+import { usePreloadContext } from "../../preload/context";
 
 export const projectsApiUrl = "/projects";
 
@@ -17,10 +19,15 @@ export function useProject(id, withUnpublished = false) {
 }
 
 export function useProjectsLoader(withUnpublished) {
-  return useSWR(`${projectsApiUrl}?published=${!withUnpublished}`, superagentFetch);
+  const preload = usePreloadContext();
+  return useSWR(`${projectsApiUrl}?published=${!withUnpublished}`, superagentFetch, { initialData: preload?.projects });
 }
 
 export function useProjectLoading(withUnpublished = false) {
   const result = useProjectsLoader(withUnpublished);
   return useLoadingStatus(result);
+}
+
+export async function preloadProjects() {
+  return preload("projects", superagentFetch(projectsApiUrl));
 }

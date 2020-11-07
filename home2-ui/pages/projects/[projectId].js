@@ -5,7 +5,9 @@ import React from "react";
 import { useRouter } from "next/router";
 import { NotFound } from "../../component/error/not-found";
 import { OwnerTitled } from "../../component/about/owner-titled";
-import { useProject, useProjectLoading, useProjects } from "../../data/hooks/projects/get";
+import { preloadProjects, useProject, useProjectLoading, useProjects } from "../../data/hooks/projects/get";
+import { preloadOwner } from "../../data/hooks/owner";
+import { preloadFooter } from "../../data/hooks/footer";
 
 export default function Project() {
   let router = useRouter();
@@ -30,6 +32,9 @@ export default function Project() {
 }
 
 export async function getServerSideProps(ctx) {
-  // Do nothing, disable automatic static optimisation to access Next Config.
-  return { props: {} };
+  const preload = {};
+  preload.owner = await preloadOwner();
+  preload.footer = await preloadFooter();
+  preload.projects = await preloadProjects();
+  return { props: { preload } };
 }

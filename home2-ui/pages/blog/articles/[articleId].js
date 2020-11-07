@@ -1,6 +1,6 @@
 import React from "react";
 import { Loading } from "../../../data/hooks/global/enums";
-import { useArticle, useArticleLoading } from "../../../data/hooks/articles/get";
+import { preloadArticle, useArticle, useArticleLoading } from "../../../data/hooks/articles/get";
 import { NotFound } from "../../../component/error/not-found";
 import { useRouter } from "next/router";
 import { BlogPath } from "../../../utils/paths";
@@ -8,6 +8,9 @@ import { OwnerTitled } from "../../../component/about/owner-titled";
 import { ArticleView } from "../../../component/article/article-view";
 import Grid from "semantic-ui-react/dist/commonjs/collections/Grid";
 import dynamic from "next/dynamic";
+import { preloadOwner } from "../../../data/hooks/owner";
+import { preloadFooter } from "../../../data/hooks/footer";
+import { preloadProjects } from "../../../data/hooks/projects";
 
 export default function ArticleId() {
   let router = useRouter();
@@ -41,7 +44,10 @@ export default function ArticleId() {
   );
 }
 
-export async function getServerSideProps(ctx) {
-  // Do nothing, disable automatic static optimisation to access Next Config.
-  return { props: {} };
+export async function getServerSideProps({ params }) {
+  const preload = {};
+  preload.owner = await preloadOwner();
+  preload.footer = await preloadFooter();
+  preload.article = await preloadArticle(params.articleId);
+  return { props: { preload } };
 }

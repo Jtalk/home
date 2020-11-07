@@ -3,7 +3,9 @@ import { ProjectsMenu } from "../../component/projects/menu/projects-menu";
 import { ProjectDescription } from "../../component/projects/project-description";
 import { Loading } from "../../data/hooks/global/enums";
 import { OwnerTitled } from "../../component/about/owner-titled";
-import { useProjectLoading, useProjects } from "../../data/hooks/projects/get";
+import { preloadProjects, useProjectLoading, useProjects } from "../../data/hooks/projects/get";
+import { preloadOwner } from "../../data/hooks/owner";
+import { preloadFooter } from "../../data/hooks/footer";
 
 export default function Projects() {
   let projects = useProjects() || [];
@@ -20,6 +22,9 @@ export default function Projects() {
 }
 
 export async function getServerSideProps(ctx) {
-  // Do nothing, disable automatic static optimisation to access Next Config.
-  return { props: {} };
+  const preload = {};
+  preload.owner = await preloadOwner();
+  preload.footer = await preloadFooter();
+  preload.projects = await preloadProjects();
+  return { props: { preload } };
 }

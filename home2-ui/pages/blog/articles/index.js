@@ -14,6 +14,9 @@ import Grid from "semantic-ui-react/dist/commonjs/collections/Grid";
 import Segment from "semantic-ui-react/dist/commonjs/elements/Segment";
 import Menu from "semantic-ui-react/dist/commonjs/collections/Menu";
 import dynamic from "next/dynamic";
+import { preloadOwner } from "../../../data/hooks/owner";
+import { preloadFooter } from "../../../data/hooks/footer";
+import { preloadArticles } from "../../../data/hooks/articles/list";
 
 export default function Blog() {
   let router = useRouter();
@@ -78,7 +81,10 @@ const Pagination = function ({ loading, total, page, navigate }) {
   );
 };
 
-export async function getServerSideProps(ctx) {
-  // Do nothing, disable automatic static optimisation to access Next Config.
-  return { props: {} };
+export async function getServerSideProps({ query }) {
+  const preload = {};
+  preload.owner = await preloadOwner();
+  preload.footer = await preloadFooter();
+  preload.articles = await preloadArticles(query.page || 0);
+  return { props: { preload } };
 }
