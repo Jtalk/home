@@ -1,4 +1,4 @@
-FROM node:13-alpine
+FROM node:13
 
 ARG REACT_APP_VERSION
 WORKDIR /app
