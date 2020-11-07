@@ -1,38 +1,45 @@
 import React from "react";
-import { Loading } from "../data/hooks/global/enums";
 import { OwnerTitled } from "../component/about/owner-titled";
-import { ContentPlaceholderOr } from "../component/placeholder/content-placeholder";
 import Grid from "semantic-ui-react/dist/commonjs/collections/Grid";
-import { useOwner, useOwnerLoading } from "../data/hooks/owner/get";
+import { preloadOwner, useOwner } from "../data/hooks/owner/get";
 import dynamic from "next/dynamic";
+import PreloadContext from "../data/preload/context";
+import OwnerCard from "../component/about/owner-card";
+import MarkdownTextArea from "../component/text-area";
+import ContentPlaceholderOr from "../component/placeholder/content-placeholder";
+import { useOwnerLoading } from "../data/hooks/owner";
+import { Loading } from "../data/hooks/global/enums";
+import { preloadFooter } from "../data/hooks/footer";
 
-export default function About() {
+export default function About({ preload }) {
   const { bio } = useOwner() || {};
   const loading = useOwnerLoading();
 
-  const MarkdownTextArea = dynamic(() => import("../component/text-area"));
-  const OwnerCard = dynamic(() => import("../component/about/owner-card"));
   const LatestPosts = dynamic(() => import("../component/about/latest-posts"));
 
   return (
-    <Grid stackable centered>
-      <OwnerTitled title={"About"} />
-      <Grid.Row>
-        <Grid.Column width={10} as="main">
-          <ContentPlaceholderOr header lines={30} loading={!MarkdownTextArea || loading === Loading.LOADING}>
-            <MarkdownTextArea>{bio}</MarkdownTextArea>
-          </ContentPlaceholderOr>
-        </Grid.Column>
-        <Grid.Column width={4}>
-          <OwnerCard />
-          <LatestPosts />
-        </Grid.Column>
-      </Grid.Row>
-    </Grid>
+    <PreloadContext.Provider value={preload}>
+      <Grid stackable centered>
+        <OwnerTitled title={"About"} />
+        <Grid.Row>
+          <Grid.Column width={10} as="main">
+            <ContentPlaceholderOr header lines={30} loading={!MarkdownTextArea || loading === Loading.LOADING}>
+              <MarkdownTextArea>{bio}</MarkdownTextArea>
+            </ContentPlaceholderOr>
+          </Grid.Column>
+          <Grid.Column width={4}>
+            <OwnerCard />
+            <LatestPosts />
+          </Grid.Column>
+        </Grid.Row>
+      </Grid>
+    </PreloadContext.Provider>
   );
 }
 
 export async function getServerSideProps(ctx) {
-  // Do nothing, disable automatic static optimisation to access Next Config.
-  return { props: {} };
+  const preload = {};
+  preload.owner = await preloadOwner();
+  preload.footer = await preloadFooter();
+  return { props: { preload } };
 }

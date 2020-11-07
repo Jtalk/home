@@ -8,6 +8,11 @@ import dynamic from "next/dynamic";
 import { useLoggedIn } from "../data/hooks/authentication";
 import Container from "semantic-ui-react/dist/commonjs/elements/Container";
 import withAuthentication from "../data/hooks/authentication/with-authentication";
+import PreloadContext from "../data/preload/context";
+import Footer from "../component/footer/footer";
+import Header from "../component/header/header";
+import { preloadOwner } from "../data/hooks/owner";
+import { preloadFooter } from "../data/hooks/footer";
 
 const { ErrorBoundary } = setupErrorReporting();
 
@@ -16,31 +21,33 @@ function App({ Component, pageProps }) {
   const router = useRouter();
   const disableSSR = !process.browser && router.pathname.startsWith("/admin");
   if (disableSSR) {
+    console.info(`SSR disabled for admin page ${router.pathname}`);
     Component = dynamic(() => Promise.resolve(Component), { ssr: false });
   }
   if (process.browser && router.pathname.startsWith("/admin") && !isLoggedIn) {
     Component = dynamic(() => import("../component/error/not-found"));
   }
 
-  const Header = dynamic(() => import("../component/header/header"));
-  const Footer = dynamic(() => import("../component/footer/footer"));
-
   return (
     <ErrorBoundary>
-      <div className="main-content-pushable">
-        <Container className="main-content-pusher framed">
-          <Header />
-          <Component {...pageProps} />
-        </Container>
-        <ErrorBoundary FallbackComponent={<div />}>
-          <Footer />
-        </ErrorBoundary>
-      </div>
+      <PreloadContext.Provider value={pageProps.preload}>
+        <div className="main-content-pushable">
+          <Container className="main-content-pusher framed">
+            <Header />
+            <Component {...pageProps} />
+          </Container>
+          <ErrorBoundary FallbackComponent={<div />}>
+            <Footer />
+          </ErrorBoundary>
+        </div>
+      </PreloadContext.Provider>
     </ErrorBoundary>
   );
 }
 
-App.getInitialProps = async () => {
+App.getInitialProps = async ({ ctx }) => {
+  // Does nothing but disabling SSP so that components could access API data.
+  // We rely on components' getServerSideProps for the actual SSR
   return {};
 };
 

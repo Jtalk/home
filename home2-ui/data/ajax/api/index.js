@@ -1,16 +1,13 @@
 import prefix from "superagent-prefix";
-import getConfig from "next/config";
 import delay, { isApiDelayEnabled } from "./delay";
-
-const { publicRuntimeConfig: config } = getConfig();
+import { ApiPrefix } from "./prefix";
 
 export async function superagent() {
   return await import("superagent");
 }
 
 export default function index(request) {
-  let apiPrefix = config.api.prefix;
-  request = request.use(prefix(apiPrefix)).withCredentials();
+  request = request.use(prefix(ApiPrefix)).withCredentials();
   if (isApiDelayEnabled()) {
     request = request.use(delayed);
   }

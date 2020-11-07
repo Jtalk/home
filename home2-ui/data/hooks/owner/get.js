@@ -1,6 +1,8 @@
 import useSWR from "swr";
 import superagentFetch from "../../ajax/fetch";
 import useLoadingStatus from "../global/swr-common/loading-status";
+import { usePreloadContext } from "../../preload/context";
+import preload from "../../preload/preload";
 
 export const ownerApiUrl = "/owner";
 
@@ -9,7 +11,8 @@ export function useOwner() {
 }
 
 export function useOwnerLoader() {
-  return useSWR(ownerApiUrl, superagentFetch);
+  const preload = usePreloadContext();
+  return useSWR(ownerApiUrl, superagentFetch, { initialData: preload?.owner });
 }
 
 export function useOwnerLoading() {
@@ -19,4 +22,8 @@ export function useOwnerLoading() {
 
 export function useOwnerError() {
   return useOwnerLoader().error;
+}
+
+export async function preloadOwner() {
+  return preload("owner", superagentFetch(ownerApiUrl));
 }

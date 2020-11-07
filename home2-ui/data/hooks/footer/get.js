@@ -1,6 +1,8 @@
 import { useLoadingStatus } from "../global/swr-common";
 import useSWR from "swr";
 import { superagentFetch } from "../../ajax";
+import preload from "../../preload/preload";
+import { usePreloadContext } from "../../preload/context";
 
 export const footerApiUrl = "/footer";
 
@@ -18,5 +20,10 @@ export function useFooterLoading() {
 }
 
 function useFooterLoader() {
-  return useSWR(footerApiUrl, superagentFetch);
+  const preload = usePreloadContext();
+  return useSWR(footerApiUrl, superagentFetch, { initialData: preload?.footer });
+}
+
+export async function preloadFooter() {
+  return preload("footer", superagentFetch(footerApiUrl));
 }
