@@ -5,6 +5,7 @@ WORKDIR /app
 
 COPY node_modules ./node_modules
 COPY .next ./.next
+COPY public ./public
 COPY package*.json ./
 COPY next.config.js ./
 
