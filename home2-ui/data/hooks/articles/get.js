@@ -1,6 +1,7 @@
 import useSWR from "swr";
 import {articlesApiUrl} from "./list";
 import useLoadingStatus from "../global/swr-common/loading-status";
+import superagentFetch from "../../ajax/fetch";
 
 export function useArticle(id) {
     const {data} = useArticleLoader(id);
@@ -8,7 +9,7 @@ export function useArticle(id) {
 }
 
 export function useArticleLoader(id) {
-    return useSWR(id && `${articlesApiUrl}/${id}`);
+    return useSWR(id && `${articlesApiUrl}/${id}`, superagentFetch);
 }
 
 export function useArticleLoading(id) {

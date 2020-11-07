@@ -1,4 +1,5 @@
 import useSWR from "swr";
+import superagentFetch from "../ajax/fetch";
 
 const knownTagsApiUrl = "/blog/tags";
 
@@ -8,5 +9,5 @@ export function useAvailableTags() {
 }
 
 function useAvailableTagsLoader() {
-    return useSWR(knownTagsApiUrl);
+    return useSWR(knownTagsApiUrl, superagentFetch);
 }

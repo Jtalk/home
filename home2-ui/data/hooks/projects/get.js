@@ -1,6 +1,7 @@
 import find from "lodash/find";
 import useSWR from "swr";
 import useLoadingStatus from "../global/swr-common/loading-status";
+import superagentFetch from "../../ajax/fetch";
 
 export const projectsApiUrl = "/projects";
 
@@ -16,7 +17,7 @@ export function useProject(id, withUnpublished = false) {
 }
 
 export function useProjectsLoader(withUnpublished) {
-    return useSWR(`${projectsApiUrl}?published=${!withUnpublished}`);
+    return useSWR(`${projectsApiUrl}?published=${!withUnpublished}`, superagentFetch);
 }
 
 export function useProjectLoading(withUnpublished = false) {

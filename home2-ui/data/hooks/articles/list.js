@@ -1,5 +1,6 @@
 import useSWR from "swr";
 import useLoadingStatus from "../global/swr-common/loading-status";
+import superagentFetch from "../../ajax/fetch";
 
 export const articlesApiUrl = "/blog/articles";
 
@@ -9,7 +10,7 @@ export function useArticles(page, pageSize, withUnpublished = false) {
 }
 
 export function useArticlesLoader(page, pageSize, withUnpublished) {
-    return useSWR(`${articlesApiUrl}?page=${page}&pageSize=${pageSize}&published=${!withUnpublished}`);
+    return useSWR(`${articlesApiUrl}?page=${page}&pageSize=${pageSize}&published=${!withUnpublished}`, superagentFetch);
 }
 
 export function useArticlesTotalCount(page, pageSize, withUnpublished = false) {

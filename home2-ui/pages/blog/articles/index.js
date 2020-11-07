@@ -18,8 +18,8 @@ export default function Blog() {
     page = parseInt(Array.isArray(page) ? page[0] : page);
 
     let articles = useArticles(page - 1, DEFAULT_PAGE_SIZE);
-    let totalCount = useArticlesTotalCount();
-    let loading = useArticlesLoading();
+    let totalCount = useArticlesTotalCount(page - 1, DEFAULT_PAGE_SIZE);
+    let loading = useArticlesLoading(page - 1, DEFAULT_PAGE_SIZE);
 
     let navigateToPage = async (page) => {
         await router.push(`${BlogPath}?page=${page}`, undefined, { shallow: true });
