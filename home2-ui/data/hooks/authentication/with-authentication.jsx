@@ -52,6 +52,9 @@ export default function withAuthentication(Component) {
     );
   };
   Wrapper.displayName = `withAuthentication(${Component.displayName || Component.name || "Component"})`;
+  if (Component.getInitialProps) {
+    Wrapper.getInitialProps = async (...args) => Component.getInitialProps(...args);
+  }
   return Wrapper;
 }
 
