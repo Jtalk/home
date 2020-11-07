@@ -9,46 +9,49 @@ console.debug("API debug response delay is set to", debugDelay);
 const withBundleAnalyzer = require('@next/bundle-analyzer')({
     enabled: process.env.ANALYZE === 'true'
 })
+const withSourceMaps = require('@zeit/next-source-maps')
 
-module.exports = withBundleAnalyzer({
-    serverRuntimeConfig: {
-    },
-    publicRuntimeConfig: {
-        api: {
-            prefix: api,
-            debug: {
-                delay: debugDelay
-            }
-        },
-        image: {
-            url: {
-                template: `${api}/images/{}`
-            }
-        },
-        bugsnag: {
-            key: API_KEY,
-            version: APP_VERSION
+module.exports = withBundleAnalyzer(
+    withSourceMaps(
+        {
+            serverRuntimeConfig: {},
+            publicRuntimeConfig: {
+                api: {
+                    prefix: api,
+                    debug: {
+                        delay: debugDelay
+                    }
+                },
+                image: {
+                    url: {
+                        template: `${api}/images/{}`
+                    }
+                },
+                bugsnag: {
+                    key: API_KEY,
+                    version: APP_VERSION
+                }
+            },
+            async redirects() {
+                return [
+                    {
+                        source: '/home',
+                        destination: '/',
+                        permanent: true,
+                    },
+                    {
+                        source: '/home/projects.xhtml',
+                        destination: '/projects',
+                        permanent: true,
+                    },
+                    {
+                        source: '/home/blog/post.xhtml',
+                        destination: '/blog/articles',
+                        permanent: true,
+                    },
+
+                ]
+            },
+            excludeFile: (str) => /\*.{spec,test}.js/.test(str)
         }
-    },
-    async redirects() {
-        return [
-            {
-                source: '/home',
-                destination: '/',
-                permanent: true,
-            },
-            {
-                source: '/home/projects.xhtml',
-                destination: '/projects',
-                permanent: true,
-            },
-            {
-                source: '/home/blog/post.xhtml',
-                destination: '/blog/articles',
-                permanent: true,
-            },
-
-        ]
-    },
-    excludeFile: (str) => /\*.{spec,test}.js/.test(str)
-});
+    ));
