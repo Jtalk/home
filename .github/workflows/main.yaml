@@ -62,7 +62,7 @@ jobs:
         cat build.sbt
       working-directory: home2-rest
     - name: Build & publish the project
-      uses: matankdr/github-docker-sbt@cbbd7cd33a08bde77b42e329107b7123df26bf14
+      uses: matankdr/github-docker-sbt@a8b6a773bcab2df439fe4150ff155196629d1d4f
       with:
         command: |
           sbt test docker:publish
