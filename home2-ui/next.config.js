@@ -1,5 +1,5 @@
 const api = process.env.REACT_APP_API_URL || "http://localhost:8090";
-const debugDelay = process.env["REACT_APP_TEST_DURATION"];
+const debugDelay = process.env.REACT_APP_TEST_DURATION;
 const APP_VERSION = process.env.REACT_APP_VERSION || undefined;
 const API_KEY = process.env.REACT_APP_BUGSNAG_API_KEY;
 

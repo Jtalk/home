@@ -40,4 +40,8 @@ function App({ Component, pageProps }) {
   );
 }
 
+App.getInitialProps = async () => {
+  return {};
+};
+
 export default withAuthentication(App);

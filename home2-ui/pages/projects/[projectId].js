@@ -28,3 +28,8 @@ export default function Project() {
     </div>
   );
 }
+
+export async function getServerSideProps(ctx) {
+  // Do nothing, disable automatic static optimisation to access Next Config.
+  return { props: {} };
+}
