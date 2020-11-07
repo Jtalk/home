@@ -6,6 +6,7 @@ WORKDIR /app
 COPY node_modules ./node_modules
 COPY .next ./.next
 COPY package*.json ./
+COPY next.config.js ./
 
 ENV PORT=80
 ENV NODE_ENV=production
