@@ -1,11 +1,11 @@
-import {useAuthentication} from "./context";
+import { useAuthentication } from "./context";
 
 export function useLoginHandler() {
-    const {login} = useAuthentication() || {};
-    return login;
+  const { login } = useAuthentication() || {};
+  return login;
 }
 
 export function useLoginError() {
-    const {error} = useAuthentication() || {};
-    return error;
+  const { error } = useAuthentication() || {};
+  return error;
 }

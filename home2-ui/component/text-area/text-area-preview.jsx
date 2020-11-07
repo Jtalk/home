@@ -1,3 +1,3 @@
-export const Preview = function ({children}) {
-    return children || "";
+export const Preview = function ({ children }) {
+  return children || "";
 };

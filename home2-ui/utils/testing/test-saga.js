@@ -1,4 +1,1 @@
-
-
-export function* emptySaga() {
-}
+export function* emptySaga() {}

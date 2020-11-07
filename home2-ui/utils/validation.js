@@ -1,6 +1,5 @@
-
-export const checkTruthy = function(value, message) {
-    if (!value) {
-        throw new Error(message);
-    }
+export const checkTruthy = function (value, message) {
+  if (!value) {
+    throw new Error(message);
+  }
 };

@@ -1,6 +1,6 @@
-import {useAuthentication} from "./context";
+import { useAuthentication } from "./context";
 
 export function useLogoutHandler() {
-    const {logout} = useAuthentication() || {};
-    return logout;
+  const { logout } = useAuthentication() || {};
+  return logout;
 }

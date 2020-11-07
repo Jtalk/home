@@ -1,11 +1,12 @@
-import {EditProjects} from "../../../component/admin/edit-projects";
+import { EditProjects } from "../../../component/admin/edit-projects";
 import React from "react";
-import {OwnerTitled} from "../../../component/about/owner-titled";
+import { OwnerTitled } from "../../../component/about/owner-titled";
 
 export default function Projects() {
-
-    return <>
-        <OwnerTitled title={"Edit Projects"}/>
-        <EditProjects/>
+  return (
+    <>
+      <OwnerTitled title={"Edit Projects"} />
+      <EditProjects />
     </>
+  );
 }

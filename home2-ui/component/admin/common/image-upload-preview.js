@@ -1,8 +1,8 @@
 import React from "react";
-import {useDataUrl} from "../../../utils/file-converter-context";
-import {OptionalImage} from "../../image/optional-image";
+import { useDataUrl } from "../../../utils/file-converter-context";
+import { OptionalImage } from "../../image/optional-image";
 
-export const ImageUploadPreview = function ({src, alt, className}) {
-    src = useDataUrl(src);
-    return <OptionalImage className={className} src={src} alt={alt}/>;
+export const ImageUploadPreview = function ({ src, alt, className }) {
+  src = useDataUrl(src);
+  return <OptionalImage className={className} src={src} alt={alt} />;
 };

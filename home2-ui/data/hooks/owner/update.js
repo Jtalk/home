@@ -1,6 +1,6 @@
 import useUpdater from "../global/swr-common/updater";
-import {ownerApiUrl} from "./get";
+import { ownerApiUrl } from "./get";
 
 export function useOwnerUpdater() {
-    return useUpdater(ownerApiUrl);
+  return useUpdater(ownerApiUrl);
 }

@@ -11,23 +11,23 @@ metadata:
 spec:
   tls:
     - hosts:
-      - jtalk.me
+        - jtalk.me
       secretName: home-certificate
     - hosts:
-      - www.jtalk.me
+        - www.jtalk.me
       secretName: www-home-certificate
   rules:
     - host: jtalk.me
       http:
         paths:
-        - path: /(.*)
-          backend:
-            serviceName: home-ui
-            servicePort: 80
+          - path: /(.*)
+            backend:
+              serviceName: home-ui
+              servicePort: 80
     - host: www.jtalk.me
       http:
         paths:
-        - path: /(.*)
-          backend:
-            serviceName: home-ui
-            servicePort: 80
+          - path: /(.*)
+            backend:
+              serviceName: home-ui
+              servicePort: 80

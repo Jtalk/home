@@ -1,19 +1,19 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import FlipMove from 'react-flip-move';
+import React from "react";
+import PropTypes from "prop-types";
+import FlipMove from "react-flip-move";
 
 const styles = {
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
   flexWrap: "wrap",
-  width: "100%"
+  width: "100%",
 };
 
 const ERROR = {
-  NOT_SUPPORTED_EXTENSION: 'NOT_SUPPORTED_EXTENSION',
-  FILESIZE_TOO_LARGE: 'FILESIZE_TOO_LARGE'
-}
+  NOT_SUPPORTED_EXTENSION: "NOT_SUPPORTED_EXTENSION",
+  FILESIZE_TOO_LARGE: "FILESIZE_TOO_LARGE",
+};
 
 class ReactImageUploadComponent extends React.Component {
   constructor(props) {
@@ -21,16 +21,16 @@ class ReactImageUploadComponent extends React.Component {
     this.state = {
       pictures: [...props.defaultImages],
       files: [],
-      fileErrors: []
+      fileErrors: [],
     };
-    this.inputElement = '';
+    this.inputElement = "";
     this.onDropFile = this.onDropFile.bind(this);
     this.onUploadClick = this.onUploadClick.bind(this);
     this.triggerFileUpload = this.triggerFileUpload.bind(this);
   }
 
-  componentDidUpdate(prevProps, prevState, snapshot){
-    if(prevState.files !== this.state.files){
+  componentDidUpdate(prevProps, prevState, snapshot) {
+    if (prevState.files !== this.state.files) {
       this.props.onChange(this.state.files, this.state.pictures);
     }
   }
@@ -39,8 +39,8 @@ class ReactImageUploadComponent extends React.Component {
 	 Check file extension (onDropFile)
 	 */
   hasExtension(fileName) {
-    const pattern = '(' + this.props.imgExtension.join('|').replace(/\./g, '\\.') + ')$';
-    return new RegExp(pattern, 'i').test(fileName);
+    const pattern = "(" + this.props.imgExtension.join("|").replace(/\./g, "\\.") + ")$";
+    return new RegExp(pattern, "i").test(fileName);
   }
 
   /*
@@ -60,15 +60,15 @@ class ReactImageUploadComponent extends React.Component {
       // Check for file extension
       if (!this.hasExtension(file.name)) {
         fileError = Object.assign(fileError, {
-          type: ERROR.NOT_SUPPORTED_EXTENSION
+          type: ERROR.NOT_SUPPORTED_EXTENSION,
         });
         fileErrors.push(fileError);
         continue;
       }
       // Check for file size
-      if(file.size > this.props.maxFileSize) {
+      if (file.size > this.props.maxFileSize) {
         fileError = Object.assign(fileError, {
-          type: ERROR.FILESIZE_TOO_LARGE
+          type: ERROR.FILESIZE_TOO_LARGE,
         });
         fileErrors.push(fileError);
         continue;
@@ -78,21 +78,21 @@ class ReactImageUploadComponent extends React.Component {
     }
 
     this.setState({
-      fileErrors
+      fileErrors,
     });
 
-    const {singleImage} = this.props;
+    const { singleImage } = this.props;
 
-    Promise.all(allFilePromises).then(newFilesData => {
-      const dataURLs = singleImage?[]:this.state.pictures.slice();
-      const files = singleImage?[]:this.state.files.slice();
+    Promise.all(allFilePromises).then((newFilesData) => {
+      const dataURLs = singleImage ? [] : this.state.pictures.slice();
+      const files = singleImage ? [] : this.state.files.slice();
 
-      newFilesData.forEach(newFileData => {
+      newFilesData.forEach((newFileData) => {
         dataURLs.push(newFileData.dataURL);
         files.push(newFileData.file);
       });
 
-      this.setState({pictures: dataURLs, files: files});
+      this.setState({ pictures: dataURLs, files: files });
     });
   }
 
@@ -113,7 +113,7 @@ class ReactImageUploadComponent extends React.Component {
         // Add the file name to the data URL
         let dataURL = e.target.result;
         dataURL = dataURL.replace(";base64", `;name=${file.name};base64`);
-        resolve({file, dataURL});
+        resolve({ file, dataURL });
       };
 
       reader.readAsDataURL(file);
@@ -124,11 +124,11 @@ class ReactImageUploadComponent extends React.Component {
    Remove the image from state
    */
   removeImage(picture) {
-    const removeIndex = this.state.pictures.findIndex(e => e === picture);
+    const removeIndex = this.state.pictures.findIndex((e) => e === picture);
     const filteredPictures = this.state.pictures.filter((e, index) => index !== removeIndex);
     const filteredFiles = this.state.files.filter((e, index) => index !== removeIndex);
 
-    this.setState({pictures: filteredPictures, files: filteredFiles}, () => {
+    this.setState({ pictures: filteredPictures, files: filteredFiles }, () => {
       this.props.onChange(this.state.files, this.state.pictures);
     });
   }
@@ -140,8 +140,9 @@ class ReactImageUploadComponent extends React.Component {
     const { fileErrors } = this.state;
     return fileErrors.map((fileError, index) => {
       return (
-        <div className={'errorMessage ' + this.props.errorClass} key={index} style={this.props.errorStyle}>
-          * {fileError.name} {fileError.type === ERROR.FILESIZE_TOO_LARGE ? this.props.fileSizeError: this.props.fileTypeError}
+        <div className={"errorMessage " + this.props.errorClass} key={index} style={this.props.errorStyle}>
+          * {fileError.name}{" "}
+          {fileError.type === ERROR.FILESIZE_TOO_LARGE ? this.props.fileSizeError : this.props.fileTypeError}
         </div>
       );
     });
@@ -161,7 +162,11 @@ class ReactImageUploadComponent extends React.Component {
    */
   renderLabel() {
     if (this.props.withLabel) {
-      return <p className={this.props.labelClass} style={this.props.labelStyles}>{this.props.label}</p>
+      return (
+        <p className={this.props.labelClass} style={this.props.labelStyles}>
+          {this.props.label}
+        </p>
+      );
     }
   }
 
@@ -182,8 +187,10 @@ class ReactImageUploadComponent extends React.Component {
     return this.state.pictures.map((picture, index) => {
       return (
         <div key={index} className="uploadPictureContainer">
-          <div className="deleteImage" onClick={() => this.removeImage(picture)}>X</div>
-          <img src={picture} className="uploadPicture" alt="preview"/>
+          <div className="deleteImage" onClick={() => this.removeImage(picture)}>
+            X
+          </div>
+          <img src={picture} className="uploadPicture" alt="preview" />
         </div>
       );
     });
@@ -197,7 +204,7 @@ class ReactImageUploadComponent extends React.Component {
   }
 
   clearPictures() {
-    this.setState({pictures: []})
+    this.setState({ pictures: [] });
   }
 
   render() {
@@ -206,9 +213,7 @@ class ReactImageUploadComponent extends React.Component {
         <div className="fileContainer" style={this.props.fileContainerStyle}>
           {this.renderIcon()}
           {this.renderLabel()}
-          <div className="errorsContainer">
-            {this.renderErrors()}
-          </div>
+          <div className="errorsContainer">{this.renderErrors()}</div>
           <button
             type={this.props.buttonType}
             className={"chooseFileButton " + this.props.buttonClassName}
@@ -219,22 +224,22 @@ class ReactImageUploadComponent extends React.Component {
           </button>
           <input
             type="file"
-            ref={input => this.inputElement = input}
+            ref={(input) => (this.inputElement = input)}
             name={this.props.name}
             multiple={!this.props.singleImage}
             onChange={this.onDropFile}
             onClick={this.onUploadClick}
             accept={this.props.accept}
           />
-          { this.props.withPreview ? this.renderPreview() : null }
+          {this.props.withPreview ? this.renderPreview() : null}
         </div>
       </div>
-    )
+    );
   }
 }
 
 ReactImageUploadComponent.defaultProps = {
-  className: '',
+  className: "",
   fileContainerStyle: {},
   buttonClassName: "",
   buttonStyles: {},
@@ -248,7 +253,7 @@ ReactImageUploadComponent.defaultProps = {
   label: "Max file size: 5mb, accepted: jpg|gif|png",
   labelStyles: {},
   labelClass: "",
-  imgExtension: ['.jpg', '.jpeg', '.gif', '.png'],
+  imgExtension: [".jpg", ".jpeg", ".gif", ".png"],
   maxFileSize: 5242880,
   fileSizeError: " file size is too big",
   fileTypeError: " is not a supported file extension",
@@ -257,7 +262,7 @@ ReactImageUploadComponent.defaultProps = {
   errorStyle: {},
   singleImage: false,
   onChange: () => {},
-  defaultImages: []
+  defaultImages: [],
 };
 
 ReactImageUploadComponent.propTypes = {
@@ -285,7 +290,7 @@ ReactImageUploadComponent.propTypes = {
   errorClass: PropTypes.string,
   errorStyle: PropTypes.object,
   singleImage: PropTypes.bool,
-  defaultImages: PropTypes.array
+  defaultImages: PropTypes.array,
 };
 
 export default ReactImageUploadComponent;

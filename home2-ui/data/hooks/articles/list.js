@@ -5,20 +5,20 @@ import superagentFetch from "../../ajax/fetch";
 export const articlesApiUrl = "/blog/articles";
 
 export function useArticles(page, pageSize, withUnpublished = false) {
-    const {data} = useArticlesLoader(page, pageSize, withUnpublished);
-    return data?.data;
+  const { data } = useArticlesLoader(page, pageSize, withUnpublished);
+  return data?.data;
 }
 
 export function useArticlesLoader(page, pageSize, withUnpublished) {
-    return useSWR(`${articlesApiUrl}?page=${page}&pageSize=${pageSize}&published=${!withUnpublished}`, superagentFetch);
+  return useSWR(`${articlesApiUrl}?page=${page}&pageSize=${pageSize}&published=${!withUnpublished}`, superagentFetch);
 }
 
 export function useArticlesTotalCount(page, pageSize, withUnpublished = false) {
-    const {data} = useArticlesLoader(page, pageSize, withUnpublished);
-    return data?.pagination?.total;
+  const { data } = useArticlesLoader(page, pageSize, withUnpublished);
+  return data?.pagination?.total;
 }
 
 export function useArticlesLoading(page, pageSize, withUnpublished = false) {
-    const result = useArticlesLoader(page, pageSize, withUnpublished);
-    return useLoadingStatus(result);
+  const result = useArticlesLoader(page, pageSize, withUnpublished);
+  return useLoadingStatus(result);
 }

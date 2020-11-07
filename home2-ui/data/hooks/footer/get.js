@@ -1,22 +1,22 @@
-import {useLoadingStatus} from "../global/swr-common";
+import { useLoadingStatus } from "../global/swr-common";
 import useSWR from "swr";
-import {superagentFetch} from "../../ajax";
+import { superagentFetch } from "../../ajax";
 
 export const footerApiUrl = "/footer";
 
 export function useFooter() {
-    return useFooterLoader().data;
+  return useFooterLoader().data;
 }
 
 export function useFooterError() {
-    return useFooterLoader().error;
+  return useFooterLoader().error;
 }
 
 export function useFooterLoading() {
-    const state = useFooterLoader();
-    return useLoadingStatus(state);
+  const state = useFooterLoader();
+  return useLoadingStatus(state);
 }
 
 function useFooterLoader() {
-    return useSWR(footerApiUrl, superagentFetch);
+  return useSWR(footerApiUrl, superagentFetch);
 }
