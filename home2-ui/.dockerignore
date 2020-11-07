@@ -1,0 +1,6 @@
+.idea
+deploy
+README.md
+setupTests.js
+**/*.test.jsx?
+.prettierrc.json

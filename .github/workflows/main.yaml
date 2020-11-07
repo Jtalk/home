@@ -17,9 +17,7 @@ jobs:
     name: Build and Release UI
     runs-on: ubuntu-latest
     env:
-      REACT_APP_API_URL: /api
       REACT_APP_VERSION: ${{ github.sha }}
-      REACT_APP_BUGSNAG_API_KEY: 899f8865a22e37b078415c92f56dfc5f
     steps:
     - uses: actions/checkout@v1
     - name: Set up Node.JS ${{ env.NODE_VERSION }}
@@ -37,6 +35,7 @@ jobs:
       working-directory: home2-ui
       run: |
         npm run build
+        npm prune --production
     - name: Build and push Docker images
       uses: docker/build-push-action@v1.0.1
       with:
@@ -48,6 +47,8 @@ jobs:
         tag_with_ref: true
         tag_with_sha: false
         push: true
+        build-args:
+          - REACT_APP_VERSION=${{ env.REACT_APP_VERSION }}
 
   build-release-api:
     name: Build and Release API
