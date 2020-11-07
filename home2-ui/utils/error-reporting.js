@@ -4,7 +4,7 @@ import React from "react";
 import {BasicErrorBoundary} from "./basic-error-boundary";
 import getConfig from "next/config";
 
-const {publicRuntimeConfig: config} = getConfig();
+const {publicRuntimeConfig: config} = getConfig() || {};
 
 let ErrorBoundary = null;
 

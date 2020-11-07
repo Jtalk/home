@@ -1,5 +1,9 @@
-import {useForm} from "./use-form";
 import {act, renderHook} from "@testing-library/react-hooks";
+import {reportError} from "../../../utils/error-reporting";
+import {useForm} from "./use-form";
+
+jest.mock("../../../utils/error-reporting");
+reportError.mockImplementation(() => null);
 
 describe("useForm", () => {
 
