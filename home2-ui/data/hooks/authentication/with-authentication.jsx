@@ -73,7 +73,7 @@ function WithAuthentication({ children }) {
       refreshAuthentication()
         .then((expiry) => {
           if (expiry) {
-            dispatch({ type: Action.INIT, data: state });
+            dispatch({ type: Action.RESTORE, data: state });
           } else {
             // Else our auth has expired already, cleaning the local store
             console.info("The authentication data in the local store has expired, cleaning it up");
@@ -122,6 +122,7 @@ function WithAuthentication({ children }) {
       const { expiry } = await superagentPostForm("/login", form);
       console.info("Login success");
       dispatch({ type: Action.LOGIN, data: { expiry, username: form.login } });
+      updateLocalStore({ username: form.login, expiry });
       return true;
     } catch (e) {
       console.error("Error logging in", e);
