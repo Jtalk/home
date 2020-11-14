@@ -20,8 +20,8 @@ spec:
     - host: jtalk.me
       http:
         paths:
-          - path: /
-            pathType: Prefix
+          - path: /(.*)
+            pathType: ImplementationSpecific
             backend:
               service:
                 name: home-ui
@@ -30,8 +30,8 @@ spec:
     - host: www.jtalk.me
       http:
         paths:
-          - path: /
-            pathType: Prefix
+          - path: /(.*)
+            pathType: ImplementationSpecific
             backend:
               service:
                 name: home-ui

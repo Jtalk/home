@@ -19,8 +19,8 @@ spec:
     - host: staging.jtalk.me
       http:
         paths:
-          - path: /api
-            pathType: Prefix
+          - path: /api/(.*)
+            pathType: ImplementationSpecific
             backend:
               service:
                 name: home-api
