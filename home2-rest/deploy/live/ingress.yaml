@@ -22,7 +22,8 @@ spec:
     - host: jtalk.me
       http:
         paths:
-          - path: /api/(.*)
+          - path: /api
+            pathType: Prefix
             backend:
               service:
                 name: home-api
@@ -31,7 +32,8 @@ spec:
     - host: www.jtalk.me
       http:
         paths:
-          - path: /api/(.*)
+          - path: /api
+            pathType: Prefix
             backend:
               service:
                 name: home-api
