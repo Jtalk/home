@@ -30,7 +30,7 @@ function App({ Component, pageProps }) {
 
   return (
     <ErrorBoundary>
-      <PreloadContext.Provider value={pageProps.preload}>
+      <PreloadContext.Provider value={pageProps?.preload || {}}>
         <div className="main-content-pushable">
           <Container className="main-content-pusher framed">
             <Header />
