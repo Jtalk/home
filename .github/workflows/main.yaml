@@ -198,7 +198,7 @@ jobs:
           method: service-account
           k8s-url: ${{ secrets.CLUSTER_URL }}
           k8s-secret: ${{ secrets.CLUSTER_ACCOUNT_SECRET }}
-      - name: Deploy API to Kubernetes
+      - name: Deploy UI to Kubernetes
         uses: jtalk/k8s-deploy@v2
         with:
           namespace: home-staging
@@ -304,7 +304,7 @@ jobs:
           method: service-account
           k8s-url: ${{ secrets.CLUSTER_URL }}
           k8s-secret: ${{ secrets.CLUSTER_ACCOUNT_SECRET }}
-      - name: Deploy API to Kubernetes
+      - name: Deploy UI to Kubernetes
         uses: jtalk/k8s-deploy@v2
         with:
           namespace: home
