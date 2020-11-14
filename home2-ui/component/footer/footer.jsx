@@ -7,7 +7,8 @@ import "./footer.module.css";
 import { useFooter } from "../../data/hooks/footer/get";
 
 export default function Footer() {
-  let { links, logos } = useFooter() || {};
+  const { data } = useFooter();
+  const { links, logos } = data || {};
   return <StatelessFooter {...{ links, logos }} />;
 }
 

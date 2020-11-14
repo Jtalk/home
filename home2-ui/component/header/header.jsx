@@ -11,7 +11,7 @@ export default function Header() {
   const router = useRouter();
   const activeRoute = router.pathname;
 
-  const owner = useOwner() || {};
+  const { data: owner } = useOwner();
   const authenticated = useLoggedIn();
 
   return <HeaderStateless authenticated={authenticated} activeRoute={activeRoute} ownerName={owner?.name || ""} />;

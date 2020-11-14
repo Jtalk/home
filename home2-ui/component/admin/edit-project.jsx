@@ -15,30 +15,29 @@ import List from "semantic-ui-react/dist/commonjs/elements/List";
 import Message from "semantic-ui-react/dist/commonjs/collections/Message";
 import LazyIcon from "../lazy-icon";
 import { useRouter } from "next/router";
-import { useProject, useProjectLoading } from "../../data/hooks/projects/get";
+import { useProject } from "../../data/hooks/projects/get";
 import { useProjectUpdater } from "../../data/hooks/projects/update";
 import { useProjectDeleter } from "../../data/hooks/projects/delete";
 
 export const EditProject = function ({ projectId }) {
   const router = useRouter();
 
-  let project = useProject(projectId, true) || {};
-  let loading = useProjectLoading(true);
+  const { data: project = {}, loading } = useProject(projectId, true);
 
-  let { onSubmit, data, updater: formUpdater, canSubmit } = useForm({
+  const { onSubmit, data, updater: formUpdater, canSubmit } = useForm({
     init: project,
   });
 
-  let { updater, status: updating, error: uploadError } = useProjectUpdater();
-  let { deleter, status: deleting, error: deleteError } = useProjectDeleter();
+  const { updater, status: updating, error: uploadError } = useProjectUpdater();
+  const { deleter, status: deleting, error: deleteError } = useProjectDeleter();
   const errorMessage = uploadError || deleteError;
 
-  let submit = onSubmit(async (updated, extra) => {
+  const submit = onSubmit(async (updated, extra) => {
     await updater(projectId, updated, extra?.logo);
     await router.push(`${EditProjectsPath}/${data.id || ""}`);
   });
-  let reset = async () => await formUpdater.reload(project);
-  let remove = useCallback(async () => {
+  const reset = async () => await formUpdater.reload(project);
+  const remove = useCallback(async () => {
     await deleter(projectId);
     await router.push(`${EditProjectsPath}/${projectId || ""}`);
   }, [deleter, projectId, router]);

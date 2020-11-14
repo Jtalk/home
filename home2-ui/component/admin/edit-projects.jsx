@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 import Link from "next/link";
 import { NotFound } from "../error/not-found";
 import { EditProject } from "./edit-project";
@@ -12,6 +12,8 @@ import Menu from "semantic-ui-react/dist/commonjs/collections/Menu";
 import LazyIcon from "../lazy-icon";
 import { useProject, useProjects } from "../../data/hooks/projects/get";
 import { useProjectUpdater } from "../../data/hooks/projects/update";
+import { useProjectError } from "../../data/hooks/projects";
+import { useRouter } from "next/router";
 
 const NEW_PROJECT_ID = "new";
 const MAKE_NEW_PROJECT = (order) => ({
@@ -25,12 +27,20 @@ const MAKE_NEW_PROJECT = (order) => ({
 });
 
 export const EditProjects = function ({ currentProjectId }) {
-  let projects = useProjects(true);
-  let currentProject = useProject(currentProjectId, true);
+  const router = useRouter();
 
-  let errorMessage = useProjectError();
+  const { data: projects, error: errorMessage } = useProjects(true);
+  const { data: currentProject } = useProject(currentProjectId, true);
 
-  let submit = useProjectUpdater();
+  const { updater } = useProjectUpdater();
+  const submit = useCallback(
+    async (id, redirectTo, data, { logo } = {}) => {
+      const result = await updater(id, data, logo);
+      redirectTo && (await router.push(redirectTo));
+      return result;
+    },
+    [router, updater]
+  );
 
   if (projects && projects.length && currentProjectId && !currentProject) {
     return <NotFound />;

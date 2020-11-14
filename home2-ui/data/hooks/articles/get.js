@@ -1,23 +1,14 @@
 import useSWR from "swr";
 import { articlesApiUrl } from "./list";
-import useLoadingStatus from "../global/swr-common/loading-status";
 import superagentFetch from "../../ajax/fetch";
 import preload from "../../preload/preload";
 import { usePreloadContext } from "../../preload/context";
+import useResultMapper from "../global/swr-common/mapper";
 
 export function useArticle(id) {
-  const { data } = useArticleLoader(id);
-  return data;
-}
-
-export function useArticleLoader(id) {
   const preload = usePreloadContext();
-  return useSWR(id && `${articlesApiUrl}/${id}`, superagentFetch, { initialData: preload?.article?.[id] });
-}
-
-export function useArticleLoading(id) {
-  const result = useArticleLoader(id);
-  return useLoadingStatus(result);
+  const result = useSWR(id && `${articlesApiUrl}/${id}`, superagentFetch, { initialData: preload?.article?.[id] });
+  return useResultMapper(result);
 }
 
 export async function preloadArticle(id) {

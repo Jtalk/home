@@ -1,10 +1,5 @@
 import React from "react";
-import {
-  DEFAULT_PAGE_SIZE,
-  useArticles,
-  useArticlesLoading,
-  useArticlesTotalCount,
-} from "../../../data/hooks/articles";
+import { DEFAULT_PAGE_SIZE, useArticles } from "../../../data/hooks/articles";
 import { Loading } from "../../../data/hooks/global/enums";
 import { useRouter } from "next/router";
 import { BlogPath } from "../../../utils/paths";
@@ -19,16 +14,15 @@ import { preloadFooter } from "../../../data/hooks/footer";
 import { preloadArticles } from "../../../data/hooks/articles/list";
 
 export default function Blog() {
-  let router = useRouter();
+  const router = useRouter();
 
   let { page = 1 } = router.query;
   page = parseInt(Array.isArray(page) ? page[0] : page);
 
-  let articles = useArticles(page - 1, DEFAULT_PAGE_SIZE);
-  let totalCount = useArticlesTotalCount(page - 1, DEFAULT_PAGE_SIZE);
-  let loading = useArticlesLoading(page - 1, DEFAULT_PAGE_SIZE);
+  const { data: articles, pagination, loading } = useArticles(page - 1, DEFAULT_PAGE_SIZE);
+  const totalCount = pagination?.total;
 
-  let navigateToPage = async (page) => {
+  const navigateToPage = async (page) => {
     await router.push(`${BlogPath}?page=${page}`, undefined, { shallow: true });
   };
 

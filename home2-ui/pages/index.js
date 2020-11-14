@@ -7,13 +7,12 @@ import PreloadContext from "../data/preload/context";
 import OwnerCard from "../component/about/owner-card";
 import MarkdownTextArea from "../component/text-area";
 import ContentPlaceholderOr from "../component/placeholder/content-placeholder";
-import { useOwnerLoading } from "../data/hooks/owner";
 import { Loading } from "../data/hooks/global/enums";
 import { preloadFooter } from "../data/hooks/footer";
 
 export default function About({ preload }) {
-  const { bio } = useOwner() || {};
-  const loading = useOwnerLoading();
+  const { data: owner, loading } = useOwner();
+  const { bio } = owner || {};
 
   const LatestPosts = dynamic(() => import("../component/about/latest-posts"));
 

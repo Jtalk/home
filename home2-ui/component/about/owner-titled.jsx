@@ -3,7 +3,8 @@ import Head from "next/head";
 import { useOwner } from "../../data/hooks/owner/get";
 
 export const OwnerTitled = function ({ title, subtitle }) {
-  let { name } = useOwner() || {};
+  const { data } = useOwner();
+  const { name } = data || {};
   return (
     <Head>
       <title>

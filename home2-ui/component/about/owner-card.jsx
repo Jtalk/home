@@ -8,11 +8,10 @@ import { OptionalImage } from "../image/optional-image";
 import { useLoggedIn } from "../../data/hooks/authentication/hooks";
 import Card from "semantic-ui-react/dist/commonjs/views/Card";
 import dynamic from "next/dynamic";
-import { useOwner, useOwnerLoading } from "../../data/hooks/owner/get";
+import { useOwner } from "../../data/hooks/owner/get";
 
 export default function OwnerCard() {
-  let owner = useOwner() || {};
-  let loading = useOwnerLoading();
+  let { data: owner, loading } = useOwner();
   let loggedIn = useLoggedIn();
 
   let [loggingIn, setLoggingIn] = useState(false);
@@ -26,7 +25,7 @@ export default function OwnerCard() {
 
   return (
     <>
-      <CardStateless {...{ loading, owner, showLogin }} />
+      <CardStateless loading={loading} owner={owner || {}} showLogin={showLogin} />
       <LoginModal enabled={loggingIn} onClose={onCloseHandler} />
     </>
   );

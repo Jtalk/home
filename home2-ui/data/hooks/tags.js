@@ -1,13 +1,10 @@
 import useSWR from "swr";
 import superagentFetch from "../ajax/fetch";
+import useResultMapper from "./global/swr-common/mapper";
 
 const knownTagsApiUrl = "/blog/tags";
 
 export function useAvailableTags() {
-  const result = useAvailableTagsLoader();
-  return result.data;
-}
-
-function useAvailableTagsLoader() {
-  return useSWR(knownTagsApiUrl, superagentFetch);
+  const result = useSWR(knownTagsApiUrl, superagentFetch);
+  return useResultMapper(result);
 }

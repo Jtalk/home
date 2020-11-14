@@ -6,11 +6,10 @@ import { ErrorMessage } from "../../component/message/error-message";
 import Grid from "semantic-ui-react/dist/commonjs/collections/Grid";
 import Segment from "semantic-ui-react/dist/commonjs/elements/Segment";
 import Divider from "semantic-ui-react/dist/commonjs/elements/Divider";
-import Image from "semantic-ui-react/dist/commonjs/elements/Image";
 import Form from "semantic-ui-react/dist/commonjs/collections/Form";
 import List from "semantic-ui-react/dist/commonjs/elements/List";
 import LazyIcon from "../../component/lazy-icon";
-import { useFooter, useFooterError, useFooterLoading } from "../../data/hooks/footer/get";
+import { useFooter } from "../../data/hooks/footer/get";
 import { useFooterUpdater } from "../../data/hooks/footer/update";
 import { LazyImage } from "../../component/image/lazy-image";
 
@@ -18,9 +17,7 @@ let EMPTY_LINK = () => ({ caption: "", href: "" });
 let EMPTY_LOGO = () => ({ name: "", src: "" });
 
 export default function Footer() {
-  let footer = useFooter();
-  let errorMessage = useFooterError();
-  let loading = useFooterLoading();
+  let { data: footer = { links: [], logos: [] }, error: errorMessage, loading } = useFooter();
 
   let { updater: submit, status: updating } = useFooterUpdater();
 

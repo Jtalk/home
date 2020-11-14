@@ -14,8 +14,8 @@ import LazyIcon from "../../../../component/lazy-icon";
 const DEFAULT_PAGE_SIZE = 100;
 
 export default function EditBlog() {
-  let articles = useArticles(0, DEFAULT_PAGE_SIZE, true); // TODO: Add pagination to blog editor
-  let { deleter: onDelete } = useArticlesDeleter();
+  const { data: articles } = useArticles(0, DEFAULT_PAGE_SIZE, true); // TODO: Add pagination to blog editor
+  const { deleter: onDelete } = useArticlesDeleter();
 
   return (
     <>

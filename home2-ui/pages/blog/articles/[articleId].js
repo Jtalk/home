@@ -1,6 +1,6 @@
 import React from "react";
 import { Loading } from "../../../data/hooks/global/enums";
-import { preloadArticle, useArticle, useArticleLoading } from "../../../data/hooks/articles/get";
+import { preloadArticle, useArticle } from "../../../data/hooks/articles/get";
 import { NotFound } from "../../../component/error/not-found";
 import { useRouter } from "next/router";
 import { BlogPath } from "../../../utils/paths";
@@ -10,15 +10,13 @@ import Grid from "semantic-ui-react/dist/commonjs/collections/Grid";
 import dynamic from "next/dynamic";
 import { preloadOwner } from "../../../data/hooks/owner";
 import { preloadFooter } from "../../../data/hooks/footer";
-import { preloadProjects } from "../../../data/hooks/projects";
 
 export default function ArticleId() {
   let router = useRouter();
   let { articleId } = router.query;
   let href = `${BlogPath}/${articleId}`;
 
-  let article = useArticle(articleId);
-  let loading = useArticleLoading(articleId) || Loading.LOADING;
+  let { data: article, loading } = useArticle(articleId);
   if (!article && loading !== Loading.LOADING) {
     return <NotFound />;
   }

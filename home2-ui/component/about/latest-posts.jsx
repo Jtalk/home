@@ -13,10 +13,9 @@ import { useLatestArticles, useLatestArticlesLoading } from "../../data/hooks/la
 const PREVIEW_SIZE = 3;
 
 export default function LatestPosts() {
-  let posts = useLatestArticles(PREVIEW_SIZE) || [];
-  let loading = useLatestArticlesLoading(PREVIEW_SIZE);
+  const { data: posts = [], loading } = useLatestArticles(PREVIEW_SIZE);
 
-  let latestPostElements = posts.map((post) => createPostItem(post));
+  const latestPostElements = posts.map((post) => createPostItem(post));
   return (
     <Card>
       <Card.Content>

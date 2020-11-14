@@ -19,7 +19,7 @@ import Button from "semantic-ui-react/dist/commonjs/elements/Button";
 import Form from "semantic-ui-react/dist/commonjs/collections/Form";
 import Loader from "semantic-ui-react/dist/commonjs/elements/Loader";
 import Container from "semantic-ui-react/dist/commonjs/elements/Container";
-import { useImages, useImagesLoading, useImagesTotalCount } from "../../data/hooks/images/get";
+import { useImages } from "../../data/hooks/images/get";
 import { useImageUploader } from "../../data/hooks/images/upload";
 import { useImageDeleter } from "../../data/hooks/images/delete";
 
@@ -30,12 +30,11 @@ export default function EditImagesPage() {
 }
 
 export const EditImages = function ({ page = 0 }) {
-  let loadingStatus = useImagesLoading(page);
-  let images = useImages(page);
-  let totalCount = useImagesTotalCount(page);
+  const { data: images, pagination, loading: loadingStatus } = useImages(page) || [];
+  const totalCount = pagination?.total;
 
-  let { uploader: uploadImage, status: uploadStatus, error: errorMessage } = useImageUploader();
-  let { deleter: deleteImage } = useImageDeleter();
+  const { uploader: uploadImage, status: uploadStatus, error: errorMessage } = useImageUploader();
+  const { deleter: deleteImage } = useImageDeleter();
 
   return (
     <EditImagesStateless

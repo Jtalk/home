@@ -14,12 +14,11 @@ import Divider from "semantic-ui-react/dist/commonjs/elements/Divider";
 import Button from "semantic-ui-react/dist/commonjs/elements/Button";
 import Input from "semantic-ui-react/dist/commonjs/elements/Input";
 import TextArea from "semantic-ui-react/dist/commonjs/addons/TextArea";
-import { useOwner, useOwnerLoading } from "../../data/hooks/owner/get";
+import { useOwner } from "../../data/hooks/owner/get";
 import { useOwnerUpdater } from "../../data/hooks/owner/update";
 
 export default function EditBio() {
-  let owner = useOwner() || {};
-  let loading = useOwnerLoading();
+  let { data: owner, loading } = useOwner();
 
   let { updater: onUpdate, status: updateStatus, error: errorMessage } = useOwnerUpdater();
 

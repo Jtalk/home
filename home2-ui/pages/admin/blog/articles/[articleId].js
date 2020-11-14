@@ -3,7 +3,7 @@ import { useAvailableTags } from "../../../../data/hooks/tags";
 import { useForm } from "../../../../component/admin/common/use-form";
 import { Loading, Updating } from "../../../../data/hooks/global/enums";
 import { DatePicker } from "../../../../component/admin/common/date-picker";
-import { useArticle, useArticleLoading, useArticleUpdater } from "../../../../data/hooks/articles";
+import { useArticle, useArticleUpdater } from "../../../../data/hooks/articles";
 import { NotFound } from "../../../../component/error/not-found";
 import { useRouter } from "next/router";
 import uniq from "lodash/uniq";
@@ -24,21 +24,20 @@ export default function EditBlogArticle() {
   const router = useRouter();
   const { articleId } = router.query;
 
-  let article = useArticle(articleId);
-  let knownTags = useAvailableTags() || [];
-  let loading = useArticleLoading(articleId);
+  const { data: article, loading } = useArticle(articleId);
+  const { data: knownTags = [] } = useAvailableTags();
 
-  let { data, updater, onSubmit, canSubmit } = useForm({ init: article });
-  let { updater: articleUpdater, status: updating, error: errorMessage } = useArticleUpdater();
+  const { data, updater, onSubmit, canSubmit } = useForm({ init: article });
+  const { updater: articleUpdater, status: updating, error: errorMessage } = useArticleUpdater();
 
-  let submit = useCallback(
+  const submit = useCallback(
     () => async (updatedArticle) => {
       article && (await articleUpdater(article.id, updatedArticle));
       await router.push(editHref(updatedArticle.id));
     },
     [article, articleUpdater, router]
   );
-  let reset = useCallback(() => {
+  const reset = useCallback(() => {
     article && updater.reload(article);
   }, [article, updater]);
 

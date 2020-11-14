@@ -4,7 +4,7 @@ import { useCallback, useMemo } from "react";
 import { useImageUploader } from "../images";
 
 export function useProjectUpdater() {
-  const updater = useUpdater(projectsApiUrl, false);
+  const updater = useUpdater(`${projectsApiUrl}?published=false`, false);
   const { updater: nestedUpdater } = updater;
   const { uploader: imageUploader } = useImageUploader(0);
   const updaterById = useCallback(
