@@ -3,7 +3,7 @@ const debugDelay = process.env.REACT_APP_TEST_DURATION;
 const APP_VERSION = process.env.REACT_APP_VERSION || undefined;
 const API_KEY = process.env.REACT_APP_BUGSNAG_API_KEY;
 
-console.debug("API server is set to", api);
+console.info("API server is set to", api);
 console.debug("API debug response delay is set to", debugDelay);
 
 const withBundleAnalyzer = require("@next/bundle-analyzer")({

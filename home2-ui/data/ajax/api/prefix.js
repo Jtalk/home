@@ -1,4 +1,6 @@
 import getConfig from "next/config";
 
-const { publicRuntimeConfig: config } = getConfig();
-export const ApiPrefix = config.api?.prefix || "";
+export const ApiPrefix = () => {
+  const { publicRuntimeConfig: config } = getConfig();
+  return config.api.prefix || "";
+};

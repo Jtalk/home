@@ -6,8 +6,8 @@ export async function superagent() {
   return await import("superagent");
 }
 
-export default function index(request) {
-  request = request.use(prefix(ApiPrefix)).withCredentials();
+export default function api(request) {
+  request = request.use(prefix(ApiPrefix())).withCredentials();
   if (isApiDelayEnabled()) {
     request = request.use(delayed);
   }
