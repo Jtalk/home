@@ -1,4 +1,4 @@
-apiVersion: networking.k8s.io/v1beta1
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: home-ui
@@ -19,5 +19,7 @@ spec:
         paths:
           - path: /(.*)
             backend:
-              serviceName: home-ui
-              servicePort: 80
+              service:
+                name: home-ui
+                port:
+                  number: 80
