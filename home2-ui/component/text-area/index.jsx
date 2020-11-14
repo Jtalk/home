@@ -50,8 +50,7 @@ function useHighlightJS(targetRef, text) {
       console.error(`Unexpected markdown child: expected string, but found`, typeof text, text);
       return;
     }
-    const matches = text.matchAll(/```(\w+)/g);
-    const languagesInText = [...matches].map((match) => match[1]);
+    const languagesInText = extractLanguages(text);
     highlight(targetRef, languagesInText).catch((err) => {
       console.error(`Could not load highlighting for`, languagesInText, err);
     });
@@ -86,4 +85,14 @@ export default function MarkdownTextArea({ children, preview }) {
       <Markdown options={opts}>{`<${WRAPPER_COMPONENT_NAME}>${children}</${WRAPPER_COMPONENT_NAME}>`}</Markdown>
     </div>
   );
+}
+
+function extractLanguages(text) {
+  const languagesInText = [];
+  const regex = /```(\w+)/g;
+  let m;
+  while ((m = regex.exec(text))) {
+    languagesInText.push(m[1]);
+  }
+  return languagesInText;
 }
