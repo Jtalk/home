@@ -203,7 +203,7 @@ jobs:
         with:
           namespace: home-staging
           manifests: |
-            home2-ui/deploy/deployment.yaml
+            home2-ui/deploy/staging/deployment.yaml
             home2-ui/deploy/service.yaml
             home2-ui/deploy/staging/ingress.yaml
           images: ${{ env.UI_DOCKER_IMAGE_PREFIX }}:${{ github.sha }}
@@ -309,7 +309,7 @@ jobs:
         with:
           namespace: home
           manifests: |
-            home2-ui/deploy/deployment.yaml
+            home2-ui/deploy/live/deployment.yaml
             home2-ui/deploy/service.yaml
             home2-ui/deploy/live/ingress.yaml
           images: ${{ env.UI_DOCKER_IMAGE_PREFIX }}:${{ github.sha }}

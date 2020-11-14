@@ -37,7 +37,7 @@ spec:
           image: jtalk/home-ui:[[IMAGE_TAG]]
           env:
             - name: REACT_APP_API_URL
-              value: /api
+              value: https://jtalk.me/api
             - name: REACT_APP_BUGSNAG_API_KEY
               value: 899f8865a22e37b078415c92f56dfc5f
           startupProbe:
