@@ -18,7 +18,6 @@ jobs:
     runs-on: ubuntu-latest
     env:
       REACT_APP_VERSION: ${{ github.sha }}
-      CYPRESS_DASHBOARD_KEY: ${{ secrets.CYPRESS_DASHBOARD_KEY }}
     steps:
     - uses: actions/checkout@v1
     - name: Set up Node.JS ${{ env.NODE_VERSION }}
@@ -50,21 +49,34 @@ jobs:
         push: true
         build_args: |
           REACT_APP_VERSION=${{ env.REACT_APP_VERSION }}
-    - name: Cypress Tests
-      working-directory: home2-ui
-      run: |
-        docker run -d --rm --name home-ui-ci -p 8070:80 -e REACT_APP_BUGSNAG_API_KEY= -e SSR_PRELOAD=false ${{ env.UI_DOCKER_IMAGE_PREFIX }}:${{ github.sha }}
-        npm ci
-        npm i -D wait-on
-        npx wait-on -t 20000 http-get://localhost:8070/
-        npm run cypress:ci:chrome
-        npm run cypress:ci:firefox
-    - name: Cypress Test Cleanup
-      if: always()
-      working-directory: home2-ui
-      run: |
-        docker logs home-ui-ci
-        docker stop home-ui-ci
+
+  cypress-test-ui:
+    name: Run Cypress tests on the Docker image
+    runs-on: ubuntu-latest
+    needs:
+      - build-release-ui
+    steps:
+      - uses: actions/checkout@v1
+      - uses: cypress-io/github-action@v2
+        with:
+          browser: firefox
+          headless: true
+          working-directory: home2-ui
+          start: docker run -d --rm --name home-ui-ci -p 8070:80 -e REACT_APP_BUGSNAG_API_KEY= -e SSR_PRELOAD=false ${{ env.UI_DOCKER_IMAGE_PREFIX }}:${{ github.sha }}
+          wait-on: http-get://localhost:8070/
+          wait-on-timeout: 10
+          node-version: ${{ env.NODE_VERSION }}
+          record: true
+        env:
+          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_DASHBOARD_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Cypress Test Cleanup
+        if: always()
+        working-directory: home2-ui
+        run: |
+          docker logs home-ui-ci
+          docker stop home-ui-ci
+
 
   build-release-api:
     name: Build and Release API
