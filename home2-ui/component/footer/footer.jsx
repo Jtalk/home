@@ -18,7 +18,7 @@ export const StatelessFooter = function (props) {
       <Container textAlign="center">
         <FlatLinksList links={props.links || []} separator="|" />
         <FlatLogoList className="logos" logos={props.logos || []} />
-        <p>Copyright (C) 2020 Roman Nazarenko </p>
+        <p>Copyright (C) 2020 Roman Nazarenko</p>
       </Container>
     </Segment>
   );

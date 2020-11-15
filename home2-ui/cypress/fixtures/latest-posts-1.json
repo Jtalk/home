@@ -1,0 +1,13 @@
+{
+  "data": [
+    {
+      "title": "Stubby's Post #1",
+      "id": "stub-post-1",
+      "created": "2020-11-15T12:34:56Z"
+    }
+  ],
+  "pagination": {
+    "current": 0,
+    "total": 1
+  }
+}

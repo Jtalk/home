@@ -38,20 +38,22 @@ export const CardStateless = function ({ loading, owner, showLogin }) {
     }
   };
   return (
-    <Card>
+    <Card data-id="owner-card">
       <ImagePlaceholderOr square loading={loading === Loading.LOADING}>
-        <OptionalImage wrapped id={owner.photoId} />
+        <OptionalImage wrapped data-id="owner-photo" id={owner.photoId} />
       </ImagePlaceholderOr>
       <Card.Content>
         <ContentPlaceholderOr header loading={loading === Loading.LOADING} lines={3}>
-          <Card.Header onClick={onNameClick}>{owner.name}</Card.Header>
-          <Card.Meta>{owner.nickname}</Card.Meta>
-          <Card.Description>{owner.description}</Card.Description>
+          <Card.Header data-id="owner-name" as="h3" onClick={onNameClick}>
+            {owner.name}
+          </Card.Header>
+          <Card.Meta data-id="owner-nickname">{owner.nickname}</Card.Meta>
+          <Card.Description data-id="owner-description">{owner.description}</Card.Description>
         </ContentPlaceholderOr>
       </Card.Content>
-      <Card.Content extra icon="user">
+      <Card.Content extra icon="user" data-id="owner-contacts">
         <LinePlaceholderOr length="short" loading={loading === Loading.LOADING}>
-          {get(owner, "contacts.email.value", null)}
+          <span data-id="owner-email">{get(owner, "contacts.email.value", null)}</span>
         </LinePlaceholderOr>
       </Card.Content>
     </Card>

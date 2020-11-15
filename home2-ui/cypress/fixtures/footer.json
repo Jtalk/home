@@ -1,0 +1,28 @@
+{
+  "links": [
+    {
+      "caption": "About",
+      "href": "https://example.com"
+    },
+    {
+      "caption": "Source",
+      "href": "https://github.com/Jtalk/home"
+    },
+    {
+      "caption": "Else",
+      "href": "http://example.com/else"
+    }
+  ],
+  "logos": [
+    {
+      "name": "Site Icon",
+      "src": "/images/icon32.png",
+      "href": "https://example.com"
+    },
+    {
+      "name": "Avatar Icon",
+      "src": "/images/avatar.png",
+      "href": "https://example.com/avatar"
+    }
+  ]
+}

@@ -14,5 +14,5 @@ export const FlatLinksList = function ({ links, separator }) {
   if (result.length > 1) {
     result.pop(); // Remove trailing "|"
   }
-  return <div>{result}</div>;
+  return <div data-id="footer-links-list">{result}</div>;
 };

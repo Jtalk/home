@@ -2,6 +2,7 @@ const api = process.env.REACT_APP_API_URL || "http://localhost:8090";
 const debugDelay = process.env.REACT_APP_TEST_DURATION;
 const APP_VERSION = process.env.REACT_APP_VERSION || undefined;
 const API_KEY = process.env.REACT_APP_BUGSNAG_API_KEY;
+const SSR_PRELOAD = process.env.SSR_PRELOAD !== "false";
 
 console.info("API server is set to", api);
 console.debug("API debug response delay is set to", debugDelay);
@@ -13,7 +14,11 @@ const withSourceMaps = require("@zeit/next-source-maps");
 
 module.exports = withBundleAnalyzer(
   withSourceMaps({
-    serverRuntimeConfig: {},
+    serverRuntimeConfig: {
+      ssr: {
+        preload: SSR_PRELOAD,
+      },
+    },
     publicRuntimeConfig: {
       api: {
         prefix: api,

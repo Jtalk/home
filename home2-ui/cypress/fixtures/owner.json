@@ -1,0 +1,12 @@
+{
+  "name": "Cypress Bot",
+  "nickname": "botocyp",
+  "photoId": "",
+  "description": "A good testing stub",
+  "contacts": {
+    "email": {
+      "value": "botocyp@example.com"
+    }
+  },
+  "bio": "# The Great Bot\nCybot is a great testing stub"
+}

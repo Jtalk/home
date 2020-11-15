@@ -8,7 +8,7 @@ import Link from "next/link";
 import "./latest-posts.module.css";
 import { BlogPath } from "../../utils/paths";
 import { ContentPlaceholderOr } from "../placeholder/content-placeholder";
-import { useLatestArticles, useLatestArticlesLoading } from "../../data/hooks/latest-articles";
+import { useLatestArticles } from "../../data/hooks/latest-articles";
 
 const PREVIEW_SIZE = 3;
 
@@ -17,13 +17,15 @@ export default function LatestPosts() {
 
   const latestPostElements = posts.map((post) => createPostItem(post));
   return (
-    <Card>
+    <Card data-id="latest-posts">
       <Card.Content>
-        <Card.Header>Latest Posts</Card.Header>
+        <Card.Header data-id="latest-posts-header" as="h3">
+          Latest Posts
+        </Card.Header>
         <Card.Description>
           <Divider />
           <ContentPlaceholderOr loading={loading === Loading.LOADING} lines={6}>
-            <List>{latestPostElements}</List>
+            <List data-id="latests-posts-list">{latestPostElements}</List>
           </ContentPlaceholderOr>
         </Card.Description>
       </Card.Content>
@@ -33,15 +35,15 @@ export default function LatestPosts() {
 
 function createPostItem(post) {
   return (
-    <List.Item key={post.title}>
+    <List.Item data-id="latest-post" key={post.title}>
       <List.Content>
-        <List.Header as="h4">
+        <List.Header data-id="latest-post-caption" as="h4">
           <Link href={`${BlogPath}/${post.id}`}>
             <a>{post.title}</a>
           </Link>
         </List.Header>
         <List.Description>
-          <div suppressHydrationWarning className="datetime">
+          <div data-id="latest-post-created-timestamp" suppressHydrationWarning className="datetime">
             {formatDateTime(post.created)}
           </div>
         </List.Description>

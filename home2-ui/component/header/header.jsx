@@ -29,13 +29,13 @@ export const HeaderStateless = function ({ ownerName, activeRoute, authenticated
   const HeaderSearch = dynamic(() => import("./header-search"));
 
   return (
-    <Menu secondary pointing>
+    <Menu secondary pointing data-id="header">
       <HeaderOwner />
-      <HeaderMenuItem exact active={activeRoute} title={"About"} href={"/"} />
-      <HeaderMenuItem active={activeRoute} title={"Projects"} href={"/projects"} />
-      <HeaderMenuItem active={activeRoute} title={"Blog"} href={"/blog/articles"} />
+      <HeaderMenuItem exact data-id="header-about" active={activeRoute} title={"About"} href={"/"} />
+      <HeaderMenuItem data-id="header-projects" active={activeRoute} title={"Projects"} href={"/projects"} />
+      <HeaderMenuItem data-id="header-blog" active={activeRoute} title={"Blog"} href={"/blog/articles"} />
       {authenticated && (
-        <HeaderMenuDropdownItem title={"Admin"}>
+        <HeaderMenuDropdownItem data-id="header-admin-dropdown" title={"Admin"}>
           <HeaderMenuItem active={activeRoute} title={"Bio"} href={"/admin/bio"} />
           <HeaderMenuItem active={activeRoute} title={"Projects"} href={"/admin/projects"} />
           <HeaderMenuItem active={activeRoute} title={"Blog"} href={"/admin/blog/articles"} />
@@ -46,7 +46,7 @@ export const HeaderStateless = function ({ ownerName, activeRoute, authenticated
       <Menu.Menu position="right">
         <HeaderSearch />
         {authenticated && (
-          <HeaderMenuDropdownItem icon={"user"}>
+          <HeaderMenuDropdownItem data-id="header-account-dropdown" icon={"user"}>
             <DropdownHeader content={ownerName} />
             <DropdownDivider />
             <HeaderMenuItem active={activeRoute} title={"Account"} icon={"settings"} href={"/admin/account"} />

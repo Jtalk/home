@@ -11,8 +11,6 @@ import withAuthentication from "../data/hooks/authentication/with-authentication
 import PreloadContext from "../data/preload/context";
 import Footer from "../component/footer/footer";
 import Header from "../component/header/header";
-import { preloadOwner } from "../data/hooks/owner";
-import { preloadFooter } from "../data/hooks/footer";
 
 const { ErrorBoundary } = setupErrorReporting();
 

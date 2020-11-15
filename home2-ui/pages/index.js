@@ -9,6 +9,7 @@ import MarkdownTextArea from "../component/text-area";
 import ContentPlaceholderOr from "../component/placeholder/content-placeholder";
 import { Loading } from "../data/hooks/global/enums";
 import { preloadFooter } from "../data/hooks/footer";
+import { isSsrPreloadEnabled } from "../data/ajax/ssr";
 
 export default function About({ preload }) {
   const { data: owner, loading } = useOwner();
@@ -38,7 +39,9 @@ export default function About({ preload }) {
 
 export async function getServerSideProps(ctx) {
   const preload = {};
-  preload.owner = await preloadOwner();
-  preload.footer = await preloadFooter();
+  if (isSsrPreloadEnabled()) {
+    preload.owner = await preloadOwner();
+    preload.footer = await preloadFooter();
+  }
   return { props: { preload } };
 }
