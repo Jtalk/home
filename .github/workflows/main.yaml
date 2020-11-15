@@ -67,7 +67,7 @@ jobs:
           headless: true
           working-directory: home2-ui
           start: docker run -d --rm --name home-ui-ci -p 8070:80 -e REACT_APP_BUGSNAG_API_KEY= -e SSR_PRELOAD=false ${{ env.UI_DOCKER_IMAGE_PREFIX }}:${{ github.sha }}
-          wait-on: http-get://localhost:8070/
+          wait-on: http://localhost:8070/
           wait-on-timeout: 10
           record: true
         env:
