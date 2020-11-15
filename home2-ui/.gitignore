@@ -24,3 +24,7 @@ yarn-error.log*
 
 # Idea
 /.idea
+
+# Cypress artefacts
+cypress/screenshots
+cypress/videos
