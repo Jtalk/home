@@ -32,10 +32,6 @@ jobs:
       run: |
         npm ci
         npm run test
-    - name: Cypress Tests
-      run: |
-        npm run cypress:ci:chrome
-        npm run cypress:ci:firefox
     - name: Build UI
       working-directory: home2-ui
       run: |
@@ -54,6 +50,14 @@ jobs:
         push: true
         build_args: |
           REACT_APP_VERSION=${{ env.REACT_APP_VERSION }}
+    - name: Cypress Tests
+      run: |
+        npm i -g wait-on
+        docker run -d --rm --name home-ui-ci -p 8070:8070 -e REACT_APP_BUGSNAG_API_KEY= -e SSR_PRELOAD=false ${{ env.UI_DOCKER_IMAGE_PREFIX }}:${{ github.sha }}
+        npx wait-on http://localhost:8070/
+        npm run cypress:ci:chrome
+        npm run cypress:ci:firefox
+        docker stop home-ui-ci
 
   build-release-api:
     name: Build and Release API
