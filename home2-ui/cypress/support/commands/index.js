@@ -19,3 +19,9 @@ Cypress.Commands.add("containsTitle", (...segments) => {
   const textSegments = [...segments, "Cypress Bot"].join(" | ");
   cy.title().should("equal", textSegments);
 });
+
+Cypress.Commands.add("screenshotCI", (name) => {
+  if (Cypress.env("CI")) {
+    cy.screenshot(name);
+  }
+});
