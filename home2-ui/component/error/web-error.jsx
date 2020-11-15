@@ -24,7 +24,7 @@ export const WebError = function ({ httpCode, message }) {
   );
 };
 
-const ignore404 = [/\.php(\?|$)/];
+const ignore404 = [/\.php(\?|$)/, /asset-manifest.json$/];
 function is404Ignored(path) {
   for (const ignored of ignore404) {
     if (ignored.exec(path)) return true;
