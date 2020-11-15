@@ -75,6 +75,7 @@ jobs:
           wait-on-timeout: 10
           record: true
         env:
+          CYPRESS_CI: true
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_DASHBOARD_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Cypress Test Cleanup
