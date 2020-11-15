@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Loading } from "../../data/hooks/global/enums";
 import { useSearch } from "../../data/hooks/search";
 import { reportError } from "../../utils/error-reporting";
@@ -17,8 +17,11 @@ export default function HeaderSearch() {
       console.debug(`Showing search results for term '${query}':`, results);
     }
   }, [query, results]);
+  const onQueryChange = useCallback((e, data) => {
+    setQuery(data.value);
+  }, []);
 
-  return <HeaderSearchStateless query={query} onQueryChange={setQuery} {...{ loading, results }} />;
+  return <HeaderSearchStateless query={query} onQueryChange={onQueryChange} {...{ loading, results }} />;
 }
 
 export const HeaderSearchStateless = function ({ query, loading, results, onQueryChange }) {
