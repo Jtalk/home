@@ -61,6 +61,8 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: ${{ env.NODE_VERSION }}
+      - name: Pre-pull the image
+        run: docker pull ${{ env.UI_DOCKER_IMAGE_PREFIX }}:${{ github.sha }}
       - uses: cypress-io/github-action@v2
         with:
           browser: firefox
