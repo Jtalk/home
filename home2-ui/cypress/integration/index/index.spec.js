@@ -3,15 +3,7 @@
 describe("/", () => {
   beforeEach(() => {
     cy.server();
-
-    cy.fixture("owner").as("ownerFx");
-    cy.fixture("footer").as("footerFx");
-    cy.fixture("latest-posts").as("latestPostsFx");
-
-    cy.route("GET", "http://localhost:8090/owner", "@ownerFx");
-    cy.route("GET", "http://localhost:8090/footer", "@footerFx");
-    cy.route("GET", "http://localhost:8090/blog/articles?page=0&pageSize=3&published=true", "@latestPostsFx");
-
+    cy.stubRoutesIndex();
     cy.visit("/");
   });
 

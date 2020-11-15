@@ -25,3 +25,21 @@ Cypress.Commands.add("screenshotCI", (name) => {
     cy.screenshot(name);
   }
 });
+
+Cypress.Commands.add("apiRoute", (methodOrObject, url, stub) => {
+  if (typeof methodOrObject === "string") {
+    return cy.route(methodOrObject, `${Cypress.env("API_PREFIX")}${url}`, stub);
+  } else {
+    return cy.route({ ...methodOrObject, url: `${Cypress.env("API_PREFIX")}${methodOrObject.url}` });
+  }
+});
+
+Cypress.Commands.add("stubRoutesIndex", () => {
+  cy.fixture("owner").as("ownerFx");
+  cy.fixture("footer").as("footerFx");
+  cy.fixture("latest-posts").as("latestPostsFx");
+
+  cy.apiRoute("GET", "/owner", "@ownerFx");
+  cy.apiRoute("GET", "/footer", "@footerFx");
+  cy.apiRoute("GET", "/blog/articles?page=0&pageSize=3&published=true", "@latestPostsFx");
+});
