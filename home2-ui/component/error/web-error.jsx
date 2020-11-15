@@ -6,11 +6,14 @@ import { useRouter } from "next/router";
 
 export const WebError = function ({ httpCode, message }) {
   const router = useRouter();
-  console.error("Showing error page at", router.asPath || router.pathname, httpCode, message);
-  reportError({
-    errorClass: "error-page",
-    errorMessage: `Showing error page at ${router.asPath || router.pathname}: ${httpCode} ${message}`,
-  });
+  const path = router.asPath || router.pathname;
+  if (httpCode === 404 && !is404Ignored(path)) {
+    console.error("Showing error page at", path, httpCode, message);
+    reportError({
+      errorClass: "error-page",
+      errorMessage: `Showing error page at ${path}: ${httpCode} ${message}`,
+    });
+  }
   return (
     <Container text textAlign="center">
       <Head>
@@ -20,3 +23,11 @@ export const WebError = function ({ httpCode, message }) {
     </Container>
   );
 };
+
+const ignore404 = [/\.php(\?|$)/];
+function is404Ignored(path) {
+  for (const ignored of ignore404) {
+    if (ignored.exec(path)) return true;
+  }
+  return false;
+}
