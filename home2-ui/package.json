@@ -9,7 +9,10 @@
     "start": "next start -p ${PORT:-80}",
     "test": "jest",
     "test:watch": "jest --watch",
-    "cypress:open": "cypress open"
+    "cypress:open": "cypress open",
+    "cypress:ci:browser": "CYPRESS_CI=true cypress run --headless --record --key ${CYPRESS_DASHBOARD_KEY} --browser",
+    "cypress:ci:chrome": "npm run cypress:ci:browser chrome",
+    "cypress:ci:firefox": "npm run cypress:ci:browser firefox"
   },
   "eslintConfig": {
     "extends": [
