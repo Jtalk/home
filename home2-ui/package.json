@@ -26,7 +26,9 @@
     ]
   },
   "jest": {
-    "modulePathIgnorePatterns": ["cypress"],
+    "modulePathIgnorePatterns": [
+      "cypress"
+    ],
     "setupFiles": [
       "./setupTests"
     ],
@@ -100,6 +102,7 @@
     "react-test-renderer": "^16.13.1",
     "source-map-explorer": "^2.5.0",
     "superagent-mocker": "^0.5.2",
+    "wait-on": "^5.2.0",
     "webpack-dev-server": "^3.11.0"
   }
 }
