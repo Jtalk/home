@@ -24,7 +24,7 @@ describe("/", () => {
       .should("have.text", "Cybot is a great testing stub");
 
     cy.containsOwnerCard();
-    cy.containsLatestPosts(3);
+    cy.get("div[data-id=latest-posts]").should("be.visible");
 
     cy.containsHeader(false);
     cy.containsFooter();

@@ -15,6 +15,7 @@ const PREVIEW_SIZE = 3;
 export default function LatestPosts() {
   const { data: posts = [], loading } = useLatestArticles(PREVIEW_SIZE);
 
+  if (!posts?.length) return null;
   const latestPostElements = posts.map((post) => createPostItem(post));
   return (
     <Card data-id="latest-posts">
