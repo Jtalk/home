@@ -56,6 +56,10 @@ module.exports = withBundleAnalyzer(
           source: "/home/rss",
           destination: "/api/atom.xml",
         },
+        {
+          source: "/feed",
+          destination: "/api/atom.xml",
+        },
       ];
     },
     excludeFile: (str) => /\*.{spec,test}.js/.test(str),
