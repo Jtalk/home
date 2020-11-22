@@ -7,6 +7,8 @@ const DYNAMIC_IMPORT_SSR_ON = process.env.DYNAMIC_IMPORT_SSR !== "false";
 
 console.info("API server is set to", api);
 console.debug("API debug response delay is set to", debugDelay);
+console.info("SSR data preload is", SSR_PRELOAD ? "on" : "off");
+console.info("Dynamic SSR components are", DYNAMIC_IMPORT_SSR_ON ? "on" : "off");
 
 const withBundleAnalyzer = require("@next/bundle-analyzer")({
   enabled: process.env.ANALYZE === "true",
