@@ -8,6 +8,7 @@
     "dev:cypress": "SSR_PRELOAD=false DYNAMIC_IMPORT_SSR=false npm run dev",
     "build": "next build",
     "start": "next start -p ${PORT:-80}",
+    "start:cypress": "SSR_PRELOAD=false DYNAMIC_IMPORT_SSR=false npm run start",
     "test": "jest",
     "test:watch": "jest --watch",
     "cypress:open": "cypress open",
