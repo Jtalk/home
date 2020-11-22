@@ -21,7 +21,7 @@ export default function HeaderSearch() {
     setQuery(data.value);
   }, []);
 
-  return <HeaderSearchStateless query={query} onQueryChange={onQueryChange} {...{ loading, results }} />;
+  return <HeaderSearchStateless query={query} onQueryChange={onQueryChange} loading={loading} results={results} />;
 }
 
 export const HeaderSearchStateless = function ({ query, loading, results, onQueryChange }) {
@@ -43,9 +43,17 @@ export const HeaderSearchStateless = function ({ query, loading, results, onQuer
 
 export const HeaderSearchResult = ({ title, description, url }) => (
   <Link href={url}>
-    <a className="content">
-      {title && <div className="title">{title}</div>}
-      {description && <div className="description">{description}</div>}
+    <a data-id="search-result-link" className="content">
+      {title && (
+        <div data-id="search-result-title" className="title">
+          {title}
+        </div>
+      )}
+      {description && (
+        <div data-id="search-result-description" className="description">
+          {description}
+        </div>
+      )}
     </a>
   </Link>
 );
