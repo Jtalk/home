@@ -91,7 +91,7 @@ function toVisualResult(query, type, value) {
   }
 }
 
-function toVisualResultDescription(fuse, query, ...candidates) {
+function toVisualResultDescription(query, ...candidates) {
   let result = new Fuse(candidates, { includeScore: true }).search(query);
   if (!result.length) {
     return "preview unavailable";
