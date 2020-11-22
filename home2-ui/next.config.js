@@ -3,6 +3,7 @@ const debugDelay = process.env.REACT_APP_TEST_DURATION;
 const APP_VERSION = process.env.REACT_APP_VERSION || undefined;
 const API_KEY = process.env.REACT_APP_BUGSNAG_API_KEY;
 const SSR_PRELOAD = process.env.SSR_PRELOAD !== "false";
+const DYNAMIC_IMPORT_SSR_ON = process.env.DYNAMIC_IMPORT_SSR !== "false";
 
 console.info("API server is set to", api);
 console.debug("API debug response delay is set to", debugDelay);
@@ -24,6 +25,11 @@ module.exports = withBundleAnalyzer(
         prefix: api,
         debug: {
           delay: debugDelay,
+        },
+      },
+      import: {
+        dynamic: {
+          ssr: DYNAMIC_IMPORT_SSR_ON,
         },
       },
       image: {

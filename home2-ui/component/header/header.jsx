@@ -6,6 +6,7 @@ import { useRouter } from "next/router";
 import { useLoggedIn } from "../../data/hooks/authentication";
 import dynamic from "next/dynamic";
 import { useOwner } from "../../data/hooks/owner/get";
+import { dynamicSSR } from "../../utils/dynamic-import";
 
 export default function Header() {
   const router = useRouter();
@@ -25,8 +26,8 @@ export const HeaderStateless = function ({ ownerName, activeRoute, authenticated
     import("semantic-ui-react/dist/commonjs/modules/Dropdown").then((dd) => dd.Divider)
   );
   const HeaderMenuDropdownItem = dynamic(() => import("./header-menu-dropdown-item"));
-  const LogoutButton = dynamic(() => import("./logout-button"));
-  const HeaderSearch = dynamic(() => import("./header-search"));
+  const LogoutButton = dynamic(() => import("./logout-button"), { ssr: dynamicSSR() });
+  const HeaderSearch = dynamic(() => import("./header-search"), { ssr: dynamicSSR() });
 
   return (
     <Menu secondary pointing data-id="header">
