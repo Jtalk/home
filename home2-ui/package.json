@@ -5,6 +5,7 @@
   "license": "GPL-3.0-or-later",
   "scripts": {
     "dev": "next dev -p ${PORT:-8070}",
+    "dev:cypress": "SSR_PRELOAD=false DYNAMIC_IMPORT_SSR=false npm run dev",
     "build": "next build",
     "start": "next start -p ${PORT:-80}",
     "test": "jest",
