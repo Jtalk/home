@@ -24,7 +24,7 @@ export default function About({ preload }) {
         <Grid.Row>
           <Grid.Column width={10} as="main">
             <ContentPlaceholderOr header lines={30} loading={!MarkdownTextArea || loading === Loading.LOADING}>
-              <MarkdownTextArea>{bio}</MarkdownTextArea>
+              <MarkdownTextArea data-id="owner-bio">{bio}</MarkdownTextArea>
             </ContentPlaceholderOr>
           </Grid.Column>
           <Grid.Column width={4}>

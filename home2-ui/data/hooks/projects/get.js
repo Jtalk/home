@@ -21,7 +21,7 @@ export function useProject(id, withUnpublished = false) {
   const getProject = useCallback(
     (data) => {
       if (!data) return;
-      return find(data, (p) => p.id === id) || data[0];
+      return find(data, (p) => p.id === id);
     },
     [id]
   );

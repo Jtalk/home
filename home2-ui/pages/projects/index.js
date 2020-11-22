@@ -6,6 +6,9 @@ import { OwnerTitled } from "../../component/about/owner-titled";
 import { preloadProjects, useProjects } from "../../data/hooks/projects/get";
 import { preloadOwner } from "../../data/hooks/owner";
 import { preloadFooter } from "../../data/hooks/footer";
+import { isSsrPreloadEnabled } from "../../data/ajax/ssr";
+import { InfoMessage } from "../../component/messages/info-message";
+import { Segment } from "semantic-ui-react";
 
 export default function Projects() {
   const { data: projects, loading } = useProjects();
@@ -14,16 +17,33 @@ export default function Projects() {
   return (
     <div>
       <OwnerTitled title={"Projects"} />
-      <ProjectsMenu projects={projects || []} />
-      <ProjectDescription loading={loading === Loading.LOADING} {...selectedProject} />
+      <NoProjectsMessageOr show={projects && projects.length === 0}>
+        <ProjectsMenu projects={projects || []} />
+        <ProjectDescription loading={loading === Loading.LOADING} {...selectedProject} />
+      </NoProjectsMessageOr>
     </div>
   );
 }
 
 export async function getServerSideProps(ctx) {
   const preload = {};
-  preload.owner = await preloadOwner();
-  preload.footer = await preloadFooter();
-  preload.projects = await preloadProjects();
+  if (isSsrPreloadEnabled()) {
+    preload.owner = await preloadOwner();
+    preload.footer = await preloadFooter();
+    preload.projects = await preloadProjects();
+  }
   return { props: { preload } };
+}
+
+function NoProjectsMessageOr({ show, children }) {
+  if (!show) {
+    return children;
+  }
+  return (
+    <Segment basic padded="very">
+      <InfoMessage data-id="no-projects-found-message" header="None found">
+        No projects have been added.
+      </InfoMessage>
+    </Segment>
+  );
 }

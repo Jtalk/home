@@ -3,11 +3,11 @@ import { ProjectsMenu } from "../../component/projects/menu/projects-menu";
 import { ProjectDescription } from "../../component/projects/project-description";
 import React from "react";
 import { useRouter } from "next/router";
-import { NotFound } from "../../component/error/not-found";
 import { OwnerTitled } from "../../component/about/owner-titled";
 import { preloadProjects, useProject, useProjects } from "../../data/hooks/projects/get";
 import { preloadOwner } from "../../data/hooks/owner";
 import { preloadFooter } from "../../data/hooks/footer";
+import { NotFound } from "../../component/error/not-found";
 
 export default function Project() {
   const router = useRouter();
@@ -16,10 +16,10 @@ export default function Project() {
   const { data: projects, loading: loadingAll } = useProjects();
   let { data: selectedProject, loading } = useProject(projectId);
 
-  if (projects?.length && loadingAll !== Loading.LOADING && !selectedProject) {
+  if (loadingAll !== Loading.LOADING && !selectedProject) {
     return <NotFound />;
   }
-  selectedProject = selectedProject || projects?.[0] || {};
+  selectedProject = selectedProject || {};
 
   return (
     <div>

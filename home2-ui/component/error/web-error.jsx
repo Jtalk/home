@@ -15,7 +15,7 @@ export const WebError = function ({ httpCode, message }) {
     });
   }
   return (
-    <Container text textAlign="center">
+    <Container text textAlign="center" data-id="error-page">
       <Head>
         <title>{message}</title>
       </Head>

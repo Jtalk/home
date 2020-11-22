@@ -15,6 +15,7 @@ import "./owner-card";
 import "./latest-posts";
 import "./footer";
 import "./search";
+import "./projects";
 
 Cypress.Commands.add("containsTitle", (...segments) => {
   const textSegments = [...segments, "Cypress Bot"].join(" | ");
@@ -35,12 +36,16 @@ Cypress.Commands.add("apiRoute", (methodOrObject, url, stub) => {
   }
 });
 
-Cypress.Commands.add("stubRoutesIndex", () => {
+Cypress.Commands.add("stubCommonRoutes", () => {
   cy.fixture("owner").as("ownerFx");
   cy.fixture("footer").as("footerFx");
-  cy.fixture("latest-posts").as("latestPostsFx");
 
   cy.apiRoute("GET", "/owner", "@ownerFx");
   cy.apiRoute("GET", "/footer", "@footerFx");
+});
+
+Cypress.Commands.add("stubRoutesIndex", () => {
+  cy.stubCommonRoutes();
+  cy.fixture("latest-posts").as("latestPostsFx");
   cy.apiRoute("GET", "/blog/articles?page=0&pageSize=3&published=true", "@latestPostsFx");
 });

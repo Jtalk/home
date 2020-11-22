@@ -61,7 +61,7 @@ function useHighlightJS(targetRef, text) {
 // <Markdown/> and keep our article preview system nice to work with.
 const WRAPPER_COMPONENT_NAME = "UGxeb0I7MWsgq5YuVDXxlfH0DlKS1nfu5m3vZviiU7hbPXhfyYlN1RqoLoz4OzOz";
 
-export default function MarkdownTextArea({ children, preview }) {
+export default function MarkdownTextArea({ children, preview, ...rest }) {
   let opts = {
     overrides: {
       InfoMessage,
@@ -81,7 +81,7 @@ export default function MarkdownTextArea({ children, preview }) {
   }
 
   return (
-    <div ref={rootRef} data-id="content">
+    <div ref={rootRef} {...rest}>
       <Markdown options={opts}>{`<${WRAPPER_COMPONENT_NAME}>${children}</${WRAPPER_COMPONENT_NAME}>`}</Markdown>
     </div>
   );

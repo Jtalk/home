@@ -47,8 +47,8 @@ describe("/", () => {
         cy.fixture("articles-5").then((articlesFx) => {
           const response = [
             { type: "owner", value: ownerFx },
-            { type: "project", value: projectsFx.data[0] },
-            { type: "project", value: projectsFx.data[1] },
+            { type: "project", value: projectsFx[0] },
+            { type: "project", value: projectsFx[1] },
             { type: "article", value: articlesFx.data[2] },
             { type: "article", value: articlesFx.data[0] },
             { type: "article", value: articlesFx.data[1] },

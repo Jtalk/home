@@ -9,17 +9,17 @@ import Menu from "semantic-ui-react/dist/commonjs/collections/Menu";
 export const ProjectDescription = function (project) {
   let { loading } = project;
   return (
-    <Grid stackable centered layout="block">
+    <Grid stackable centered layout="block" data-id="project-page">
       <Grid.Column width={3}>
         <ImagePlaceholderOr loading={loading}>
-          <OptionalImage size="small" id={project.logoId} alt={project.title + " Logo"} />
+          <OptionalImage size="small" data-id="project-logo" id={project.logoId} alt={project.title + " Logo"} />
         </ImagePlaceholderOr>
         <ContentPlaceholderOr loading={loading} lines={8}>
-          <Menu fluid vertical text layout="block">
+          <Menu fluid vertical text layout="block" data-id="project-links">
             <div className="active item">Overview</div>
             {project.links &&
               project.links.map((link) => (
-                <a key={link.name} className="item" href={link.href}>
+                <a key={link.name} className="item" href={link.href} data-id="project-link">
                   {link.name}
                 </a>
               ))}
@@ -28,7 +28,7 @@ export const ProjectDescription = function (project) {
       </Grid.Column>
       <Grid.Column width={12}>
         <ContentPlaceholderOr header loading={loading} lines={20}>
-          <MarkdownTextArea>{project.description || ""}</MarkdownTextArea>
+          <MarkdownTextArea data-id="project-description">{project.description || ""}</MarkdownTextArea>
         </ContentPlaceholderOr>
       </Grid.Column>
     </Grid>
