@@ -1,0 +1,38 @@
+{
+  "data": [
+    {
+      "id": "article-1",
+      "title": "Article 1",
+      "content": "The very first test article's content",
+      "tags": [ "first", "node" ]
+    },
+    {
+      "id": "article-2",
+      "title": "Article 2",
+      "content": "The very second test article's content",
+      "tags": [ "second", "node" ]
+    },
+    {
+      "id": "article-3",
+      "title": "Article 3",
+      "content": "The very third test article's content",
+      "tags": [ "third", "node" ]
+    },
+    {
+      "id": "article-4",
+      "title": "Article 4",
+      "content": "The very fourth test article's content",
+      "tags": [ "fourth", "node" ]
+    },
+    {
+      "id": "article-5",
+      "title": "Article 5",
+      "content": "The very fifth test article's content",
+      "tags": [ "fifth", "node" ]
+    }
+  ],
+  "pagination": {
+    "total": 20,
+    "current": 0
+  }
+}

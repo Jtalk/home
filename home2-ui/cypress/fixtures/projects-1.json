@@ -1,0 +1,23 @@
+{
+  "data": [
+    {
+      "id": "project-1",
+      "title": "Project 1",
+      "description": "The very first tester project",
+      "links": [
+        {
+          "name": "Link One",
+          "href": "https://example.com"
+        },
+        {
+          "name": "Link Two",
+          "href": "https://example.com/two"
+        },
+        {
+          "name": "Link Three",
+          "href": "https://example.com/three"
+        }
+      ]
+    }
+  ]
+}
