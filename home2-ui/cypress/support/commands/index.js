@@ -16,6 +16,7 @@ import "./latest-posts";
 import "./footer";
 import "./search";
 import "./projects";
+import "./blog";
 
 Cypress.Commands.add("containsTitle", (...segments) => {
   const textSegments = [...segments, "Cypress Bot"].join(" | ");

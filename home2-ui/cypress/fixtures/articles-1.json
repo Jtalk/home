@@ -1,0 +1,15 @@
+{
+  "data": [
+    {
+      "id": "article-1",
+      "title": "Article 1",
+      "content": "<preview>The very first test article's content</preview>\nText not visible in preview mode",
+      "tags": [ "first", "node" ],
+      "created": "2020-11-01T12:00:00Z"
+    }
+  ],
+  "pagination": {
+    "total": 3,
+    "current": 2
+  }
+}

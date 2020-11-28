@@ -60,16 +60,24 @@ const BlogArticles = function ({ loading, articles }) {
 };
 
 const Pagination = function ({ loading, total, page, navigate }) {
-  if (loading) {
+  if (loading || total === 0) {
     return null;
   }
   let currentIndex = page - 1;
   return (
-    <Menu pagination>
+    <Menu pagination data-id="articles-pagination">
       {Array(total || 1)
         .fill()
         .map((_, i) => {
-          return <Menu.Item key={i} name={`${i + 1}`} active={currentIndex === i} onClick={() => navigate(i + 1)} />;
+          return (
+            <Menu.Item
+              data-id="page-button"
+              key={i}
+              name={`${i + 1}`}
+              active={currentIndex === i}
+              onClick={() => navigate(i + 1)}
+            />
+          );
         })}
     </Menu>
   );

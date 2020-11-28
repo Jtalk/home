@@ -15,10 +15,10 @@ export const ArticleView = function ({ article, loading, href, preview }) {
 
   return (
     <Segment className="items">
-      <Item>
+      <Item data-id="blog-article-view">
         <Item.Content>
           <ContentPlaceholderOr header lines={0} loading={articleLoading}>
-            <Item.Header>
+            <Item.Header data-id="header">
               <Link shallow={!preview} href={href}>
                 <a>
                   <h1>{article.title}</h1>
@@ -31,25 +31,29 @@ export const ArticleView = function ({ article, loading, href, preview }) {
             {article.tags && article.tags.length > 0 && (
               <Item.Meta>
                 {article.tags.map((tag) => (
-                  <Button compact key={tag} size="mini">
+                  <Button data-id="article-tag" compact key={tag} size="mini">
                     {tag}
                   </Button>
                 ))}
               </Item.Meta>
             )}
             <Item.Description>
-              <MarkdownTextArea preview={preview}>{article.content || ""}</MarkdownTextArea>
+              <MarkdownTextArea data-id="content" preview={preview}>
+                {article.content || ""}
+              </MarkdownTextArea>
               {preview && <p />}
               {preview && (
                 <Link href={href}>
-                  <a className="ui compact basic small button">Read further</a>
+                  <a data-id="read-further-button" className="ui compact basic small button">
+                    Read further
+                  </a>
                 </Link>
               )}
             </Item.Description>
             <Item.Extra suppressHydrationWarning>
               {/*<LazyIcon name="comment outline"/>*/}
               {/*{this.props.comments.length} comments | */}
-              Created {formatDateTime(article.created)}
+              <span data-id="created-at">Created {formatDateTime(article.created)}</span>
             </Item.Extra>
           </ContentPlaceholderOr>
         </Item.Content>

@@ -3,36 +3,41 @@
     {
       "id": "article-1",
       "title": "Article 1",
-      "content": "The very first test article's content",
-      "tags": [ "first", "node" ]
+      "content": "<preview>The very first test article's content</preview>\nText not visible in preview mode",
+      "tags": [ "first", "node" ],
+      "created": "2020-11-01T12:00:00Z"
     },
     {
       "id": "article-2",
       "title": "Article 2",
-      "content": "The very second test article's content",
-      "tags": [ "second", "node" ]
+      "content": "<preview>The very second test article's content</preview>\nText not visible in preview mode",
+      "tags": [ "second", "node" ],
+      "created": "2020-11-02T12:00:00Z"
     },
     {
       "id": "article-3",
       "title": "Article 3",
-      "content": "The very third test article's content",
-      "tags": [ "third", "node" ]
+      "content": "<preview>The very third test article's content</preview>\nText not visible in preview mode",
+      "tags": [ "third", "node" ],
+      "created": "2020-11-03T12:00:00Z"
     },
     {
       "id": "article-4",
       "title": "Article 4",
-      "content": "The very fourth test article's content",
-      "tags": [ "fourth", "node" ]
+      "content": "<preview>The very fourth test article's content</preview>\nText not visible in preview mode",
+      "tags": [ "fourth", "node" ],
+      "created": "2020-11-04T12:00:00Z"
     },
     {
       "id": "article-5",
       "title": "Article 5",
-      "content": "The very fifth test article's content",
-      "tags": [ "fifth", "node" ]
+      "content": "<preview>The very fifth test article's content</preview>\nText not visible in preview mode",
+      "tags": [ "fifth", "node" ],
+      "created": "2020-11-05T12:00:00Z"
     }
   ],
   "pagination": {
-    "total": 20,
+    "total": 3,
     "current": 0
   }
 }
