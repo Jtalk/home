@@ -70,7 +70,7 @@ describe("/", () => {
       cy.containsSearchResult(1, "/projects/project-1", "Project 1", "first tester project");
       cy.containsSearchResult(2, "/projects/project-2", "Project 2", "second tester project");
       cy.containsSearchResult(3, "/blog/articles/article-3", "Article 3", "third test article's content");
-      cy.containsSearchResult(4, "/blog/articles/article-1", "Article 1", "first test article's content");
+      cy.containsSearchResult(4, "/blog/articles/article-1", "Article 1", "first");
       cy.containsSearchResult(5, "/blog/articles/article-2", "Article 2", "second test article's content");
       // No more results
       cy.containsSearchResults(6);
