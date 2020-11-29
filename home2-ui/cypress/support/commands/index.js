@@ -51,3 +51,9 @@ Cypress.Commands.add("stubRoutesIndex", () => {
   cy.fixture("latest-posts").as("latestPostsFx");
   cy.apiRoute("GET", "/blog/articles?page=0&pageSize=3&published=true", "@latestPostsFx");
 });
+
+Cypress.Commands.add("loggedIn", (expiry) => {
+  localStorage.setItem("session-username", "admin");
+  localStorage.setItem("session-expiry", expiry);
+  cy.apiRoute("POST", "/login/refresh", { expiry });
+});

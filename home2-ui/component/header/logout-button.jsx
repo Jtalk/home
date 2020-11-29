@@ -10,7 +10,7 @@ export default function LogoutButton() {
     loggedIn && logoutHandler();
   };
   return (
-    <Menu.Item onClick={onClick} tooltip="Logout">
+    <Menu.Item data-id="logout-button" onClick={onClick} tooltip="Logout">
       <Icon name="sign-out" />
       Sign out
     </Menu.Item>

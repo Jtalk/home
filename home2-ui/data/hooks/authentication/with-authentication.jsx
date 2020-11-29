@@ -5,8 +5,8 @@ import { AuthenticationContext } from "./context";
 import superagentPostJson from "../../ajax/post";
 import superagentPostForm from "../../ajax/post-form";
 
-const SESSION_EXPIRY_KEY = "session-expiry";
-const SESSION_USERNAME_KEY = "session-username";
+export const SESSION_EXPIRY_KEY = "session-expiry";
+export const SESSION_USERNAME_KEY = "session-username";
 
 const defaultContext = {
   status: null,

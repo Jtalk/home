@@ -17,18 +17,17 @@ export default function Header() {
 
   return <HeaderStateless authenticated={authenticated} activeRoute={activeRoute} ownerName={owner?.name || ""} />;
 }
-
 export const HeaderStateless = function ({ ownerName, activeRoute, authenticated }) {
   const DropdownHeader = dynamic(() =>
-    import("semantic-ui-react/dist/commonjs/modules/Dropdown").then((dd) => dd.Header)
+    import("semantic-ui-react/dist/commonjs/modules/Dropdown").then((dd) => dd.default.Header)
   );
   const DropdownDivider = dynamic(() =>
-    import("semantic-ui-react/dist/commonjs/modules/Dropdown").then((dd) => dd.Divider)
+    import("semantic-ui-react/dist/commonjs/modules/Dropdown").then((dd) => dd.default.Divider)
   );
   const HeaderMenuDropdownItem = dynamic(() => import("./header-menu-dropdown-item"));
   const LogoutButton = dynamic(() => import("./logout-button"), { ssr: dynamicSSR() });
   const HeaderSearch = dynamic(() => import("./header-search"), { ssr: dynamicSSR() });
-
+  console.error(`wtf`, DropdownHeader);
   return (
     <Menu secondary pointing data-id="header">
       <HeaderOwner />
@@ -37,20 +36,26 @@ export const HeaderStateless = function ({ ownerName, activeRoute, authenticated
       <HeaderMenuItem data-id="header-blog" active={activeRoute} title={"Blog"} href={"/blog/articles"} />
       {authenticated && (
         <HeaderMenuDropdownItem data-id="header-admin-dropdown" title={"Admin"}>
-          <HeaderMenuItem active={activeRoute} title={"Bio"} href={"/admin/bio"} />
-          <HeaderMenuItem active={activeRoute} title={"Projects"} href={"/admin/projects"} />
-          <HeaderMenuItem active={activeRoute} title={"Blog"} href={"/admin/blog/articles"} />
-          <HeaderMenuItem active={activeRoute} title={"Images"} href={"/admin/images"} />
-          <HeaderMenuItem active={activeRoute} title={"Footer"} href={"/admin/footer"} />
+          <HeaderMenuItem active={activeRoute} data-id="bio" title={"Bio"} href={"/admin/bio"} />
+          <HeaderMenuItem active={activeRoute} data-id="projects" title={"Projects"} href={"/admin/projects"} />
+          <HeaderMenuItem active={activeRoute} data-id="blog" title={"Blog"} href={"/admin/blog/articles"} />
+          <HeaderMenuItem active={activeRoute} data-id="images" title={"Images"} href={"/admin/images"} />
+          <HeaderMenuItem active={activeRoute} data-id="footer" title={"Footer"} href={"/admin/footer"} />
         </HeaderMenuDropdownItem>
       )}
       <Menu.Menu position="right">
         <HeaderSearch />
         {authenticated && (
           <HeaderMenuDropdownItem data-id="header-account-dropdown" icon={"user"}>
-            <DropdownHeader content={ownerName} />
+            <DropdownHeader data-id="account-name" icon="user" content={ownerName} />
             <DropdownDivider />
-            <HeaderMenuItem active={activeRoute} title={"Account"} icon={"settings"} href={"/admin/account"} />
+            <HeaderMenuItem
+              active={activeRoute}
+              data-id="settings"
+              title={"Account"}
+              icon={"settings"}
+              href={"/admin/account"}
+            />
             <LogoutButton />
           </HeaderMenuDropdownItem>
         )}

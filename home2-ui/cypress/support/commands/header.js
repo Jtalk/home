@@ -23,7 +23,8 @@ Cypress.Commands.add("containsHeader", (activePage, authenticated) => {
       cy.get("div[data-id=header-search-bar]").should("be.visible").should("have.class", "search");
 
       if (authenticated) {
-        // todo
+        cy.get("a[data-id=header-admin-dropdown]").should("be.visible");
+        cy.get("a[data-id=header-account-dropdown]").should("be.visible");
       } else {
         cy.get("a[data-id=header-admin-dropdown]").should("not.be.visible");
         cy.get("a[data-id=header-account-dropdown]").should("not.be.visible");
