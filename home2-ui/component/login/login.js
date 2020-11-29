@@ -55,11 +55,12 @@ export const LoginModalStateless = function ({ enabled, onClose, errorMessage, l
   };
 
   return (
-    <Modal closeIcon basic={false} open={enabled} onClose={cleanAndClose}>
+    <Modal closeIcon basic={false} data-id="login-modal" open={enabled} onClose={cleanAndClose}>
       <Modal.Header>Login</Modal.Header>
       <Modal.Content>
         <Form loading={loginStatus === Login.LOGGING_IN} error={loginStatus === Login.ERROR || errors.hasErrors()}>
           <Form.Input
+            data-id="login-input"
             label="Login"
             autoComplete="username"
             value={data.login || ""}
@@ -67,6 +68,7 @@ export const LoginModalStateless = function ({ enabled, onClose, errorMessage, l
             error={errors.errorFor("login")}
           />
           <Form.Input
+            data-id="password-input"
             label="Password"
             type="password"
             autoComplete="current-password"
@@ -74,14 +76,14 @@ export const LoginModalStateless = function ({ enabled, onClose, errorMessage, l
             onChange={updater.change("password")}
             error={errors.errorFor("password")}
           />
-          <ErrorMessage message={errorMessage} />
+          <ErrorMessage data-id="login-error" message={errorMessage} />
         </Form>
       </Modal.Content>
       <Modal.Actions>
-        <Button primary disabled={!canSubmit} onClick={onSubmit(submit)}>
+        <Button primary disabled={!canSubmit} data-id="login-button" onClick={onSubmit(submit)}>
           Login &nbsp; <LazyIcon name="sign in" />
         </Button>
-        <Button color="red" onClick={cleanAndClose}>
+        <Button color="red" data-id="cancel-button" onClick={cleanAndClose}>
           Cancel
         </Button>
       </Modal.Actions>
