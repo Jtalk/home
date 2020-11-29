@@ -20,7 +20,7 @@ describe("/blog/articles", () => {
       "/blog/articles/article-1",
       "The very first test article's content",
       ["first", "node"],
-      /Created ((01.11)|(11.01)).2020/
+      /Created ((0?1.11)|(11.0?1)).2020/
     );
     cy.containsArticlePreview(
       1,
@@ -28,7 +28,7 @@ describe("/blog/articles", () => {
       "/blog/articles/article-2",
       "The very second test article's content",
       ["second", "node"],
-      /Created ((02.11)|(11.02)).2020/
+      /Created ((0?2.11)|(11.0?2)).2020/
     );
     cy.containsArticlePreview(
       2,
@@ -36,7 +36,7 @@ describe("/blog/articles", () => {
       "/blog/articles/article-3",
       "The very third test article's content",
       ["third", "node"],
-      /Created ((03.11)|(11.03)).2020/
+      /Created ((0?3.11)|(11.0?3)).2020/
     );
     cy.containsArticlePreview(
       3,
@@ -44,7 +44,7 @@ describe("/blog/articles", () => {
       "/blog/articles/article-4",
       "The very fourth test article's content",
       ["fourth", "node"],
-      /Created ((04.11)|(11.04)).2020/
+      /Created ((0?4.11)|(11.0?4)).2020/
     );
     cy.containsArticlePreview(
       4,
@@ -52,7 +52,7 @@ describe("/blog/articles", () => {
       "/blog/articles/article-5",
       "The very fifth test article's content",
       ["fifth", "node"],
-      /Created ((05.11)|(11.05)).2020/
+      /Created ((0?5.11)|(11.0?5)).2020/
     );
     cy.containsArticlesCount(5);
     cy.containsPagination(3, 1);
@@ -97,7 +97,7 @@ describe("/blog/articles", () => {
       "/blog/articles/article-5",
       "The very fifth test article's content",
       ["fifth", "node"],
-      /Created ((05.11)|(11.05)).2020/
+      /Created ((0?5.11)|(11.0?5)).2020/
     );
     cy.containsArticlesCount(5);
     cy.containsPagination(3, 3);
@@ -148,7 +148,7 @@ describe("/blog/articles", () => {
         "Article 1",
         "The very first test article's contentText not visible in preview mode",
         ["first", "node"],
-        /Created ((01.11)|(11.01)).2020/
+        /Created ((0?1.11)|(11.0?1)).2020/
       );
       cy.containsArticlesCount(1);
 
