@@ -1,9 +1,9 @@
 import React from "react";
 import Dropdown from "semantic-ui-react/dist/commonjs/modules/Dropdown";
 
-export default function HeaderMenuDropdownItem({ title, icon, children, ...props }) {
+export default function HeaderDropdownItem({ title, icon, children, ...props }) {
   return (
-    <Dropdown item icon={icon} text={title} {...props}>
+    <Dropdown icon={icon} text={title} className="item" {...props}>
       <Dropdown.Menu>{children}</Dropdown.Menu>
     </Dropdown>
   );

@@ -9,7 +9,12 @@ export const HeaderOwner = function () {
   let margin = name ? "10px" : "15ch";
   return (
     <Menu.Item data-id="header-owner-info">
-      <img src="/images/icon16.png" style={{ height: "16px", width: "16px", marginRight: margin }} alt="Icon" />
+      <img
+        src="/images/icon16.png"
+        className="icon"
+        style={{ height: "16px", width: "16px", marginRight: margin }}
+        alt="Icon"
+      />
       <b>{name}</b>
     </Menu.Item>
   );

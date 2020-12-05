@@ -20,7 +20,6 @@ export function useProject(id, withUnpublished = false) {
   const result = useProjects(withUnpublished);
   const getProject = useCallback(
     (data) => {
-      console.error(`wtf`, data, id);
       if (!data) return;
       return find(data, (p) => p.id === id);
     },

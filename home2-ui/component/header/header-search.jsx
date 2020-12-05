@@ -28,10 +28,8 @@ export const HeaderSearchStateless = function ({ query, loading, results, onQuer
   return (
     <Search
       category
-      size="mini"
-      aligned="right"
       data-id="header-search-bar"
-      className="item"
+      className={"item"}
       loading={loading === Loading.LOADING}
       results={results}
       onSearchChange={onQueryChange}

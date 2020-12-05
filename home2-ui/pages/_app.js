@@ -10,7 +10,8 @@ import Container from "semantic-ui-react/dist/commonjs/elements/Container";
 import withAuthentication from "../data/hooks/authentication/with-authentication";
 import PreloadContext from "../data/preload/context";
 import Footer from "../component/footer/footer";
-import Header from "../component/header/header";
+import HeaderDesktop from "../component/header/header-desktop";
+import HeaderMobile from "../component/header/header-mobile";
 
 const { ErrorBoundary } = setupErrorReporting();
 
@@ -30,8 +31,9 @@ function App({ Component, pageProps }) {
     <ErrorBoundary>
       <PreloadContext.Provider value={pageProps?.preload || {}}>
         <div className="main-content-pushable">
-          <Container className="main-content-pusher framed">
-            <Header />
+          <HeaderMobile />
+          <Container className="main-content-pusher desktop-framed">
+            <HeaderDesktop />
             <Component {...pageProps} />
           </Container>
           <ErrorBoundary FallbackComponent={<div />}>

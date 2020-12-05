@@ -77,16 +77,21 @@ footer a {
   color: white;
 }
 
-.ui.container.framed {
-  border-left-style: solid;
-  border-right-style: solid;
-  border-left-width: 2px;
-  border-right-width: 2px;
-  border-color: lightgray;
-  background-color: white;
-}
-
 .ui.cards > .card.width-fit,
 .ui.card.width-fit {
   width: auto;
+}
+
+.ui.container.desktop-framed {
+  background-color: white;
+}
+
+@media only screen and (min-width: 768px) {
+  .ui.container.desktop-framed {
+    border-left-style: solid;
+    border-right-style: solid;
+    border-left-width: 2px;
+    border-right-width: 2px;
+    border-color: lightgray;
+  }
 }
