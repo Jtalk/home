@@ -18,6 +18,8 @@ import "./search";
 import "./projects";
 import "./blog";
 import "./login";
+import "./edit";
+import dayjs from "dayjs";
 
 Cypress.Commands.add("containsTitle", (...segments) => {
   const textSegments = [...segments, "Cypress Bot"].join(" | ");
@@ -53,6 +55,7 @@ Cypress.Commands.add("stubRoutesIndex", () => {
 });
 
 Cypress.Commands.add("loggedIn", (expiry) => {
+  expiry = expiry || dayjs().add(1, "hour").toISOString();
   localStorage.setItem("session-username", "admin");
   localStorage.setItem("session-expiry", expiry);
   cy.apiRoute("POST", "/login/refresh", { expiry });

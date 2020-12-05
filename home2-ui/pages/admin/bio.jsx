@@ -42,6 +42,7 @@ export const EditBioStateless = function ({ data, onSubmit, updater, loading, up
         <Segment raised>
           <h2>Edit bio</h2>
           <Form
+            data-id="edit-bio-form"
             onSubmit={onSubmit}
             loading={loading === Loading.LOADING}
             success={updateStatus === Updating.UPDATED}
@@ -52,31 +53,35 @@ export const EditBioStateless = function ({ data, onSubmit, updater, loading, up
               <Grid.Row>
                 <Grid.Column width={11}>
                   <Form.Input
+                    data-id="owner-name-input"
                     label="Owner Name"
                     placeholder="Name"
                     value={data.name || ""}
                     onChange={updater.change("name")}
                   />
                   <Form.Input
+                    data-id="owner-nickname-input"
                     label="Owner Nickname"
                     placeholder="Nickname"
                     value={data.nickname || ""}
                     onChange={updater.change("nickname")}
                   />
                   <Form.Input
+                    data-id="owner-email-input"
                     label="Owner E-Mail"
                     placeholder="E-Mail"
                     value={get(data, ["contacts", "email", "value"], "")}
                     onChange={updater.change("contacts", "email", "value")}
                   />
                   <Form.Input
+                    data-id="owner-short-bio-input"
                     label="Owner Short Bio"
                     placeholder="Description"
                     value={data.description || ""}
                     onChange={updater.change("description")}
                   />
-                  <SuccessMessage message="Changes successfully saved" />
-                  <ErrorMessage message={errorMessage} />
+                  <SuccessMessage data-id="success-message" message="Changes successfully saved" />
+                  <ErrorMessage data-id="error-message" message={errorMessage} />
                 </Grid.Column>
                 <Grid.Column width={5}>
                   <PhotoUpload
@@ -84,14 +89,20 @@ export const EditBioStateless = function ({ data, onSubmit, updater, loading, up
                     onPhotoSelected={updater.changeFile("photo")}
                     selectedPhoto={data.__files && data.__files["photo"]}
                   />
-                  <Button primary type="submit" loading={updateStatus === Updating.UPDATING} disabled={!canSubmit}>
+                  <Button
+                    data-id="submit-button"
+                    primary
+                    type="submit"
+                    loading={updateStatus === Updating.UPDATING}
+                    disabled={!canSubmit}
+                  >
                     Save
                   </Button>
                 </Grid.Column>
               </Grid.Row>
               <Grid.Row>
                 <Grid.Column width={16}>
-                  <BioTextArea bio={data.bio || ""} onChange={updater.change("bio")} />
+                  <BioTextArea data-id="owner-bio-input" bio={data.bio || ""} onChange={updater.change("bio")} />
                 </Grid.Column>
               </Grid.Row>
             </Grid>
@@ -105,16 +116,16 @@ export const EditBioStateless = function ({ data, onSubmit, updater, loading, up
 export const PhotoUpload = function ({ existingPhotoId, selectedPhoto, onPhotoSelected }) {
   selectedPhoto = selectedPhoto || imageUrl(existingPhotoId);
   return (
-    <Form.Field>
-      <label>Photo</label>
+    <Form.Field data-id="photo-upload">
+      <label data-id="photo-upload-label">Photo</label>
       <div className="image">
-        <ImageUploadPreview src={selectedPhoto} alt={"Owner photo"} />
+        <ImageUploadPreview data-id="owner-photo-upload-preview" src={selectedPhoto} alt={"Owner photo"} />
       </div>
-      <Input type="file" accept="image/*" onChange={onPhotoSelected} />
+      <Input data-id="owner-photo-upload-input" type="file" accept="image/*" onChange={onPhotoSelected} />
     </Form.Field>
   );
 };
 
-export const BioTextArea = function ({ bio, onChange }) {
-  return <TextArea label="Bio" placeholder="Something about me..." value={bio} onChange={onChange} />;
+export const BioTextArea = function ({ bio, onChange, ...rest }) {
+  return <TextArea label="Bio" placeholder="Something about me..." value={bio} onChange={onChange} {...rest} />;
 };

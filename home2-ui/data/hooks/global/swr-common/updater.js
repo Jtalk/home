@@ -21,7 +21,11 @@ export default function useUpdater(url, updateBody = true) {
         setError(null);
       } catch (e) {
         setStatus(Updating.ERROR);
-        setError(e?.message || e);
+        if (e.response?.body?.errors) {
+          setError(e.response.body.errors.join(", "));
+        } else {
+          setError(e.message || e);
+        }
       }
     },
     [updateBody, url]

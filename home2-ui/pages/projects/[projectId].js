@@ -7,7 +7,7 @@ import { OwnerTitled } from "../../component/about/owner-titled";
 import { preloadProjects, useProject, useProjects } from "../../data/hooks/projects/get";
 import { preloadOwner } from "../../data/hooks/owner";
 import { preloadFooter } from "../../data/hooks/footer";
-import { NotFound } from "../../component/error/not-found";
+import NotFound from "../../component/error/not-found";
 
 export default function Project() {
   const router = useRouter();

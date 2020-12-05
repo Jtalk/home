@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import Link from "next/link";
-import { NotFound } from "../error/not-found";
+import NotFound from "../error/not-found";
 import { EditProject } from "./edit-project";
 import maxBy from "lodash/maxBy";
 import findIndex from "lodash/findIndex";

@@ -8,7 +8,7 @@ export default async function superagentPut(url, data) {
     console.info(`Put complete`, url, response.status, response.body);
     return response.body;
   } catch (e) {
-    console.error(`Error putting`, url, e);
+    console.error(`Error putting`, url, e, e.response);
     throw e;
   }
 }

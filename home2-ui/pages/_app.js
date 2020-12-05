@@ -23,7 +23,7 @@ function App({ Component, pageProps }) {
     Component = dynamic(() => Promise.resolve(Component), { ssr: false });
   }
   if (process.browser && router.pathname.startsWith("/admin") && !isLoggedIn) {
-    Component = dynamic(() => import("../component/error/not-found"));
+    Component = dynamic(() => import("../component/error/not-found").then((i) => i.default));
   }
 
   return (

@@ -3,11 +3,10 @@
 import dayjs from "dayjs";
 
 describe("/", () => {
-  const expiry = dayjs().add(1, "hour").toISOString();
   beforeEach(() => {
     cy.server();
     cy.stubRoutesIndex();
-    cy.loggedIn(expiry);
+    cy.loggedIn();
     cy.visit("/");
   });
   describe("header", () => {

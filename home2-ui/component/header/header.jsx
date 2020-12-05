@@ -27,7 +27,7 @@ export const HeaderStateless = function ({ ownerName, activeRoute, authenticated
   const HeaderMenuDropdownItem = dynamic(() => import("./header-menu-dropdown-item"));
   const LogoutButton = dynamic(() => import("./logout-button"), { ssr: dynamicSSR() });
   const HeaderSearch = dynamic(() => import("./header-search"), { ssr: dynamicSSR() });
-  console.error(`wtf`, DropdownHeader);
+
   return (
     <Menu secondary pointing data-id="header">
       <HeaderOwner />

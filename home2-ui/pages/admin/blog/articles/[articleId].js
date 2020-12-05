@@ -4,7 +4,7 @@ import { useForm } from "../../../../component/admin/common/use-form";
 import { Loading, Updating } from "../../../../data/hooks/global/enums";
 import { DatePicker } from "../../../../component/admin/common/date-picker";
 import { useArticle, useArticleUpdater } from "../../../../data/hooks/articles";
-import { NotFound } from "../../../../component/error/not-found";
+import NotFound from "../../../../component/error/not-found";
 import { useRouter } from "next/router";
 import uniq from "lodash/uniq";
 import uniqBy from "lodash/uniqBy";

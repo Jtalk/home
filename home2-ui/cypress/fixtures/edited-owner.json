@@ -1,0 +1,12 @@
+{
+  "name": "New Bot",
+  "nickname": "botonew",
+  "photoId": "",
+  "description": "An updated testing stub",
+  "contacts": {
+    "email": {
+      "value": "botonew@example.com"
+    }
+  },
+  "bio": "# The Next Great Bot\nNewbot is an even greater testing stub"
+}

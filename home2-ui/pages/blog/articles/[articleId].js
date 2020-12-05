@@ -1,7 +1,7 @@
 import React from "react";
 import { Loading } from "../../../data/hooks/global/enums";
 import { preloadArticle, useArticle } from "../../../data/hooks/articles/get";
-import { NotFound } from "../../../component/error/not-found";
+import NotFound from "../../../component/error/not-found";
 import { useRouter } from "next/router";
 import { BlogPath } from "../../../utils/paths";
 import { OwnerTitled } from "../../../component/about/owner-titled";
