@@ -11,6 +11,7 @@ import MainMenu from "./main-menu";
 import AccountMenu from "./account-menu";
 import HeaderDropdownItem from "./header-dropdown-item";
 import AdminMenu from "./admin-menu";
+import HeaderSearch from "./header-search";
 
 export default function HeaderDesktop() {
   const router = useRouter();
@@ -21,6 +22,7 @@ export default function HeaderDesktop() {
 
   return (
     <HeaderDesktopStateless
+      data-id="header-desktop"
       className={styles.desktop}
       authenticated={authenticated}
       activeRoute={activeRoute}
@@ -29,12 +31,10 @@ export default function HeaderDesktop() {
   );
 }
 
-export const HeaderDesktopStateless = function ({ ownerName, activeRoute, authenticated, className }) {
-  const HeaderSearch = dynamic(() => import("./header-search"), { ssr: dynamicSSR() });
-
+export const HeaderDesktopStateless = function ({ ownerName, activeRoute, authenticated, ...rest }) {
   return (
-    <div className={className}>
-      <Menu secondary pointing data-id="header" className={className}>
+    <div {...rest}>
+      <Menu secondary pointing data-id="header">
         <HeaderOwner />
         <MainMenu type="bar" activeRoute={activeRoute} authenticated={authenticated} />
         {authenticated && (

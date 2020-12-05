@@ -11,9 +11,9 @@ describe("/", () => {
   });
   describe("header", () => {
     it("should render admin navigation when authenticated", () => {
-      cy.get("[data-id=header] [data-id=header-admin-dropdown]").should("be.visible").click();
-      cy.get("[data-id=header-admin-dropdown]")
-        .should("be.visible")
+      cy.get("[data-id=header]:visible [data-id=header-admin-dropdown]").should("exist").click();
+      cy.get("[data-id=header-admin-dropdown]:visible")
+        .should("exist")
         .within(() => {
           cy.get("[data-id=bio]")
             .should("have.text", "Bio")
@@ -38,9 +38,9 @@ describe("/", () => {
           cy.get("a").eq(5).should("not.exist");
           cy.screenshotCI("admin dropdown");
         });
-      cy.get("[data-id=header] [data-id=header-account-dropdown]").should("be.visible").click();
-      cy.get("[data-id=header] [data-id=header-account-dropdown]")
-        .should("be.visible")
+      cy.get("[data-id=header]:visible [data-id=header-account-dropdown]").should("exist").click();
+      cy.get("[data-id=header]:visible [data-id=header-account-dropdown]")
+        .should("exist")
         .within(() => {
           cy.get("[data-id=account-name]").should("have.text", "Cypress Bot");
           cy.get("a[data-id=settings]").should("have.text", "Account").should("have.attr", "href", "/admin/account");
@@ -51,7 +51,7 @@ describe("/", () => {
 
       // Logout
       cy.apiRoute("POST", "/logout", {});
-      cy.get("[data-id=logout-button]").click();
+      cy.get("[data-id=logout-button]:visible").click();
       cy.get("[data-id=header-account-dropdown]")
         .should("not.be.visible")
         .then(() => {

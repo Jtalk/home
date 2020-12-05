@@ -21,6 +21,7 @@ export default function HeaderMobile() {
 
   return (
     <HeaderMobileStateless
+      data-id="header-mobile"
       className={styles.mobile}
       authenticated={authenticated}
       activeRoute={activeRoute}
@@ -29,12 +30,12 @@ export default function HeaderMobile() {
   );
 }
 
-const HeaderMobileStateless = function ({ ownerName, activeRoute, authenticated, className }) {
+const HeaderMobileStateless = function ({ ownerName, activeRoute, authenticated, ...rest }) {
   const HeaderSearch = dynamic(() => import("./header-search"), { ssr: dynamicSSR() });
 
   return (
-    <div className={className}>
-      <Menu pointing fluid data-id="header" className={className}>
+    <div {...rest}>
+      <Menu pointing fluid data-id="header">
         <Dropdown compact item simple icon="wrench" data-id="header">
           <Dropdown.Menu>
             <MainMenu type="menu" activeRoute={activeRoute} authenticated={authenticated} />

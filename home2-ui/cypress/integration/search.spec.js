@@ -10,13 +10,16 @@ describe("/", () => {
     it("should operate search", () => {
       // Empty result
       cy.route("GET", `/search?q=a&max=20`, []).as("searchNothing");
-      cy.get("div[data-id=header-search-bar] input").should("be.visible").type("a");
-      cy.get("div[data-id=header-search-bar] input").should("have.attr", "value", "a");
+      cy.get("[data-id=header-desktop] div[data-id=header-search-bar] input").should("be.visible").type("a");
+      cy.get("[data-id=header-desktop] div[data-id=header-search-bar] input").should("have.attr", "value", "a");
       cy.wait("@searchNothing");
       // Should contain no results
-      cy.get("div[data-id=header-search-bar] .results").should("contain.text", "No results found");
+      cy.get("[data-id=header-desktop] div[data-id=header-search-bar] .results").should(
+        "contain.text",
+        "No results found"
+      );
       cy.screenshotCI("search empty results");
-      cy.get("div[data-id=header-search-bar] input").clear();
+      cy.get("[data-id=header-desktop] div[data-id=header-search-bar] input").clear();
 
       // Single result, owner
       cy.route("GET", `/search?q=g&max=20`, []);
@@ -27,8 +30,8 @@ describe("/", () => {
         const response = [{ type: "owner", value: ownerFx }];
         cy.route("GET", `/search?q=great&max=20`, response).as("searchSingleOwner");
       });
-      cy.get("div[data-id=header-search-bar] input").should("be.visible").type("great");
-      cy.get("div[data-id=header-search-bar] input").should("have.attr", "value", "great");
+      cy.get("[data-id=header-desktop] div[data-id=header-search-bar] input").should("exist").type("great");
+      cy.get("[data-id=header-desktop] div[data-id=header-search-bar] input").should("have.attr", "value", "great");
       cy.wait("@searchSingleOwner");
       cy.containsSearchCategory(0, "owner");
       cy.containsSearchCategories(1);
@@ -37,7 +40,7 @@ describe("/", () => {
       // No more results
       cy.containsSearchResults(1);
       cy.screenshotCI("search single result");
-      cy.get("div[data-id=header-search-bar] input").clear();
+      cy.get("[data-id=header-desktop] div[data-id=header-search-bar] input").clear();
 
       // Multiple results in multiple categories
       cy.route("GET", `/search?q=t&max=20`, []);
@@ -58,8 +61,8 @@ describe("/", () => {
           });
         });
       });
-      cy.get("div[data-id=header-search-bar] input").should("be.visible").type("test");
-      cy.get("div[data-id=header-search-bar] input").should("have.attr", "value", "test");
+      cy.get("[data-id=header-desktop] div[data-id=header-search-bar] input").should("exist").type("test");
+      cy.get("[data-id=header-desktop] div[data-id=header-search-bar] input").should("have.attr", "value", "test");
       cy.wait("@searchMultipleResults");
       cy.containsSearchCategory(0, "owner");
       cy.containsSearchCategory(1, "project");
@@ -75,7 +78,7 @@ describe("/", () => {
       // No more results
       cy.containsSearchResults(6);
       cy.screenshotCI("search multiple results");
-      cy.get("div[data-id=header-search-bar] input").clear();
+      cy.get("[data-id=header-desktop] div[data-id=header-search-bar] input").clear();
     });
   });
 });

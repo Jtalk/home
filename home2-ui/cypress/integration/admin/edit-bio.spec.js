@@ -7,8 +7,8 @@ describe("/admin/bio", () => {
   });
   it("should navigate from menu", () => {
     cy.visit("/");
-    cy.get("[data-id=header-admin-dropdown]").should("be.visible").click();
-    cy.get("[data-id=header-admin-dropdown] a[data-id=bio]").should("be.visible").click();
+    cy.get("[data-id=header-admin-dropdown]:visible").should("be.visible").click();
+    cy.get("[data-id=header-admin-dropdown]:visible a[data-id=bio]").should("be.visible").click();
     cy.location("pathname").should("equal", "/admin/bio");
     cy.containsTitle("Edit Bio");
   });

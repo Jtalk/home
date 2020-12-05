@@ -1,8 +1,8 @@
 /* eslint-disable no-undef */
 
 Cypress.Commands.add("containsHeader", (activePage, authenticated) => {
-  cy.get("div[data-id=header]")
-    .should("be.visible")
+  cy.get("div[data-id=header]:visible")
+    .should("exist")
     .within(() => {
       cy.get("div[data-id=header-owner-info] img").should("have.attr", "src", "/images/icon16.png");
       cy.get("div[data-id=header-owner-info]").should("contain.text", "Cypress Bot");
