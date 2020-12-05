@@ -11,7 +11,6 @@ describe("/admin/bio", () => {
     cy.get("[data-id=header-admin-dropdown] a[data-id=bio]").should("be.visible").click();
     cy.location("pathname").should("equal", "/admin/bio");
     cy.containsTitle("Edit Bio");
-    cy.screenshotCI("edit bio");
   });
   it("should edit bio", function () {
     cy.visit("/admin/bio");
@@ -27,6 +26,8 @@ describe("/admin/bio", () => {
     cy.get("[data-id=edit-bio-form]")
       .should("be.visible")
       .within(() => {
+        cy.screenshotCI("edit bio");
+
         cy.verifyInputAndEdit("[data-id=owner-name-input] input", this.ownerFx.name, this.editedOwnerFx.name);
         cy.verifyInputAndEdit(
           "[data-id=owner-nickname-input] input",

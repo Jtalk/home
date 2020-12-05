@@ -12,7 +12,6 @@ import Menu from "semantic-ui-react/dist/commonjs/collections/Menu";
 import LazyIcon from "../lazy-icon";
 import { useProject, useProjects } from "../../data/hooks/projects/get";
 import { useProjectUpdater } from "../../data/hooks/projects/update";
-import { useProjectError } from "../../data/hooks/projects";
 import { useRouter } from "next/router";
 
 const NEW_PROJECT_ID = "new";
@@ -30,6 +29,7 @@ export const EditProjects = function ({ currentProjectId }) {
   const router = useRouter();
 
   const { data: projects, error: errorMessage } = useProjects(true);
+  currentProjectId = currentProjectId || projects?.[0]?.id;
   const { data: currentProject } = useProject(currentProjectId, true);
 
   const { updater } = useProjectUpdater();
@@ -45,7 +45,6 @@ export const EditProjects = function ({ currentProjectId }) {
   if (projects && projects.length && currentProjectId && !currentProject) {
     return <NotFound />;
   }
-  currentProjectId = currentProjectId || (currentProject && currentProject.id);
   return <EditProjectsStateless {...{ projects, currentProject, currentProjectId, errorMessage, submit }} />;
 };
 
