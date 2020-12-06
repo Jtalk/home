@@ -114,6 +114,7 @@ describe("/blog/articles", () => {
 
     cy.containsArticlesCount(0);
     cy.get("[data-id=articles-pagination]").should("not.exist");
+    cy.get("[data-id=no-articles]").should("contain.text", "No articles found");
 
     cy.screenshotCI("empty blog");
 

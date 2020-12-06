@@ -55,7 +55,7 @@ const BlogArticles = function ({ loading, articles }) {
     articles = Array(5).fill({});
   } else if (articles.length === 0) {
     return (
-      <Segment basic>
+      <Segment basic data-id="no-articles">
         <h1>No articles found</h1>
         This blog seems to be empty for now...
       </Segment>
