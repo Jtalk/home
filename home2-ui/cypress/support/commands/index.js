@@ -10,6 +10,7 @@
 // ***********************************************
 //
 
+import dayjs from "dayjs";
 import "./header";
 import "./owner-card";
 import "./latest-posts";
@@ -19,7 +20,6 @@ import "./projects";
 import "./blog";
 import "./login";
 import "./edit";
-import dayjs from "dayjs";
 
 Cypress.Commands.add("containsTitle", (...segments) => {
   const textSegments = [...segments, "Cypress Bot"].join(" | ");
@@ -30,6 +30,25 @@ Cypress.Commands.add("screenshotCI", (name) => {
   if (Cypress.env("CI")) {
     cy.screenshot(name);
   }
+});
+
+Cypress.Commands.add("screenshotsCI", (title) => {
+  cy.viewport("iphone-5", "portrait");
+  cy.screenshotCI(`${title} (small mobile)`);
+
+  cy.viewport("iphone-5", "landscape");
+  cy.screenshotCI(`${title} (small mobile, landscape)`);
+
+  cy.viewport("iphone-x");
+  cy.screenshotCI(`${title} (large mobile)`);
+
+  cy.viewport("ipad-2", "landscape");
+  cy.screenshotCI(`${title} (tablet landscape)`);
+
+  cy.viewport("ipad-2", "portrait");
+  cy.screenshotCI(`${title} (tablet portrait)`);
+
+  cy.viewport(1000, 660);
 });
 
 Cypress.Commands.add("apiRoute", (methodOrObject, url, stub) => {

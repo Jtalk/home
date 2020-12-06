@@ -30,7 +30,7 @@ describe("/projects", () => {
     cy.containsHeader("Projects", false);
     cy.containsFooter();
 
-    cy.screenshotCI("projects");
+    cy.screenshotsCI("projects");
 
     cy.get("a[data-id=project-tab]").eq(1).should("have.text", "Project 3").click();
 
@@ -113,7 +113,7 @@ describe("/projects", () => {
     cy.get("[data-id=projects-tabs]").should("not.be.visible");
     cy.get("[data-id=project-page]").should("not.be.visible");
 
-    cy.screenshotCI("no projects configured message");
+    cy.screenshotsCI("no projects configured message");
   });
 
   it("should render error page when project not found", () => {
@@ -124,6 +124,6 @@ describe("/projects", () => {
 
     cy.get("[data-id=error-page]").should("contain.text", "Not Found");
 
-    cy.screenshotCI("project not found message");
+    cy.screenshotsCI("project not found message");
   });
 });

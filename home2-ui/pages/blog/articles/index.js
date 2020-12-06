@@ -53,6 +53,13 @@ export default function Blog() {
 const BlogArticles = function ({ loading, articles }) {
   if (loading === Loading.LOADING) {
     articles = Array(5).fill({});
+  } else if (articles.length === 0) {
+    return (
+      <Segment basic>
+        <h1>No articles found</h1>
+        This blog seems to be empty for now...
+      </Segment>
+    );
   }
   return articles.map((article, i) => (
     <ArticleView preview key={i} article={article} loading={loading} href={`${BlogPath}/${article.id}`} />

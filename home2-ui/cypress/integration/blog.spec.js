@@ -81,6 +81,8 @@ describe("/blog/articles", () => {
     cy.containsTitle("Article 3", "Articles");
     // Just make sure we've changed what's rendered to a single article view. To be tested properly in a separate feature below.
     cy.containsArticlesCount(1);
+
+    cy.screenshotsCI("articles");
   });
 
   it("should render a different blog page", () => {
@@ -112,6 +114,11 @@ describe("/blog/articles", () => {
 
     cy.containsArticlesCount(0);
     cy.get("[data-id=articles-pagination]").should("not.exist");
+
+    cy.screenshotCI("empty blog");
+
+    cy.viewport("iphone-5");
+    cy.screenshotCI("empty blog (mobile)");
   });
 
   it("should navigate through pagination", () => {

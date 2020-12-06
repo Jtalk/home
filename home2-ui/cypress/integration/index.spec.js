@@ -21,6 +21,6 @@ describe("/", () => {
     cy.containsHeader("About", false);
     cy.containsFooter();
 
-    cy.screenshotCI("index");
+    cy.screenshotsCI("index");
   });
 });
