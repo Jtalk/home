@@ -8,6 +8,7 @@ import db.Database
 import javax.inject.Inject
 import models.blog.Article
 import models.owner.{Contact, OwnerInfo}
+import play.api.libs.json.Json
 import play.api.{Configuration, Logger}
 import play.api.mvc.{AbstractController, Action, AnyContent, ControllerComponents, PlayBodyParsers, Request}
 import utils.Extension._
@@ -30,8 +31,11 @@ class FeedController @Inject()(cc: ControllerComponents,
   private lazy val selfUrl = config.get[String]("app.feed.atom.url")
   private lazy val articleUrl = config.get[String]("app.feed.atom.entry.url.base")
 
+  private val filter = Json.obj("published" -> true)
+  private val sorter = Json.obj("created" -> -1)
+
   def atom: Action[AnyContent] = Action.async { implicit request: Request[AnyContent] =>
-    db.findPage[Article](0, AtomPageSize)
+    db.findPage[Article](0, AtomPageSize, filter, sorter)
       .map(_.data)
       .flatMap(articles => owner.map((_, articles)))
       .map((asAtom _).tupled)
