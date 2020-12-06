@@ -50,7 +50,10 @@ describe("/admin/bio", () => {
         cy.apiRoute("GET", "/owner", "@editedOwnerFx");
 
         cy.get("[data-id=submit-button]").click();
-        cy.wait("@editCall").its("requestBody").should("deep.equal", this.editedOwnerFx);
+        cy.wait("@editCall").should(({ request }) => {
+          expect(request.body).to.deep.equal(this.editedOwnerFx);
+          expect(request.headers).to.have.property("Content-Type", "application/json");
+        });
 
         cy.get("[data-id=success-message]").should("be.visible").should("have.text", "Changes successfully saved");
       });
