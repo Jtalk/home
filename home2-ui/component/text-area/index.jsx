@@ -26,7 +26,7 @@ const languages = {
 async function highlight(targetRef, languagesInText) {
   console.info(`Loading highlighting for`, languagesInText);
   if (languagesInText.length > 0) {
-    const hljs = await import("highlight.js/lib/highlight");
+    const hljs = await import("highlight.js/lib/core");
     const promises = languagesInText
       .map((language) => [language, languages[language]])
       .filter((loader) => !!loader[1])
