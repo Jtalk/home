@@ -9,6 +9,7 @@ import { useLoggedIn } from "../../data/hooks/authentication/hooks";
 import Card from "semantic-ui-react/dist/commonjs/views/Card";
 import dynamic from "next/dynamic";
 import { useOwner } from "../../data/hooks/owner/get";
+import styles from "./owner-card.module.css";
 
 export default function OwnerCard() {
   let { data: owner, loading } = useOwner();
@@ -47,13 +48,17 @@ export const CardStateless = function ({ loading, owner, showLogin }) {
           <Card.Header data-id="owner-name" as="h3" onClick={onNameClick}>
             {owner.name}
           </Card.Header>
-          <Card.Meta data-id="owner-nickname">{owner.nickname}</Card.Meta>
+          <Card.Meta className={styles.abbreviated} data-id="owner-nickname">
+            {owner.nickname}
+          </Card.Meta>
           <Card.Description data-id="owner-description">{owner.description}</Card.Description>
         </ContentPlaceholderOr>
       </Card.Content>
       <Card.Content extra icon="user" data-id="owner-contacts">
         <LinePlaceholderOr length="short" loading={loading === Loading.LOADING}>
-          <span data-id="owner-email">{get(owner, "contacts.email.value", null)}</span>
+          <span className={styles.abbreviated} data-id="owner-email">
+            {get(owner, "contacts.email.value", null)}
+          </span>
         </LinePlaceholderOr>
       </Card.Content>
     </Card>
