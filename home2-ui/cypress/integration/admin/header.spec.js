@@ -1,7 +1,5 @@
 /* eslint-disable no-undef */
 
-import dayjs from "dayjs";
-
 describe("/", () => {
   beforeEach(() => {
     cy.server();
@@ -55,7 +53,9 @@ describe("/", () => {
       cy.get("[data-id=header-account-dropdown]")
         .should("not.be.visible")
         .then(() => {
+          // eslint-disable-next-line no-unused-expressions
           expect(localStorage.getItem("session-username")).to.not.exist;
+          // eslint-disable-next-line no-unused-expressions
           expect(localStorage.getItem("session-expiry")).to.not.exist;
         });
     });
