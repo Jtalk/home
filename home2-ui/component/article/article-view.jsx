@@ -50,10 +50,12 @@ export const ArticleView = function ({ article, loading, href, preview }) {
                 </Link>
               )}
             </Item.Description>
-            <Item.Extra suppressHydrationWarning>
+            <Item.Extra>
               {/*<LazyIcon name="comment outline"/>*/}
               {/*{this.props.comments.length} comments | */}
-              <span data-id="created-at">Created {formatDateTime(article.created)}</span>
+              <span data-id="created-at" suppressHydrationWarning>
+                Created {formatDateTime(article.created)}
+              </span>
             </Item.Extra>
           </ContentPlaceholderOr>
         </Item.Content>
