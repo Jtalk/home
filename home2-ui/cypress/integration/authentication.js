@@ -59,10 +59,11 @@ describe("login", () => {
           response: {
             errors: ["Invalid login/password"],
           },
-        });
+        }).as("loginFail");
         cy.get("[data-id=login-input] input").type("admin");
-        cy.get("[data-id=password-input] input").type("password");
+        cy.get("[data-id=password-input] input").type("password1");
         cy.get("[data-id=login-button]").click();
+        cy.wait("@loginFail").its("requestBody").should("equal", "login=admin&password=password1");
       });
     // .click() detaches the old modal for some reason, invalidating the above `within`
     cy.get("[data-id=login-error] [data-id=header]").should("have.text", "Error");
@@ -70,21 +71,25 @@ describe("login", () => {
 
     // Successful login
     const expiry = dayjs().add(1, "hour").toISOString();
-    cy.apiRoute("POST", "/login", { expiry });
+    cy.apiRoute("POST", "/login", { expiry }).as("loginSuccess");
     cy.get("[data-id=login-modal]")
       .should("be.visible")
       .within(() => {
         cy.get("[data-id=login-input] input").clear();
         cy.get("[data-id=password-input] input").clear();
 
-        cy.get("[data-id=login-input] input").type("admin");
-        cy.get("[data-id=password-input] input").type("password");
+        cy.get("[data-id=login-input] input").type("user");
+        cy.get("[data-id=password-input] input").type("rightpass");
         cy.get("[data-id=login-button]").click();
+        cy.wait("@loginSuccess").should(({ request }) => {
+          expect(request.body).to.equal("login=user&password=rightpass");
+          expect(request.headers).to.have.property("Content-Type", "application/x-www-form-urlencoded");
+        });
       });
     cy.get("[data-id=login-modal]")
       .should("not.be.visible")
       .then(() => {
-        expect(localStorage.getItem("session-username")).to.equal("admin");
+        expect(localStorage.getItem("session-username")).to.equal("user");
         expect(localStorage.getItem("session-expiry")).to.equal(expiry);
       });
     cy.get("[data-id=header-account-dropdown]").should("be.visible");
