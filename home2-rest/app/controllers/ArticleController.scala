@@ -12,6 +12,7 @@ import play.api.{Configuration, Logger}
 import utils.WebUtils
 
 import scala.concurrent.ExecutionContext
+import utils.Extension._
 
 @Singleton
 class ArticleController @Inject()(cc: ControllerComponents,
@@ -43,8 +44,12 @@ class ArticleController @Inject()(cc: ControllerComponents,
   }
 
   def update(id: String) = AuthenticatedAction.async(Article.jsonParser) { _ => request: Request[Article] =>
-    val update = request.body.copy(updated = now)
-    db.update(id, update)
+    val update = db.find[Article](id)
+      .fomap(existing => request.body.copy(atomId = existing.atomId))
+      .foget(request.body)
+      .map(_.copy(updated = now))
+    update
+      .flatMap(db.update(id, _))
       .map(Ok[Article])
   }
 

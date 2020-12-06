@@ -39,7 +39,7 @@ object Article {
       (JsPath \ "updated").readWithDefault[ZonedDateTime](ZonedDateTime.now(ZoneOffset.UTC)) and
       (JsPath \ "content").readWithDefault[String]("")and
       (JsPath \ "tags").readWithDefault[Set[String]](Set[String]()) and
-      (JsPath \ "atomId").read[UUID])
+      (JsPath \ "atomId").readWithDefault[UUID](UUID.randomUUID()))
     .apply(Article.apply _)
 
   implicit def jsonParser(implicit bodyParsers: PlayBodyParsers, ec: ExecutionContext) = WebUtils.bodyParser[Article]
