@@ -20,7 +20,7 @@ export default function EditBlog() {
   return (
     <>
       <OwnerTitled title={"Edit Article"} />
-      <EditBlogStateless page={1} {...{ articles, onDelete }} />
+      <EditBlogStateless page={1} {...{ articles: articles || [], onDelete }} />
     </>
   );
 }
