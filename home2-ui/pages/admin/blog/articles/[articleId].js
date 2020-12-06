@@ -31,7 +31,7 @@ export default function EditBlogArticle() {
   const { updater: articleUpdater, status: updating, error: errorMessage } = useArticleUpdater();
 
   const submit = useCallback(
-    () => async (updatedArticle) => {
+    async (updatedArticle) => {
       article && (await articleUpdater(article.id, updatedArticle));
       await router.push(editHref(updatedArticle.id));
     },
