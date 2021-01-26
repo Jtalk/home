@@ -42,7 +42,7 @@ spec:
               value: 899f8865a22e37b078415c92f56dfc5f
           startupProbe:
             httpGet:
-              path: /
+              path: /api/health
               port: 80
               scheme: HTTP
             failureThreshold: 15
@@ -51,7 +51,7 @@ spec:
           livenessProbe:
             failureThreshold: 2
             httpGet:
-              path: /
+              path: /api/health
               port: 80
               scheme: HTTP
             periodSeconds: 10
