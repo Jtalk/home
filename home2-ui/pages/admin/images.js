@@ -3,7 +3,7 @@ import { Pagination } from "../../component/pagination";
 import { checkTruthy } from "../../utils/validation";
 import { formatDateTime } from "../../utils/date-time";
 import ImageUploader from "../../component/3rdparty/react-image-upload";
-import "./images.module.css";
+import classes from "./images.module.css";
 import { ImageUploadPreview } from "../../component/admin/common/image-upload-preview";
 import { Loading, Uploading } from "../../data/hooks/global/enums";
 import { useRouter } from "next/router";
@@ -174,7 +174,9 @@ export const ImageUploadStateless = function ({
 
 export const ImageUploaderWithPreview = function ({ selectedFile, onFileSelected }) {
   if (selectedFile) {
-    return <ImageUploadPreview src={selectedFile} alt={"Image upload preview"} className={"image-upload-preview"} />;
+    return (
+      <ImageUploadPreview src={selectedFile} alt={"Image upload preview"} className={classes.imageUploadPreview} />
+    );
   } else {
     const supportedTypes = ["jpg", "png", "gif", "svg"];
     return (

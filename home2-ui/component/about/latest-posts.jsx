@@ -5,7 +5,7 @@ import List from "semantic-ui-react/dist/commonjs/elements/List";
 import { formatDateTime } from "../../utils/date-time";
 import { Loading } from "../../data/hooks/global/enums";
 import Link from "next/link";
-import "./latest-posts.module.css";
+import classes from "./latest-posts.module.css";
 import { BlogPath } from "../../utils/paths";
 import { ContentPlaceholderOr } from "../placeholder/content-placeholder";
 import { useLatestArticles } from "../../data/hooks/latest-articles";
@@ -44,7 +44,7 @@ function createPostItem(post) {
           </Link>
         </List.Header>
         <List.Description>
-          <div data-id="latest-post-created-timestamp" suppressHydrationWarning className="datetime">
+          <div data-id="latest-post-created-timestamp" suppressHydrationWarning className={classes.datetime}>
             {formatDateTime(post.created)}
           </div>
         </List.Description>
