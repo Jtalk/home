@@ -76,13 +76,15 @@ export default function MarkdownTextArea({ children, preview, ...rest }) {
   };
   const rootRef = useRef();
   useHighlightJS(rootRef, children);
-  if (typeof children !== "string") {
+  if (children && typeof children !== "string") {
     throw Error("Markdown text area can only render textual content, but was " + typeof children);
   }
 
   return (
     <div ref={rootRef} {...rest}>
-      <Markdown options={opts}>{`<${WRAPPER_COMPONENT_NAME}>${children}</${WRAPPER_COMPONENT_NAME}>`}</Markdown>
+      {children && (
+        <Markdown options={opts}>{`<${WRAPPER_COMPONENT_NAME}>${children}</${WRAPPER_COMPONENT_NAME}>`}</Markdown>
+      )}
     </div>
   );
 }
