@@ -5,17 +5,18 @@ import { preloadOwner, useOwner } from "../data/hooks/owner/get";
 import dynamic from "next/dynamic";
 import PreloadContext from "../data/preload/context";
 import OwnerCard from "../component/about/owner-card";
-import MarkdownTextArea from "../component/text-area";
 import ContentPlaceholderOr from "../component/placeholder/content-placeholder";
 import { Loading } from "../data/hooks/global/enums";
 import { preloadFooter } from "../data/hooks/footer";
 import { isSsrPreloadEnabled } from "../data/ajax/ssr";
+import { dynamicSSR } from "../utils/dynamic-import";
 
 export default function About({ preload }) {
   const { data: owner, loading } = useOwner();
   const { bio } = owner || {};
 
-  const LatestPosts = dynamic(() => import("../component/about/latest-posts"));
+  const LatestPosts = dynamic(() => import("../component/about/latest-posts"), { ssr: dynamicSSR() });
+  const MarkdownTextArea = dynamic(() => import("../component/text-area"), { ssr: dynamicSSR() });
 
   return (
     <PreloadContext.Provider value={preload}>

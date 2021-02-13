@@ -11,8 +11,7 @@ import Container from "semantic-ui-react/dist/commonjs/elements/Container";
 import withAuthentication from "../data/hooks/authentication/with-authentication";
 import PreloadContext from "../data/preload/context";
 import Footer from "../component/footer/footer";
-import HeaderDesktop from "../component/header/header-desktop";
-import HeaderMobile from "../component/header/header-mobile";
+import { dynamicSSR } from "../utils/dynamic-import";
 
 const { ErrorBoundary } = setupErrorReporting();
 
@@ -27,6 +26,9 @@ function App({ Component, pageProps }) {
   if (process.browser && router.pathname.startsWith("/admin") && !isLoggedIn) {
     Component = dynamic(() => import("../component/error/not-found").then((i) => i.default));
   }
+
+  const HeaderMobile = dynamic(() => import("../component/header/header-mobile"), { ssr: dynamicSSR() });
+  const HeaderDesktop = dynamic(() => import("../component/header/header-desktop"), { ssr: dynamicSSR() });
 
   return (
     <ErrorBoundary>
