@@ -22,11 +22,19 @@ import Container from "semantic-ui-react/dist/commonjs/elements/Container";
 import { useImages } from "../../data/hooks/images/get";
 import { useImageUploader } from "../../data/hooks/images/upload";
 import { useImageDeleter } from "../../data/hooks/images/delete";
+import Head from "next/head";
 
 export default function EditImagesPage() {
   const router = useRouter();
   const { page = 0 } = router.query;
-  return <EditImages page={page} />;
+  return (
+    <>
+      <Head>
+        <link rel="stylesheet" href="/css/3rdparty/react-image-upload.css" />
+      </Head>
+      <EditImages page={page} />
+    </>
+  );
 }
 
 export const EditImages = function ({ page = 0 }) {

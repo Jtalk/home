@@ -2,7 +2,6 @@ import React from "react";
 import "./index.css";
 import "semantic-ui-css/semantic.min.css";
 import "highlight.js/styles/idea.css";
-import "../component/3rdparty/react-image-upload.css";
 import { setupErrorReporting } from "../utils/error-reporting";
 import { useRouter } from "next/router";
 import dynamic from "next/dynamic";
