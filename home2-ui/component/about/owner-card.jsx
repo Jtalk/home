@@ -10,6 +10,8 @@ import Card from "semantic-ui-react/dist/commonjs/views/Card";
 import dynamic from "next/dynamic";
 import { useOwner } from "../../data/hooks/owner/get";
 import styles from "./owner-card.module.css";
+import ImageLoading from "react-image-loading";
+import Placeholder from "semantic-ui-react/dist/commonjs/elements/Placeholder";
 
 export default function OwnerCard() {
   let { data: owner, loading } = useOwner();
@@ -40,8 +42,19 @@ export const CardStateless = function ({ loading, owner, showLogin }) {
   };
   return (
     <Card data-id="owner-card">
-      <ImagePlaceholderOr square loading={loading === Loading.LOADING}>
-        <OptionalImage wrapped data-id="owner-photo" id={owner.photoId} />
+      <ImagePlaceholderOr rectangular loading={loading === Loading.LOADING}>
+        <ImageLoading>
+          {(ref, status) => (
+            <>
+              <OptionalImage ref={ref} data-id="owner-photo" id={owner.photoId} />
+              {status === "loading" && (
+                <Placeholder>
+                  <Placeholder.Image rectangular />
+                </Placeholder>
+              )}
+            </>
+          )}
+        </ImageLoading>
       </ImagePlaceholderOr>
       <Card.Content>
         <ContentPlaceholderOr header loading={loading === Loading.LOADING} lines={3}>
