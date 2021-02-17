@@ -4,3 +4,7 @@
     white-space: nowrap;
     display: block;
 }
+
+.photo {
+    width: 100%;
+}

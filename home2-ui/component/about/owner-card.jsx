@@ -46,7 +46,7 @@ export const CardStateless = function ({ loading, owner, showLogin }) {
         <ImageLoading>
           {(ref, status) => (
             <>
-              <OptionalImage ref={ref} data-id="owner-photo" id={owner.photoId} />
+              <OptionalImage ref={ref} className={styles.photo} data-id="owner-photo" id={owner.photoId} />
               {status === "loading" && (
                 <Placeholder>
                   <Placeholder.Image rectangular />
