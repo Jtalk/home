@@ -70,11 +70,7 @@ jobs:
           browser: firefox
           headless: true
           working-directory: home2-ui
-          start: >-
-            docker run -d --rm --name home-ui-ci -p 8070:80
-              -e REACT_APP_BUGSNAG_API_KEY=
-              ${{ env.UI_DOCKER_IMAGE_PREFIX }}:${{ github.sha }}
-              npm run start:cypress
+          start: docker run -d --rm --name home-ui-ci -p 8070:80 -e REACT_APP_BUGSNAG_API_KEY= ${{ env.UI_DOCKER_IMAGE_PREFIX }}:${{ github.sha }} npm run start:cypress
           wait-on: http://localhost:8070/
           wait-on-timeout: 10
           record: true
