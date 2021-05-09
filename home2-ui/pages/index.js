@@ -12,11 +12,11 @@ import { isSsrPreloadEnabled } from "../data/ajax/ssr";
 import { dynamicSSR } from "../utils/dynamic-import";
 import MarkdownTextArea from "../component/text-area";
 
+const LatestPosts = dynamic(() => import("../component/about/latest-posts"), { ssr: dynamicSSR() });
+
 export default function About({ preload }) {
   const { data: owner, loading } = useOwner();
   const { bio } = owner || {};
-
-  const LatestPosts = dynamic(() => import("../component/about/latest-posts"), { ssr: dynamicSSR() });
 
   return (
     <PreloadContext.Provider value={preload}>

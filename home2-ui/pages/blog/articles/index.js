@@ -13,6 +13,9 @@ import { preloadOwner } from "../../../data/hooks/owner";
 import { preloadFooter } from "../../../data/hooks/footer";
 import { preloadArticles } from "../../../data/hooks/articles/list";
 
+const OwnerCard = dynamic(() => import("../../../component/about/owner-card"));
+const LatestPosts = dynamic(() => import("../../../component/about/latest-posts"));
+
 export default function Blog() {
   const router = useRouter();
 
@@ -25,9 +28,6 @@ export default function Blog() {
   const navigateToPage = async (page) => {
     await router.push(`${BlogPath}?page=${page}`, undefined, { shallow: true });
   };
-
-  const OwnerCard = dynamic(() => import("../../../component/about/owner-card"));
-  const LatestPosts = dynamic(() => import("../../../component/about/latest-posts"));
 
   return (
     <Grid centered stackable columns={2}>

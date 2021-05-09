@@ -11,6 +11,9 @@ import dynamic from "next/dynamic";
 import { preloadOwner } from "../../../data/hooks/owner";
 import { preloadFooter } from "../../../data/hooks/footer";
 
+const OwnerCard = dynamic(() => import("../../../component/about/owner-card"));
+const LatestPosts = dynamic(() => import("../../../component/about/latest-posts"));
+
 export default function ArticleId() {
   let router = useRouter();
   let { articleId } = router.query;
@@ -20,9 +23,6 @@ export default function ArticleId() {
   if (!article && loading !== Loading.LOADING) {
     return <NotFound />;
   }
-
-  const OwnerCard = dynamic(() => import("../../../component/about/owner-card"));
-  const LatestPosts = dynamic(() => import("../../../component/about/latest-posts"));
 
   return (
     <>

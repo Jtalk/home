@@ -12,6 +12,8 @@ import AccountMenu from "./account-menu";
 import AdminMenu from "./admin-menu";
 import Icon from "semantic-ui-react/dist/commonjs/elements/Icon";
 
+const HeaderSearch = dynamic(() => import("./header-search"), { ssr: dynamicSSR() });
+
 export default function HeaderMobile() {
   const router = useRouter();
   const activeRoute = router.pathname;
@@ -31,8 +33,6 @@ export default function HeaderMobile() {
 }
 
 const HeaderMobileStateless = function ({ ownerName, activeRoute, authenticated, ...rest }) {
-  const HeaderSearch = dynamic(() => import("./header-search"), { ssr: dynamicSSR() });
-
   return (
     <div {...rest}>
       <Menu pointing fluid data-id="header">

@@ -14,6 +14,10 @@ import { dynamicSSR } from "../utils/dynamic-import";
 
 const { ErrorBoundary } = setupErrorReporting();
 
+const HeaderMobile = dynamic(() => import("../component/header/header-mobile"), { ssr: dynamicSSR() });
+const HeaderDesktop = dynamic(() => import("../component/header/header-desktop"), { ssr: dynamicSSR() });
+const ErrorNotFound = dynamic(() => import("../component/error/not-found").then((i) => i.default));
+
 function App({ Component, pageProps }) {
   const isLoggedIn = useLoggedIn();
   const router = useRouter();
@@ -23,11 +27,8 @@ function App({ Component, pageProps }) {
     Component = dynamic(() => Promise.resolve(Component), { ssr: false });
   }
   if (process.browser && router.pathname.startsWith("/admin") && !isLoggedIn) {
-    Component = dynamic(() => import("../component/error/not-found").then((i) => i.default));
+    Component = ErrorNotFound;
   }
-
-  const HeaderMobile = dynamic(() => import("../component/header/header-mobile"), { ssr: dynamicSSR() });
-  const HeaderDesktop = dynamic(() => import("../component/header/header-desktop"), { ssr: dynamicSSR() });
 
   return (
     <ErrorBoundary>

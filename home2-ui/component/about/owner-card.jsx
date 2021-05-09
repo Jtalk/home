@@ -13,6 +13,8 @@ import styles from "./owner-card.module.css";
 import ImageLoading from "react-image-loading";
 import Placeholder from "semantic-ui-react/dist/commonjs/elements/Placeholder";
 
+const LoginModal = dynamic(() => import("../login/login"));
+
 export default function OwnerCard() {
   let { data: owner, loading } = useOwner();
   let loggedIn = useLoggedIn();
@@ -23,8 +25,6 @@ export default function OwnerCard() {
     loggedIn || setLoggingIn(true);
   }, [loggedIn]);
   const onCloseHandler = useCallback(() => setLoggingIn(false), []);
-
-  const LoginModal = dynamic(() => import("../login/login"));
 
   return (
     <>
