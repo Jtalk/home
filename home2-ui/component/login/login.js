@@ -51,6 +51,7 @@ export const LoginModalStateless = function ({ enabled, onClose, errorMessage, l
   };
   let cleanAndClose = function (e) {
     updater.reload(EMPTY_FORM());
+    errors.clear();
     onClose(e);
   };
 

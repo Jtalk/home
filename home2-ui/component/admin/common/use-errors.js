@@ -63,4 +63,9 @@ export class FormErrors {
     this.onUpdate(this);
     return this.reset;
   };
+  clear = () => {
+    this.store = {};
+    this.knownPaths.clear();
+    this.onUpdate(this);
+  };
 }
