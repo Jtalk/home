@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "private": true,
   "dependencies": {
-    "migrate-mongo": "^7.2.2",
+    "migrate-mongo": "^8.2.2",
     "uuid": "^8.3.0"
   },
   "scripts": {
