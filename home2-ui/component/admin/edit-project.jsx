@@ -154,7 +154,7 @@ const ProjectLinks = function ({ links, className, updater }) {
       </label>
       Edit and rearrange links shown at the left panel
       <List celled verticalAlign="middle" ordered>
-        {links.map((link, index, links) => {
+        {(links || []).map((link, index, links) => {
           return <EditableProjectLink key={index} {...{ link, links, index, reorder, update, remove }} />;
         })}
       </List>
