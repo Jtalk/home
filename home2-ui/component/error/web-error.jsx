@@ -32,6 +32,8 @@ const ignore404 = [
   /\/console/,
   /\/\.env/,
   /\/feed/,
+  /\/ads.txt/,
+  /\/wp-content/,
 ];
 function is404Ignored(path) {
   for (const ignored of ignore404) {
