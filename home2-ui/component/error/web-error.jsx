@@ -27,13 +27,9 @@ export const WebError = function ({ httpCode, message }) {
 const ignore404 = [
   /\.php(\?|$)/,
   /asset-manifest.json$/,
-  /\/vendor\//,
-  /\/admin(istrator)?/,
-  /\/console/,
-  /\/\.env/,
-  /\/feed/,
-  /\/ads.txt/,
-  /\/wp-content/,
+  /\/(\.env|feed|ads\.txt|wp-content|rss\.xml|console|admin(istrator)?|vendor)/,
+  /\/index\.(rss|rdf)/,
+  /\/\.well-known\/acme-challenge\//,
 ];
 function is404Ignored(path) {
   for (const ignored of ignore404) {
