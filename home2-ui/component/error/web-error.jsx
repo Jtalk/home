@@ -31,6 +31,7 @@ const ignore404 = [
   /\/(site|test|main|new|wordpress|bk)/i,
   /\/(\.git|DesktopModules|providers|Install|app_master|\.well-known|stalker_portal|c|home\/resources)/i,
   /\/index\.(rss|rdf)/i,
+  /\/rss.xml/i,
   /\/\.well-known\/(acme-challenge\/|security.txt)/i,
 ];
 function is404Ignored(path) {
