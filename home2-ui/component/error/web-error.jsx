@@ -28,10 +28,10 @@ const ignore404 = [
   /\.php(\?|$)/i,
   /asset-manifest.json$/i,
   /\/(\.env|feed|ads\.txt|wp-\w+|wp\d|rss\.xml|console|admin(istrator)?|vendor|bak|new-site|v\d|temp|\d{4}|dev|web|old(-\w+)?|cms|demo|backup)/i,
-  /\/(site|test|main|new|wordpress|index)/i,
+  /\/(site|test|main|new|wordpress|bk)/i,
   /\/(\.git|DesktopModules|providers|Install|app_master|\.well-known|stalker_portal|c|home\/resources)/i,
   /\/index\.(rss|rdf)/i,
-  /\/\.well-known\/acme-challenge\//i,
+  /\/\.well-known\/(acme-challenge\/|security.txt)/i,
 ];
 function is404Ignored(path) {
   for (const ignored of ignore404) {
