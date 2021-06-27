@@ -28,9 +28,10 @@ const ignore404 = [
   /\.php(\?|$)/i,
   /asset-manifest.json$/i,
   /\/(\.env|feed|ads\.txt|wp-\w+|wp\d|rss\.xml|console|admin(istrator)?|vendor|bak|new-site|v\d|temp|\d{4}|dev|web|old(-\w+)?|cms|demo|backup)/i,
-  /\/(site|test|main|new|wordpress|bk)/i,
+  /\/(site|test|main|new|wordpress|bk|adm)/i,
   /\/(\.git|DesktopModules|providers|Install|app_master|\.well-known|stalker_portal|c|home\/resources)/i,
-  /\/index\.(rss|rdf)/i,
+  /\/(\w+\/)?(login|sign.in)/i,
+  /\/index\.rdf/i,
   /\/rss.xml/i,
   /\/\.well-known\/(acme-challenge\/|security.txt)/i,
 ];

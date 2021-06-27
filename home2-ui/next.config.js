@@ -52,6 +52,11 @@ module.exports = withBundleAnalyzer(
           permanent: true,
         },
         {
+          source: "/home/index.xhtml",
+          destination: "/",
+          permanent: true,
+        },
+        {
           source: "/home/projects.xhtml",
           destination: "/projects",
           permanent: true,
@@ -62,7 +67,17 @@ module.exports = withBundleAnalyzer(
           permanent: true,
         },
         {
+          source: "/projects/jacra",
+          destination: "/projects",
+          permanent: false,
+        },
+        {
           source: "/atom.xml",
+          destination: "/api/atom.xml",
+          permanent: false,
+        },
+        {
+          source: "/rss.xml",
           destination: "/api/atom.xml",
           permanent: false,
         },
@@ -73,6 +88,11 @@ module.exports = withBundleAnalyzer(
         },
         {
           source: "/feed",
+          destination: "/api/atom.xml",
+          permanent: false,
+        },
+        {
+          source: "/index.rss",
           destination: "/api/atom.xml",
           permanent: false,
         },
