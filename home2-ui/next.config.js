@@ -62,6 +62,11 @@ module.exports = withBundleAnalyzer(
           permanent: true,
         },
         {
+          source: "/home/blog.xhtml",
+          destination: "/blog/articles",
+          permanent: true,
+        },
+        {
           source: "/home/blog/post.xhtml",
           destination: "/blog/articles",
           permanent: true,
