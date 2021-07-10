@@ -4,7 +4,7 @@ on: [push]
 
 env:
   CI: true
-  NODE_VERSION: 13.x
+  NODE_VERSION: 16.x
   NODE_ENV: production
 
   UI_DOCKER_IMAGE_PREFIX: jtalk/home-ui
