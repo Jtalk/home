@@ -101,6 +101,11 @@ module.exports = withBundleAnalyzer(
           destination: "/api/atom.xml",
           permanent: false,
         },
+        {
+          source: "/blog",
+          destination: "/blog/articles",
+          permanent: false,
+        }
       ];
     },
     excludeFile: (str) => /\*.{spec,test}.js/.test(str),
