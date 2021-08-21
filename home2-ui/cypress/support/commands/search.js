@@ -10,7 +10,7 @@ Cypress.Commands.add("containsSearchResult", (index, href, header, description) 
 });
 
 Cypress.Commands.add("containsSearchResults", (n) => {
-  cy.get("div[data-id=header-search-bar] .results a[data-id=search-result-link]").eq(n).should("not.be.visible");
+  cy.get("div[data-id=header-search-bar] .results a[data-id=search-result-link]").eq(n).should("not.exist");
 });
 
 Cypress.Commands.add("containsSearchCategory", (index, name) => {
@@ -18,5 +18,5 @@ Cypress.Commands.add("containsSearchCategory", (index, name) => {
 });
 
 Cypress.Commands.add("containsSearchCategories", (n) => {
-  cy.get("div[data-id=header-search-bar] .results .category .name").eq(n).should("not.be.visible");
+  cy.get("div[data-id=header-search-bar] .results .category .name").eq(n).should("not.exist");
 });

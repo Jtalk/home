@@ -3,7 +3,7 @@ import delay, { isApiDelayEnabled } from "./delay";
 import { ApiPrefix } from "./prefix";
 
 export async function superagent() {
-  return await import("superagent");
+  return await import("superagent").then((r) => r.default);
 }
 
 export default function api(request) {

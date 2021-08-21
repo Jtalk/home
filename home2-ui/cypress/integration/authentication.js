@@ -18,7 +18,7 @@ describe("login", () => {
         cy.get("[data-id=login-button]").should("be.disabled");
         cy.get("[data-id=cancel-button]").click();
       });
-    cy.get("[data-id=login-modal]").should("not.be.visible");
+    cy.get("[data-id=login-modal]").should("not.exist");
 
     // Open again
     cy.get("[data-id=owner-card] [data-id=owner-name]").should("be.visible").click({ altKey: true });
@@ -42,7 +42,7 @@ describe("login", () => {
         cy.get("[data-id=login-input] input").type("admin");
         cy.get("[data-id=cancel-button]").click();
       });
-    cy.get("[data-id=login-modal]").should("not.be.visible");
+    cy.get("[data-id=login-modal]").should("not.exist");
     cy.get("[data-id=owner-card] [data-id=owner-name]").should("be.visible").click({ altKey: true });
     cy.get("[data-id=login-modal]")
       .should("be.visible")
@@ -87,13 +87,13 @@ describe("login", () => {
         });
       });
     cy.get("[data-id=login-modal]")
-      .should("not.be.visible")
+      .should("not.exist")
       .then(() => {
         expect(localStorage.getItem("session-username")).to.equal("user");
         expect(localStorage.getItem("session-expiry")).to.equal(expiry);
       });
     cy.get("[data-id=header-account-dropdown]").should("be.visible");
     cy.get("[data-id=owner-card] [data-id=owner-name]").should("be.visible").click({ altKey: true });
-    cy.get("[data-id=login-modal]").should("not.be.visible");
+    cy.get("[data-id=login-modal]").should("not.exist");
   });
 });

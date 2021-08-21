@@ -26,8 +26,8 @@ Cypress.Commands.add("containsHeader", (activePage, authenticated) => {
         cy.get("a[data-id=header-admin-dropdown]").should("be.visible");
         cy.get("a[data-id=header-account-dropdown]").should("be.visible");
       } else {
-        cy.get("a[data-id=header-admin-dropdown]").should("not.be.visible");
-        cy.get("a[data-id=header-account-dropdown]").should("not.be.visible");
+        cy.get("a[data-id=header-admin-dropdown]").should("not.exist");
+        cy.get("a[data-id=header-account-dropdown]").should("not.exist");
       }
     });
 });

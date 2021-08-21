@@ -28,7 +28,7 @@ describe("/", () => {
 
       cy.visit("/");
 
-      cy.get("div[data-id=latest-posts]").should("not.be.visible");
+      cy.get("div[data-id=latest-posts]").should("not.exist");
     });
   });
 });

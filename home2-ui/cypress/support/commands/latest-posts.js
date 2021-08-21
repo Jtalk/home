@@ -15,6 +15,6 @@ Cypress.Commands.add("containsLatestPosts", (num) => {
           .should("have.text", new Date(`2020-11-${15 - i}T12:34:56Z`).toLocaleString());
       }
 
-      cy.get("div[data-id=latest-post] h4[data-id=latest-post-caption] a").eq(num).should("not.be.visible");
+      cy.get("div[data-id=latest-post] h4[data-id=latest-post-caption] a").eq(num).should("not.exist");
     });
 });

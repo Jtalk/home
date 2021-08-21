@@ -110,8 +110,8 @@ describe("/projects", () => {
     cy.containsTitle("Projects");
 
     cy.get("[data-id=no-projects-found-message]").should("be.visible");
-    cy.get("[data-id=projects-tabs]").should("not.be.visible");
-    cy.get("[data-id=project-page]").should("not.be.visible");
+    cy.get("[data-id=projects-tabs]").should("not.exist");
+    cy.get("[data-id=project-page]").should("not.exist");
 
     cy.screenshotsCI("no projects configured message");
   });

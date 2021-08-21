@@ -51,7 +51,7 @@ describe("/", () => {
       cy.apiRoute("POST", "/logout", {});
       cy.get("[data-id=logout-button]:visible").click();
       cy.get("[data-id=header-account-dropdown]")
-        .should("not.be.visible")
+        .should("not.exist")
         .then(() => {
           // eslint-disable-next-line no-unused-expressions
           expect(localStorage.getItem("session-username")).to.not.exist;
