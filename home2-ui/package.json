@@ -36,7 +36,8 @@
     ],
     "moduleNameMapper": {
       "\\.(css)$": "identity-obj-proxy"
-    }
+    },
+    "testEnvironment": "jsdom"
   },
   "browserslist": [
     ">0.2%",
