@@ -10,7 +10,7 @@ import Card from "semantic-ui-react/dist/commonjs/views/Card";
 import dynamic from "next/dynamic";
 import { useOwner } from "../../data/hooks/owner/get";
 import styles from "./owner-card.module.css";
-import ImageLoading from "react-image-loading";
+import ImageLoading from "@jtalk/react-image-loading";
 import Placeholder from "semantic-ui-react/dist/commonjs/elements/Placeholder";
 
 const LoginModal = dynamic(() => import("../login/login"));
