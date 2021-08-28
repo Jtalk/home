@@ -17,7 +17,7 @@ spec:
                 optional: no
             env:
               - name: BUCKET_PATH
-                value: {{ required "AWS bucket is required" .Values.database.backup.aws.bucket | quote }}
+                value: {{ printf "%s/%s" (required "AWS bucket is required" .Values.database.backup.aws.bucket) .Values.environment | quote }}
               - name: MONGO_URL
                 valueFrom:
                   secretKeyRef:

@@ -113,8 +113,7 @@ database:
       name: jtalk/home-dbbackup
       version: latest
     aws:
-      bucket:
-      # jtalk.me-backup/live
+      bucket: jtalk.me-backup
       key:
         id:
         secret:
