@@ -1,0 +1,38 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ quote .Values.api.name }}
+  labels:
+    app: {{ quote .Values.name }}
+    type: {{ quote .Values.api.type }}
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    cert-manager.io/cluster-issuer: letsencrypt
+    {{- if .Values.api.basePath }}
+    nginx.ingress.kubernetes.io/rewrite-target: /$1
+    {{- end }}
+
+spec:
+  tls:
+    {{- range $baseDomain := .Values.domains }}
+    {{- range $domain := list $baseDomain (printf "www.%s" $baseDomain)}}
+    - hosts:
+      - {{ $domain | quote }}
+      secretName: {{ printf "%s-certificate" . | quote }}
+    {{- end }}
+    {{- end }}
+  rules:
+    {{- range $baseDomain := .Values.domains }}
+    {{- range $domain := list $baseDomain (printf "www.%s" $baseDomain)}}
+    - host: {{ quote $domain }}
+      http:
+        paths:
+          - path: {{ printf "%s/(.*)" $.Values.api.basePath | quote }}
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: {{ quote $.Values.api.name }}
+                port:
+                  number: {{ $.Values.api.service.port }}
+    {{- end }}
+    {{- end }}

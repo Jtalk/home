@@ -1,0 +1,85 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: {{ quote .Values.name }}
+    type: {{ quote .Values.api.type }}
+  name: {{ quote .Values.api.name }}
+spec:
+  replicas: {{ .Values.api.replicas }}
+  selector:
+    matchLabels:
+      app: {{ quote .Values.name }}
+      type: {{ quote .Values.api.type }}
+  strategy:
+    rollingUpdate:
+      maxSurge: {{ quote .Values.api.deployment.rollingUpdate.maxSurge }}
+      maxUnavailable: {{ quote .Values.api.deployment.rollingUpdate.maxUnavailable }}
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: {{ quote .Values.name }}
+        type: {{ quote .Values.api.type }}
+    spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - podAffinityTerm:
+                labelSelector:
+                  matchLabels:
+                    app: {{ quote .Values.name }}
+                    type: {{ quote .Values.api.type }}
+                topologyKey: {{ quote .Values.api.deployment.affinity.topologyKey }}
+              weight: {{ .Values.api.deployment.affinity.weight }}
+      containers:
+        - name: {{ quote .Values.api.name }}
+          image: "{{ .Values.api.deployment.image.name }}:{{ .Values.api.deployment.image.version }}"
+          env:
+            - name: HTTP_PORT
+              value: {{ quote .Values.api.deployment.port }}
+          envFrom:
+            - configMapRef:
+                name: {{ quote .Values.api.name }}
+                optional: no
+            - secretRef:
+                name: {{ quote .Values.api.name }}
+                optional: no
+            - secretRef:
+                name: {{ quote .Values.database.secret.name }}
+                optional: no
+          startupProbe:
+            httpGet:
+              path: {{ default .Values.api.deployment.probes.liveness.path .Values.api.deployment.probes.startup.path | quote }}
+              port: {{ .Values.api.deployment.port }}
+              scheme: HTTP
+            failureThreshold: {{ .Values.api.deployment.probes.startup.failureThreshold }}
+            periodSeconds: {{ .Values.api.deployment.probes.startup.periodSeconds }}
+            timeoutSeconds: {{ .Values.api.deployment.probes.startup.timeoutSeconds }}
+          livenessProbe:
+            httpGet:
+              path: {{ quote .Values.api.deployment.probes.liveness.path }}
+              port: {{ .Values.api.deployment.port }}
+              scheme: HTTP
+            successThreshold: {{ .Values.api.deployment.probes.liveness.successThreshold }}
+            failureThreshold: {{ .Values.api.deployment.probes.liveness.failureThreshold }}
+            periodSeconds: {{ .Values.api.deployment.probes.liveness.periodSeconds }}
+            timeoutSeconds: {{ .Values.api.deployment.probes.liveness.timeoutSeconds }}
+          readinessProbe:
+            httpGet:
+              path: {{ quote .Values.api.deployment.probes.readiness.path }}
+              port: {{ .Values.api.deployment.port }}
+              scheme: HTTP
+            successThreshold: {{ .Values.api.deployment.probes.liveness.successThreshold }}
+            failureThreshold: {{ .Values.api.deployment.probes.liveness.failureThreshold }}
+            periodSeconds: {{ .Values.api.deployment.probes.liveness.periodSeconds }}
+            timeoutSeconds: {{ .Values.api.deployment.probes.liveness.timeoutSeconds }}
+          ports:
+            - containerPort: {{ quote .Values.api.deployment.port }}
+              protocol: TCP
+          resources:
+            limits:
+              memory: {{ quote .Values.api.deployment.resources.limits.memory }}
+            requests:
+              cpu: {{ quote .Values.api.deployment.resources.requests.cpu }}
+              memory: {{ default .Values.api.deployment.resources.limits.memory .Values.api.deployment.resources.requests.memory | quote }}

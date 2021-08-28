@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ quote .Values.ui.name }}
+data:
+  REACT_APP_API_URL: {{ printf "https://%s%s" (mustFirst .Values.domains) .Values.api.basePath | quote }}
+  {{- if .Values.ui.bugsnag.key }}
+  REACT_APP_BUGSNAG_API_KEY: {{ quote .Values.ui.bugsnag.key }}
+  {{- end }}
