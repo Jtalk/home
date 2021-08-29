@@ -1,5 +1,5 @@
 apiVersion: v2
-name: jtalk-me-home
+name: jtalk-me
 description: A deployment for jtalk.me
 
 type: application

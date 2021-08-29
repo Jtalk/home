@@ -12,7 +12,7 @@ ui:
   type: ui
   name: home-ui
   bugsnag:
-    key: 899f8865a22e37b078415c92f56dfc5f
+    key:
   service:
     port: 80
   deployment:
@@ -52,7 +52,6 @@ api:
   encryption:
     secret:
   cors:
-    allowLocalhost: false
     localhostPort: 8070
   initialSetup:
     enabled: false
@@ -99,7 +98,6 @@ database:
     name: database
     urlKey: MONGODB_URI
   url:
-  name:
   migration:
     name: database-migration
     deadline:
@@ -114,7 +112,7 @@ database:
       name: jtalk/home-dbbackup
       version: latest
     aws:
-      bucket: jtalk.me-backup
+      bucket:
       key:
         id:
         secret:
