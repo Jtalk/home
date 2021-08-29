@@ -189,6 +189,12 @@ jobs:
         run: |
           mkdir charts/
           helm package jtalk-me -d charts/ --version "1.0.0-${{ github.sha }}"
+      - name: Convince Helm Chart Releaser that the new chart actually exists
+        # It expects me to store pre-built charts in Git (why would I want to do that??)
+        # so I need to trick it into believing there were changes in charts/
+        working-directory: deploy
+        run: |
+          git add charts
       - name: Release Helm chart
         uses: helm/chart-releaser-action@v1.2.1
         with:
