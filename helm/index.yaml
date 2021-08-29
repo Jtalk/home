@@ -1,0 +1,20 @@
+apiVersion: v1
+entries:
+  jtalk-me:
+  - apiVersion: v2
+    appVersion: f9481bf66558549655406b1f6984b3790fe86e85
+    created: "2021-08-29T18:45:16.81406802Z"
+    description: A deployment for jtalk.me
+    digest: 3de51d0a2d7706da8f21c2a041b53b98be810d58c7055d69a6ab34c07c38c1af
+    home: https://jtalk.me
+    maintainers:
+    - email: me+home-helm@jtalk.me
+      name: Roman Nazarenko
+    name: jtalk-me
+    sources:
+    - https://github.com/Jtalk/home
+    type: application
+    urls:
+    - https://Jtalk.github.io/home/helm/jtalk-me-1.0.0-f9481bf66558549655406b1f6984b3790fe86e85.tgz
+    version: 1.0.0-f9481bf66558549655406b1f6984b3790fe86e85
+generated: "2021-08-29T18:45:16.812833011Z"
