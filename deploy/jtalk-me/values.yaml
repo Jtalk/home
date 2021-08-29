@@ -50,7 +50,7 @@ api:
   name: home-api
   basePath: /api
   encryption:
-    secret:
+    secret: ""
   cors:
     localhostPort: 8070
   initialSetup:
@@ -97,7 +97,7 @@ database:
   secret:
     name: database
     urlKey: MONGODB_URI
-  url:
+  url: ""
   migration:
     name: database-migration
     deadline:
@@ -112,10 +112,10 @@ database:
       name: jtalk/home-dbbackup
       version: latest
     aws:
-      bucket:
+      bucket: ""
       key:
-        id:
-        secret:
+        id: ""
+        secret: ""
 
 stagingCleanup:
   name: staging-cleanup
