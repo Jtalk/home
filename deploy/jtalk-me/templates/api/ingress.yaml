@@ -1,0 +1,12 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ quote .Values.api.name }}
+  labels:
+    app: {{ quote .Values.name }}
+    type: {{ quote .Values.api.type }}
+  {{- include "jtalk.me.ingress.annotations" .Values.api | indent 2 }}
+
+spec:
+  {{- include "jtalk.me.ingress.tls" .Values | indent 2 }}
+  {{- include "jtalk.me.ingress.rules" (mergeOverwrite .Values (dict "service" .Values.api.service "basePath" .Values.api.basePath)) | indent 2 }}

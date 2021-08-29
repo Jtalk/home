@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: {{ quote .Values.name }}
+    type: {{ quote .Values.ui.type }}
+  name: {{ quote .Values.ui.name }}
+spec:
+  replicas: {{ .Values.ui.replicas }}
+  selector:
+    matchLabels:
+      app: {{ quote .Values.name }}
+      type: {{ quote .Values.ui.type }}
+  {{- include "jtalk.me.deployment.rollout-strategy" .Values.ui.deployment | indent 2 }}
+  template:
+    metadata:
+      labels:
+        app: {{ quote .Values.name }}
+        type: {{ quote .Values.ui.type }}
+    spec:
+      {{- include "jtalk.me.deployment.affinity" (merge .Values.ui.deployment.affinity (dict "name" .Values.name "type" .Values.ui.type)) | indent 6 }}
+      containers:
+        - name: {{ quote .Values.ui.name }}
+          image: {{- include "jtalk.me.container.image" .Values.ui.deployment.image | quote | indent 1 }}
+          envFrom:
+            - configMapRef:
+                name: {{ quote .Values.ui.name }}
+                optional: no
+          {{- include "jtalk.me.container.probes" .Values.ui.deployment | indent 10 }}
+          ports:
+            - containerPort: {{ .Values.ui.deployment.port }}
+              protocol: TCP
+          {{- include "jtalk.me.container.resources" .Values.ui.deployment.resources | indent 10 }}
+

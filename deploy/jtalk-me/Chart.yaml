@@ -1,0 +1,16 @@
+apiVersion: v2
+name: jtalk-me
+description: A deployment for jtalk.me
+
+type: application
+
+version: 1.0.0
+appVersion: "initial"
+
+home: https://jtalk.me
+sources:
+  - https://github.com/Jtalk/home
+
+maintainers:
+  - name: Roman Nazarenko
+    email: me+home-helm@jtalk.me

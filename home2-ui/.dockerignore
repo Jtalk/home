@@ -4,5 +4,5 @@ README.md
 setupTests.js
 **/*.test.jsx?
 .prettierrc.json
-cypress/screenshots
-cypress/videos
+cypress/
+cypress.json

@@ -1,0 +1,24 @@
+{{- if .Values.staging }}
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: {{ quote .Values.stagingCleanup.name }}
+spec:
+  schedule: {{ quote .Values.stagingCleanup.schedule }}
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          serviceAccountName: {{ .Values.stagingCleanup.account.name }}
+          automountServiceAccountToken: yes
+          containers:
+          - name: staging-cleanup
+            image: bitnami/kubectl:latest
+            command: [sh]
+            args:
+            - -c
+            - |
+              kubectl scale deployment {{ quote .Values.api.name }} --replicas=0;
+              kubectl scale deployment {{ quote .Values.ui.name }} --replicas=0;
+          restartPolicy: Never
+{{- end }}

@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: {{ quote .Values.name }}
+    type: {{ quote .Values.api.type }}
+  name: {{ quote .Values.api.name }}
+spec:
+  replicas: {{ .Values.api.replicas }}
+  selector:
+    matchLabels:
+      app: {{ quote .Values.name }}
+      type: {{ quote .Values.api.type }}
+  {{- include "jtalk.me.deployment.rollout-strategy" .Values.api.deployment | indent 2 }}
+  template:
+    metadata:
+      labels:
+        app: {{ quote .Values.name }}
+        type: {{ quote .Values.api.type }}
+    spec:
+      {{- include "jtalk.me.deployment.affinity" (merge .Values.api.deployment.affinity (dict "name" .Values.name "type" .Values.api.type)) | indent 6 }}
+      containers:
+        - name: {{ quote .Values.api.name }}
+          image: {{- include "jtalk.me.container.image" .Values.api.deployment.image | quote | indent 1 }}
+          env:
+            - name: HTTP_PORT
+              value: {{ quote .Values.api.deployment.port }}
+          envFrom:
+            - configMapRef:
+                name: {{ quote .Values.api.name }}
+                optional: no
+            - secretRef:
+                name: {{ quote .Values.api.name }}
+                optional: no
+            - secretRef:
+                name: {{ quote .Values.database.secret.name }}
+                optional: no
+          {{- include "jtalk.me.container.probes" .Values.api.deployment | indent 10 }}
+          ports:
+            - containerPort: {{ .Values.api.deployment.port }}
+              protocol: TCP
+          {{- include "jtalk.me.container.resources" .Values.api.deployment.resources | indent 10 }}
+

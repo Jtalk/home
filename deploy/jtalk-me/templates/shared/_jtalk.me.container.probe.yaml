@@ -1,0 +1,33 @@
+{{- define "jtalk.me.container.probe" }}
+httpGet:
+  port: {{ required "Probe port is required" .port }}
+  path: {{ required "Probe path is required" .path | quote }}
+  scheme: HTTP
+{{- if hasKey . "successThreshold" }}
+successThreshold: {{ .successThreshold }}
+{{- end }}
+{{- if hasKey . "failureThreshold" }}
+failureThreshold: {{ .failureThreshold }}
+{{- end }}
+{{- if hasKey . "periodSeconds" }}
+periodSeconds: {{ .periodSeconds }}
+{{- end }}
+{{- if hasKey . "timeoutSeconds" }}
+timeoutSeconds: {{ .timeoutSeconds }}
+{{- end }}
+{{- end }}
+
+{{- define "jtalk.me.container.probes" }}
+{{- if hasKey .probes "startup" }}
+startupProbe:
+  {{- include "jtalk.me.container.probe" (merge .probes.startup (dict "port" .port "path" .probes.liveness.path)) | indent 2 }}
+{{- end }}
+{{- if hasKey .probes "liveness" }}
+livenessProbe:
+  {{- include "jtalk.me.container.probe" (set .probes.liveness "port" .port ) | indent 2 }}
+{{- end }}
+{{- if hasKey .probes "readiness" }}
+readinessProbe:
+  {{- include "jtalk.me.container.probe" (set .probes.readiness "port" .port ) | indent 2 }}
+{{- end }}
+{{- end }}

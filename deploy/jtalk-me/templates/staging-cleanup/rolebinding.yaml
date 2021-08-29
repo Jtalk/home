@@ -1,0 +1,13 @@
+{{- if .Values.staging }}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: {{ quote .Values.stagingCleanup.name }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: {{ quote .Values.stagingCleanup.name }}
+subjects:
+- kind: ServiceAccount
+  name: {{ quote .Values.stagingCleanup.name }}
+{{- end }}

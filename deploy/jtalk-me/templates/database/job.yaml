@@ -1,0 +1,21 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ quote .Values.database.migration.name }}
+spec:
+  activeDeadlineSeconds: {{ .Values.database.migration.deadline.seconds }}
+  template:
+    spec:
+      containers:
+        - name: {{ quote .Values.database.migration.name }}
+          image: {{- include "jtalk.me.container.image" .Values.database.backup.image | quote | indent 1 }}
+          args: ["up"]
+          env:
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: {{ quote .Values.database.secret.name }}
+                  key: {{ quote .Values.database.secret.urlKey }}
+            - name: DATABASE_NAME
+              value: {{ splitList "/" .Values.database.url | mustLast | quote }}
+      restartPolicy: Never

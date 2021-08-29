@@ -1,0 +1,124 @@
+name: home
+domains:
+  - jtalk.me
+basePath: ""
+staging: false
+
+atom:
+  xmlPath: /atom.xml
+  urlBasePath: /blog/articles
+
+ui:
+  type: ui
+  name: home-ui
+  bugsnag:
+    key:
+  service:
+    port: 80
+  deployment:
+    port: 80
+    image:
+      name: jtalk/home-ui
+      version: latest
+    replicas: 2
+    rollingUpdate:
+      maxSurge: 50%
+      maxUnavailable: 50%
+    affinity:
+      weight: 100
+      topologyKey: kubernetes.io/hostname
+    probes:
+      startup:
+        failureThreshold: 15
+        periodSeconds: 1
+        timeoutSeconds: 1
+      liveness:
+        path: /api/health
+        failureThreshold: 2
+        periodSeconds: 10
+        successThreshold: 1
+        timeoutSeconds: 5
+    resources:
+      limits:
+        memory: 150Mi
+      requests:
+        cpu: 100m
+        memory: 150Mi
+
+api:
+  type: api
+  name: home-api
+  basePath: /api
+  encryption:
+    secret: ""
+  cors:
+    localhostPort: 8070
+  initialSetup:
+    enabled: false
+  service:
+    port: 80
+  deployment:
+    port: 8080
+    image:
+      name: jtalk/home-api
+      version: latest
+    replicas: 1
+    rollingUpdate:
+      maxSurge: 100%
+      maxUnavailable: 50%
+    affinity:
+      weight: 100
+      topologyKey: kubernetes.io/hostname
+    probes:
+      startup:
+        failureThreshold: 15
+        periodSeconds: 1
+        timeoutSeconds: 1
+      liveness:
+        path: /status
+        failureThreshold: 1
+        periodSeconds: 10s
+        successThreshold: 1
+        timeoutSeconds: 5
+      readiness:
+        path: /status/ready
+        failureThreshold: 1
+        periodSeconds: 10
+        successThreshold: 1
+        timeoutSeconds: 5
+    resources:
+      limits:
+        memory: 400Mi
+      requests:
+        cpu: 100m
+        memory: 400Mi
+
+database:
+  secret:
+    name: database
+    urlKey: MONGODB_URI
+  url: ""
+  migration:
+    name: database-migration
+    deadline:
+      seconds: 60
+    image:
+      name: jtalk/home-dbmigrate
+      version: latest
+  backup:
+    name: database-backup
+    schedule: "0 2 2 * *"
+    image:
+      name: jtalk/home-dbbackup
+      version: latest
+    aws:
+      bucket: ""
+      key:
+        id: ""
+        secret: ""
+
+stagingCleanup:
+  name: staging-cleanup
+  schedule: "0 1 * * *"
+  account:
+    name: staging-cleanup
