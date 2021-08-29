@@ -21,165 +21,165 @@ env:
   DBBACKUP_DOCKER_IMAGE_PREFIX: jtalk/home-dbbackup
 
 jobs:
-  build-release-ui:
-    name: Build and Release UI
-    runs-on: ubuntu-latest
-    env:
-      REACT_APP_VERSION: ${{ github.sha }}
-    steps:
-      - uses: actions/checkout@v1
-      - name: Set up Node.JS ${{ env.NODE_VERSION }}
-        uses: actions/setup-node@v1
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-      - name: Test UI
-        working-directory: home2-ui
-        env:
-          NODE_ENV: development
-        run: |
-          npm ci
-          npm run test
-      - name: Build UI
-        working-directory: home2-ui
-        run: |
-          npm run build
-          npm prune --production
-      - name: Build and push Docker images
-        uses: docker/build-push-action@v1.0.1
-        with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
-          path: home2-ui
-          repository: ${{ env.UI_DOCKER_IMAGE_PREFIX }}
-          tags: ${{ github.sha }}
-          tag_with_ref: true
-          tag_with_sha: false
-          push: ${{ github.ref == 'refs/heads/master' }}
-          build_args: |
-            REACT_APP_VERSION=${{ env.REACT_APP_VERSION }}
-      - name: Save image for testing
-        id: export-docker
-        run: |
-          docker save "${{ env.UI_DOCKER_IMAGE_PREFIX }}:${{ github.sha }}" -o "${{ env.UI_IMAGE_ARTEFACT_NAME }}"
-      - uses: actions/upload-artifact@v2
-        with:
-          name: ${{ env.UI_IMAGE_ARTEFACT_NAME }}
-          path: ${{ env.UI_IMAGE_ARTEFACT_NAME }}
-          if-no-files-found: error
+  # build-release-ui:
+  #   name: Build and Release UI
+  #   runs-on: ubuntu-latest
+  #   env:
+  #     REACT_APP_VERSION: ${{ github.sha }}
+  #   steps:
+  #     - uses: actions/checkout@v1
+  #     - name: Set up Node.JS ${{ env.NODE_VERSION }}
+  #       uses: actions/setup-node@v1
+  #       with:
+  #         node-version: ${{ env.NODE_VERSION }}
+  #     - name: Test UI
+  #       working-directory: home2-ui
+  #       env:
+  #         NODE_ENV: development
+  #       run: |
+  #         npm ci
+  #         npm run test
+  #     - name: Build UI
+  #       working-directory: home2-ui
+  #       run: |
+  #         npm run build
+  #         npm prune --production
+  #     - name: Build and push Docker images
+  #       uses: docker/build-push-action@v1.0.1
+  #       with:
+  #         username: ${{ secrets.DOCKER_USERNAME }}
+  #         password: ${{ secrets.DOCKER_PASSWORD }}
+  #         path: home2-ui
+  #         repository: ${{ env.UI_DOCKER_IMAGE_PREFIX }}
+  #         tags: ${{ github.sha }}
+  #         tag_with_ref: true
+  #         tag_with_sha: false
+  #         push: ${{ github.ref == 'refs/heads/master' }}
+  #         build_args: |
+  #           REACT_APP_VERSION=${{ env.REACT_APP_VERSION }}
+  #     - name: Save image for testing
+  #       id: export-docker
+  #       run: |
+  #         docker save "${{ env.UI_DOCKER_IMAGE_PREFIX }}:${{ github.sha }}" -o "${{ env.UI_IMAGE_ARTEFACT_NAME }}"
+  #     - uses: actions/upload-artifact@v2
+  #       with:
+  #         name: ${{ env.UI_IMAGE_ARTEFACT_NAME }}
+  #         path: ${{ env.UI_IMAGE_ARTEFACT_NAME }}
+  #         if-no-files-found: error
 
-  cypress-test-ui:
-    name: Run Cypress tests on the Docker image
-    runs-on: ubuntu-latest
-    needs:
-      - build-release-ui
-    env:
-      NODE_ENV: development
-    steps:
-      - uses: actions/checkout@v1
-      - name: Set up Node.JS ${{ env.NODE_VERSION }}
-        uses: actions/setup-node@v1
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-      - uses: actions/download-artifact@v2
-        with:
-          name: ${{ env.UI_IMAGE_ARTEFACT_NAME }}
-      - name: Load the pre-build UI docker image
-        run: |
-          docker load --input "${{ env.UI_IMAGE_ARTEFACT_NAME }}"
-      - uses: cypress-io/github-action@v2
-        with:
-          browser: firefox
-          headless: true
-          working-directory: home2-ui
-          start: docker run -d --rm --name home-ui-ci -p 8070:80 -e REACT_APP_BUGSNAG_API_KEY= ${{ env.UI_DOCKER_IMAGE_PREFIX }}:${{ github.sha }} npm run start:cypress
-          wait-on: http://localhost:8070/
-          wait-on-timeout: 10
-          record: true
-        env:
-          CYPRESS_CI: true
-          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_DASHBOARD_KEY }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Cypress Test Cleanup
-        if: always()
-        working-directory: home2-ui
-        run: |
-          docker logs home-ui-ci
-          docker stop home-ui-ci
+  # cypress-test-ui:
+  #   name: Run Cypress tests on the Docker image
+  #   runs-on: ubuntu-latest
+  #   needs:
+  #     - build-release-ui
+  #   env:
+  #     NODE_ENV: development
+  #   steps:
+  #     - uses: actions/checkout@v1
+  #     - name: Set up Node.JS ${{ env.NODE_VERSION }}
+  #       uses: actions/setup-node@v1
+  #       with:
+  #         node-version: ${{ env.NODE_VERSION }}
+  #     - uses: actions/download-artifact@v2
+  #       with:
+  #         name: ${{ env.UI_IMAGE_ARTEFACT_NAME }}
+  #     - name: Load the pre-build UI docker image
+  #       run: |
+  #         docker load --input "${{ env.UI_IMAGE_ARTEFACT_NAME }}"
+  #     - uses: cypress-io/github-action@v2
+  #       with:
+  #         browser: firefox
+  #         headless: true
+  #         working-directory: home2-ui
+  #         start: docker run -d --rm --name home-ui-ci -p 8070:80 -e REACT_APP_BUGSNAG_API_KEY= ${{ env.UI_DOCKER_IMAGE_PREFIX }}:${{ github.sha }} npm run start:cypress
+  #         wait-on: http://localhost:8070/
+  #         wait-on-timeout: 10
+  #         record: true
+  #       env:
+  #         CYPRESS_CI: true
+  #         CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_DASHBOARD_KEY }}
+  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  #     - name: Cypress Test Cleanup
+  #       if: always()
+  #       working-directory: home2-ui
+  #       run: |
+  #         docker logs home-ui-ci
+  #         docker stop home-ui-ci
 
-  build-release-api:
-    name: Build and Release API
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v1
-      - name: Specify the current hash as a build version
-        run: |
-          sed -Ei 's/^version := "\w+"$/version := "${{ github.sha }}"/' build.sbt
-          echo The new build.sbt with its version updated
-          cat build.sbt
-        working-directory: home2-rest
-      - name: Choose whether to deploy to docker hub or build locally
-        id: publish_cmd
-        run: |
-          if [[ "$REF" == 'refs/heads/master' ]]; then
-            echo "::set-output name=action::docker:publish"
-          else 
-            echo "::set-output name=action::docker:publishLocal"
-          fi
-      - name: Build & publish the project
-        uses: matankdr/github-docker-sbt@a8b6a773bcab2df439fe4150ff155196629d1d4f
-        with:
-          command: |
-            sbt test ${{ steps.publish_cmd.outputs.action }}
-          working-directory: home2-rest
-          docker-registry: docker.io
-          docker-login-username: ${{ secrets.DOCKER_USERNAME }}
-          docker-login-password: ${{ secrets.DOCKER_PASSWORD }}
-    # Waiting for https://github.com/docker/build-push-action/issues/17 to push multiple tags properly
+  # build-release-api:
+  #   name: Build and Release API
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v1
+  #     - name: Specify the current hash as a build version
+  #       run: |
+  #         sed -Ei 's/^version := "\w+"$/version := "${{ github.sha }}"/' build.sbt
+  #         echo The new build.sbt with its version updated
+  #         cat build.sbt
+  #       working-directory: home2-rest
+  #     - name: Choose whether to deploy to docker hub or build locally
+  #       id: publish_cmd
+  #       run: |
+  #         if [[ "$REF" == 'refs/heads/master' ]]; then
+  #           echo "::set-output name=action::docker:publish"
+  #         else
+  #           echo "::set-output name=action::docker:publishLocal"
+  #         fi
+  #     - name: Build & publish the project
+  #       uses: matankdr/github-docker-sbt@a8b6a773bcab2df439fe4150ff155196629d1d4f
+  #       with:
+  #         command: |
+  #           sbt test ${{ steps.publish_cmd.outputs.action }}
+  #         working-directory: home2-rest
+  #         docker-registry: docker.io
+  #         docker-login-username: ${{ secrets.DOCKER_USERNAME }}
+  #         docker-login-password: ${{ secrets.DOCKER_PASSWORD }}
+  #   # Waiting for https://github.com/docker/build-push-action/issues/17 to push multiple tags properly
 
-  build-release-backup:
-    name: Build and Release Database Backup Script
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v1
-      - name: Build and push Docker images
-        uses: docker/build-push-action@v1.0.1
-        with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
-          path: home2-dbbackup
-          repository: ${{ env.DBBACKUP_DOCKER_IMAGE_PREFIX }}
-          tags: ${{ github.sha }}
-          tag_with_ref: true
-          tag_with_sha: false
-          push: ${{ github.ref == 'refs/heads/master' }}
+  # build-release-backup:
+  #   name: Build and Release Database Backup Script
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v1
+  #     - name: Build and push Docker images
+  #       uses: docker/build-push-action@v1.0.1
+  #       with:
+  #         username: ${{ secrets.DOCKER_USERNAME }}
+  #         password: ${{ secrets.DOCKER_PASSWORD }}
+  #         path: home2-dbbackup
+  #         repository: ${{ env.DBBACKUP_DOCKER_IMAGE_PREFIX }}
+  #         tags: ${{ github.sha }}
+  #         tag_with_ref: true
+  #         tag_with_sha: false
+  #         push: ${{ github.ref == 'refs/heads/master' }}
 
-  build-release-migrations:
-    name: Build and Release Database Migrations
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v1
-      - name: Build and push Docker images
-        uses: docker/build-push-action@v1.0.1
-        with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
-          path: home2-dbmigrate
-          repository: ${{ env.DBMIGRATE_DOCKER_IMAGE_PREFIX }}
-          tags: ${{ github.sha }}
-          tag_with_ref: true
-          tag_with_sha: false
-          push: ${{ github.ref == 'refs/heads/master' }}
+  # build-release-migrations:
+  #   name: Build and Release Database Migrations
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v1
+  #     - name: Build and push Docker images
+  #       uses: docker/build-push-action@v1.0.1
+  #       with:
+  #         username: ${{ secrets.DOCKER_USERNAME }}
+  #         password: ${{ secrets.DOCKER_PASSWORD }}
+  #         path: home2-dbmigrate
+  #         repository: ${{ env.DBMIGRATE_DOCKER_IMAGE_PREFIX }}
+  #         tags: ${{ github.sha }}
+  #         tag_with_ref: true
+  #         tag_with_sha: false
+  #         push: ${{ github.ref == 'refs/heads/master' }}
 
   ############################## HELM #############################
   build-release-helm:
     name: Build and release the app's Helm chart
     runs-on: ubuntu-latest
-    needs:
-      - build-release-ui
-      - build-release-api
-      - build-release-migrations
-      - build-release-backup
-      - cypress-test-ui
+    # needs:
+    #   - build-release-ui
+    #   - build-release-api
+    #   - build-release-migrations
+    #   - build-release-backup
+    #   - cypress-test-ui
     # if: github.ref == 'refs/heads/master'
     steps:
       - uses: actions/checkout@v1
@@ -192,255 +192,245 @@ jobs:
           target_dir: helm
           app_version: ${{ github.sha }}
           chart_version: 1.0.0-${{ github.sha }}
-
-  ############################ STAGING ############################
-  deploy-migrations-staging:
-    name: Deploy database to staging
-    runs-on: ubuntu-latest
-    needs:
-      - build-release-ui
-      - build-release-api
-      - build-release-migrations
-      - cypress-test-ui
-    if: github.ref == 'refs/heads/master'
-    steps:
-      - uses: actions/checkout@v1
-      - name: Authenticate with the cluster
-        uses: Azure/k8s-set-context@v1
-        with:
-          method: service-account
-          k8s-url: ${{ secrets.CLUSTER_URL }}
-          k8s-secret: ${{ secrets.CLUSTER_ACCOUNT_SECRET }}
-      - name: Deploy the migration job
-        run: kubectl delete -f home2-dbmigrate/deploy/staging/up.job.yaml || echo No existing job found
-      - name: Deploy Database to Kubernetes
-        uses: jtalk/k8s-deploy@v2
-        with:
-          namespace: home-staging
-          manifests: |
-            home2-dbmigrate/deploy/staging/up.job.yaml
-          images: ${{ env.DBMIGRATE_DOCKER_IMAGE_PREFIX }}:${{ github.sha }}
-      - name: Verify database deployment
-        env:
-          WAIT_TIMEOUT: 60s
-        working-directory: home2-dbmigrate/deploy/staging
-        run: |
-          kubectl wait --for=condition=complete --timeout=$WAIT_TIMEOUT -f up.job.yaml &
-          success_pid=$!
-          kubectl wait --for=condition=failed --timeout=$WAIT_TIMEOUT -f up.job.yaml && exit 1 &
-          fail_pid=$!
-          wait -n $success_pid $fail_pid
-
-  deploy-db-backup:
-    name: Deploy the database backup job
-    runs-on: ubuntu-latest
-    needs:
-      - build-release-backup
-    if: github.ref == 'refs/heads/master'
-    steps:
-      - uses: actions/checkout@v1
-      - name: Authenticate with the cluster
-        uses: Azure/k8s-set-context@v1
-        with:
-          method: service-account
-          k8s-url: ${{ secrets.CLUSTER_URL }}
-          k8s-secret: ${{ secrets.CLUSTER_ACCOUNT_SECRET }}
-      - name: Deploy the backup job
-        uses: jtalk/k8s-deploy@v2
-        with:
-          namespace: home
-          manifests: |
-            home2-dbbackup/deploy/backup.cronjob.yaml
-          images: ${{ env.DBBACKUP_DOCKER_IMAGE_PREFIX }}:${{ github.sha }}
-
-  deploy-staging-cleanup:
-    name: Deploy the daily cleanup job for the staging cluster
-    runs-on: ubuntu-latest
-    needs:
-      - deploy-migrations-staging
-    if: github.ref == 'refs/heads/master'
-    steps:
-      - uses: actions/checkout@v1
-      - name: Authenticate with the cluster
-        uses: Azure/k8s-set-context@v1
-        with:
-          method: service-account
-          k8s-url: ${{ secrets.CLUSTER_URL }}
-          k8s-secret: ${{ secrets.CLUSTER_ACCOUNT_SECRET }}
-      - name: Deploy the cleanup job
-        working-directory: home2-dev
-        run: kubectl apply -f deploy/
-
-  deploy-ui-staging:
-    name: Deploy UI to staging
-    runs-on: ubuntu-latest
-    needs:
-      - build-release-ui
-      - cypress-test-ui
-      - deploy-migrations-staging
-    if: github.ref == 'refs/heads/master'
-    steps:
-      - uses: actions/checkout@v1
-      - name: Authenticate with the cluster
-        uses: Azure/k8s-set-context@v1
-        with:
-          method: service-account
-          k8s-url: ${{ secrets.CLUSTER_URL }}
-          k8s-secret: ${{ secrets.CLUSTER_ACCOUNT_SECRET }}
-      - name: Deploy UI to Kubernetes
-        uses: jtalk/k8s-deploy@v2
-        with:
-          namespace: home-staging
-          manifests: |
-            home2-ui/deploy/staging/deployment.yaml
-            home2-ui/deploy/service.yaml
-            home2-ui/deploy/staging/ingress.yaml
-          images: ${{ env.UI_DOCKER_IMAGE_PREFIX }}:${{ github.sha }}
-
-  deploy-api-staging:
-    name: Deploy API to staging
-    runs-on: ubuntu-latest
-    needs:
-      - build-release-api
-      - cypress-test-ui
-      - deploy-migrations-staging
-    if: github.ref == 'refs/heads/master'
-    steps:
-      - uses: actions/checkout@v1
-      - name: Authenticate with the cluster
-        uses: Azure/k8s-set-context@v1
-        with:
-          method: service-account
-          k8s-url: ${{ secrets.CLUSTER_URL }}
-          k8s-secret: ${{ secrets.CLUSTER_ACCOUNT_SECRET }}
-      - name: Deploy API to Kubernetes
-        uses: jtalk/k8s-deploy@v2
-        with:
-          namespace: home-staging
-          manifests: |
-            home2-rest/deploy/staging/configmap.yaml
-            home2-rest/deploy/deployment.yaml
-            home2-rest/deploy/service.yaml
-            home2-rest/deploy/staging/ingress.yaml
-          images: ${{ env.API_DOCKER_IMAGE_PREFIX }}:${{ github.sha }}
-
-  ############################ Staging Test ############################
-  verify-staging:
-    name: Verify on staging
-    runs-on: ubuntu-latest
-    needs:
-      - deploy-ui-staging
-      - deploy-api-staging
-    steps:
-      - name: Check staging is up
-        uses: Jtalk/url-health-check-action@v1
-        with:
-          url: https://staging.jtalk.me/api/owner|https://staging.jtalk.me/api/blog/articles|https://staging.jtalk.me/api/projects|https://staging.jtalk.me
-          follow-redirect: true
-          max-attempts: 5
-          retry-delay: 5s
-
-  ############################ LIVE ############################
-  deploy-migrations-live:
-    name: Deploy database to live
-    runs-on: ubuntu-latest
-    needs:
-      - build-release-migrations
-      - verify-staging
-    if: github.ref == 'refs/heads/master'
-    steps:
-      - uses: actions/checkout@v1
-      - name: Authenticate with the cluster
-        uses: Azure/k8s-set-context@v1
-        with:
-          method: service-account
-          k8s-url: ${{ secrets.CLUSTER_URL }}
-          k8s-secret: ${{ secrets.CLUSTER_ACCOUNT_SECRET }}
-      - name: Deploy the migration job
-        run: kubectl delete -f home2-dbmigrate/deploy/live/up.job.yaml || echo No existing job found
-      - name: Deploy Database to Kubernetes
-        uses: jtalk/k8s-deploy@v2
-        with:
-          namespace: home
-          manifests: |
-            home2-dbmigrate/deploy/live/up.job.yaml
-          images: ${{ env.DBMIGRATE_DOCKER_IMAGE_PREFIX }}:${{ github.sha }}
-      - name: Verify database deployment
-        env:
-          WAIT_TIMEOUT: 60s
-        working-directory: home2-dbmigrate/deploy/live
-        run: |
-          kubectl wait --for=condition=complete --timeout=$WAIT_TIMEOUT -f up.job.yaml &
-          success_pid=$!
-          kubectl wait --for=condition=failed --timeout=$WAIT_TIMEOUT -f up.job.yaml && exit 1 &
-          fail_pid=$!
-          wait -n $success_pid $fail_pid
-
-  deploy-ui-live:
-    name: Deploy UI to live
-    runs-on: ubuntu-latest
-    needs:
-      - build-release-ui
-      - deploy-migrations-live
-      - verify-staging
-    if: github.ref == 'refs/heads/master'
-    steps:
-      - uses: actions/checkout@v1
-      - name: Authenticate with the cluster
-        uses: Azure/k8s-set-context@v1
-        with:
-          method: service-account
-          k8s-url: ${{ secrets.CLUSTER_URL }}
-          k8s-secret: ${{ secrets.CLUSTER_ACCOUNT_SECRET }}
-      - name: Deploy UI to Kubernetes
-        uses: jtalk/k8s-deploy@v2
-        with:
-          namespace: home
-          manifests: |
-            home2-ui/deploy/live/deployment.yaml
-            home2-ui/deploy/service.yaml
-            home2-ui/deploy/live/ingress.yaml
-          images: ${{ env.UI_DOCKER_IMAGE_PREFIX }}:${{ github.sha }}
-
-  deploy-api-live:
-    name: Deploy API to live
-    runs-on: ubuntu-latest
-    needs:
-      - build-release-api
-      - deploy-migrations-live
-      - verify-staging
-    if: github.ref == 'refs/heads/master'
-    steps:
-      - uses: actions/checkout@v1
-      - name: Authenticate with the cluster
-        uses: Azure/k8s-set-context@v1
-        with:
-          method: service-account
-          k8s-url: ${{ secrets.CLUSTER_URL }}
-          k8s-secret: ${{ secrets.CLUSTER_ACCOUNT_SECRET }}
-      - name: Deploy API to Kubernetes
-        uses: jtalk/k8s-deploy@v2
-        with:
-          namespace: home
-          manifests: |
-            home2-rest/deploy/live/configmap.yaml
-            home2-rest/deploy/deployment.yaml
-            home2-rest/deploy/service.yaml
-            home2-rest/deploy/live/ingress.yaml
-          images: ${{ env.API_DOCKER_IMAGE_PREFIX }}:${{ github.sha }}
-
-  ############################ LIVE Test ############################
-  verify-live:
-    name: Verify on LIVE
-    runs-on: ubuntu-latest
-    needs:
-      - deploy-ui-live
-      - deploy-api-live
-    steps:
-      - name: Check LIVE is up
-        uses: Jtalk/url-health-check-action@v1
-        with:
-          url: https://jtalk.me/api/owner|https://jtalk.me/api/blog/articles|https://jtalk.me/api/projects|https://jtalk.me
-          follow-redirect: true
-          max-attempts: 5
-          retry-delay: 5s
+  # ############################ STAGING ############################
+  # deploy-migrations-staging:
+  #   name: Deploy database to staging
+  #   runs-on: ubuntu-latest
+  #   needs:
+  #     - build-release-ui
+  #     - build-release-api
+  #     - build-release-migrations
+  #     - cypress-test-ui
+  #   if: github.ref == 'refs/heads/master'
+  #   steps:
+  #     - uses: actions/checkout@v1
+  #     - name: Authenticate with the cluster
+  #       uses: Azure/k8s-set-context@v1
+  #       with:
+  #         method: service-account
+  #         k8s-url: ${{ secrets.CLUSTER_URL }}
+  #         k8s-secret: ${{ secrets.CLUSTER_ACCOUNT_SECRET }}
+  #     - name: Deploy the migration job
+  #       run: kubectl delete -f home2-dbmigrate/deploy/staging/up.job.yaml || echo No existing job found
+  #     - name: Deploy Database to Kubernetes
+  #       uses: jtalk/k8s-deploy@v2
+  #       with:
+  #         namespace: home-staging
+  #         manifests: |
+  #           home2-dbmigrate/deploy/staging/up.job.yaml
+  #         images: ${{ env.DBMIGRATE_DOCKER_IMAGE_PREFIX }}:${{ github.sha }}
+  #     - name: Verify database deployment
+  #       env:
+  #         WAIT_TIMEOUT: 60s
+  #       working-directory: home2-dbmigrate/deploy/staging
+  #       run: |
+  #         kubectl wait --for=condition=complete --timeout=$WAIT_TIMEOUT -f up.job.yaml &
+  #         success_pid=$!
+  #         kubectl wait --for=condition=failed --timeout=$WAIT_TIMEOUT -f up.job.yaml && exit 1 &
+  #         fail_pid=$!
+  #         wait -n $success_pid $fail_pid
+  # deploy-db-backup:
+  #   name: Deploy the database backup job
+  #   runs-on: ubuntu-latest
+  #   needs:
+  #     - build-release-backup
+  #   if: github.ref == 'refs/heads/master'
+  #   steps:
+  #     - uses: actions/checkout@v1
+  #     - name: Authenticate with the cluster
+  #       uses: Azure/k8s-set-context@v1
+  #       with:
+  #         method: service-account
+  #         k8s-url: ${{ secrets.CLUSTER_URL }}
+  #         k8s-secret: ${{ secrets.CLUSTER_ACCOUNT_SECRET }}
+  #     - name: Deploy the backup job
+  #       uses: jtalk/k8s-deploy@v2
+  #       with:
+  #         namespace: home
+  #         manifests: |
+  #           home2-dbbackup/deploy/backup.cronjob.yaml
+  #         images: ${{ env.DBBACKUP_DOCKER_IMAGE_PREFIX }}:${{ github.sha }}
+  # deploy-staging-cleanup:
+  #   name: Deploy the daily cleanup job for the staging cluster
+  #   runs-on: ubuntu-latest
+  #   needs:
+  #     - deploy-migrations-staging
+  #   if: github.ref == 'refs/heads/master'
+  #   steps:
+  #     - uses: actions/checkout@v1
+  #     - name: Authenticate with the cluster
+  #       uses: Azure/k8s-set-context@v1
+  #       with:
+  #         method: service-account
+  #         k8s-url: ${{ secrets.CLUSTER_URL }}
+  #         k8s-secret: ${{ secrets.CLUSTER_ACCOUNT_SECRET }}
+  #     - name: Deploy the cleanup job
+  #       working-directory: home2-dev
+  #       run: kubectl apply -f deploy/
+  # deploy-ui-staging:
+  #   name: Deploy UI to staging
+  #   runs-on: ubuntu-latest
+  #   needs:
+  #     - build-release-ui
+  #     - cypress-test-ui
+  #     - deploy-migrations-staging
+  #   if: github.ref == 'refs/heads/master'
+  #   steps:
+  #     - uses: actions/checkout@v1
+  #     - name: Authenticate with the cluster
+  #       uses: Azure/k8s-set-context@v1
+  #       with:
+  #         method: service-account
+  #         k8s-url: ${{ secrets.CLUSTER_URL }}
+  #         k8s-secret: ${{ secrets.CLUSTER_ACCOUNT_SECRET }}
+  #     - name: Deploy UI to Kubernetes
+  #       uses: jtalk/k8s-deploy@v2
+  #       with:
+  #         namespace: home-staging
+  #         manifests: |
+  #           home2-ui/deploy/staging/deployment.yaml
+  #           home2-ui/deploy/service.yaml
+  #           home2-ui/deploy/staging/ingress.yaml
+  #         images: ${{ env.UI_DOCKER_IMAGE_PREFIX }}:${{ github.sha }}
+  # deploy-api-staging:
+  #   name: Deploy API to staging
+  #   runs-on: ubuntu-latest
+  #   needs:
+  #     - build-release-api
+  #     - cypress-test-ui
+  #     - deploy-migrations-staging
+  #   if: github.ref == 'refs/heads/master'
+  #   steps:
+  #     - uses: actions/checkout@v1
+  #     - name: Authenticate with the cluster
+  #       uses: Azure/k8s-set-context@v1
+  #       with:
+  #         method: service-account
+  #         k8s-url: ${{ secrets.CLUSTER_URL }}
+  #         k8s-secret: ${{ secrets.CLUSTER_ACCOUNT_SECRET }}
+  #     - name: Deploy API to Kubernetes
+  #       uses: jtalk/k8s-deploy@v2
+  #       with:
+  #         namespace: home-staging
+  #         manifests: |
+  #           home2-rest/deploy/staging/configmap.yaml
+  #           home2-rest/deploy/deployment.yaml
+  #           home2-rest/deploy/service.yaml
+  #           home2-rest/deploy/staging/ingress.yaml
+  #         images: ${{ env.API_DOCKER_IMAGE_PREFIX }}:${{ github.sha }}
+  # ############################ Staging Test ############################
+  # verify-staging:
+  #   name: Verify on staging
+  #   runs-on: ubuntu-latest
+  #   needs:
+  #     - deploy-ui-staging
+  #     - deploy-api-staging
+  #   steps:
+  #     - name: Check staging is up
+  #       uses: Jtalk/url-health-check-action@v1
+  #       with:
+  #         url: https://staging.jtalk.me/api/owner|https://staging.jtalk.me/api/blog/articles|https://staging.jtalk.me/api/projects|https://staging.jtalk.me
+  #         follow-redirect: true
+  #         max-attempts: 5
+  #         retry-delay: 5s
+  # ############################ LIVE ############################
+  # deploy-migrations-live:
+  #   name: Deploy database to live
+  #   runs-on: ubuntu-latest
+  #   needs:
+  #     - build-release-migrations
+  #     - verify-staging
+  #   if: github.ref == 'refs/heads/master'
+  #   steps:
+  #     - uses: actions/checkout@v1
+  #     - name: Authenticate with the cluster
+  #       uses: Azure/k8s-set-context@v1
+  #       with:
+  #         method: service-account
+  #         k8s-url: ${{ secrets.CLUSTER_URL }}
+  #         k8s-secret: ${{ secrets.CLUSTER_ACCOUNT_SECRET }}
+  #     - name: Deploy the migration job
+  #       run: kubectl delete -f home2-dbmigrate/deploy/live/up.job.yaml || echo No existing job found
+  #     - name: Deploy Database to Kubernetes
+  #       uses: jtalk/k8s-deploy@v2
+  #       with:
+  #         namespace: home
+  #         manifests: |
+  #           home2-dbmigrate/deploy/live/up.job.yaml
+  #         images: ${{ env.DBMIGRATE_DOCKER_IMAGE_PREFIX }}:${{ github.sha }}
+  #     - name: Verify database deployment
+  #       env:
+  #         WAIT_TIMEOUT: 60s
+  #       working-directory: home2-dbmigrate/deploy/live
+  #       run: |
+  #         kubectl wait --for=condition=complete --timeout=$WAIT_TIMEOUT -f up.job.yaml &
+  #         success_pid=$!
+  #         kubectl wait --for=condition=failed --timeout=$WAIT_TIMEOUT -f up.job.yaml && exit 1 &
+  #         fail_pid=$!
+  #         wait -n $success_pid $fail_pid
+  # deploy-ui-live:
+  #   name: Deploy UI to live
+  #   runs-on: ubuntu-latest
+  #   needs:
+  #     - build-release-ui
+  #     - deploy-migrations-live
+  #     - verify-staging
+  #   if: github.ref == 'refs/heads/master'
+  #   steps:
+  #     - uses: actions/checkout@v1
+  #     - name: Authenticate with the cluster
+  #       uses: Azure/k8s-set-context@v1
+  #       with:
+  #         method: service-account
+  #         k8s-url: ${{ secrets.CLUSTER_URL }}
+  #         k8s-secret: ${{ secrets.CLUSTER_ACCOUNT_SECRET }}
+  #     - name: Deploy UI to Kubernetes
+  #       uses: jtalk/k8s-deploy@v2
+  #       with:
+  #         namespace: home
+  #         manifests: |
+  #           home2-ui/deploy/live/deployment.yaml
+  #           home2-ui/deploy/service.yaml
+  #           home2-ui/deploy/live/ingress.yaml
+  #         images: ${{ env.UI_DOCKER_IMAGE_PREFIX }}:${{ github.sha }}
+  # deploy-api-live:
+  #   name: Deploy API to live
+  #   runs-on: ubuntu-latest
+  #   needs:
+  #     - build-release-api
+  #     - deploy-migrations-live
+  #     - verify-staging
+  #   if: github.ref == 'refs/heads/master'
+  #   steps:
+  #     - uses: actions/checkout@v1
+  #     - name: Authenticate with the cluster
+  #       uses: Azure/k8s-set-context@v1
+  #       with:
+  #         method: service-account
+  #         k8s-url: ${{ secrets.CLUSTER_URL }}
+  #         k8s-secret: ${{ secrets.CLUSTER_ACCOUNT_SECRET }}
+  #     - name: Deploy API to Kubernetes
+  #       uses: jtalk/k8s-deploy@v2
+  #       with:
+  #         namespace: home
+  #         manifests: |
+  #           home2-rest/deploy/live/configmap.yaml
+  #           home2-rest/deploy/deployment.yaml
+  #           home2-rest/deploy/service.yaml
+  #           home2-rest/deploy/live/ingress.yaml
+  #         images: ${{ env.API_DOCKER_IMAGE_PREFIX }}:${{ github.sha }}
+  # ############################ LIVE Test ############################
+  # verify-live:
+  #   name: Verify on LIVE
+  #   runs-on: ubuntu-latest
+  #   needs:
+  #     - deploy-ui-live
+  #     - deploy-api-live
+  #   steps:
+  #     - name: Check LIVE is up
+  #       uses: Jtalk/url-health-check-action@v1
+  #       with:
+  #         url: https://jtalk.me/api/owner|https://jtalk.me/api/blog/articles|https://jtalk.me/api/projects|https://jtalk.me
+  #         follow-redirect: true
+  #         max-attempts: 5
+  #         retry-delay: 5s
