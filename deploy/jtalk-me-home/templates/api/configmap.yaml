@@ -6,8 +6,8 @@ data:
   {{- range $index, $domain := .Values.domains }}
   "CORS_ALLOWED_ORIGINS.{{ $index }}": {{ printf "https://%s" $domain | quote }}
   {{- end }}
-  {{- if .Values.api.cors.allowLocalhost }}
-  "CORS_ALLOWED_ORIGINS.{{ len .Values.domains }}": {{ printf "http://localhost:%d" .Values.cors.localhostPort | quote }}
+  {{- if and .Values.staging .Values.api.cors.localhostPort }}
+  "CORS_ALLOWED_ORIGINS.{{ len .Values.domains }}": {{ printf "http://localhost:%.0f" .Values.api.cors.localhostPort | quote }}
   {{- end }}
   ATOM_URL:  {{ printf "https://%s%s%s" (mustFirst .Values.domains) .Values.basePath .Values.atom.xmlPath | quote }}
   ATOM_ENTRY_BASE_URL: {{ printf "https://%s%s%s" (mustFirst .Values.domains) .Values.basePath .Values.atom.urlBasePath | quote }}

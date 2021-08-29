@@ -2,6 +2,7 @@ name: home
 domains:
   - jtalk.me
 basePath: ""
+staging: false
 
 atom:
   xmlPath: /atom.xml
@@ -119,7 +120,6 @@ database:
         secret:
 
 stagingCleanup:
-  enabled: false
   name: staging-cleanup
   schedule: "0 1 * * *"
   account:

@@ -1,0 +1,17 @@
+{{- define "jtalk.me.ingress.rule" }}
+- host: {{ quote .domain }}
+  http:
+    paths:
+      - path: {{ printf "%s/(.*)" .basePath | quote }}
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: {{ quote .service.name }}
+            port:
+              number: {{ .service.port }}
+{{- end }}
+
+{{- define "jtalk.me.ingress.rules" }}
+rules:
+  {{- include "jtalk.me.ingress.each-domain" (set . "each" "jtalk.me.ingress.rule") | indent 2 }}
+{{- end }}

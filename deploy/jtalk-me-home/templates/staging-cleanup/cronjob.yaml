@@ -1,4 +1,4 @@
-{{- if .Values.stagingCleanup.enabled }}
+{{- if .Values.staging }}
 apiVersion: batch/v1beta1
 kind: CronJob
 metadata:
@@ -13,7 +13,7 @@ spec:
           automountServiceAccountToken: yes
           containers:
           - name: staging-cleanup
-            image: bitnami/kubectl:1.16
+            image: bitnami/kubectl:latest
             command: [sh]
             args:
             - -c

@@ -1,0 +1,19 @@
+{{- define "jtalk.me.ingress.tls.host" }}
+- hosts:
+  - {{ .domain | quote }}
+  secretName: {{ printf "%s-certificate" .domain | quote }}
+{{- end }}
+
+{{- define "jtalk.me.ingress.each-domain" }}
+  {{- range $baseDomain := .domains }}
+  {{- $domains := ternary (printf "staging.%s" $baseDomain | list) (list $baseDomain (print "www.%s" $baseDomain)) $.staging -}}
+    {{- range $domain := $domains }}
+      {{- include $.each (set $ "domain" $domain) | indent 2}}
+    {{- end }}
+  {{- end }}
+{{- end }}
+
+{{- define "jtalk.me.ingress.tls" }}
+tls:
+  {{- include "jtalk.me.ingress.each-domain" (set . "each" "jtalk.me.ingress.tls.host") | indent 2 }}
+{{- end }}

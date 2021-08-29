@@ -8,7 +8,7 @@ spec:
     spec:
       containers:
         - name: {{ quote .Values.database.migration.name }}
-          image: "{{ .Values.database.backup.image.name }}:{{ .Values.database.backup.image.version }}"
+          image: {{- include "jtalk.me.container.image" .Values.database.backup.image | quote | indent 1 }}
           args: ["up"]
           env:
             - name: DATABASE_URL
@@ -17,5 +17,5 @@ spec:
                   name: {{ quote .Values.database.secret.name }}
                   key: {{ quote .Values.database.secret.urlKey }}
             - name: DATABASE_NAME
-              value: {{ quote .Values.database.name }}
+              value: {{ splitList "/" .Values.database.url | mustLast | quote }}
       restartPolicy: Never

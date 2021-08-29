@@ -1,0 +1,3 @@
+{{- define "jtalk.me.container.image" }}
+{{- .name }}:{{ .version }}
+{{- end }}

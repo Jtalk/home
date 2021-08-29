@@ -9,7 +9,4 @@ spec:
   selector:
     app: {{ quote .Values.name }}
     type: {{ quote .Values.ui.type }}
-  ports:
-    - name: http
-      port: {{ quote .Values.ui.service.port }}
-      targetPort: {{ quote .Values.ui.deployment.port }}
+  {{- include "jtalk.me.service.ports" .Values.ui | indent 2 }}
