@@ -3,7 +3,7 @@ entries:
   jtalk-me:
   - apiVersion: v2
     appVersion: f9481bf66558549655406b1f6984b3790fe86e85
-    created: "2021-08-29T18:45:16.81406802Z"
+    created: "2021-08-29T18:49:53.279409685Z"
     description: A deployment for jtalk.me
     digest: 3de51d0a2d7706da8f21c2a041b53b98be810d58c7055d69a6ab34c07c38c1af
     home: https://jtalk.me
@@ -17,4 +17,20 @@ entries:
     urls:
     - https://Jtalk.github.io/home/helm/jtalk-me-1.0.0-f9481bf66558549655406b1f6984b3790fe86e85.tgz
     version: 1.0.0-f9481bf66558549655406b1f6984b3790fe86e85
-generated: "2021-08-29T18:45:16.812833011Z"
+  - apiVersion: v2
+    appVersion: e96cfb89aa7c861506ace689784508332ab0d5cb
+    created: "2021-08-29T18:49:53.277898877Z"
+    description: A deployment for jtalk.me
+    digest: 9a9e62babac5c360d95b045f49323fd77e5952d3a4e9b6fef53a94734ea3b0c2
+    home: https://jtalk.me
+    maintainers:
+    - email: me+home-helm@jtalk.me
+      name: Roman Nazarenko
+    name: jtalk-me
+    sources:
+    - https://github.com/Jtalk/home
+    type: application
+    urls:
+    - https://Jtalk.github.io/home/helm/jtalk-me-1.0.0-e96cfb89aa7c861506ace689784508332ab0d5cb.tgz
+    version: 1.0.0-e96cfb89aa7c861506ace689784508332ab0d5cb
+generated: "2021-08-29T18:49:53.275945665Z"
