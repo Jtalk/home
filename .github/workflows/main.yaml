@@ -184,23 +184,14 @@ jobs:
     steps:
       - uses: actions/checkout@v1
       - uses: azure/setup-helm@v1
-      - name: Build Helm chart
-        working-directory: deploy
-        run: |
-          mkdir charts/
-          helm package jtalk-me -d charts/ --version "1.0.0-${{ github.sha }}"
-      - name: Convince Helm Chart Releaser that the new chart actually exists
-        # It expects me to store pre-built charts in Git (why would I want to do that??)
-        # so I need to trick it into believing there were changes in charts/
-        working-directory: deploy
-        run: |
-          git add charts
-      - name: Release Helm chart
-        uses: helm/chart-releaser-action@v1.2.1
+      - name: Publish Helm chart
+        uses: stefanprodan/helm-gh-pages@v1.4.1
         with:
-          charts_dir: deploy/charts
-        env:
-          CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+          token: ${{ secrets.GITHUB_TOKEN }}
+          charts_dir: deploy
+          target_dir: helm
+          app_version: ${{ github.sha }}
+          chart_version: 1.0.0-${{ github.sha }}
 
   ############################ STAGING ############################
   deploy-migrations-staging:
