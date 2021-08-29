@@ -52,7 +52,7 @@ jobs:
           tags: ${{ github.sha }}
           tag_with_ref: true
           tag_with_sha: false
-          push: true
+          push: ${{ github.ref == 'refs/heads/master' }}
           build_args: |
             REACT_APP_VERSION=${{ env.REACT_APP_VERSION }}
 
@@ -102,11 +102,19 @@ jobs:
           echo The new build.sbt with its version updated
           cat build.sbt
         working-directory: home2-rest
+      - name: Choose whether to deploy to docker hub or build locally
+        id: publish_cmd
+        run: |
+          if [[ "$REF" == 'refs/heads/master' ]]; then
+            echo "::set-output name=action::docker:publish"
+          else 
+            echo "::set-output name=action::docker:publishLocal"
+          fi
       - name: Build & publish the project
         uses: matankdr/github-docker-sbt@a8b6a773bcab2df439fe4150ff155196629d1d4f
         with:
           command: |
-            sbt test docker:publish
+            sbt test ${{ steps.publish_cmd.outputs.action }}
           working-directory: home2-rest
           docker-registry: docker.io
           docker-login-username: ${{ secrets.DOCKER_USERNAME }}
@@ -128,7 +136,7 @@ jobs:
           tags: ${{ github.sha }}
           tag_with_ref: true
           tag_with_sha: false
-          push: true
+          push: ${{ github.ref == 'refs/heads/master' }}
 
   build-release-migrations:
     name: Build and Release Database Migrations
@@ -145,7 +153,7 @@ jobs:
           tags: ${{ github.sha }}
           tag_with_ref: true
           tag_with_sha: false
-          push: true
+          push: ${{ github.ref == 'refs/heads/master' }}
 
   ############################## HELM #############################
   build-release-helm:
