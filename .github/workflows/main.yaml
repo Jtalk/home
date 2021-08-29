@@ -86,7 +86,7 @@ jobs:
           name: ${{ needs.build-release-ui.outputs.artefact }}
       - name: Load the pre-build UI docker image
         run: |
-          docker load -i "${{ env.UI_IMAGE_ARTEFACT_NAME }}"
+          docker load -i "${{ needs.build-release-ui.outputs.artefact }}"
       - uses: cypress-io/github-action@v2
         with:
           browser: firefox
