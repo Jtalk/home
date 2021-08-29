@@ -64,6 +64,7 @@ jobs:
           docker save "${{ env.UI_DOCKER_IMAGE_PREFIX }}:${{ github.sha }}" -o "${{ env.UI_IMAGE_ARTEFACT_NAME }}"
       - uses: actions/upload-artifact@v2
         with:
+          name: ${{ env.UI_IMAGE_ARTEFACT_NAME }}
           path: ${{ env.UI_IMAGE_ARTEFACT_NAME }}
           if-no-files-found: error
 
