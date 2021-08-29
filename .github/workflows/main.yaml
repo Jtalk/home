@@ -13,6 +13,8 @@ env:
   NODE_VERSION: 16.x
   NODE_ENV: production
 
+  UI_IMAGE_ARTEFACT_NAME: "ui-docker-image"
+
   UI_DOCKER_IMAGE_PREFIX: jtalk/home-ui
   API_DOCKER_IMAGE_PREFIX: jtalk/home-api
   DBMIGRATE_DOCKER_IMAGE_PREFIX: jtalk/home-dbmigrate
@@ -24,9 +26,6 @@ jobs:
     runs-on: ubuntu-latest
     env:
       REACT_APP_VERSION: ${{ github.sha }}
-      UI_IMAGE_ARTEFACT_NAME: "ui-docker-image"
-    outputs:
-      artefact: ${{ env.UI_IMAGE_ARTEFACT_NAME }}
     steps:
       - uses: actions/checkout@v1
       - name: Set up Node.JS ${{ env.NODE_VERSION }}
@@ -83,10 +82,10 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
       - uses: actions/download-artifact@v2
         with:
-          name: ${{ needs.build-release-ui.outputs.artefact }}
+          name: ${{ env.UI_IMAGE_ARTEFACT_NAME }}
       - name: Load the pre-build UI docker image
         run: |
-          docker load -i "${{ needs.build-release-ui.outputs.artefact }}"
+          docker load --input "${{ env.UI_IMAGE_ARTEFACT_NAME }}"
       - uses: cypress-io/github-action@v2
         with:
           browser: firefox
