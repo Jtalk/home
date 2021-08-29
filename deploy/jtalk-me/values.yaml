@@ -107,7 +107,7 @@ database:
       version: latest
   backup:
     name: database-backup
-    schedule: "0 2 * 2 *"
+    schedule: "0 2 2 * *"
     image:
       name: jtalk/home-dbbackup
       version: latest
