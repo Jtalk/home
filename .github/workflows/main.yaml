@@ -82,7 +82,7 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
       - uses: actions/download-artifact@v2
         with:
-          name: ${{ jobs.build-release-ui.outputs.artefact }}
+          name: ${{ needs.build-release-ui.outputs.artefact }}
       - name: Load the pre-build UI docker image
         run: |
           docker load -i "${{ env.UI_IMAGE_ARTEFACT_NAME }}"
