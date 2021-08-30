@@ -13,17 +13,17 @@ spec:
           - name: {{ quote .Values.database.backup.name }}
             image: {{- include "jtalk.me.container.image" .Values.database.backup.image | quote | indent 1 }}
             envFrom:
-              secretRef: 
+            - secretRef: 
                 name: {{ quote .Values.database.backup.name }}
                 optional: no
             env:
-              - name: BUCKET_PATH
-                {{- $pathInsideBucket := ternary "staging" "live" .Values.staging }}
-                value: {{ printf "%s/%s" (required "AWS bucket is required" .Values.database.backup.aws.bucket) $pathInsideBucket | quote }}
-              - name: MONGO_URL
-                valueFrom:
-                  secretKeyRef:
-                    name: {{ quote .Values.database.secret.name }}
-                    key: {{ quote .Values.database.secret.urlKey }}
+            - name: BUCKET_PATH
+              {{- $pathInsideBucket := ternary "staging" "live" .Values.staging }}
+              value: {{ printf "%s/%s" (required "AWS bucket is required" .Values.database.backup.aws.bucket) $pathInsideBucket | quote }}
+            - name: MONGO_URL
+              valueFrom:
+                secretKeyRef:
+                  name: {{ quote .Values.database.secret.name }}
+                  key: {{ quote .Values.database.secret.urlKey }}
           restartPolicy: Never
 {{- end }}
