@@ -13,5 +13,5 @@
 
 {{- define "jtalk.me.ingress.rules" }}
 rules:
-  {{- include "jtalk.me.ingress.each-domain" (set . "each" "jtalk.me.ingress.rule") | indent 2 }}
+  {{- include "jtalk.me.ingress.each-domain" (merge (dict) . (dict "each" "jtalk.me.ingress.rule")) | indent 2 }}
 {{- end }}

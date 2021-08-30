@@ -20,14 +20,14 @@ timeoutSeconds: {{ .timeoutSeconds }}
 {{- define "jtalk.me.container.probes" }}
 {{- if hasKey .probes "startup" }}
 startupProbe:
-  {{- include "jtalk.me.container.probe" (merge .probes.startup (dict "port" .port "path" .probes.liveness.path)) | indent 2 }}
+  {{- include "jtalk.me.container.probe" (merge (dict) .probes.startup (dict "port" .port "path" .probes.liveness.path)) | indent 2 }}
 {{- end }}
 {{- if hasKey .probes "liveness" }}
 livenessProbe:
-  {{- include "jtalk.me.container.probe" (set .probes.liveness "port" .port ) | indent 2 }}
+  {{- include "jtalk.me.container.probe" (merge (dict) .probes.liveness (dict "port" .port) ) | indent 2 }}
 {{- end }}
 {{- if hasKey .probes "readiness" }}
 readinessProbe:
-  {{- include "jtalk.me.container.probe" (set .probes.readiness "port" .port ) | indent 2 }}
+  {{- include "jtalk.me.container.probe" (merge (dict) .probes.readiness (dict "port" .port) ) | indent 2 }}
 {{- end }}
 {{- end }}
