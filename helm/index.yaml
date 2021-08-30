@@ -3,7 +3,7 @@ entries:
   jtalk-me:
   - apiVersion: v2
     appVersion: f9481bf66558549655406b1f6984b3790fe86e85
-    created: "2021-08-29T22:36:20.512155128Z"
+    created: "2021-08-30T10:16:16.306863576Z"
     description: A deployment for jtalk.me
     digest: 3de51d0a2d7706da8f21c2a041b53b98be810d58c7055d69a6ab34c07c38c1af
     home: https://jtalk.me
@@ -19,7 +19,7 @@ entries:
     version: 1.0.0-f9481bf66558549655406b1f6984b3790fe86e85
   - apiVersion: v2
     appVersion: e96cfb89aa7c861506ace689784508332ab0d5cb
-    created: "2021-08-29T22:36:20.510960319Z"
+    created: "2021-08-30T10:16:16.30461699Z"
     description: A deployment for jtalk.me
     digest: 9a9e62babac5c360d95b045f49323fd77e5952d3a4e9b6fef53a94734ea3b0c2
     home: https://jtalk.me
@@ -35,7 +35,7 @@ entries:
     version: 1.0.0-e96cfb89aa7c861506ace689784508332ab0d5cb
   - apiVersion: v2
     appVersion: 275194f6e54ff76c5a1d170280a97cab30e16d88
-    created: "2021-08-29T22:36:20.509526029Z"
+    created: "2021-08-30T10:16:16.302941852Z"
     description: A deployment for jtalk.me
     digest: ce2475eb17dcdf4777e16a06170d805a0504807add67326a108ffa6181936592
     home: https://jtalk.me
@@ -49,4 +49,20 @@ entries:
     urls:
     - https://Jtalk.github.io/home/helm/jtalk-me-1.0.0-275194f6e54ff76c5a1d170280a97cab30e16d88.tgz
     version: 1.0.0-275194f6e54ff76c5a1d170280a97cab30e16d88
-generated: "2021-08-29T22:36:20.507333697Z"
+  - apiVersion: v2
+    appVersion: 1c5a6b21915f057150121dfe6054cb90b8b9325f
+    created: "2021-08-30T10:16:16.301263313Z"
+    description: A deployment for jtalk.me
+    digest: 4f7bd471c4685a45c159bb35b5fd0ebad5ff27c5585b5fd9fb77592f12eec6d9
+    home: https://jtalk.me
+    maintainers:
+    - email: me+home-helm@jtalk.me
+      name: Roman Nazarenko
+    name: jtalk-me
+    sources:
+    - https://github.com/Jtalk/home
+    type: application
+    urls:
+    - https://Jtalk.github.io/home/helm/jtalk-me-1.0.0-1c5a6b21915f057150121dfe6054cb90b8b9325f.tgz
+    version: 1.0.0-1c5a6b21915f057150121dfe6054cb90b8b9325f
+generated: "2021-08-30T10:16:16.299437462Z"
