@@ -6,7 +6,7 @@
 
 {{- define "jtalk.me.ingress.each-domain" }}
   {{- range $baseDomain := .domains }}
-  {{- $domains := ternary (printf "staging.%s" $baseDomain | list) (list $baseDomain (print "www.%s" $baseDomain)) $.staging -}}
+  {{- $domains := ternary (printf "staging.%s" $baseDomain | list) (list $baseDomain (printf "www.%s" $baseDomain)) $.staging -}}
     {{- range $domain := $domains }}
       {{- include $.each (merge (dict) $ (dict "domain" $domain)) | indent 2}}
     {{- end }}
