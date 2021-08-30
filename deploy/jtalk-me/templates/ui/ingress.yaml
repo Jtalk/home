@@ -8,5 +8,7 @@ metadata:
   {{- include "jtalk.me.ingress.annotations" .Values.ui | indent 2 }}
 
 spec:
+  {{- $ruleService := merge (dict) .Values.ui.service (dict "name" .Values.ui.name) }}
+  {{- $rulesValues := merge (dict) .Values (dict "service" $ruleService) }}
   {{- include "jtalk.me.ingress.tls" .Values | indent 2 }}
-  {{- include "jtalk.me.ingress.rules" (merge .Values (dict "service" .Values.ui.service)) | indent 2 }}
+  {{- include "jtalk.me.ingress.rules" $rulesValues | indent 2 }}
