@@ -77,7 +77,7 @@ api:
       liveness:
         path: /status
         failureThreshold: 1
-        periodSeconds: 10s
+        periodSeconds: 10
         successThreshold: 1
         timeoutSeconds: 5
       readiness:
