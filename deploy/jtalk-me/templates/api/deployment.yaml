@@ -12,7 +12,7 @@ spec:
       app: {{ quote .Values.name }}
       type: {{ quote .Values.api.type }}
   strategy:
-    {{- toYaml dict "type" "RollingUpdate" "rollingUpdate" .Values.api.deployment.rollingUpdate | indent 2 }}
+    {{- dict "type" "RollingUpdate" "rollingUpdate" .Values.api.deployment.rollingUpdate | toYaml | nindent 6 }}
   template:
     metadata:
       labels:
@@ -41,5 +41,5 @@ spec:
             - containerPort: {{ .Values.api.deployment.port }}
               protocol: TCP
           resources:
-            {{- toYaml .Values.api.deployment.resources | indent 12 }}
+            {{- toYaml .Values.api.deployment.resources | nindent 12 }}
 
