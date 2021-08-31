@@ -6,7 +6,7 @@ metadata:
     type: {{ quote .Values.api.type }}
   name: {{ quote .Values.api.name }}
 spec:
-  replicas: {{ .Values.api.replicas }}
+  replicas: {{ .Values.api.deployment.replicas }}
   selector:
     matchLabels:
       app: {{ quote .Values.name }}
