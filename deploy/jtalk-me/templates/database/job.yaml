@@ -1,14 +1,14 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: {{ quote .Values.database.migration.name }}
+  name: "{{ .Values.database.migration.name }}-{{ .Values.database.migration.image.version }}"
 spec:
   activeDeadlineSeconds: {{ .Values.database.migration.deadline.seconds }}
   template:
     spec:
       containers:
-        - name: {{ quote .Values.database.migration.name }}
-          image: {{- include "jtalk.me.container.image" .Values.database.backup.image | quote | indent 1 }}
+        - name: "{{ .Values.database.migration.name }}-{{ .Values.database.migration.image.version }}"
+          image: {{- include "jtalk.me.container.image" .Values.database.migration.image | quote | indent 1 }}
           args: ["up"]
           env:
             - name: DATABASE_URL
