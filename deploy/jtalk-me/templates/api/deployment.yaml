@@ -11,7 +11,8 @@ spec:
     matchLabels:
       app: {{ quote .Values.name }}
       type: {{ quote .Values.api.type }}
-  {{- include "jtalk.me.deployment.rollout-strategy" .Values.api.deployment | indent 2 }}
+  strategy:
+    {{- toYaml dict "type" "RollingUpdate" "rollingUpdate" .Values.api.deployment.rollingUpdate | indent 2 }}
   template:
     metadata:
       labels:
@@ -39,5 +40,6 @@ spec:
           ports:
             - containerPort: {{ .Values.api.deployment.port }}
               protocol: TCP
-          {{- include "jtalk.me.container.resources" .Values.api.deployment.resources | indent 10 }}
+          resources:
+            {{- toYaml .Values.api.deployment.resources | indent 12 }}
 

@@ -1,7 +1,0 @@
-{{- define "jtalk.me.deployment.rollout-strategy" }}
-strategy:
-  rollingUpdate:
-    maxSurge: {{ quote .rollingUpdate.maxSurge }}
-    maxUnavailable: {{ quote .rollingUpdate.maxUnavailable }}
-  type: RollingUpdate
-{{- end }}
