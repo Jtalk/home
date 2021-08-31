@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: api-test-connection
+  annotations:
+    "helm.sh/hook": test
+spec:
+  containers:
+    - name: wget
+      image: busybox
+      command: ['wget']
+      args: ['{{ quote .Values.api.name }}:{{ .Values.api.service.port }}{{ .Values.api.deployment.probes.readiness.path }}']
+  restartPolicy: Never
