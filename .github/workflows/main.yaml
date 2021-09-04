@@ -32,7 +32,7 @@ jobs:
     env:
       REACT_APP_VERSION: ${{ github.sha }}
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
       - name: Set up Node.JS ${{ env.NODE_VERSION }}
         uses: actions/setup-node@v1
         with:
@@ -80,7 +80,7 @@ jobs:
     env:
       NODE_ENV: development
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
       - name: Set up Node.JS ${{ env.NODE_VERSION }}
         uses: actions/setup-node@v1
         with:
@@ -115,7 +115,7 @@ jobs:
     name: Build and Release API
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
       - name: Specify the current hash as a build version
         run: |
           sed -Ei 's/^version := "\w+"$/version := "${{ github.sha }}"/' build.sbt
@@ -145,7 +145,7 @@ jobs:
     name: Build and Release Database Backup Script
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
       - name: Build and push Docker images
         uses: docker/build-push-action@v1.0.1
         with:
@@ -162,7 +162,7 @@ jobs:
     name: Build and Release Database Migrations
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
       - name: Build and push Docker images
         uses: docker/build-push-action@v1.0.1
         with:
@@ -187,7 +187,7 @@ jobs:
       - cypress-test-ui
     if: github.ref == 'refs/heads/master'
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
       - uses: azure/setup-helm@v1
       - name: Publish Helm chart
         uses: stefanprodan/helm-gh-pages@v1.4.1
