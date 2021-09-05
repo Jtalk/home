@@ -3,7 +3,7 @@ entries:
   jtalk-me:
   - apiVersion: v2
     appVersion: f9481bf66558549655406b1f6984b3790fe86e85
-    created: "2021-09-04T17:47:21.706739618Z"
+    created: "2021-09-05T15:19:47.037063506Z"
     description: A deployment for jtalk.me
     digest: 3de51d0a2d7706da8f21c2a041b53b98be810d58c7055d69a6ab34c07c38c1af
     home: https://jtalk.me
@@ -19,7 +19,7 @@ entries:
     version: 1.0.0-f9481bf66558549655406b1f6984b3790fe86e85
   - apiVersion: v2
     appVersion: f8058914106f3959148d22728702523e3f87fa45
-    created: "2021-09-04T17:47:21.705634299Z"
+    created: "2021-09-05T15:19:47.035763182Z"
     description: A deployment for jtalk.me
     digest: 759c31da60369b2b70d4a352409c452ceefe4e5ff12e92b3980d95d5fae8d7b8
     home: https://jtalk.me
@@ -35,7 +35,7 @@ entries:
     version: 1.0.0-f8058914106f3959148d22728702523e3f87fa45
   - apiVersion: v2
     appVersion: ee6e3acb420b329bd3a1f7584fda9089f43a41c2
-    created: "2021-09-04T17:47:21.70456238Z"
+    created: "2021-09-05T15:19:47.034296155Z"
     description: A deployment for jtalk.me
     digest: eaed2e8d86ee52d6144fbc93524969ad5c9592065723ab5507dd7236d10d540c
     home: https://jtalk.me
@@ -51,7 +51,7 @@ entries:
     version: 1.0.0-ee6e3acb420b329bd3a1f7584fda9089f43a41c2
   - apiVersion: v2
     appVersion: eb08aeb5dea065a829dda0849c2258a3c18d606f
-    created: "2021-09-04T17:47:21.703231756Z"
+    created: "2021-09-05T15:19:47.032559923Z"
     description: A deployment for jtalk.me
     digest: 51656e67e09ea4ef0b1e02ef002ded989a0bb93cb40427edeed4f5cfc8e8bcbf
     home: https://jtalk.me
@@ -67,7 +67,7 @@ entries:
     version: 1.0.0-eb08aeb5dea065a829dda0849c2258a3c18d606f
   - apiVersion: v2
     appVersion: e96cfb89aa7c861506ace689784508332ab0d5cb
-    created: "2021-09-04T17:47:21.701599227Z"
+    created: "2021-09-05T15:19:47.030902093Z"
     description: A deployment for jtalk.me
     digest: 9a9e62babac5c360d95b045f49323fd77e5952d3a4e9b6fef53a94734ea3b0c2
     home: https://jtalk.me
@@ -83,7 +83,7 @@ entries:
     version: 1.0.0-e96cfb89aa7c861506ace689784508332ab0d5cb
   - apiVersion: v2
     appVersion: dad2ec5b5fb7225f101675393273dc35eabe22a4
-    created: "2021-09-04T17:47:21.700417807Z"
+    created: "2021-09-05T15:19:47.029548168Z"
     description: A deployment for jtalk.me
     digest: 496013422bec31a27e60d647c394af5727818f1cc517c2104f526a07584c5a7d
     home: https://jtalk.me
@@ -99,7 +99,7 @@ entries:
     version: 1.0.0-dad2ec5b5fb7225f101675393273dc35eabe22a4
   - apiVersion: v2
     appVersion: dacabda0e0e7fe7cc2604749114951fc974a1835
-    created: "2021-09-04T17:47:21.699254886Z"
+    created: "2021-09-05T15:19:47.028214343Z"
     description: A deployment for jtalk.me
     digest: faf77f4c1c2c90a987e616abb2ae4c1be6c8772c556da4cdd6bbbc11005d21e3
     home: https://jtalk.me
@@ -115,7 +115,7 @@ entries:
     version: 1.0.0-dacabda0e0e7fe7cc2604749114951fc974a1835
   - apiVersion: v2
     appVersion: d7153e1c487bd4a21839a5dfd865ede09c77f3b8
-    created: "2021-09-04T17:47:21.698141066Z"
+    created: "2021-09-05T15:19:47.026883118Z"
     description: A deployment for jtalk.me
     digest: 73747f23960099f9f08d4acbaa8d3143580c0ff5c41285e7da54bb08bdc1ab82
     home: https://jtalk.me
@@ -131,7 +131,7 @@ entries:
     version: 1.0.0-d7153e1c487bd4a21839a5dfd865ede09c77f3b8
   - apiVersion: v2
     appVersion: cfd6aa68ee716a67aa64e03ce3f339e8abde96e1
-    created: "2021-09-04T17:47:21.697036347Z"
+    created: "2021-09-05T15:19:47.025503993Z"
     description: A deployment for jtalk.me
     digest: e00aedcd3c6a4f8b0f78b0637cf7e3532271d90bc38e5beb3f2a0e74f3d72e82
     home: https://jtalk.me
@@ -147,7 +147,7 @@ entries:
     version: 1.0.0-cfd6aa68ee716a67aa64e03ce3f339e8abde96e1
   - apiVersion: v2
     appVersion: ad7763cbf9b8788689ef5493192dfa2619207f2e
-    created: "2021-09-04T17:47:21.695969228Z"
+    created: "2021-09-05T15:19:47.024168868Z"
     description: A deployment for jtalk.me
     digest: e96dcba77977137cb46f65e28073ad0f80b9597cdc6340f3587f251c0dc91695
     home: https://jtalk.me
@@ -163,7 +163,7 @@ entries:
     version: 1.0.0-ad7763cbf9b8788689ef5493192dfa2619207f2e
   - apiVersion: v2
     appVersion: 7e4fb9e668a795fe2227bfc959b0b4a910bfc73d
-    created: "2021-09-04T17:47:21.694868508Z"
+    created: "2021-09-05T15:19:47.022795643Z"
     description: A deployment for jtalk.me
     digest: 33a9fe9605d47693f783d5d242ad9d44d61d6e1c71e2d790447d381d9618229f
     home: https://jtalk.me
@@ -179,7 +179,7 @@ entries:
     version: 1.0.0-7e4fb9e668a795fe2227bfc959b0b4a910bfc73d
   - apiVersion: v2
     appVersion: 6d5c4ae47ddfd854cef9b51a0bee84bbf3c645b8
-    created: "2021-09-04T17:47:21.69380139Z"
+    created: "2021-09-05T15:19:47.016895134Z"
     description: A deployment for jtalk.me
     digest: da412d12c242f7523b1f0377e6ae8979b8c3f7706cbb2229ed83575a2b349eba
     home: https://jtalk.me
@@ -195,7 +195,7 @@ entries:
     version: 1.0.0-6d5c4ae47ddfd854cef9b51a0bee84bbf3c645b8
   - apiVersion: v2
     appVersion: 5298225291705ced9369c5125b05706dabf23f8d
-    created: "2021-09-04T17:47:21.692664369Z"
+    created: "2021-09-05T15:19:47.01559491Z"
     description: A deployment for jtalk.me
     digest: f74de1c6d16e45ab3fad3d7ef06b89f0aeb7ca84dc8d9bbb7ba6b3aa103aefd9
     home: https://jtalk.me
@@ -210,8 +210,24 @@ entries:
     - https://Jtalk.github.io/home/helm/jtalk-me-1.0.0-5298225291705ced9369c5125b05706dabf23f8d.tgz
     version: 1.0.0-5298225291705ced9369c5125b05706dabf23f8d
   - apiVersion: v2
+    appVersion: 37defb6d8c86e0e7beeec17898b27358b4b95ca8
+    created: "2021-09-05T15:19:47.014219285Z"
+    description: A deployment for jtalk.me
+    digest: fd7a8e9bb717dce45318bd0896af9af71c8f33c03043d30dd9cc700d14a22fb5
+    home: https://jtalk.me
+    maintainers:
+    - email: me+home-helm@jtalk.me
+      name: Roman Nazarenko
+    name: jtalk-me
+    sources:
+    - https://github.com/Jtalk/home
+    type: application
+    urls:
+    - https://Jtalk.github.io/home/helm/jtalk-me-1.0.0-37defb6d8c86e0e7beeec17898b27358b4b95ca8.tgz
+    version: 1.0.0-37defb6d8c86e0e7beeec17898b27358b4b95ca8
+  - apiVersion: v2
     appVersion: 275194f6e54ff76c5a1d170280a97cab30e16d88
-    created: "2021-09-04T17:47:21.690094324Z"
+    created: "2021-09-05T15:19:47.01284756Z"
     description: A deployment for jtalk.me
     digest: ce2475eb17dcdf4777e16a06170d805a0504807add67326a108ffa6181936592
     home: https://jtalk.me
@@ -227,7 +243,7 @@ entries:
     version: 1.0.0-275194f6e54ff76c5a1d170280a97cab30e16d88
   - apiVersion: v2
     appVersion: 1c5a6b21915f057150121dfe6054cb90b8b9325f
-    created: "2021-09-04T17:47:21.689008705Z"
+    created: "2021-09-05T15:19:47.010964225Z"
     description: A deployment for jtalk.me
     digest: 4f7bd471c4685a45c159bb35b5fd0ebad5ff27c5585b5fd9fb77592f12eec6d9
     home: https://jtalk.me
@@ -243,7 +259,7 @@ entries:
     version: 1.0.0-1c5a6b21915f057150121dfe6054cb90b8b9325f
   - apiVersion: v2
     appVersion: 1c0f6fb8d3fb778c58ffe8993777cd34cafadc4e
-    created: "2021-09-04T17:47:21.687846684Z"
+    created: "2021-09-05T15:19:47.009573699Z"
     description: A deployment for jtalk.me
     digest: 3bf668116b4b25f992e2703fed07530e438070cd758c02a63b5a5b3449ed748c
     home: https://jtalk.me
@@ -257,4 +273,4 @@ entries:
     urls:
     - https://Jtalk.github.io/home/helm/jtalk-me-1.0.0-1c0f6fb8d3fb778c58ffe8993777cd34cafadc4e.tgz
     version: 1.0.0-1c0f6fb8d3fb778c58ffe8993777cd34cafadc4e
-generated: "2021-09-04T17:47:21.68649126Z"
+generated: "2021-09-05T15:19:47.00799757Z"
