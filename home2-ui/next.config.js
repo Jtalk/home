@@ -87,6 +87,16 @@ module.exports = withBundleAnalyzer(
           permanent: false,
         },
         {
+          source: "/atom",
+          destination: "/api/atom.xml",
+          permanent: false,
+        },
+        {
+          source: "/rss",
+          destination: "/api/atom.xml",
+          permanent: false,
+        },
+        {
           source: "/home/rss",
           destination: "/api/atom.xml",
           permanent: false,
