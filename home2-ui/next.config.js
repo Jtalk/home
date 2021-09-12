@@ -44,6 +44,27 @@ module.exports = withBundleAnalyzer(
         version: APP_VERSION,
       },
     },
+    async headers() {
+      return [
+        {
+          source: "/(.*)",
+          headers: [
+            {
+              key: "X-XSS-Protection",
+              value: "1; mode=block",
+            },
+            {
+              key: "X-Frame-Options",
+              value: "SAMEORIGIN",
+            },
+            {
+              key: "X-Content-Type-Options",
+              value: "nosniff",
+            },
+          ],
+        },
+      ];
+    },
     async redirects() {
       return [
         {
@@ -115,7 +136,7 @@ module.exports = withBundleAnalyzer(
           source: "/blog",
           destination: "/blog/articles",
           permanent: false,
-        }
+        },
       ];
     },
     excludeFile: (str) => /\*.{spec,test}.js/.test(str),
