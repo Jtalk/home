@@ -11,7 +11,7 @@ spec:
         spec:
           containers:
           - name: {{ quote .Values.database.backup.name }}
-          image: {{ printf "%s:%s" .Values.database.backup.image.name .Chart.AppVersion | quote }}
+            image: {{ printf "%s:%s" .Values.database.backup.image.name .Chart.AppVersion | quote }}
             envFrom:
             - secretRef: 
                 name: {{ quote .Values.database.backup.name }}
