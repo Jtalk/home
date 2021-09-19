@@ -8,7 +8,7 @@ spec:
     spec:
       containers:
         - name: "{{ .Values.database.migration.name }}-{{ .Values.database.migration.image.version }}"
-          image: {{- include "jtalk.me.container.image" .Values.database.migration.image | quote | indent 1 }}
+          image: {{ printf "%s:%s" .Values.database.migration.image.name .Chart.AppVersion | quote }}
           args: ["up"]
           env:
             - name: DATABASE_URL

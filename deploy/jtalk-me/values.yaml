@@ -19,7 +19,6 @@ ui:
     port: 80
     image:
       name: jtalk/home-ui
-      version: latest
     replicas: 2
     rollingUpdate:
       maxSurge: 50%
@@ -61,7 +60,6 @@ api:
     port: 8080
     image:
       name: jtalk/home-api
-      version: latest
     replicas: 1
     rollingUpdate:
       maxSurge: 100%
@@ -104,13 +102,11 @@ database:
       seconds: 60
     image:
       name: jtalk/home-dbmigrate
-      version: latest
   backup:
     name: database-backup
     schedule: "0 2 2 * *"
     image:
       name: jtalk/home-dbbackup
-      version: latest
     aws:
       bucket: ""
       key:

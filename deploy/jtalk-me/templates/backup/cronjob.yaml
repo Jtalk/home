@@ -11,7 +11,7 @@ spec:
         spec:
           containers:
           - name: {{ quote .Values.database.backup.name }}
-            image: {{- include "jtalk.me.container.image" .Values.database.backup.image | quote | indent 1 }}
+          image: {{ printf "%s:%s" .Values.database.backup.image.name .Chart.AppVersion | quote }}
             envFrom:
             - secretRef: 
                 name: {{ quote .Values.database.backup.name }}

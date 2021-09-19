@@ -5,7 +5,7 @@ description: A deployment for jtalk.me
 type: application
 
 version: 1.0.0
-appVersion: "initial"
+appVersion: "latest"
 
 home: https://jtalk.me
 sources:
