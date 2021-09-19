@@ -21,11 +21,6 @@ database.backup.aws.key.secret = <AWS Key secret for backup process to access th
 Some useful options:
 
 ```
-ui.deployment.image.version = <version of the docker image to deploy, defaults to latest>
-api.deployment.image.version = <version of the docker image to deploy, defaults to latest>
-database.migration.image.version = <version of the docker image to deploy, defaults to latest>
-database.backup.image.version = <version of the docker image to deploy, defaults to latest>
-
 domains = <a list of domains the app is served on>
 basePath = <a base path prefix for the app, if not served at the root of the domain>
 api.basePath = <a base path prefix for the API, defaults to /api on the same domain>

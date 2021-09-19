@@ -1,13 +1,13 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: "{{ .Values.database.migration.name }}-{{ .Values.database.migration.image.version }}"
+  name: "{{ .Values.database.migration.name }}-{{ .Chart.AppVersion }}"
 spec:
   activeDeadlineSeconds: {{ .Values.database.migration.deadline.seconds }}
   template:
     spec:
       containers:
-        - name: "{{ .Values.database.migration.name }}-{{ .Values.database.migration.image.version }}"
+        - name: "{{ .Values.database.migration.name }}-{{ .Chart.AppVersion }}"
           image: {{ printf "%s:%s" .Values.database.migration.image.name .Chart.AppVersion | quote }}
           args: ["up"]
           env:
