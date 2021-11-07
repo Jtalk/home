@@ -5,7 +5,7 @@ use derive_more::From;
 
 mod config;
 mod database;
-mod handler;
+mod health;
 
 #[cfg(debug_assertions)]
 mod dev;
@@ -31,12 +31,12 @@ async fn main() -> BootstrapResult {
     HttpServer::new(move || {
         App::new()
             .app_data(db.clone())
-            .service(handler::health)
-            .service(handler::ready)
+            .service(health::health)
+            .service(health::ready)
     })
     .bind("0.0.0.0:8080")?
     .run()
     .await?;
 
-    BootstrapResult::Ok(())
+    Ok(())
 }
