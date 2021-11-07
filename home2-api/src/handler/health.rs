@@ -32,15 +32,8 @@ pub async fn health() -> impl Responder {
 }
 
 #[get("/ready")]
-pub async fn ready(
-    db: web::Data<database::Client>,
-    db_config: web::Data<database::config::Config>,
-) -> impl Responder {
-    match db
-        .database(&db_config.database)
-        .list_collection_names(None)
-        .await
-    {
+pub async fn ready(db: web::Data<database::Database>) -> impl Responder {
+    match db.health().await {
         Ok(_) => HttpResponse::Ok().json(HealthStatus::ok()),
         Err(e) => HttpResponse::InternalServerError().json(HealthStatus::error(e)),
     }

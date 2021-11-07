@@ -1,7 +1,7 @@
 use std::result;
 
 use merge::Merge;
-use mongodb::options::{AuthMechanism, Credential};
+use mongodb::options::Credential;
 use serde::de::DeserializeOwned;
 use serde::Deserialize;
 
@@ -27,6 +27,7 @@ pub type Error = envy::Error;
 pub type Result = result::Result<Config, Error>;
 
 impl Config {
+    #[allow(dead_code)]
     pub fn from_env() -> Result {
         Config::from_env_for::<Config>()
     }
@@ -70,12 +71,5 @@ impl Config {
     pub fn to_credentials(&self) -> Option<Credential> {
         let clone = self.clone();
         clone.to_credentials_move()
-    }
-
-    /// Remove sensitive information from the config (i.e. credentials).
-    ///
-    /// Must be used before storing it in e.g. the app runtime.
-    pub fn redact(&mut self) {
-        self.password = None;
     }
 }

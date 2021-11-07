@@ -19,24 +19,18 @@ enum BootstrapError {
 
 type BootstrapResult = result::Result<(), BootstrapError>;
 
-async fn database() -> result::Result<(database::Client, database::config::Config), BootstrapError>
-{
+async fn database() -> result::Result<database::Database, BootstrapError> {
     let config = config::database()?;
-    let database = database::init(&config).await?;
-    Ok((database, config))
+    let result = database::Database::new(&config).await?;
+    Ok(result)
 }
 
 #[actix_web::main]
 async fn main() -> BootstrapResult {
-    let (database, mut database_config) = database().await?;
-    database_config.redact();
-
-    let db_state = web::Data::new(database);
-    let db_config_state = web::Data::new(database_config);
+    let db = web::Data::new(database().await?);
     HttpServer::new(move || {
         App::new()
-            .app_data(db_state.clone())
-            .app_data(db_config_state.clone())
+            .app_data(db.clone())
             .service(handler::health)
             .service(handler::ready)
     })
