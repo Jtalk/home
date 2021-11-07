@@ -1,0 +1,20 @@
+[package]
+name = "home2-api"
+version = "0.1.0"
+authors = ["Roman Nazarenko <me@jtalk.me>"]
+edition = "2021"
+
+[package.metadata.scripts]
+"run:watch" = "cargo watch -x run"
+"build:watch" = "cargo watch"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+actix-web = "4.0.0-beta.10"
+derive_more = "~0.99"
+envy = "~0.4"
+merge = "~0.1"
+mongodb = { version = "~2", features = ["tokio-runtime"] }
+serde = "~1"
+
