@@ -1,6 +1,7 @@
 use std::result;
 
-use mongodb::options::ClientOptions;
+use mongodb::options::{ClientOptions, FindOneOptions};
+use serde::de::DeserializeOwned;
 
 pub mod config;
 
@@ -8,6 +9,7 @@ pub type Error = mongodb::error::Error;
 pub type Result<T> = result::Result<T, Error>;
 
 type Client = mongodb::Client;
+
 pub struct Database {
     client: Client,
     name: String,
@@ -27,6 +29,15 @@ impl Database {
     pub async fn health(&self) -> Result<()> {
         self.db().list_collection_names(None).await?;
         Ok(())
+    }
+
+    pub async fn only<T>(&self, collection: &'static str) -> Result<Option<T>>
+    where
+        T: DeserializeOwned + Unpin + Send + Sync,
+    {
+        let col = self.db().collection::<T>(collection);
+        let opts = FindOneOptions::builder().build();
+        col.find_one(None, Some(opts)).await
     }
 
     fn db(&self) -> mongodb::Database {

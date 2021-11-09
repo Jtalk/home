@@ -1,11 +1,14 @@
 use std::{io::Error as IOError, result};
 
+use crate::database::Database;
 use actix_web::{web, App, HttpServer};
 use derive_more::From;
 
 mod config;
 mod database;
 mod health;
+mod owner;
+mod shared;
 
 #[cfg(debug_assertions)]
 mod dev;
@@ -31,6 +34,7 @@ async fn main() -> BootstrapResult {
     HttpServer::new(move || {
         App::new()
             .app_data(db.clone())
+            .configure(owner::configure(db.clone().into_inner()))
             .service(health::health)
             .service(health::ready)
     })
