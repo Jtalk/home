@@ -3,6 +3,12 @@ use serde::{self, Serialize};
 
 use crate::database;
 
+pub fn configure() -> impl Fn(&mut web::ServiceConfig) {
+    |config: &mut web::ServiceConfig| {
+        config.service(health).service(ready);
+    }
+}
+
 #[derive(Serialize)]
 struct HealthStatus {
     status: &'static str,
@@ -27,12 +33,12 @@ impl HealthStatus {
 }
 
 #[get("/health")]
-pub async fn health() -> impl Responder {
+async fn health() -> impl Responder {
     HttpResponse::Ok().json(HealthStatus::ok())
 }
 
 #[get("/ready")]
-pub async fn ready(db: web::Data<database::Database>) -> impl Responder {
+async fn ready(db: web::Data<database::Database>) -> impl Responder {
     match db.health().await {
         Ok(_) => HttpResponse::Ok().json(HealthStatus::ok()),
         Err(e) => HttpResponse::InternalServerError().json(HealthStatus::error(e)),

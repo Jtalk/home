@@ -38,9 +38,8 @@ async fn main() -> BootstrapResult {
     HttpServer::new(move || {
         App::new()
             .app_data(db.clone())
+            .configure(health::configure())
             .configure(owner::configure(db.clone().into_inner()))
-            .service(health::health)
-            .service(health::ready)
     })
     .bind("0.0.0.0:8080")?
     .run()
