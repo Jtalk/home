@@ -12,9 +12,13 @@ edition = "2021"
 
 [dependencies]
 actix-web = "4.0.0-beta.10"
+chrono = { version = "~0.4", features = ["serde"] }
 derive_more = "~0.99"
 envy = "~0.4"
+log = "~0.4"
 merge = "~0.1"
 mongodb = { version = "~2", features = ["tokio-runtime"] }
 serde = "~1"
+simplelog = "~0.10"
+uuid = { version = "~0.8", features = ["serde"] }
 
