@@ -3,6 +3,7 @@ use std::{io::Error as IOError, result};
 use crate::database::Database;
 use actix_web::{web, App, HttpServer};
 use derive_more::From;
+use log::LevelFilter;
 
 mod config;
 mod database;
@@ -18,6 +19,7 @@ enum BootstrapError {
     DatabaseConfig(database::config::Error),
     Database(database::Error),
     Server(IOError),
+    Logger(log::SetLoggerError),
 }
 
 type BootstrapResult = result::Result<(), BootstrapError>;
@@ -30,6 +32,8 @@ async fn database() -> result::Result<database::Database, BootstrapError> {
 
 #[actix_web::main]
 async fn main() -> BootstrapResult {
+    simplelog::SimpleLogger::init(LevelFilter::Debug, simplelog::Config::default())?;
+
     let db = web::Data::new(database().await?);
     HttpServer::new(move || {
         App::new()
