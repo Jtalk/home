@@ -1,5 +1,6 @@
 use actix_web::{get, web, HttpResponse, Responder};
-use serde::{self, Serialize};
+use log::error;
+use serde::{self, Deserialize, Serialize};
 
 use crate::database;
 
@@ -9,9 +10,9 @@ pub fn configure() -> impl Fn(&mut web::ServiceConfig) {
     }
 }
 
-#[derive(Serialize)]
+#[derive(Serialize, Deserialize)]
 struct HealthStatus {
-    status: &'static str,
+    status: String,
 
     #[serde(skip_serializing_if = "Option::is_none")]
     message: Option<String>,
@@ -20,13 +21,13 @@ struct HealthStatus {
 impl HealthStatus {
     pub fn ok() -> Self {
         HealthStatus {
-            status: "Ok",
+            status: "Ok".to_owned(),
             message: None,
         }
     }
     pub fn error(e: database::Error) -> Self {
         HealthStatus {
-            status: "Error",
+            status: "Error".to_owned(),
             message: Some(format!("Error accessing the database: {:?}", e)),
         }
     }
@@ -41,6 +42,85 @@ async fn health() -> impl Responder {
 async fn ready(db: web::Data<database::Database>) -> impl Responder {
     match db.health().await {
         Ok(_) => HttpResponse::Ok().json(HealthStatus::ok()),
-        Err(e) => HttpResponse::InternalServerError().json(HealthStatus::error(e)),
+        Err(e) => {
+            error!("Readiness check failed: {:?}", e);
+            HttpResponse::ServiceUnavailable().json(HealthStatus::error(e))
+        }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use actix_web::body::AnyBody;
+    use actix_web::{test, web, App};
+    use http;
+    use spectral::prelude::assert_that;
+
+    use crate::database::{self, Database};
+    use crate::shared::testing;
+
+    use super::*;
+
+    #[actix_web::test]
+    async fn healthcheck_works() {
+        testing::setup_test_logger();
+
+        let app = test::init_service(App::new().configure(configure())).await;
+        let req = test::TestRequest::get().uri("/health").to_request();
+        let res = test::call_service(&app, req).await;
+        assert_eq!(res.status(), http::StatusCode::OK);
+
+        let body = test::read_body_json::<HealthStatus, AnyBody>(res).await;
+        assert_eq!(body.status, "Ok");
+        assert_eq!(body.message, None);
+    }
+
+    #[actix_web::test]
+    async fn readiness_works() {
+        testing::setup_test_logger();
+
+        let mut db = Database::default();
+        db.expect_health().returning(|| Ok(()));
+
+        let app = test::init_service(
+            App::new()
+                .app_data(web::Data::<database::Database>::new(db))
+                .configure(configure()),
+        )
+        .await;
+        let req = test::TestRequest::get().uri("/ready").to_request();
+        let res = test::call_service(&app, req).await;
+        assert_eq!(res.status(), http::StatusCode::OK);
+
+        let body = test::read_body_json::<HealthStatus, AnyBody>(res).await;
+        assert_eq!(body.status, "Ok");
+        assert_eq!(body.message, None);
+    }
+
+    #[actix_web::test]
+    async fn readiness_fails_error_relayed() {
+        testing::setup_test_logger();
+
+        let mut db = Database::default();
+        db.expect_health().returning(|| {
+            Err(std::io::Error::new(std::io::ErrorKind::NotFound, "Test Error").into())
+        });
+
+        let app = test::init_service(
+            App::new()
+                .app_data(web::Data::<database::Database>::new(db))
+                .configure(configure()),
+        )
+        .await;
+        let req = test::TestRequest::get().uri("/ready").to_request();
+        let res = test::call_service(&app, req).await;
+        assert_eq!(res.status(), http::StatusCode::SERVICE_UNAVAILABLE);
+
+        let body = test::read_body_json::<HealthStatus, AnyBody>(res).await;
+        assert_eq!(body.status, "Error");
+        assert!(body
+            .message
+            .expect("message must be present")
+            .contains("Test Error"));
     }
 }
