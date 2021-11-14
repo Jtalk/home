@@ -17,6 +17,7 @@ db.owner.createIndex({
 	}
 })
 db.owner.insert({
+	_id: "owner",
 	name: 'Vasya Pupkin',
 	nickname: 'pupkivas',
 	description: 'A very cool guy with his own website',
