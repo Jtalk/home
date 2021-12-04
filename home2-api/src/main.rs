@@ -1,6 +1,5 @@
 use std::{io::Error as IOError, result};
 
-use crate::database::Database;
 use actix_web::{web, App, HttpServer};
 use derive_more::From;
 use log::LevelFilter;
