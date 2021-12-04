@@ -14,7 +14,6 @@ pub type DatabaseError = mongodb::error::Error;
 pub enum Error {
     Database(DatabaseError),
     ValueAccessError(mongodb::bson::document::ValueAccessError),
-    TransactionError(String),
 }
 pub type Result<T> = result::Result<T, Error>;
 pub type CollectionMetadata = str;

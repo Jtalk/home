@@ -56,7 +56,7 @@ mod tests {
     use http;
     use spectral::prelude::assert_that;
 
-    use crate::database::{self, Database};
+    use crate::database::{self, Database, DatabaseError};
     use crate::shared::testing;
 
     use super::*;
@@ -103,7 +103,11 @@ mod tests {
 
         let mut db = Database::default();
         db.expect_health().returning(|| {
-            Err(std::io::Error::new(std::io::ErrorKind::NotFound, "Test Error").into())
+            Err(DatabaseError::from(std::io::Error::new(
+                std::io::ErrorKind::NotFound,
+                "Test Error",
+            ))
+            .into())
         });
 
         let app = test::init_service(
