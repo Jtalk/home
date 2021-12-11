@@ -73,7 +73,7 @@ impl Database {
         Ok(data)
     }
 
-    fn db(&self) -> mongodb::Database {
+    pub fn db(&self) -> mongodb::Database {
         self.client.database(&self.name)
     }
 }

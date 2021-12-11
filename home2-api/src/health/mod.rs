@@ -54,7 +54,6 @@ mod tests {
     use actix_web::body::AnyBody;
     use actix_web::{test, web, App};
     use http;
-    use spectral::prelude::assert_that;
 
     use crate::database::{self, Database, DatabaseError};
     use crate::shared::testing;

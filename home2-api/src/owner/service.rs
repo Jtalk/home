@@ -1,8 +1,10 @@
 use std::result;
 use std::sync::Arc;
 
+use actix_session::Session;
 use derive_more::From;
 
+use crate::auth;
 use crate::database::{self, Database};
 use crate::owner::model::{DatabaseOwnerInfo, OwnerInfo, STATIC_OWNER_ID};
 
@@ -17,17 +19,22 @@ pub enum FindError {
 pub enum UpdateError {
     Database(database::Error),
     Format(database::oid::ConversionError),
+    Unauthorised(auth::VerifyError),
 }
 pub type FindResult<T> = result::Result<T, FindError>;
 pub type UpdateResult<T> = result::Result<T, UpdateError>;
 
 pub struct OwnerService {
     db: Arc<Database>,
+    auth: Arc<auth::Service>,
 }
 
 impl OwnerService {
-    pub fn new(db: Arc<Database>) -> OwnerService {
-        OwnerService { db }
+    pub fn new(db: Arc<Database>, auth_service: Arc<auth::Service>) -> OwnerService {
+        OwnerService {
+            db,
+            auth: auth_service,
+        }
     }
 
     pub async fn find(&self) -> FindResult<OwnerInfo> {
@@ -40,7 +47,8 @@ impl OwnerService {
             .map(DatabaseOwnerInfo::into)
     }
 
-    pub async fn update(&self, data: OwnerInfo) -> UpdateResult<OwnerInfo> {
+    pub async fn update(&self, session: &Session, data: OwnerInfo) -> UpdateResult<OwnerInfo> {
+        self.auth.verify(session)?;
         let db_update: DatabaseOwnerInfo = DatabaseOwnerInfo::try_from(data)?;
         let result: DatabaseOwnerInfo = self.db.replace(TABLE_METADATA, db_update).await?;
         Ok(result.into())
