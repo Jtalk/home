@@ -8,7 +8,7 @@ use envy;
 use serde::{self, Deserialize};
 use serde_json::json;
 
-pub const AUTH_COOKIE_NAME: &str = "api-session";
+pub const SESSION_COOKIE_NAME: &str = "api-session";
 
 pub fn url<'a, U>(path: U) -> Uri
 where
@@ -26,6 +26,13 @@ pub type ClientResult = Result<Client, Box<dyn Error>>;
 pub fn client() -> ClientResult {
     Ok(Client::default())
 }
+
+pub fn client_with(cookie: &Cookie) -> Client {
+    Client::builder()
+        .header("Cookie", format!("{}={}", cookie.name(), cookie.value()))
+        .finish()
+}
+
 pub async fn client_logged_in() -> ClientResult {
     let login_client = client()?;
 
@@ -37,13 +44,10 @@ pub async fn client_logged_in() -> ClientResult {
 
     assert_eq!(StatusCode::OK, resp.status());
     let cookie = resp
-        .cookie(AUTH_COOKIE_NAME)
+        .cookie(SESSION_COOKIE_NAME)
         .expect("auth cookie must be present in the login response");
 
-    let result = Client::builder()
-        .header("Cookie", format!("{}={}", cookie.name(), cookie.value()))
-        .finish();
-    Ok(result)
+    Ok(client_with(&cookie))
 }
 
 #[derive(Debug, Deserialize)]
