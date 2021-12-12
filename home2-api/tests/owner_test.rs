@@ -2,29 +2,14 @@ use actix_web;
 use http::StatusCode;
 use serde_json::{json, Value};
 
-use crate::common::url;
+use common::url;
 
 mod common;
 
 #[actix_web::test]
-async fn update_and_fetch_owner_without_photo() {
-    let client = common::client().unwrap();
-    let owner = json!({
-        "name": "Gull McBirdsson",
-        "nickname": "gull",
-        "description": "Cool Bird",
-        "bio": "Test Bio\nTest",
-        "contacts": { "EMAIL": { "value": "test@example.com" } },
-        "atomId": "e4435f7d-3c38-44c6-8e0e-b72864fe91bb",
-        "updated": "2021-12-11T13:14:15Z",
-    });
-    let put_resp = client.put(url("/owner")).send_json(&owner).await.unwrap();
-    assert_eq!(put_resp.status(), StatusCode::OK);
-}
-
-#[actix_web::test]
 async fn update_and_fetch_owner() {
-    let client = common::client().unwrap();
+    let client = common::client_logged_in().await.unwrap();
+
     let owner = json!({
         "name": "Gull McBirdsson",
         "nickname": "gull",
