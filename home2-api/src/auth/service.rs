@@ -2,6 +2,7 @@ use std::borrow::Borrow;
 use std::sync::Arc;
 
 use actix_session::Session;
+use chrono::{DateTime, Utc};
 use derive_more::From;
 use mockall_double::double;
 
@@ -14,6 +15,7 @@ use super::repo::{self};
 use super::LoginError::UnsupportedType;
 
 pub const ACCESS_TOKEN_KEY: &str = "token";
+pub const ACCESS_TOKEN_EXPIRY_KEY: &str = "token-expiry";
 const FAKE_PASSWORD: &str = "ignored";
 
 #[derive(Debug, From)]
@@ -48,12 +50,15 @@ impl Service {
     }
 
     pub fn verify(&self, session: &Session) -> VerifyResult {
+        let now = Utc::now();
         let found = session.get::<String>(ACCESS_TOKEN_KEY)?;
-        if let Some(_) = found {
-            Ok(())
-        } else {
-            Err(VerifyError::BadAuthentication("Authentication required"))
+        let expiry = session.get::<DateTime<Utc>>(ACCESS_TOKEN_EXPIRY_KEY)?;
+        if let (Some(_), Some(expiry)) = (found, expiry) {
+            if now < expiry {
+                return Ok(());
+            }
         }
+        Err(VerifyError::BadAuthentication("Authentication required"))
     }
 
     pub async fn login(&self, form: &LoginForm) -> LoginResult {

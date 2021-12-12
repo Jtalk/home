@@ -96,8 +96,11 @@ fn update_session(config: &config::Config, session: &Session) -> HttpResponse {
     let expiry = Utc::now()
         + Duration::from_std(expiry_duration)
             .expect("Never configured to overflow session duration");
-    match session.insert(ACCESS_TOKEN_KEY, uuid::Uuid::new_v4().to_string()) {
-        Ok(()) => HttpResponse::Ok().json(LoginResponse::success(expiry)),
-        Err(e) => e.error_response(),
+    if let Err(e) = session.insert(ACCESS_TOKEN_KEY, uuid::Uuid::new_v4().to_string()) {
+        return e.error_response();
     }
+    if let Err(e) = session.insert(ACCESS_TOKEN_EXPIRY_KEY, expiry) {
+        return e.error_response();
+    }
+    HttpResponse::Ok().json(LoginResponse::success(expiry))
 }
