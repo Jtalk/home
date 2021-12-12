@@ -1,9 +1,14 @@
+use std::error::Error;
 use std::fmt::Debug;
 
-use awc::http::Uri;
+use awc::cookie::Cookie;
+use awc::http::{StatusCode, Uri};
 use awc::Client;
 use envy;
 use serde::{self, Deserialize};
+use serde_json::json;
+
+pub const AUTH_COOKIE_NAME: &str = "api-session";
 
 pub fn url<'a, U>(path: U) -> Uri
 where
@@ -17,9 +22,28 @@ where
     Uri::from_parts(requested).unwrap()
 }
 
-pub type ClientResult = Result<Client, std::io::Error>;
+pub type ClientResult = Result<Client, Box<dyn Error>>;
 pub fn client() -> ClientResult {
     Ok(Client::default())
+}
+pub async fn client_logged_in() -> ClientResult {
+    let login_client = client()?;
+
+    let form = json!({
+        "login": "admin",
+        "password": "password",
+    });
+    let resp = login_client.post(url("/login")).send_form(&form).await?;
+
+    assert_eq!(StatusCode::OK, resp.status());
+    let cookie = resp
+        .cookie(AUTH_COOKIE_NAME)
+        .expect("auth cookie must be present in the login response");
+
+    let result = Client::builder()
+        .header("Cookie", format!("{}={}", cookie.name(), cookie.value()))
+        .finish();
+    Ok(result)
 }
 
 #[derive(Debug, Deserialize)]

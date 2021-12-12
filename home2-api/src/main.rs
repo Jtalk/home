@@ -1,8 +1,7 @@
-use std::sync::Arc;
 use std::{io::Error as IOError, result};
 
 use actix_session::CookieSession;
-use actix_web::{App, HttpServer};
+use actix_web::{web, App, HttpServer};
 use derive_more::From;
 use log::LevelFilter;
 
@@ -36,21 +35,30 @@ async fn database() -> result::Result<database::Database, BootstrapError> {
 async fn main() -> BootstrapResult {
     simplelog::SimpleLogger::init(LevelFilter::Debug, simplelog::Config::default())?;
 
-    let db = Arc::new(database().await?);
+    let db = web::Data::new(database().await?);
 
-    let auth_config = config::auth()?;
+    let auth_config = web::Data::new(config::auth()?);
     let session_key = auth_config.key_binary()?;
     let max_age = auth_config.max_age_actix()?;
-    let auth_repo = Arc::new(auth::Repo::new(db.clone()));
-    let auth_service = Arc::new(auth::Service::new(auth_repo.clone()));
+    let auth_repo = web::Data::new(auth::Repo::new(db.clone().into_inner()));
+    let auth_service = web::Data::new(auth::Service::new(auth_repo.clone().into_inner()));
 
     HttpServer::new(move || {
         App::new()
-            .wrap(CookieSession::private(session_key.clone().as_slice()).max_age_time(max_age))
+            .wrap(
+                CookieSession::private(session_key.clone().as_slice())
+                    .max_age_time(max_age)
+                    .name("api-session"),
+            )
             .app_data(db.clone())
             .app_data(auth_service.clone())
+            .app_data(auth_config.clone())
             .configure(health::configure())
-            .configure(owner::configure(db.clone(), auth_service.clone()))
+            .configure(auth::configure())
+            .configure(owner::configure(
+                db.clone().into_inner(),
+                auth_service.clone().into_inner(),
+            ))
     })
     .bind("0.0.0.0:8080")?
     .run()

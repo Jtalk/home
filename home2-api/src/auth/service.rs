@@ -13,7 +13,7 @@ use super::repo::Repo;
 use super::repo::{self};
 use super::LoginError::UnsupportedType;
 
-const ACCESS_TOKEN_KEY: &str = "token";
+pub const ACCESS_TOKEN_KEY: &str = "token";
 const FAKE_PASSWORD: &str = "ignored";
 
 #[derive(Debug, From)]
@@ -93,8 +93,6 @@ impl Service {
 
 #[cfg(test)]
 mod tests {
-    use std::borrow::BorrowMut;
-
     use super::super::model::*;
     use super::super::password;
     use super::*;
