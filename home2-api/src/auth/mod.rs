@@ -22,7 +22,7 @@ pub type Repo = RepoImpl;
 
 pub fn configure() -> impl Fn(&mut web::ServiceConfig) -> () {
     move |config: &mut web::ServiceConfig| {
-        config.service(login);
+        config.service(login).service(refresh);
     }
 }
 
@@ -35,18 +35,8 @@ async fn login(
 ) -> impl Responder {
     match service.login(&body).await {
         Ok(()) => {
-            let expiry_duration: std::time::Duration = config.max_age.clone().into();
-            let expiry = Utc::now()
-                + Duration::from_std(expiry_duration)
-                    .expect("Never configured to overflow session duration");
-            debug!(
-                "Successful login for {}, session until {}",
-                body.login, expiry
-            );
-            match session.insert(ACCESS_TOKEN_KEY, uuid::Uuid::new_v4().to_string()) {
-                Ok(()) => HttpResponse::Ok().json(LoginResponse::success(expiry)),
-                Err(e) => e.error_response(),
-            }
+            debug!("Creating session for {}", body.login);
+            update_session(&config, &session)
         }
         Err(LoginError::BadCredentials) => {
             warn!(
@@ -68,5 +58,40 @@ async fn login(
                 message: "Database temporarily unavailable".into(),
             })
         }
+    }
+}
+
+#[post("/login/refresh")]
+async fn refresh(
+    service: web::Data<Service>,
+    config: web::Data<config::Config>,
+    session: Session,
+) -> impl Responder {
+    match service.verify(&session) {
+        Ok(()) => {
+            debug!("Refreshing session");
+            update_session(&config, &session)
+        }
+        Err(VerifyError::BadAuthentication(msg)) => {
+            warn!("Refresh attempt while unauthenticated: {}", msg);
+            HttpResponse::BadRequest().json(LoginResponse::error("Session expired".into()))
+        }
+        Err(VerifyError::Other(e)) => {
+            error!("Error refreshing session: {:?}", e);
+            HttpResponse::InternalServerError().json(ErrorResponse {
+                message: "Unknown error".into(),
+            })
+        }
+    }
+}
+
+fn update_session(config: &config::Config, session: &Session) -> HttpResponse {
+    let expiry_duration: std::time::Duration = config.max_age.clone().into();
+    let expiry = Utc::now()
+        + Duration::from_std(expiry_duration)
+            .expect("Never configured to overflow session duration");
+    match session.insert(ACCESS_TOKEN_KEY, uuid::Uuid::new_v4().to_string()) {
+        Ok(()) => HttpResponse::Ok().json(LoginResponse::success(expiry)),
+        Err(e) => e.error_response(),
     }
 }

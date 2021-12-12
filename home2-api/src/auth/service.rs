@@ -18,7 +18,7 @@ const FAKE_PASSWORD: &str = "ignored";
 
 #[derive(Debug, From)]
 pub enum VerifyError {
-    BadAuthentication(String),
+    BadAuthentication(&'static str),
     Other(actix_web::error::Error),
 }
 pub type VerifyResult = std::result::Result<(), VerifyError>;
@@ -52,9 +52,7 @@ impl Service {
         if let Some(_) = found {
             Ok(())
         } else {
-            Err(VerifyError::BadAuthentication(
-                "Authentication required".to_owned(),
-            ))
+            Err(VerifyError::BadAuthentication("Authentication required"))
         }
     }
 
