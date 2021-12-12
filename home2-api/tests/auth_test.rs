@@ -9,7 +9,7 @@ use rstest::rstest;
 mod common;
 
 #[actix_web::test]
-async fn login_and_refresh() {
+async fn login_refresh_logout() {
     let client = common::client().unwrap();
     let now = Utc::now();
 
@@ -52,6 +52,21 @@ async fn login_and_refresh() {
 
     assert_eq!("ok", refresh_status);
     assert!(refresh_expiry > now);
+
+    let logout_resp = auth_client.post(url("/logout")).send().await.unwrap();
+
+    assert_eq!(StatusCode::OK, logout_resp.status());
+
+    let logout_cookie = logout_resp.cookie(common::SESSION_COOKIE_NAME).unwrap();
+    let logout_client = common::client_with(&logout_cookie);
+
+    let should_fail_resp = logout_client
+        .post(url("/login/refresh"))
+        .send()
+        .await
+        .unwrap();
+
+    assert_eq!(StatusCode::BAD_REQUEST, should_fail_resp.status());
 }
 
 #[rstest]

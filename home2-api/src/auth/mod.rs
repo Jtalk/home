@@ -22,7 +22,7 @@ pub type Repo = RepoImpl;
 
 pub fn configure() -> impl Fn(&mut web::ServiceConfig) -> () {
     move |config: &mut web::ServiceConfig| {
-        config.service(login).service(refresh);
+        config.service(login).service(refresh).service(logout);
     }
 }
 
@@ -83,6 +83,12 @@ async fn refresh(
             })
         }
     }
+}
+
+#[post("/logout")]
+async fn logout(session: Session) -> impl Responder {
+    session.remove(ACCESS_TOKEN_KEY);
+    HttpResponse::Ok()
 }
 
 fn update_session(config: &config::Config, session: &Session) -> HttpResponse {
