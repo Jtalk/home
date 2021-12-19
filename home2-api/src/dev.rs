@@ -1,3 +1,4 @@
+use base64ct::Encoding;
 use duration_string::DurationString;
 use rand::distributions::Uniform;
 use rand::{thread_rng, Rng};
@@ -21,7 +22,7 @@ pub fn auth() -> auth::config::PartialConfig {
     let max_age = DurationString::new(std::time::Duration::from_secs(60));
 
     auth::config::PartialConfig {
-        key: Some(base64::encode(key)),
+        key: Some(base64ct::Base64::encode_string(&key)),
         max_age: Some(max_age),
     }
 }

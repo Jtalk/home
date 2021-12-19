@@ -1,3 +1,4 @@
+use base64ct::Encoding;
 use duration_string::DurationString;
 use merge::Merge;
 use serde::de::DeserializeOwned;
@@ -38,7 +39,7 @@ impl Config {
     }
 
     pub fn key_binary(&self) -> std::result::Result<Vec<u8>, Error> {
-        base64::decode(&self.key).map_err(|e| {
+        base64ct::Base64::decode_vec(&self.key).map_err(|e| {
             let name = format!("{}{}", CONFIG_PREFIX, "key").to_uppercase();
             Error::Custom(format!(
                 "Invalid value for {}, must be base64, but: {:?}",

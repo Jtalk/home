@@ -1006,7 +1006,6 @@ dependencies = [
  "actix-session",
  "actix-web",
  "awc",
- "base64",
  "base64ct",
  "chrono",
  "derive_more",
