@@ -1,10 +1,17 @@
 use std::borrow::Borrow;
 use std::sync::Arc;
+use std::time::Duration;
 
 use actix_session::Session;
+use actix_web::rt;
+use actix_web::rt::task::JoinError;
+use actix_web::{HttpRequest, HttpResponse, Responder};
 use chrono::{DateTime, Utc};
 use derive_more::From;
+use log::{error, warn};
 use mockall_double::double;
+
+use crate::shared::ErrorResponse;
 
 use super::model::PasswordType::PBKDF2WithHmacSHA512;
 use super::model::{AuthenticationType, Login, LoginForm};
@@ -25,11 +32,31 @@ pub enum VerifyError {
 }
 pub type VerifyResult = std::result::Result<(), VerifyError>;
 
+impl Responder for VerifyError {
+    fn respond_to(self, _req: &HttpRequest) -> HttpResponse {
+        match self {
+            Self::BadAuthentication(msg) => {
+                warn!("Error unauthorised access: {}", msg);
+                HttpResponse::Forbidden().json(ErrorResponse {
+                    message: format!("Authentication required"),
+                })
+            }
+            Self::Other(e) => {
+                error!("Unexpected error checking authentication: {:?}", e);
+                HttpResponse::InternalServerError().json(ErrorResponse {
+                    message: format!("Internal error"),
+                })
+            }
+        }
+    }
+}
+
 #[derive(Debug, From)]
 pub enum LoginError {
     BadCredentials,
     UnsupportedType(AuthenticationType),
     Database(repo::Error),
+    ActixRuntimeError(JoinError),
 }
 pub type LoginResult = std::result::Result<(), LoginError>;
 
@@ -68,23 +95,30 @@ impl Service {
             None => (None, None),
         };
         match auth_type {
-            Some(AuthenticationType::Login) => self.login_local(form, login),
+            Some(AuthenticationType::Login) => self.login_local(form, login).await,
             Some(other) => Err(UnsupportedType(other)),
-            None => self.login_local(form, None),
+            None => self.login_local(form, None).await,
         }
     }
 
-    fn login_local(&self, form: &LoginForm, db_info_opt: Option<&Login>) -> LoginResult {
-        // If there's no such credentials, we still simulate the full login cycle to battle
+    async fn login_local(&self, form: &LoginForm, db_info_opt: Option<&Login>) -> LoginResult {
+        // If there's no such credentials, we still simulate the full login cycle to fight
         // against timing attacks. We force fail the login though, even if the attacker
         // manages to guess the fake password.
         let force_fail = db_info_opt.is_none();
         let db_info = db_info_opt.unwrap_or(&self.fake_login);
 
+        let target_password = form.password.clone();
+        let target_hash = db_info.hash.clone();
         let support = password::new(db_info.password_type);
-        let password_ok = support
-            .check(form.password.borrow(), db_info.hash.borrow())
-            .unwrap(); // Should not break on any user input, 500 internal error if breaks on hash.
+
+        let password_ok = rt::task::spawn_blocking(move || {
+            // This guy takes so long on 65k iterations it needs its own space.
+            // I'm looking to move to OAuth, so this is temporary.
+            support.check(&target_password, &target_hash).unwrap() // Should not break on any user input, 500 internal error if breaks on hash.
+        })
+        .await?;
+
         let login_ok = db_info.login == form.login;
         if login_ok && password_ok && !force_fail {
             Ok(())

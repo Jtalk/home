@@ -65,6 +65,7 @@ async fn main() -> BootstrapResult {
                 auth_service.clone().into_inner(),
             ))
     })
+    .worker_max_blocking_threads(1) // We don't block in those, we run PBKDF2 :(
     .bind("0.0.0.0:8080")?
     .run()
     .await?;

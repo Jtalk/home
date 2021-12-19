@@ -58,6 +58,12 @@ async fn login(
                 message: "Database temporarily unavailable".into(),
             })
         }
+        Err(LoginError::ActixRuntimeError(e)) => {
+            error!("Error running password hashing in POST /login: {:?}", e);
+            HttpResponse::InternalServerError().json(ErrorResponse {
+                message: "Internal error".into(),
+            })
+        }
     }
 }
 

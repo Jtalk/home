@@ -11,7 +11,7 @@ use pbkdf2::{Algorithm, Params, Pbkdf2};
 use crate::auth::model::PasswordType;
 
 const SALT_LENGTH: usize = 32;
-const PBKDF2_HASH_SEPARATOR: &str = "$"; // We could use the standardised PHC string, but I want to move to OAuth
+const PBKDF2_HASH_SEPARATOR: &str = "$"; // We could use a standardised PHC string, but I want to move to OAuth
 const PBKDF2_ALGORITHM: Algorithm = Algorithm::Pbkdf2Sha512;
 const PBKDF2_ROUNDS: u32 = 65536;
 const PBKDF2_OUTPUT_LENGTH: usize = 64;
