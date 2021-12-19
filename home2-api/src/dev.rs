@@ -18,7 +18,7 @@ pub fn auth() -> auth::config::PartialConfig {
     let uniform = Uniform::new_inclusive(u8::MIN, u8::MAX);
 
     let key: Vec<u8> = thread_rng().sample_iter(&uniform).take(256).collect();
-    let max_age = DurationString::new(std::time::Duration::from_secs(10));
+    let max_age = DurationString::new(std::time::Duration::from_secs(60));
 
     auth::config::PartialConfig {
         key: Some(base64::encode(key)),

@@ -1,6 +1,4 @@
-use std::borrow::Borrow;
 use std::sync::Arc;
-use std::time::Duration;
 
 use actix_session::Session;
 use actix_web::rt;

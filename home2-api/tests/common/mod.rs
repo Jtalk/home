@@ -1,7 +1,6 @@
 use std::error::Error;
 use std::fmt::Debug;
 
-use awc::cookie::Cookie;
 use awc::http::{StatusCode, Uri};
 use awc::Client;
 use envy;
