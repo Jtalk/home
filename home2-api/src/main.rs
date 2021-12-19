@@ -10,6 +10,7 @@ mod config;
 mod database;
 mod health;
 mod owner;
+mod projects;
 mod shared;
 
 #[cfg(debug_assertions)]
@@ -56,6 +57,10 @@ async fn main() -> BootstrapResult {
             .configure(health::configure())
             .configure(auth::configure())
             .configure(owner::configure(
+                db.clone().into_inner(),
+                auth_service.clone().into_inner(),
+            ))
+            .configure(projects::configure(
                 db.clone().into_inner(),
                 auth_service.clone().into_inner(),
             ))

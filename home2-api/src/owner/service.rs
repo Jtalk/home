@@ -6,7 +6,8 @@ use derive_more::From;
 
 use crate::auth;
 use crate::database::{self, Database};
-use crate::owner::model::{DatabaseOwnerInfo, OwnerInfo, STATIC_OWNER_ID};
+
+use super::model::{DatabaseOwnerInfo, OwnerInfo, STATIC_OWNER_ID};
 
 const TABLE_METADATA: &'static database::CollectionMetadata = "owner";
 
@@ -30,8 +31,8 @@ pub struct OwnerService {
 }
 
 impl OwnerService {
-    pub fn new(db: Arc<Database>, auth_service: Arc<auth::Service>) -> OwnerService {
-        OwnerService {
+    pub fn new(db: Arc<Database>, auth_service: Arc<auth::Service>) -> Self {
+        Self {
             db,
             auth: auth_service,
         }
@@ -40,7 +41,7 @@ impl OwnerService {
     pub async fn find(&self) -> FindResult<OwnerInfo> {
         let result = self
             .db
-            .only::<DatabaseOwnerInfo>(TABLE_METADATA, STATIC_OWNER_ID)
+            .find::<DatabaseOwnerInfo>(TABLE_METADATA, STATIC_OWNER_ID)
             .await?;
         result
             .ok_or_else(|| FindError::NotFound())

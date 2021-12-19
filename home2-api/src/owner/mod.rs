@@ -4,10 +4,11 @@ use actix_session::Session;
 use actix_web::{get, put, web, HttpResponse, Responder};
 use log::{debug, error, warn};
 
+use model::OwnerInfo;
+use service::{FindError, OwnerService, UpdateError};
+
 use crate::auth;
 use crate::database::Database;
-use crate::owner::model::OwnerInfo;
-use crate::owner::service::{FindError, OwnerService, UpdateError};
 use crate::shared::ErrorResponse;
 
 mod model;
@@ -54,6 +55,7 @@ async fn update(
     session: Session,
     body: web::Json<OwnerInfo>,
     service: web::Data<OwnerService>,
+    req: web::HttpRequest,
 ) -> impl Responder {
     match service.update(&session, body.into_inner()).await {
         Ok(v) => {
@@ -74,9 +76,7 @@ async fn update(
         }
         Err(UpdateError::Unauthorised(e)) => {
             warn!("Error unauthorised access to PUT /owner: {:?}", e);
-            HttpResponse::Forbidden().json(ErrorResponse {
-                message: format!("Authentication required"),
-            })
+            e.respond_to(&req)
         }
     }
 }

@@ -5,19 +5,15 @@ photoId = db['fs.files'].findOne({filename: 'avatar.png'})._id
 print('Using GridFS object as the owner\'s photo: ' + photoId);
 
 db.owner.createIndex({
+	id: "text",
 	name: "text",
 	nickname: "text",
 	description: "text",
 	bio: "text",
 	contacts: "text",
-}, {
-	weights: {
-		name: 2,
-		nickname: 2
-	}
-})
+}, {})
 db.owner.insert({
-	_id: "owner",
+	id: "owner",
 	name: 'Vasya Pupkin',
 	nickname: 'pupkivas',
 	description: 'A very cool guy with his own website',

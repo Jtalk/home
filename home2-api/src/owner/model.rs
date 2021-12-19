@@ -32,7 +32,6 @@ pub struct Contact {
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct DatabaseOwnerInfo {
-    #[serde(rename = "_id")]
     pub id: String,
     #[serde(flatten)]
     pub parent: OwnerInfo,

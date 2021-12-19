@@ -1,9 +1,11 @@
 use std::result;
 
 use derive_more::From;
+use futures::TryStreamExt;
 use mockall::automock;
 use mongodb::bson::doc;
 use mongodb::options::{ClientOptions, ReplaceOptions};
+use mongodb::Collection;
 use serde::de::DeserializeOwned;
 use serde::Serialize;
 
@@ -42,10 +44,10 @@ impl Database {
         Ok(())
     }
 
-    /// Find for single-value collections, like `owner`.
+    /// Find a single value in the collection
     ///
-    /// They use string IDs as opposed to ObjectID.
-    pub async fn only<T: 'static>(
+    /// They use readable `id` as opposed to ObjectID `_id`.
+    pub async fn find<T: 'static>(
         &self,
         collection: &CollectionMetadata,
         id: &str,
@@ -54,8 +56,18 @@ impl Database {
         T: DeserializeOwned + Unpin + Send + Sync,
     {
         let col = self.db().collection::<T>(collection);
-        let found = col.find_one(Some(doc! { "_id": id }), None).await?;
+        let found = col.find_one(Some(doc! { "id": id }), None).await?;
         Ok(found)
+    }
+
+    pub async fn list<T: 'static>(&self, collection: &CollectionMetadata) -> Result<Vec<T>>
+    where
+        T: DeserializeOwned + Unpin + Send + Sync,
+    {
+        let col: Collection<T> = self.db().collection::<T>(collection);
+        let found = col.find(None, None).await?;
+        let result: Vec<T> = found.try_collect::<Vec<T>>().await?;
+        Ok(result)
     }
 
     pub async fn replace<T: 'static>(&self, collection: &CollectionMetadata, data: T) -> Result<T>
@@ -65,7 +77,7 @@ impl Database {
         let id = data.id();
         let col = self.db().collection::<T>(collection);
         col.replace_one(
-            doc! { "_id" : id},
+            doc! { "id" : id},
             &data,
             Some(ReplaceOptions::builder().upsert(true).build()),
         )
