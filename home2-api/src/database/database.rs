@@ -3,7 +3,7 @@ use std::result;
 use derive_more::From;
 use futures::TryStreamExt;
 use mockall::automock;
-use mongodb::bson::doc;
+use mongodb::bson::{doc, Document};
 use mongodb::options::{ClientOptions, ReplaceOptions};
 use mongodb::Collection;
 use serde::de::DeserializeOwned;
@@ -83,6 +83,12 @@ impl Database {
         )
         .await?;
         Ok(data)
+    }
+
+    pub async fn delete(&self, collection: &CollectionMetadata, id: &str) -> Result<u64> {
+        let col = self.db().collection::<Document>(collection);
+        let result = col.delete_one(doc! { "id": id}, None).await?;
+        Ok(result.deleted_count)
     }
 
     pub fn db(&self) -> mongodb::Database {

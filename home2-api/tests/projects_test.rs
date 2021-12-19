@@ -34,7 +34,7 @@ async fn fetch_projects() {
     assert_eq!(resp_published_anon.status(), StatusCode::OK);
 
     let published_anon = resp_published_anon.json::<Vec<Value>>().await.unwrap();
-    assert_that!(published_anon.len()).is_equal_to(published.len());
+    assert_that!(published_anon.len()).is_greater_than(0);
 
     let resp_unpublished_anon = client_anonymous
         .get(url("/projects?published=false"))
@@ -119,8 +119,13 @@ async fn fetch_non_existent_project(#[case] authenticated: bool) {
 #[case("test-project-it-published-multilink", true, json!([{"name": "Home", "href": "https://example.com"}, {"name": "Source", "href": "https://example.com/source"}]))]
 #[case("test-project-it-unpublished-multilink", false, json!([{"name": "Home", "href": "https://example.com"}, {"name": "Source", "href": "https://example.com/source"}]))]
 #[actix_web::test]
-async fn create_update_project(#[case] id: &str, #[case] published: bool, #[case] links: Value) {
+async fn create_update_delete_project(
+    #[case] id: &str,
+    #[case] published: bool,
+    #[case] links: Value,
+) {
     let client = common::client_logged_in().await.unwrap();
+    let client_anon = common::client().unwrap();
 
     let project = json!({
       "id": id,
@@ -154,10 +159,19 @@ async fn create_update_project(#[case] id: &str, #[case] published: bool, #[case
     let update_body = update_resp.json::<Value>().await.unwrap();
     assert_eq!(update_body, update_project);
 
+    let delete_anon_resp = client_anon.delete(url(&path)).send().await.unwrap();
+    assert_eq!(delete_anon_resp.status(), StatusCode::FORBIDDEN);
+
     let mut found_again_resp = client.get(url(&path)).send().await.unwrap();
     assert_eq!(found_again_resp.status(), StatusCode::OK);
     let found_again_body = found_again_resp.json::<Value>().await.unwrap();
     assert_eq!(found_again_body, update_project);
+
+    let delete_resp = client.delete(url(&path)).send().await.unwrap();
+    assert_eq!(delete_resp.status(), StatusCode::OK);
+
+    let no_longer_found_resp = client.get(url(&path)).send().await.unwrap();
+    assert_eq!(no_longer_found_resp.status(), StatusCode::NOT_FOUND);
 }
 
 #[actix_web::test]
@@ -173,11 +187,24 @@ async fn create_update_project_unauthenticated() {
         "links": [],
     });
 
-    let mut create_resp = client
+    let create_resp = client
         .put(url("/projects/cannot-create-id"))
         .send_json(&project)
         .await
         .unwrap();
 
     assert_eq!(create_resp.status(), StatusCode::FORBIDDEN);
+}
+
+#[actix_web::test]
+async fn delete_project_unauthenticated() {
+    let client = common::client().unwrap();
+
+    let delete_resp = client
+        .delete(url("/projects/cannot-create-id"))
+        .send()
+        .await
+        .unwrap();
+
+    assert_eq!(delete_resp.status(), StatusCode::FORBIDDEN);
 }

@@ -22,9 +22,15 @@ pub enum UpdateError {
     Format(database::oid::ConversionError),
     Unauthorised(auth::VerifyError),
 }
+#[derive(From)]
+pub enum DeleteError {
+    Database(database::Error),
+    Unauthorised(auth::VerifyError),
+}
 pub type ListResult<T> = result::Result<T, database::Error>;
 pub type FindResult<T> = result::Result<T, FindError>;
 pub type UpdateResult<T> = result::Result<T, UpdateError>;
+pub type DeleteResult<T> = result::Result<T, DeleteError>;
 
 pub struct ProjectService {
     db: Arc<Database>,
@@ -57,5 +63,11 @@ impl ProjectService {
         let db_update: DatabaseProject = DatabaseProject::try_from(data)?;
         let result: DatabaseProject = self.db.replace(TABLE_METADATA, db_update).await?;
         Ok(result.into())
+    }
+
+    pub async fn delete(&self, session: &Session, id: &str) -> DeleteResult<bool> {
+        self.auth.verify(session)?;
+        let count = self.db.delete(TABLE_METADATA, id).await?;
+        Ok(count > 0)
     }
 }

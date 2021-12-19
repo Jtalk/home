@@ -1,7 +1,7 @@
 use std::sync::Arc;
 
 use actix_session::Session;
-use actix_web::{get, put, web, HttpResponse, Responder};
+use actix_web::{delete, get, put, web, HttpResponse, Responder};
 use log::{debug, error, warn};
 use serde::{Deserialize, Serialize};
 
@@ -10,6 +10,7 @@ use service::{FindError, ProjectService, UpdateError};
 
 use crate::auth;
 use crate::database::Database;
+use crate::projects::service::DeleteError;
 use crate::shared::ErrorResponse;
 
 mod model;
@@ -25,7 +26,8 @@ pub fn configure(
             .app_data(service.clone())
             .service(list)
             .service(find)
-            .service(update);
+            .service(update)
+            .service(delete);
     }
 }
 
@@ -110,7 +112,7 @@ async fn update(
         }
         Err(UpdateError::Database(e)) => {
             error!(
-                "Error accessing the database in PUT /project/{}: {:?}",
+                "Error accessing the database in PUT /projects/{}: {:?}",
                 id, e
             );
             HttpResponse::ServiceUnavailable().json(ErrorResponse {
@@ -119,7 +121,7 @@ async fn update(
         }
         Err(UpdateError::Format(e)) => {
             warn!(
-                "Error parsing incoming request in PUT /project/{}: {:?}",
+                "Error parsing incoming request in PUT /projects/{}: {:?}",
                 id, e
             );
             HttpResponse::BadRequest().json(ErrorResponse {
@@ -127,7 +129,45 @@ async fn update(
             })
         }
         Err(UpdateError::Unauthorised(e)) => {
-            warn!("Error unauthorised access to PUT /project/{}: {:?}", id, e);
+            warn!("Error unauthorised access to PUT /projects/{}: {:?}", id, e);
+            HttpResponse::Forbidden().json(ErrorResponse {
+                message: format!("Authentication required"),
+            })
+        }
+    }
+}
+
+#[delete("/projects/{id}")]
+async fn delete(
+    id: web::Path<String>,
+    session: Session,
+    service: web::Data<ProjectService>,
+) -> impl Responder {
+    match service.delete(&session, &id).await {
+        Ok(true) => {
+            debug!("Deleted project {}", id);
+            HttpResponse::Ok().finish()
+        }
+        Ok(false) => {
+            debug!("Deleting non-existent project {}", id);
+            HttpResponse::NotFound().json(ErrorResponse {
+                message: "Project not found".into(),
+            })
+        }
+        Err(DeleteError::Database(e)) => {
+            error!(
+                "Error accessing the database in DELETE /projects/{}: {:?}",
+                id, e
+            );
+            HttpResponse::ServiceUnavailable().json(ErrorResponse {
+                message: "Error accessing the database".into(),
+            })
+        }
+        Err(DeleteError::Unauthorised(e)) => {
+            warn!(
+                "Error unauthorised access to DELETE /projects/{}: {:?}",
+                id, e
+            );
             HttpResponse::Forbidden().json(ErrorResponse {
                 message: format!("Authentication required"),
             })
