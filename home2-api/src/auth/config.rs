@@ -4,7 +4,7 @@ use serde::de::DeserializeOwned;
 use serde::Deserialize;
 use time::Duration as ActixDuration;
 
-const CONFIG_PREFIX: &'static str = "auth_";
+const CONFIG_PREFIX: &'static str = "AUTH_";
 
 #[derive(Clone, Deserialize)]
 pub struct Config {

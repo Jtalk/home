@@ -5,7 +5,7 @@ use mongodb::options::Credential;
 use serde::de::DeserializeOwned;
 use serde::Deserialize;
 
-const CONFIG_PREFIX: &'static str = "database_";
+const CONFIG_PREFIX: &'static str = "DATABASE_";
 
 #[derive(Clone, Deserialize)]
 pub struct Config {
