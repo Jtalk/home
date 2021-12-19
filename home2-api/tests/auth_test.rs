@@ -34,7 +34,7 @@ async fn login_refresh_logout() {
     assert_eq!("ok", status);
     assert!(expiry > now);
 
-    let auth_client = common::client_with(&auth_cookie.unwrap());
+    let auth_client = common::client_with_session(auth_cookie.unwrap().value());
     let mut refresh_resp = auth_client
         .post(url("/login/refresh"))
         .send()
@@ -58,7 +58,7 @@ async fn login_refresh_logout() {
     assert_eq!(StatusCode::OK, logout_resp.status());
 
     let logout_cookie = logout_resp.cookie(common::SESSION_COOKIE_NAME).unwrap();
-    let logout_client = common::client_with(&logout_cookie);
+    let logout_client = common::client_with_session(logout_cookie.value());
 
     let should_fail_resp = logout_client
         .post(url("/login/refresh"))
@@ -89,7 +89,7 @@ async fn login_wrong_password(#[case] login: &str, #[case] password: &str) {
     let auth_cookie = resp
         .cookie(common::SESSION_COOKIE_NAME)
         .expect("session created anyway");
-    let auth_client = common::client_with(&auth_cookie);
+    let auth_client = common::client_with_session(auth_cookie.value());
 
     let body = resp.json::<Value>().await.unwrap();
     let status = body.get("status").unwrap().as_str().unwrap();

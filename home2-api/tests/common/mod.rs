@@ -7,8 +7,11 @@ use awc::Client;
 use envy;
 use serde::{self, Deserialize};
 use serde_json::json;
+use simple_error::SimpleError;
+use tokio::sync::OnceCell;
 
 pub const SESSION_COOKIE_NAME: &str = "api-session";
+static SESSION_COOKIE: OnceCell<String> = OnceCell::const_new();
 
 pub fn url<'a, U>(path: U) -> Uri
 where
@@ -27,13 +30,22 @@ pub fn client() -> ClientResult {
     Ok(Client::default())
 }
 
-pub fn client_with(cookie: &Cookie) -> Client {
+pub fn client_with_session(session_cookie: &str) -> Client {
     Client::builder()
-        .header("Cookie", format!("{}={}", cookie.name(), cookie.value()))
+        .header(
+            "Cookie",
+            format!("{}={}", SESSION_COOKIE_NAME, session_cookie),
+        )
         .finish()
 }
 
+#[allow(dead_code)]
 pub async fn client_logged_in() -> ClientResult {
+    let session_cookie = SESSION_COOKIE.get_or_try_init(fetch_auth_cookie).await?;
+    Ok(client_with_session(session_cookie))
+}
+
+async fn fetch_auth_cookie() -> Result<String, Box<dyn Error>> {
     let login_client = client()?;
 
     let form = json!({
@@ -43,11 +55,11 @@ pub async fn client_logged_in() -> ClientResult {
     let resp = login_client.post(url("/login")).send_form(&form).await?;
 
     assert_eq!(StatusCode::OK, resp.status());
-    let cookie = resp
-        .cookie(SESSION_COOKIE_NAME)
-        .expect("auth cookie must be present in the login response");
+    let cookie = resp.cookie(SESSION_COOKIE_NAME).ok_or(SimpleError::new(
+        "session cookie not found in server response",
+    ))?;
 
-    Ok(client_with(&cookie))
+    Ok(cookie.value().to_string())
 }
 
 #[derive(Debug, Deserialize)]
