@@ -5,10 +5,12 @@ use actix_web::{get, put, web, HttpResponse, Responder};
 use log::{debug, error, warn};
 
 use model::OwnerInfo;
-use service::{FindError, OwnerService, UpdateError};
+use service::OwnerService;
 
 use crate::auth;
 use crate::database::Database;
+use crate::shared::crud::get::FindError;
+use crate::shared::crud::update::UpdateError;
 use crate::shared::ErrorResponse;
 
 mod model;

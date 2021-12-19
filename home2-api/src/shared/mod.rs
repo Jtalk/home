@@ -1,5 +1,7 @@
 use serde::Serialize;
 
+pub mod crud;
+
 #[derive(Debug, Serialize)]
 pub struct ErrorResponse {
     pub message: String,

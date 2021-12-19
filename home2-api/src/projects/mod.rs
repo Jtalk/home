@@ -6,11 +6,13 @@ use log::{debug, error, warn};
 use serde::{Deserialize, Serialize};
 
 use model::Project;
-use service::{FindError, ProjectService, UpdateError};
 
 use crate::auth;
 use crate::database::Database;
-use crate::projects::service::DeleteError;
+use crate::projects::service::ProjectService;
+use crate::shared::crud::delete::DeleteError;
+use crate::shared::crud::get::FindError;
+use crate::shared::crud::update::UpdateError;
 use crate::shared::ErrorResponse;
 
 mod model;
