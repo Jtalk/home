@@ -11,7 +11,7 @@ use crate::auth;
 use crate::database::Database;
 use crate::projects::service::ProjectService;
 use crate::shared::crud::delete::DeleteError;
-use crate::shared::crud::get::FindError;
+use crate::shared::crud::get::{FindError, ListError};
 use crate::shared::crud::update::UpdateError;
 use crate::shared::ErrorResponse;
 
@@ -44,20 +44,8 @@ async fn list(
     q: web::Query<ListQuery>,
     session: Session,
     service: web::Data<ProjectService>,
-    auth: web::Data<auth::Service>,
-    req: web::HttpRequest,
 ) -> impl Responder {
-    if !q.published {
-        // Only see unpublished items when logged in
-        if let Err(e) = auth.verify(&session) {
-            warn!(
-                "Error unauthorised access to unpublished GET /projects: {:?}",
-                e
-            );
-            return e.respond_to(&req);
-        }
-    }
-    match service.list().await {
+    match service.list(&session, q.published).await {
         Ok(v) => {
             let filtered: Vec<Project> = v
                 .into_iter()
@@ -65,10 +53,16 @@ async fn list(
                 .collect();
             HttpResponse::Ok().json(filtered)
         }
-        Err(e) => {
+        Err(ListError::Database(e)) => {
             error!("Error accessing the database in GET /projects: {:?}", e);
             HttpResponse::InternalServerError().json(ErrorResponse {
                 message: "Error accessing the database".into(),
+            })
+        }
+        Err(ListError::Unauthorised(e)) => {
+            warn!("Error unauthorised access to GET /projects: {:?}", e);
+            HttpResponse::Forbidden().json(ErrorResponse {
+                message: format!("Authentication required to access unpublished projects"),
             })
         }
     }
@@ -135,6 +129,9 @@ async fn update(
             HttpResponse::Forbidden().json(ErrorResponse {
                 message: format!("Authentication required"),
             })
+        }
+        Err(UpdateError::Infallible(_)) => {
+            panic!("Impossible conversion error")
         }
     }
 }

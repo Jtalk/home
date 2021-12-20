@@ -1,10 +1,12 @@
+use std::fmt::Debug;
 use std::result;
 
+use convert_case::{Case::Camel, Casing};
 use derive_more::From;
 use futures::TryStreamExt;
 use mockall::automock;
 use mongodb::bson::{doc, Document};
-use mongodb::options::{ClientOptions, ReplaceOptions};
+use mongodb::options::{ClientOptions, FindOptions, ReplaceOptions};
 use mongodb::Collection;
 use serde::de::DeserializeOwned;
 use serde::Serialize;
@@ -19,6 +21,30 @@ pub enum Error {
 }
 pub type Result<T> = result::Result<T, Error>;
 pub type CollectionMetadata = str;
+
+#[derive(Debug, Eq, PartialEq)]
+pub struct Pagination<T: Sortable> {
+    pub page: u32,
+    pub page_size: u32,
+    pub order: &'static T::Field,
+}
+
+#[derive(Debug, Eq, PartialEq)]
+pub struct Filter {
+    pub published: bool,
+}
+
+#[derive(Debug, Eq, PartialEq, Default)]
+pub struct ListOptions<T: Sortable> {
+    pub pagination: Option<Pagination<T>>,
+    pub filter: Option<Filter>,
+}
+
+pub trait Sortable {
+    type Field: 'static + Debug + Eq;
+
+    fn field_name_string(f: &Self::Field) -> &'static str;
+}
 
 type Client = mongodb::Client;
 
@@ -60,12 +86,30 @@ impl Database {
         Ok(found)
     }
 
-    pub async fn list<T: 'static>(&self, collection: &CollectionMetadata) -> Result<Vec<T>>
+    pub async fn list<T: 'static + Sortable>(
+        &self,
+        collection: &CollectionMetadata,
+        options: &ListOptions<T>,
+    ) -> Result<Vec<T>>
     where
         T: DeserializeOwned + Unpin + Send + Sync,
     {
+        let ListOptions { pagination, filter } = options;
+        let db_filter = filter
+            .as_ref()
+            .filter(|v| v.published)
+            .map(|_| doc! { "published": true });
+        let db_options = pagination.as_ref().map(|o| {
+            let field_name = T::field_name_string(o.order).to_case(Camel);
+            FindOptions::builder()
+                .skip(Some(o.page as u64 * o.page_size as u64))
+                .limit(Some(o.page_size as i64))
+                .sort(Some(doc! { field_name: 1 }))
+                .build()
+        });
+
         let col: Collection<T> = self.db().collection::<T>(collection);
-        let found = col.find(None, None).await?;
+        let found = col.find(db_filter, db_options).await?;
         let result: Vec<T> = found.try_collect::<Vec<T>>().await?;
         Ok(result)
     }

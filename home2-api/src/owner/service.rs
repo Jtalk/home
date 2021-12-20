@@ -19,7 +19,7 @@ pub struct OwnerService {
 impl OwnerService {
     pub fn new(db: Arc<Database>, auth_service: Arc<auth::Service>) -> Self {
         Self {
-            find: FindService::new(TABLE_METADATA, db.clone()),
+            find: FindService::new(TABLE_METADATA, db.clone(), auth_service.clone()),
             update: UpdateService::new(TABLE_METADATA, db.clone(), auth_service.clone()),
         }
     }

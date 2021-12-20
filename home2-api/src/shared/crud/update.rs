@@ -1,3 +1,4 @@
+use std::convert::Infallible;
 use std::sync::Arc;
 
 use actix_session::Session;
@@ -13,6 +14,7 @@ pub enum UpdateError {
     Database(database::Error),
     Format(database::oid::ConversionError),
     Unauthorised(auth::VerifyError),
+    Infallible(Infallible),
 }
 pub type UpdateResult<T> = std::result::Result<T, UpdateError>;
 

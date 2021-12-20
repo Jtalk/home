@@ -1,11 +1,12 @@
+use field_types::FieldName;
 use mongodb::bson::serde_helpers::u32_as_f64;
 use serde::{self, Deserialize, Serialize};
 
 use crate::database::oid::ConversionError;
 use crate::database::oid::ObjectID;
-use crate::database::HasID;
+use crate::database::{HasID, Sortable};
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, FieldName)]
 #[serde(rename_all = "camelCase")]
 pub struct Project {
     pub id: String,
@@ -34,6 +35,15 @@ pub struct DatabaseProject {
 impl HasID for DatabaseProject {
     fn id(&self) -> String {
         self.parent.id.clone()
+    }
+}
+
+impl Sortable for DatabaseProject {
+    type Field = ProjectFieldName;
+
+    //noinspection RsTypeCheck
+    fn field_name_string(f: &Self::Field) -> &'static str {
+        f.name()
     }
 }
 

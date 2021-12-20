@@ -80,5 +80,8 @@ async fn update(
             warn!("Error unauthorised access to PUT /owner: {:?}", e);
             e.respond_to(&req)
         }
+        Err(UpdateError::Infallible(_)) => {
+            panic!("Impossible error")
+        }
     }
 }

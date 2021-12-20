@@ -20,9 +20,11 @@ actix-session = "0.5.0-beta.4"
 awc = "3.0.0-beta.12"
 base64ct = "~1.0"
 chrono = { version = "~0.4", features = ["serde"] }
+convert_case = "~0.4"
 derive_more = "~0.99"
 duration-string = { version = "0.0.6", features = ["serde"] }
 envy = "~0.4"
+field_types = "~1.1"
 futures = "~0.3"
 http = "~0.2"
 log = "~0.4"
