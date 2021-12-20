@@ -7,7 +7,7 @@ use derive_more::From;
 use serde::de::DeserializeOwned;
 
 use crate::database::{self, CollectionMetadata};
-pub use crate::database::{Filter, ListOptions, Pagination, Sortable};
+pub use crate::database::{FilterOptions, ListOptions, PaginationOptions, Sortable};
 
 #[derive(Debug, From)]
 pub enum FindError {

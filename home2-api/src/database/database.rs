@@ -23,21 +23,21 @@ pub type Result<T> = result::Result<T, Error>;
 pub type CollectionMetadata = str;
 
 #[derive(Debug, Eq, PartialEq)]
-pub struct Pagination<T: Sortable> {
+pub struct PaginationOptions<T: Sortable> {
     pub page: u32,
     pub page_size: u32,
     pub order: &'static T::Field,
 }
 
 #[derive(Debug, Eq, PartialEq)]
-pub struct Filter {
+pub struct FilterOptions {
     pub published: bool,
 }
 
 #[derive(Debug, Eq, PartialEq, Default)]
 pub struct ListOptions<T: Sortable> {
-    pub pagination: Option<Pagination<T>>,
-    pub filter: Option<Filter>,
+    pub pagination: Option<PaginationOptions<T>>,
+    pub filter: Option<FilterOptions>,
 }
 
 pub trait Sortable {

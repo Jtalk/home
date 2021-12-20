@@ -3,7 +3,7 @@ use std::sync::Arc;
 use actix_session::Session;
 
 use crate::auth;
-use crate::database::{self, Database, Filter, ListOptions, Pagination};
+use crate::database::{self, Database, FilterOptions, ListOptions, PaginationOptions};
 use crate::shared::crud::delete::{DeleteResult, DeleteService};
 use crate::shared::crud::get::{FindResult, FindService, ListResult};
 use crate::shared::crud::update::{UpdateResult, UpdateService};
@@ -29,8 +29,8 @@ impl ProjectService {
 
     pub async fn list(&self, session: &Session, published: bool) -> ListResult<Vec<Project>> {
         let options = ListOptions {
-            filter: Some(Filter { published }),
-            pagination: Some(Pagination {
+            filter: Some(FilterOptions { published }),
+            pagination: Some(PaginationOptions {
                 order: &ProjectFieldName::Order,
                 page: 0,
                 page_size: u32::MAX,
