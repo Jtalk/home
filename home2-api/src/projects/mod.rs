@@ -46,13 +46,7 @@ async fn list(
     service: web::Data<ProjectService>,
 ) -> impl Responder {
     match service.list(&session, q.published).await {
-        Ok(v) => {
-            let filtered: Vec<Project> = v
-                .into_iter()
-                .filter(|p| !q.published || p.published)
-                .collect();
-            HttpResponse::Ok().json(filtered)
-        }
+        Ok(v) => HttpResponse::Ok().json(v),
         Err(ListError::Database(e)) => {
             error!("Error accessing the database in GET /projects: {:?}", e);
             HttpResponse::InternalServerError().json(ErrorResponse {

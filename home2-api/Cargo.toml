@@ -32,6 +32,7 @@ merge = "~0.1"
 mockall = "~0.10"
 mockall_double = "~0.2"
 mongodb = { version = "~2", features = ["tokio-runtime"] }
+num-integer = "~0.1"
 pbkdf2 = { version = "~0.10", features = ["password-hash", "std", "hmac", "simple"] }
 rand = "~0.8"
 rand_core = "~0.6"

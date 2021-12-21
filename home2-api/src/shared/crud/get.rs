@@ -1,13 +1,32 @@
-use actix_session::Session;
+use std::fmt::Debug;
 use std::sync::Arc;
+
+use actix_session::Session;
+use derive_more::From;
+use num_integer::Integer;
+use serde::de::DeserializeOwned;
+use serde::{Deserialize, Serialize};
 
 use crate::auth;
 use crate::auth::VerifyError;
-use derive_more::From;
-use serde::de::DeserializeOwned;
-
-use crate::database::{self, CollectionMetadata};
+use crate::database::{self, CollectionMetadata, OrderedPaginationOptions};
 pub use crate::database::{FilterOptions, ListOptions, PaginationOptions, Sortable};
+
+#[derive(Debug, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct Pagination {
+    pub total: u64,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub current: Option<u32>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub page_size: Option<u32>,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct Paginated<T: Debug + Sized + Serialize> {
+    pub pagination: Pagination,
+    pub data: Vec<T>,
+}
 
 #[derive(Debug, From)]
 pub enum FindError {
@@ -21,7 +40,7 @@ pub enum ListError {
     Database(database::Error),
     Unauthorised(VerifyError),
 }
-pub type ListResult<T> = std::result::Result<T, ListError>;
+pub type ListResult<T> = std::result::Result<Paginated<T>, ListError>;
 
 pub struct FindService {
     meta: &'static CollectionMetadata,
@@ -47,23 +66,42 @@ impl FindService {
         result.map(DT::into).ok_or_else(|| FindError::NotFound())
     }
 
-    pub async fn list<T, DT>(
-        &self,
-        session: &Session,
-        options: &ListOptions<DT>,
-    ) -> ListResult<Vec<T>>
+    pub async fn list<T, DT>(&self, session: &Session, options: &ListOptions<DT>) -> ListResult<T>
     where
         DT: 'static + Into<T> + DeserializeOwned + Send + Sync + Unpin + Sortable,
-        T: 'static,
+        T: 'static + Debug + Serialize,
     {
         if !options.filter.as_ref().map_or(false, |f| f.published) {
             // Only see unpublished items when logged in
             if let Err(e) = self.auth.verify(&session) {
-                return Err(e.into());
+                return Err(ListError::from(e));
             }
         }
-        let found: Vec<DT> = self.db.list(self.meta, options).await?;
+        let (found, total) = self.db.list::<DT>(self.meta, options).await?;
         let converted: Vec<T> = found.into_iter().map(DT::into).collect();
-        Ok(converted)
+        Ok(Paginated {
+            data: converted,
+            pagination: pagination_from(total, &options.pagination),
+        })
+    }
+}
+
+fn pagination_from<T: Sortable>(
+    total: u64,
+    opts: &Option<OrderedPaginationOptions<T>>,
+) -> Pagination {
+    if let Some(p) = opts {
+        let page_size: u64 = p.pagination.as_ref().map_or(1, |v| v.page_size as u64);
+        Pagination {
+            total: total.div_ceil(&(page_size)),
+            current: p.pagination.as_ref().map(|v| v.page),
+            page_size: p.pagination.as_ref().map(|v| v.page_size),
+        }
+    } else {
+        Pagination {
+            total,
+            current: None,
+            page_size: None,
+        }
     }
 }

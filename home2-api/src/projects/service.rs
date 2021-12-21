@@ -3,14 +3,16 @@ use std::sync::Arc;
 use actix_session::Session;
 
 use crate::auth;
-use crate::database::{self, Database, FilterOptions, ListOptions, PaginationOptions};
+use crate::database::{self, Database, FilterOptions, ListOptions, OrderedPaginationOptions};
 use crate::shared::crud::delete::{DeleteResult, DeleteService};
-use crate::shared::crud::get::{FindResult, FindService, ListResult};
+use crate::shared::crud::get::{FindResult, FindService, ListError};
 use crate::shared::crud::update::{UpdateResult, UpdateService};
 
 use super::model::{DatabaseProject, Project, ProjectFieldName};
 
 const TABLE_METADATA: &'static database::CollectionMetadata = "projects";
+
+pub type ListResult<T> = std::result::Result<Vec<T>, ListError>;
 
 pub struct ProjectService {
     find: FindService,
@@ -27,18 +29,20 @@ impl ProjectService {
         }
     }
 
-    pub async fn list(&self, session: &Session, published: bool) -> ListResult<Vec<Project>> {
+    pub async fn list(&self, session: &Session, published: bool) -> ListResult<Project> {
         let options = ListOptions {
             filter: Some(FilterOptions { published }),
-            pagination: Some(PaginationOptions {
+            pagination: Some(OrderedPaginationOptions {
                 order: &ProjectFieldName::Order,
-                page: 0,
-                page_size: u32::MAX,
+                pagination: None,
             }),
         };
-        self.find
+        let result = self
+            .find
             .list::<Project, DatabaseProject>(session, &options)
-            .await
+            .await?
+            .data;
+        Ok(result)
     }
 
     pub async fn find(&self, id: &str) -> FindResult<Project> {

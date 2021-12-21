@@ -1031,6 +1031,7 @@ dependencies = [
  "mockall",
  "mockall_double",
  "mongodb",
+ "num-integer",
  "pbkdf2 0.10.0",
  "rand 0.8.4",
  "rand_core 0.6.3",

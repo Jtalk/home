@@ -5,11 +5,10 @@ use convert_case::{Case::Camel, Casing};
 use derive_more::From;
 use futures::TryStreamExt;
 use mockall::automock;
-use mongodb::bson::{doc, Document};
-use mongodb::options::{ClientOptions, FindOptions, ReplaceOptions};
-use mongodb::Collection;
-use serde::de::DeserializeOwned;
-use serde::Serialize;
+use mongodb::bson::{doc, from_document, Document};
+use mongodb::options::{ClientOptions, ReplaceOptions};
+use mongodb::{Collection, Cursor};
+use serde::{de::DeserializeOwned, Deserialize, Serialize};
 
 use crate::database::config;
 
@@ -17,15 +16,19 @@ pub type DatabaseError = mongodb::error::Error;
 #[derive(From, Debug)]
 pub enum Error {
     Database(DatabaseError),
-    ValueAccessError(mongodb::bson::document::ValueAccessError),
 }
 pub type Result<T> = result::Result<T, Error>;
 pub type CollectionMetadata = str;
 
 #[derive(Debug, Eq, PartialEq)]
-pub struct PaginationOptions<T: Sortable> {
+pub struct PaginationOptions {
     pub page: u32,
     pub page_size: u32,
+}
+
+#[derive(Debug, Eq, PartialEq)]
+pub struct OrderedPaginationOptions<T: Sortable> {
+    pub pagination: Option<PaginationOptions>,
     pub order: &'static T::Field,
 }
 
@@ -36,7 +39,7 @@ pub struct FilterOptions {
 
 #[derive(Debug, Eq, PartialEq, Default)]
 pub struct ListOptions<T: Sortable> {
-    pub pagination: Option<PaginationOptions<T>>,
+    pub pagination: Option<OrderedPaginationOptions<T>>,
     pub filter: Option<FilterOptions>,
 }
 
@@ -90,28 +93,14 @@ impl Database {
         &self,
         collection: &CollectionMetadata,
         options: &ListOptions<T>,
-    ) -> Result<Vec<T>>
+    ) -> Result<(Vec<T>, u64)>
     where
         T: DeserializeOwned + Unpin + Send + Sync,
     {
-        let ListOptions { pagination, filter } = options;
-        let db_filter = filter
-            .as_ref()
-            .filter(|v| v.published)
-            .map(|_| doc! { "published": true });
-        let db_options = pagination.as_ref().map(|o| {
-            let field_name = T::field_name_string(o.order).to_case(Camel);
-            FindOptions::builder()
-                .skip(Some(o.page as u64 * o.page_size as u64))
-                .limit(Some(o.page_size as i64))
-                .sort(Some(doc! { field_name: 1 }))
-                .build()
-        });
-
         let col: Collection<T> = self.db().collection::<T>(collection);
-        let found = col.find(db_filter, db_options).await?;
-        let result: Vec<T> = found.try_collect::<Vec<T>>().await?;
-        Ok(result)
+        let aggregation = paginated_list_pipeline(options);
+        let found = col.aggregate(aggregation, None).await?;
+        paginated_result_extractor(found).await
     }
 
     pub async fn replace<T: 'static>(&self, collection: &CollectionMetadata, data: T) -> Result<T>
@@ -142,4 +131,57 @@ impl Database {
 
 pub trait HasID {
     fn id(&self) -> String;
+}
+
+fn paginated_list_pipeline<T: Sortable>(
+    ListOptions { filter, pagination }: &ListOptions<T>,
+) -> Vec<Document> {
+    let mut result = Vec::with_capacity(10);
+    if let Some(ref f) = filter {
+        if f.published {
+            result.push(doc! {
+             "$match": { "published": true }
+            });
+        }
+    }
+    if let Some(ref p) = pagination {
+        let name = T::field_name_string(p.order).to_case(Camel);
+        result.push(doc! {
+            "$sort": { name: 1 }
+        });
+        result.push(doc! {
+            "$group": { "_id": null, "data": { "$push": "$$ROOT" }, "total": { "$sum": 1 } }
+        });
+        if let Some(ref pp) = p.pagination {
+            let offset = pp.page * pp.page_size;
+            let limit = pp.page_size;
+
+            result.push(doc! {
+                "$project": { "_id": 0, "total": 1, "data": { "$slice": [ "$data", offset, limit ]}}
+            });
+        } else {
+            result.push(doc! {
+                "$project": { "_id": 0, "total": 1, "data": 1 }
+            });
+        }
+    }
+    result
+}
+
+#[derive(Debug, Deserialize)]
+struct PaginatedResultDocument<T> {
+    data: Vec<T>,
+    total: u64,
+}
+
+async fn paginated_result_extractor<T: DeserializeOwned>(
+    cursor: Cursor<Document>,
+) -> Result<(Vec<T>, u64)> {
+    let mut found_vec = cursor.try_collect::<Vec<Document>>().await?;
+    let found_raw = found_vec.remove(0);
+    let found: PaginatedResultDocument<T> = from_document(found_raw).map_err(|e| {
+        let kind = mongodb::error::ErrorKind::from(e);
+        DatabaseError::from(kind)
+    })?;
+    Ok((found.data, found.total))
 }
