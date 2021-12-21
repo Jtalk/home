@@ -178,6 +178,9 @@ async fn paginated_result_extractor<T: DeserializeOwned>(
     cursor: Cursor<Document>,
 ) -> Result<(Vec<T>, u64)> {
     let mut found_vec = cursor.try_collect::<Vec<Document>>().await?;
+    if found_vec.is_empty() {
+        return Ok((vec![], 0));
+    }
     let found_raw = found_vec.remove(0);
     let found: PaginatedResultDocument<T> = from_document(found_raw).map_err(|e| {
         let kind = mongodb::error::ErrorKind::from(e);

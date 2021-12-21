@@ -6,6 +6,7 @@ use derive_more::From;
 use log::LevelFilter;
 
 mod auth;
+mod blog;
 mod config;
 mod database;
 mod health;
@@ -61,6 +62,10 @@ async fn main() -> BootstrapResult {
                 auth_service.clone().into_inner(),
             ))
             .configure(projects::configure(
+                db.clone().into_inner(),
+                auth_service.clone().into_inner(),
+            ))
+            .configure(blog::configure(
                 db.clone().into_inner(),
                 auth_service.clone().into_inner(),
             ))

@@ -47,7 +47,7 @@ async fn fetch_projects() {
     let unpublished_expected = all
         .iter()
         .find(|p| p["published"] == false)
-        .expect("above assersions ensure there's at least one");
+        .expect("above assertions ensure there's at least one");
 
     let mut resp_published_one = client_anonymous
         .get(url(format!(
