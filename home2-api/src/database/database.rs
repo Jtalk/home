@@ -1,3 +1,5 @@
+use actix_web::{HttpRequest, HttpResponse, Responder};
+use log::error;
 use std::fmt::Debug;
 use std::result;
 
@@ -103,11 +105,15 @@ impl Database {
         paginated_result_extractor(found).await
     }
 
-    pub async fn replace<T: 'static>(&self, collection: &CollectionMetadata, data: T) -> Result<T>
+    pub async fn replace<T: 'static>(
+        &self,
+        collection: &CollectionMetadata,
+        id: &str,
+        data: T,
+    ) -> Result<T>
     where
-        T: DeserializeOwned + Serialize + Unpin + Send + Sync + HasID,
+        T: DeserializeOwned + Serialize + Unpin + Send + Sync,
     {
-        let id = data.id();
         let col = self.db().collection::<T>(collection);
         col.replace_one(
             doc! { "id" : id},
@@ -187,4 +193,27 @@ async fn paginated_result_extractor<T: DeserializeOwned>(
         DatabaseError::from(kind)
     })?;
     Ok((found.data, found.total))
+}
+
+impl Responder for Error {
+    fn respond_to(self, req: &HttpRequest) -> HttpResponse {
+        match self {
+            Self::Database(e) => {
+                error!("Error accessing database at {}: {:?}", req.uri(), e);
+                match e.kind.as_ref() {
+                    mongodb::error::ErrorKind::Io(_) => HttpResponse::ServiceUnavailable().finish(),
+                    mongodb::error::ErrorKind::ServerSelection { .. } => {
+                        HttpResponse::ServiceUnavailable().finish()
+                    }
+                    mongodb::error::ErrorKind::DnsResolve { .. } => {
+                        HttpResponse::ServiceUnavailable().finish()
+                    }
+                    mongodb::error::ErrorKind::Authentication { .. } => {
+                        HttpResponse::ServiceUnavailable().finish()
+                    }
+                    _ => HttpResponse::InternalServerError().finish(),
+                }
+            }
+        }
+    }
 }

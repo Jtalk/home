@@ -1,18 +1,16 @@
 use std::sync::Arc;
 
 use actix_session::Session;
-use actix_web::{delete, get, put, web, HttpResponse, Responder};
-use log::{debug, error, warn};
+use actix_web::{delete, get, put, web, Either, HttpResponse, Responder};
+use log::debug;
 use serde::{Deserialize, Serialize};
+use Either::{Left, Right};
 
 use model::Project;
 
 use crate::auth;
 use crate::database::Database;
 use crate::projects::service::ProjectService;
-use crate::shared::crud::delete::DeleteError;
-use crate::shared::crud::get::{FindError, ListError};
-use crate::shared::crud::update::UpdateError;
 use crate::shared::ErrorResponse;
 
 mod model;
@@ -46,45 +44,25 @@ async fn list(
     service: web::Data<ProjectService>,
 ) -> impl Responder {
     match service.list(&session, q.published).await {
-        Ok(v) => HttpResponse::Ok().json(v),
-        Err(ListError::Database(e)) => {
-            error!("Error accessing the database in GET /projects: {:?}", e);
-            HttpResponse::InternalServerError().json(ErrorResponse {
-                message: "Error accessing the database".into(),
-            })
-        }
-        Err(ListError::Unauthorised(e)) => {
-            warn!("Error unauthorised access to GET /projects: {:?}", e);
-            HttpResponse::Forbidden().json(ErrorResponse {
-                message: format!("Authentication required to access unpublished projects"),
-            })
-        }
+        Ok(v) => Right(HttpResponse::Ok().json(v)),
+        Err(e) => Left(e),
     }
 }
 
 #[get("/projects/{id}")]
 async fn find(id: web::Path<String>, service: web::Data<ProjectService>) -> impl Responder {
     match service.find(&id).await {
-        Ok(v) => {
+        Ok(Some(v)) => {
             // Allow accessing unpublished projects by direct link for easier sharing.
             debug!("Found project {}", id);
-            HttpResponse::Ok().json(v)
+            Right(HttpResponse::Ok().json(v))
         }
-        Err(FindError::Database(e)) => {
-            error!(
-                "Error accessing the database in GET /projects/{}: {:?}",
-                id, e
-            );
-            HttpResponse::ServiceUnavailable().json(ErrorResponse {
-                message: "Error accessing the database".into(),
-            })
+        Ok(None) => {
+            // Allow accessing unpublished projects by direct link for easier sharing.
+            debug!("Project not found: {}", id);
+            Right(HttpResponse::NotFound().json(ErrorResponse::new("Project not found")))
         }
-        Err(FindError::NotFound()) => {
-            error!("Requested project not found: {}", id);
-            HttpResponse::NotFound().json(ErrorResponse {
-                message: "Not found".into(),
-            })
-        }
+        Err(e) => Left(e),
     }
 }
 
@@ -95,38 +73,12 @@ async fn update(
     body: web::Json<Project>,
     service: web::Data<ProjectService>,
 ) -> impl Responder {
-    match service.update(&session, body.into_inner()).await {
+    match service.update(&session, &id, body.into_inner()).await {
         Ok(v) => {
-            debug!("Updated project: {:?}", v);
-            HttpResponse::Ok().json(v)
+            debug!("Updated project {}: {:?}", id, v);
+            Right(HttpResponse::Ok().json(v))
         }
-        Err(UpdateError::Database(e)) => {
-            error!(
-                "Error accessing the database in PUT /projects/{}: {:?}",
-                id, e
-            );
-            HttpResponse::ServiceUnavailable().json(ErrorResponse {
-                message: "Error accessing the database".into(),
-            })
-        }
-        Err(UpdateError::Format(e)) => {
-            warn!(
-                "Error parsing incoming request in PUT /projects/{}: {:?}",
-                id, e
-            );
-            HttpResponse::BadRequest().json(ErrorResponse {
-                message: format!("Unsupported field value: {}", e),
-            })
-        }
-        Err(UpdateError::Unauthorised(e)) => {
-            warn!("Error unauthorised access to PUT /projects/{}: {:?}", id, e);
-            HttpResponse::Forbidden().json(ErrorResponse {
-                message: format!("Authentication required"),
-            })
-        }
-        Err(UpdateError::Infallible(_)) => {
-            panic!("Impossible conversion error")
-        }
+        Err(e) => Left(e),
     }
 }
 
@@ -135,36 +87,18 @@ async fn delete(
     id: web::Path<String>,
     session: Session,
     service: web::Data<ProjectService>,
+    req: web::HttpRequest,
 ) -> impl Responder {
     match service.delete(&session, &id).await {
         Ok(true) => {
             debug!("Deleted project {}", id);
-            HttpResponse::Ok().finish()
+            Right(HttpResponse::Ok().finish())
         }
         Ok(false) => {
             debug!("Deleting non-existent project {}", id);
-            HttpResponse::NotFound().json(ErrorResponse {
-                message: "Project not found".into(),
-            })
+            Right(HttpResponse::NotFound().json(ErrorResponse::new("Project not found")))
         }
-        Err(DeleteError::Database(e)) => {
-            error!(
-                "Error accessing the database in DELETE /projects/{}: {:?}",
-                id, e
-            );
-            HttpResponse::ServiceUnavailable().json(ErrorResponse {
-                message: "Error accessing the database".into(),
-            })
-        }
-        Err(DeleteError::Unauthorised(e)) => {
-            warn!(
-                "Error unauthorised access to DELETE /projects/{}: {:?}",
-                id, e
-            );
-            HttpResponse::Forbidden().json(ErrorResponse {
-                message: format!("Authentication required"),
-            })
-        }
+        Err(e) => Left(e.respond_to(&req)),
     }
 }
 

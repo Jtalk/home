@@ -30,25 +30,6 @@ pub enum VerifyError {
 }
 pub type VerifyResult = std::result::Result<(), VerifyError>;
 
-impl Responder for VerifyError {
-    fn respond_to(self, _req: &HttpRequest) -> HttpResponse {
-        match self {
-            Self::BadAuthentication(msg) => {
-                warn!("Error unauthorised access: {}", msg);
-                HttpResponse::Forbidden().json(ErrorResponse {
-                    message: format!("Authentication required"),
-                })
-            }
-            Self::Other(e) => {
-                error!("Unexpected error checking authentication: {:?}", e);
-                HttpResponse::InternalServerError().json(ErrorResponse {
-                    message: format!("Internal error"),
-                })
-            }
-        }
-    }
-}
-
 #[derive(Debug, From)]
 pub enum LoginError {
     BadCredentials,
@@ -122,6 +103,25 @@ impl Service {
             Ok(())
         } else {
             Err(LoginError::BadCredentials)
+        }
+    }
+}
+
+impl Responder for VerifyError {
+    fn respond_to(self, req: &HttpRequest) -> HttpResponse {
+        match self {
+            Self::BadAuthentication(msg) => {
+                warn!("Error unauthorised access to {}: {}", req.uri(), msg);
+                HttpResponse::Forbidden().json(ErrorResponse::new("Authentication required"))
+            }
+            Self::Other(e) => {
+                error!(
+                    "Unexpected error checking authentication at {}: {:?}",
+                    req.uri(),
+                    e
+                );
+                HttpResponse::InternalServerError().finish()
+            }
         }
     }
 }

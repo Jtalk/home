@@ -1,12 +1,13 @@
 use std::sync::Arc;
 
 use actix_session::Session;
+use actix_web::{HttpRequest, HttpResponse, Responder};
 use derive_more::From;
 
 use crate::database::CollectionMetadata;
 use crate::{auth, database};
 
-#[derive(From)]
+#[derive(From, Debug)]
 pub enum DeleteError {
     Database(database::Error),
     Unauthorised(auth::VerifyError),
@@ -32,5 +33,14 @@ impl DeleteService {
         self.auth.verify(session)?;
         let count = self.db.delete(self.meta, id).await?;
         Ok(count > 0)
+    }
+}
+
+impl Responder for DeleteError {
+    fn respond_to(self, req: &HttpRequest) -> HttpResponse {
+        match self {
+            Self::Database(e) => e.respond_to(req),
+            Self::Unauthorised(e) => e.respond_to(req),
+        }
     }
 }

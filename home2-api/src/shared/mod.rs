@@ -7,6 +7,14 @@ pub struct ErrorResponse {
     pub message: String,
 }
 
+impl ErrorResponse {
+    pub fn new<T: Into<String>>(message: T) -> Self {
+        ErrorResponse {
+            message: message.into(),
+        }
+    }
+}
+
 #[cfg(test)]
 pub mod testing {
     use std::sync::Once;

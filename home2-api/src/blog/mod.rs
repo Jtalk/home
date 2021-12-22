@@ -1,8 +1,9 @@
 use std::sync::Arc;
 
 use actix_session::Session;
+use actix_web::Either::{Left, Right};
 use actix_web::{delete, get, put, web, HttpResponse, Responder};
-use log::{debug, error, warn};
+use log::{debug, warn};
 use serde::{Deserialize, Serialize};
 
 use model::{Article, ArticleFieldName};
@@ -10,11 +11,7 @@ use service::BlogService;
 
 use crate::auth;
 use crate::database::{Database, OrderedPaginationOptions};
-use crate::shared::crud::delete::DeleteError;
-use crate::shared::crud::get::{
-    FilterOptions, FindError, ListError, ListOptions, PaginationOptions,
-};
-use crate::shared::crud::update::UpdateError;
+use crate::shared::crud::get::{FilterOptions, ListOptions, PaginationOptions};
 use crate::shared::ErrorResponse;
 
 mod model;
@@ -71,48 +68,24 @@ async fn list(
 ) -> impl Responder {
     let options = q.into_inner().into();
     match service.list(&session, &options).await {
-        Ok(v) => HttpResponse::Ok().json(v),
-        Err(ListError::Database(e)) => {
-            error!(
-                "Error accessing the database in GET /blog/articles: {:?}",
-                e
-            );
-            HttpResponse::InternalServerError().json(ErrorResponse {
-                message: "Error accessing the database".into(),
-            })
-        }
-        Err(ListError::Unauthorised(e)) => {
-            warn!("Error unauthorised access to GET /blog/articles: {:?}", e);
-            HttpResponse::Forbidden().json(ErrorResponse {
-                message: format!("Authentication required to access unpublished articles"),
-            })
-        }
+        Ok(v) => Right(HttpResponse::Ok().json(v)),
+        Err(e) => Left(e),
     }
 }
 
 #[get("/blog/articles/{id}")]
 async fn find(id: web::Path<String>, service: web::Data<BlogService>) -> impl Responder {
     match service.find(&id).await {
-        Ok(v) => {
+        Ok(Some(v)) => {
             // Allow accessing unpublished articles by direct link for easier sharing.
             debug!("Found article {}", id);
-            HttpResponse::Ok().json(v)
+            Right(HttpResponse::Ok().json(v))
         }
-        Err(FindError::Database(e)) => {
-            error!(
-                "Error accessing the database in GET /blog/articles/{}: {:?}",
-                id, e
-            );
-            HttpResponse::ServiceUnavailable().json(ErrorResponse {
-                message: "Error accessing the database".into(),
-            })
+        Ok(None) => {
+            warn!("Article not found: {}", id);
+            Right(HttpResponse::NotFound().json(ErrorResponse::new("Article not found")))
         }
-        Err(FindError::NotFound()) => {
-            error!("Requested article not found: {}", id);
-            HttpResponse::NotFound().json(ErrorResponse {
-                message: "Not found".into(),
-            })
-        }
+        Err(e) => Left(e),
     }
 }
 
@@ -123,41 +96,12 @@ async fn update(
     body: web::Json<Article>,
     service: web::Data<BlogService>,
 ) -> impl Responder {
-    match service.update(&session, body.into_inner()).await {
+    match service.update(&session, &id, body.into_inner()).await {
         Ok(v) => {
-            debug!("Updated article: {:?}", v);
-            HttpResponse::Ok().json(v)
+            debug!("Updated article {}: {:?}", id, v);
+            Right(HttpResponse::Ok().json(v))
         }
-        Err(UpdateError::Database(e)) => {
-            error!(
-                "Error accessing the database in PUT /blog/articles/{}: {:?}",
-                id, e
-            );
-            HttpResponse::ServiceUnavailable().json(ErrorResponse {
-                message: "Error accessing the database".into(),
-            })
-        }
-        Err(UpdateError::Format(e)) => {
-            warn!(
-                "Error parsing incoming request in PUT /blog/articles/{}: {:?}",
-                id, e
-            );
-            HttpResponse::BadRequest().json(ErrorResponse {
-                message: format!("Unsupported field value: {}", e),
-            })
-        }
-        Err(UpdateError::Unauthorised(e)) => {
-            warn!(
-                "Error unauthorised access to PUT /blog/articles/{}: {:?}",
-                id, e
-            );
-            HttpResponse::Forbidden().json(ErrorResponse {
-                message: format!("Authentication required"),
-            })
-        }
-        Err(UpdateError::Infallible(_)) => {
-            panic!("Impossible error")
-        }
+        Err(e) => Left(e),
     }
 }
 
@@ -170,32 +114,13 @@ async fn delete(
     match service.delete(&session, &id).await {
         Ok(true) => {
             debug!("Deleted article {}", id);
-            HttpResponse::Ok().finish()
+            Right(HttpResponse::Ok().finish())
         }
         Ok(false) => {
             debug!("Deleting non-existent article {}", id);
-            HttpResponse::NotFound().json(ErrorResponse {
-                message: "Article not found".into(),
-            })
+            Right(HttpResponse::NotFound().json(ErrorResponse::new("Article not found")))
         }
-        Err(DeleteError::Database(e)) => {
-            error!(
-                "Error accessing the database in DELETE /blog/articles/{}: {:?}",
-                id, e
-            );
-            HttpResponse::ServiceUnavailable().json(ErrorResponse {
-                message: "Error accessing the database".into(),
-            })
-        }
-        Err(DeleteError::Unauthorised(e)) => {
-            warn!(
-                "Error unauthorised access to DELETE /blog/articles/{}: {:?}",
-                id, e
-            );
-            HttpResponse::Forbidden().json(ErrorResponse {
-                message: format!("Authentication required"),
-            })
-        }
+        Err(e) => Left(e),
     }
 }
 
