@@ -313,3 +313,22 @@ async fn delete_article_unauthenticated() {
 
     assert_eq!(delete_resp.status(), StatusCode::FORBIDDEN);
 }
+
+#[rstest]
+#[case(true)]
+#[case(false)]
+#[actix_web::test]
+async fn fetch_tags(#[case] authenticated: bool) {
+    let client = if authenticated {
+        common::client_logged_in().await.unwrap()
+    } else {
+        common::client().unwrap()
+    };
+
+    let mut resp_published = client.get(url("/blog/tags")).send().await.unwrap();
+    assert_eq!(resp_published.status(), StatusCode::OK);
+
+    let tags = resp_published.json::<Vec<String>>().await.unwrap();
+    assert!(!tags.is_empty());
+    assert_that!(tags).contains("Scala".to_string());
+}

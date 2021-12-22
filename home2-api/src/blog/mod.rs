@@ -7,6 +7,7 @@ use log::{debug, warn};
 use serde::{Deserialize, Serialize};
 
 use model::{Article, ArticleFieldName};
+use repo::Repo;
 use service::BlogService;
 
 use crate::auth;
@@ -15,18 +16,24 @@ use crate::shared::crud::get::{FilterOptions, ListOptions, PaginationOptions};
 use crate::shared::ErrorResponse;
 
 mod model;
+mod repo;
 mod service;
 
 pub fn configure(
     db: Arc<Database>,
     auth_service: Arc<auth::Service>,
 ) -> impl Fn(&mut web::ServiceConfig) -> () {
-    let service = web::Data::new(BlogService::new(db, auth_service));
+    let service = web::Data::new(BlogService::new(
+        db.clone(),
+        auth_service,
+        Arc::new(Repo::new(db.clone())),
+    ));
     move |config: &mut web::ServiceConfig| {
         config
             .app_data(service.clone())
             .service(list)
             .service(find)
+            .service(tags)
             .service(update)
             .service(delete);
     }
@@ -86,6 +93,17 @@ async fn find(id: web::Path<String>, service: web::Data<BlogService>) -> impl Re
             Right(HttpResponse::NotFound().json(ErrorResponse::new("Article not found")))
         }
         Err(e) => Left(e),
+    }
+}
+
+#[get("/blog/tags")]
+async fn tags(service: web::Data<BlogService>, req: web::HttpRequest) -> impl Responder {
+    match service.tags().await {
+        Ok(tags) => {
+            debug!("Tags request success: {:?}", tags);
+            Right(HttpResponse::Ok().json(tags))
+        }
+        Err(e) => Left(e.respond_to(&req)),
     }
 }
 
