@@ -49,9 +49,14 @@ impl ProjectService {
         self.find.find::<Project, DatabaseProject>(id).await
     }
 
-    pub async fn update(&self, session: &Session, data: Project) -> UpdateResult<Project> {
+    pub async fn update(
+        &self,
+        session: &Session,
+        id: &str,
+        data: Project,
+    ) -> UpdateResult<Project> {
         self.update
-            .update::<Project, DatabaseProject>(session, data)
+            .update::<Project, DatabaseProject>(session, id, data)
             .await
     }
 

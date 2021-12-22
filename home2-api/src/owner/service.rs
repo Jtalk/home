@@ -32,7 +32,7 @@ impl OwnerService {
 
     pub async fn update(&self, session: &Session, data: OwnerInfo) -> UpdateResult<OwnerInfo> {
         self.update
-            .update::<OwnerInfo, DatabaseOwnerInfo>(session, data)
+            .update::<OwnerInfo, DatabaseOwnerInfo>(session, STATIC_OWNER_ID, data)
             .await
     }
 }

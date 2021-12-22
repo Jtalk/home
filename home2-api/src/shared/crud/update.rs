@@ -36,23 +36,15 @@ impl UpdateService {
         Self { meta, db, auth }
     }
 
-    pub async fn update<T, DT>(&self, session: &Session, data: T) -> UpdateResult<T>
+    pub async fn update<T, DT>(&self, session: &Session, id: &str, data: T) -> UpdateResult<T>
     where
-        DT: 'static
-            + TryFrom<T>
-            + Into<T>
-            + Serialize
-            + DeserializeOwned
-            + HasID
-            + Send
-            + Sync
-            + Unpin,
+        DT: 'static + TryFrom<T> + Into<T> + Serialize + DeserializeOwned + Send + Sync + Unpin,
         T: 'static,
         UpdateError: From<<DT as TryFrom<T>>::Error>,
     {
         self.auth.verify(session)?;
         let db_update: DT = DT::try_from(data)?;
-        let result: DT = self.db.replace(&self.meta, db_update).await?;
+        let result: DT = self.db.replace(&self.meta, id, db_update).await?;
         Ok(result.into())
     }
 }

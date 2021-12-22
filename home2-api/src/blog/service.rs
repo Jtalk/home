@@ -40,9 +40,16 @@ impl BlogService {
         self.find.find::<Article, Article>(id).await
     }
 
-    pub async fn update(&self, session: &Session, mut data: Article) -> UpdateResult<Article> {
+    pub async fn update(
+        &self,
+        session: &Session,
+        id: &str,
+        mut data: Article,
+    ) -> UpdateResult<Article> {
         data.tags = data.tags.into_iter().unique().collect();
-        self.update.update::<Article, Article>(session, data).await
+        self.update
+            .update::<Article, Article>(session, id, data)
+            .await
     }
 
     pub async fn delete(&self, session: &Session, id: &str) -> DeleteResult<bool> {
