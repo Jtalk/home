@@ -15,9 +15,11 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-actix-web = "4.0.0-beta.13"
-actix-session = "0.5.0-beta.4"
-awc = "3.0.0-beta.12"
+actix-http = "=3.0.0-beta.14"
+actix-multipart = "=0.4.0-beta.8"
+actix-web = "=4.0.0-beta.13"
+actix-session = "=0.5.0-beta.4"
+awc = "=3.0.0-beta.12"
 base64ct = "~1.0"
 chrono = { version = "~0.4", features = ["serde"] }
 convert_case = "~0.4"
@@ -33,6 +35,7 @@ merge = "~0.1"
 mockall = "~0.10"
 mockall_double = "~0.2"
 mongodb = { version = "~2", features = ["tokio-runtime"] }
+mongodb-gridfs = "~0.2"
 num-integer = "~0.1"
 pbkdf2 = { version = "~0.10", features = ["password-hash", "std", "hmac", "simple"] }
 rand = "~0.8"

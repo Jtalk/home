@@ -10,6 +10,7 @@ mod blog;
 mod config;
 mod database;
 mod health;
+mod images;
 mod owner;
 mod projects;
 mod shared;
@@ -66,6 +67,10 @@ async fn main() -> BootstrapResult {
                 auth_service.clone().into_inner(),
             ))
             .configure(blog::configure(
+                db.clone().into_inner(),
+                auth_service.clone().into_inner(),
+            ))
+            .configure(images::configure(
                 db.clone().into_inner(),
                 auth_service.clone().into_inner(),
             ))
