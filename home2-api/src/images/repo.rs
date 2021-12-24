@@ -5,24 +5,36 @@ use actix_web::{HttpRequest, HttpResponse, Responder};
 use derive_more::From;
 use futures::{AsyncRead, Stream};
 use log::error;
-use mongodb::bson::{doc, oid::ObjectId};
+use mongodb::bson::{doc, oid::ObjectId, to_document};
 use mongodb_gridfs::options::GridFSUploadOptions;
 use mongodb_gridfs::{GridFSBucket, GridFSError};
 
 use crate::database::{self, Database};
+use crate::images::model::ImageMetadata;
 use crate::shared::ErrorResponse;
 
 use super::model::{DatabaseImageFile, ImageFile};
 
 pub const FILES_COLLECTION_METADATA: &str = "fs.files";
 
+pub struct UploadRequest<'a, S: AsyncRead + Unpin> {
+    pub name: &'a str,
+    pub description: &'a str,
+    pub content_type: &'a str,
+    pub stream: S,
+}
+
 #[derive(Debug, From)]
 pub enum ServeError {
-    Database(database::Error),
+    Database(database::DatabaseError),
     ObjectID(mongodb::bson::oid::Error),
 }
 pub trait DatabaseFileStream: Stream<Item = Vec<u8>> {}
-pub type ServeResult<T> = std::result::Result<T, ServeError>;
+pub struct ServeResponse<T: DatabaseFileStream> {
+    pub info: ImageFile,
+    pub stream: T,
+}
+pub type ServeResult<T> = std::result::Result<Option<ServeResponse<T>>, ServeError>;
 
 #[derive(Debug, From)]
 pub enum UploadError {
@@ -48,29 +60,42 @@ impl Repo {
         Self { db }
     }
 
-    pub async fn serve(&self, id: &str) -> ServeResult<Option<impl DatabaseFileStream>> {
+    pub async fn serve(&self, id: &str) -> ServeResult<impl DatabaseFileStream> {
         let oid = ObjectId::parse_str(id)?;
-        match self.gridfs().open_download_stream(oid).await {
-            Ok(v) => Ok(Some(v)),
-            Err(GridFSError::FileNotFound()) => Ok(None),
-            Err(GridFSError::MongoError(e)) => {
-                Err(ServeError::Database(database::Error::Database(e)))
-            }
+        let info_opt = self
+            .db
+            .db()
+            .collection::<DatabaseImageFile>(FILES_COLLECTION_METADATA)
+            .find_one(doc! { "_id": oid }, None)
+            .await?;
+        if let None = info_opt {
+            return Ok(None); // Early exit to avoid the below await.
         }
+        let open_result = self.gridfs().open_download_stream(oid).await;
+        info_opt.map_or(Ok(None), |info| match open_result {
+            Ok(v) => Ok(Some(ServeResponse {
+                info: info.into(),
+                stream: v,
+            })),
+            Err(GridFSError::FileNotFound()) => Ok(None),
+            Err(GridFSError::MongoError(e)) => Err(ServeError::Database(e)),
+        })
     }
 
-    pub async fn upload(
+    pub async fn upload<'a>(
         &self,
-        name: &str,
-        description: &str,
-        istream: impl AsyncRead + Unpin,
+        req: UploadRequest<'a, impl AsyncRead + Unpin>,
     ) -> UploadResult<ImageFile> {
-        let options = GridFSUploadOptions::builder()
-            .metadata(Some(doc! { "description": description }))
-            .build();
+        let meta = to_document(&ImageMetadata {
+            content_type: req.content_type.to_string(),
+            description: req.description.to_string(),
+        })
+        .map_err(|e| UploadError::Database(database::DatabaseError::from(e)))?;
+
+        let options = GridFSUploadOptions::builder().metadata(Some(meta)).build();
         let oid = self
             .gridfs()
-            .upload_from_stream(name, istream, Some(options))
+            .upload_from_stream(req.name, req.stream, Some(options))
             .await?;
         let col = self
             .db
@@ -101,7 +126,7 @@ impl Repo {
 impl Responder for ServeError {
     fn respond_to(self, req: &HttpRequest) -> HttpResponse {
         match self {
-            Self::Database(e) => e.respond_to(req),
+            Self::Database(e) => database::Error::Database(e).respond_to(req),
             Self::ObjectID(e) => DeleteError::ObjectID(e).respond_to(req),
         }
     }

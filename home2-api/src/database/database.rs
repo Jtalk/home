@@ -29,9 +29,21 @@ pub struct PaginationOptions {
 }
 
 #[derive(Debug, Eq, PartialEq)]
+pub enum OrderDirection {
+    Asc,
+    Desc,
+}
+
+#[derive(Debug, Eq, PartialEq)]
+pub struct OrderOptions<T: Sortable> {
+    pub field: &'static T::Field,
+    pub direction: OrderDirection,
+}
+
+#[derive(Debug, Eq, PartialEq)]
 pub struct OrderedPaginationOptions<T: Sortable> {
     pub pagination: Option<PaginationOptions>,
-    pub order: &'static T::Field,
+    pub order: OrderOptions<T>,
 }
 
 #[derive(Debug, Eq, PartialEq)]
@@ -151,9 +163,9 @@ fn paginated_list_pipeline<T: Sortable>(
         }
     }
     if let Some(ref p) = pagination {
-        let name = T::field_name_string(p.order).to_case(Camel);
+        let name = T::field_name_string(p.order.field).to_case(Camel);
         result.push(doc! {
-            "$sort": { name: 1 }
+            "$sort": { name: p.order.direction.mongo_ord() }
         });
         result.push(doc! {
             "$group": { "_id": null, "data": { "$push": "$$ROOT" }, "total": { "$sum": 1 } }
@@ -214,6 +226,15 @@ impl Responder for Error {
                     _ => HttpResponse::InternalServerError().finish(),
                 }
             }
+        }
+    }
+}
+
+impl OrderDirection {
+    fn mongo_ord(&self) -> i32 {
+        match self {
+            Self::Asc => 1,
+            Self::Desc => -1,
         }
     }
 }

@@ -4,13 +4,16 @@ use actix_session::Session;
 use futures::AsyncRead;
 
 use crate::auth;
-use crate::database::{Database, ListOptions, OrderedPaginationOptions, PaginationOptions};
+use crate::database::{
+    Database, ListOptions, OrderDirection, OrderOptions, OrderedPaginationOptions,
+    PaginationOptions,
+};
 use crate::shared::crud::get::{FindService, ListResult};
 
-use super::model::{DatabaseImageFile, ImageFile, ImageFileFieldName};
+use super::model::{DatabaseImageFile, DatabaseImageFileFieldName, ImageFile};
 use super::repo::Repo;
 use super::repo::{DatabaseFileStream, FILES_COLLECTION_METADATA};
-pub use super::repo::{DeleteResult, ServeResult, UploadError, UploadResult};
+pub use super::repo::{DeleteResult, ServeResult, UploadError, UploadRequest, UploadResult};
 
 pub struct Service {
     repo: Arc<Repo>,
@@ -36,7 +39,10 @@ impl Service {
         let options = ListOptions {
             pagination: Some(OrderedPaginationOptions {
                 pagination: Some(PaginationOptions { page, page_size }),
-                order: &ImageFileFieldName::Uploaded,
+                order: OrderOptions {
+                    field: &DatabaseImageFileFieldName::UploadDate,
+                    direction: OrderDirection::Desc,
+                },
             }),
             filter: None,
         };
@@ -47,19 +53,17 @@ impl Service {
         Ok(found)
     }
 
-    pub async fn serve(&self, id: &str) -> ServeResult<Option<impl DatabaseFileStream>> {
+    pub async fn serve(&self, id: &str) -> ServeResult<impl DatabaseFileStream> {
         self.repo.serve(id).await
     }
 
-    pub async fn upload(
+    pub async fn upload<'a>(
         &self,
         session: &Session,
-        name: &str,
-        description: &str,
-        istream: impl AsyncRead + Unpin,
+        req: UploadRequest<'a, impl AsyncRead + Unpin>,
     ) -> UploadResult<ImageFile> {
         self.auth.verify(session)?;
-        self.repo.upload(name, description, istream).await
+        self.repo.upload(req).await
     }
 
     pub async fn delete(&self, session: &Session, id: &str) -> DeleteResult {

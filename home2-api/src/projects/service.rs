@@ -3,7 +3,10 @@ use std::sync::Arc;
 use actix_session::Session;
 
 use crate::auth;
-use crate::database::{self, Database, FilterOptions, ListOptions, OrderedPaginationOptions};
+use crate::database::{
+    self, Database, FilterOptions, ListOptions, OrderDirection, OrderOptions,
+    OrderedPaginationOptions,
+};
 use crate::shared::crud::delete::{DeleteResult, DeleteService};
 use crate::shared::crud::get::{FindResult, FindService, ListError};
 use crate::shared::crud::update::{UpdateResult, UpdateService};
@@ -33,7 +36,10 @@ impl ProjectService {
         let options = ListOptions {
             filter: Some(FilterOptions { published }),
             pagination: Some(OrderedPaginationOptions {
-                order: &ProjectFieldName::Order,
+                order: OrderOptions {
+                    field: &ProjectFieldName::Order,
+                    direction: OrderDirection::Asc,
+                },
                 pagination: None,
             }),
         };

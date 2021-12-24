@@ -34,7 +34,7 @@ log = "~0.4"
 merge = "~0.1"
 mockall = "~0.10"
 mockall_double = "~0.2"
-mongodb = { version = "~2", features = ["tokio-runtime"] }
+mongodb = { version = "~2", features = ["tokio-runtime", "bson-chrono-0_4"] }
 mongodb-gridfs = "~0.2"
 num-integer = "~0.1"
 pbkdf2 = { version = "~0.10", features = ["password-hash", "std", "hmac", "simple"] }
@@ -49,6 +49,8 @@ tokio = "~1.15"
 uuid = { version = "~0.8", features = ["serde"] }
 
 [dev-dependencies]
+bytes = "~1.1"
+mpart-async = "~0.5"
 rstest = "~0.11"
 simple-error = "~0.2"
 spectral = "~0.6"

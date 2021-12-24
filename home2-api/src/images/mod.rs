@@ -10,12 +10,14 @@ use futures::{StreamExt, TryStreamExt};
 use log::{debug, error, warn};
 use serde::Deserialize;
 
+use model::ImageFile;
 use repo::Repo;
+use repo::ServeResponse;
 use service::Service;
+use service::UploadRequest;
 
 use crate::auth;
 use crate::database::Database;
-use crate::images::model::ImageFile;
 use crate::shared::ErrorResponse;
 
 mod model;
@@ -54,6 +56,7 @@ pub fn configure(
 
 #[derive(Debug, Deserialize)]
 struct ListQuery {
+    #[serde(default)]
     page: u32,
 }
 
@@ -77,11 +80,15 @@ async fn list(
 #[get("/images/{id}")]
 async fn serve(id: web::Path<String>, service: web::Data<Service>) -> impl Responder {
     match service.serve(&id).await {
-        Ok(Some(ostream)) => {
-            Right(HttpResponse::Ok().streaming(ostream.map(
-                |v| -> std::result::Result<web::Bytes, Infallible> { Ok(web::Bytes::from(v)) },
-            )))
-        }
+        Ok(Some(ServeResponse { info, stream })) => Right(
+            HttpResponse::Ok()
+                .content_type(info.metadata.content_type)
+                .streaming(
+                    stream.map(|v| -> std::result::Result<web::Bytes, Infallible> {
+                        Ok(web::Bytes::from(v))
+                    }),
+                ),
+        ),
         Ok(None) => Right(HttpResponse::NotFound().finish()),
         Err(e) => Left(e),
     }
@@ -126,6 +133,7 @@ async fn process_upload(
     mut payload: Multipart,
 ) -> UploadResult {
     let result = if let Some(file) = payload.try_next().await? {
+        let ct = file.content_type().clone();
         let cd = file.content_disposition();
         let name = cd
             .get_filename()
@@ -139,7 +147,15 @@ async fn process_upload(
         });
 
         let result = service
-            .upload(&session, &name, &q.description, istream.into_async_read())
+            .upload(
+                &session,
+                UploadRequest {
+                    name: &name,
+                    description: &q.description,
+                    content_type: ct.essence_str(),
+                    stream: istream.into_async_read(),
+                },
+            )
             .await?;
         Ok(result)
     } else {

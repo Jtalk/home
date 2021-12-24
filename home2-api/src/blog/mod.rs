@@ -11,7 +11,7 @@ use repo::Repo;
 use service::BlogService;
 
 use crate::auth;
-use crate::database::{Database, OrderedPaginationOptions};
+use crate::database::{Database, OrderDirection, OrderOptions, OrderedPaginationOptions};
 use crate::shared::crud::get::{FilterOptions, ListOptions, PaginationOptions};
 use crate::shared::ErrorResponse;
 
@@ -54,7 +54,10 @@ impl Into<ListOptions<Article>> for ListQuery {
     fn into(self) -> ListOptions<Article> {
         ListOptions {
             pagination: Some(OrderedPaginationOptions {
-                order: &ArticleFieldName::Created,
+                order: OrderOptions {
+                    field: &ArticleFieldName::Created,
+                    direction: OrderDirection::Asc,
+                },
                 pagination: Some(PaginationOptions {
                     page: self.page,
                     page_size: self.page_size,
