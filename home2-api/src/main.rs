@@ -9,6 +9,7 @@ mod auth;
 mod blog;
 mod config;
 mod database;
+mod footer;
 mod health;
 mod images;
 mod owner;
@@ -59,6 +60,10 @@ async fn main() -> BootstrapResult {
             .configure(health::configure())
             .configure(auth::configure())
             .configure(owner::configure(
+                db.clone().into_inner(),
+                auth_service.clone().into_inner(),
+            ))
+            .configure(footer::configure(
                 db.clone().into_inner(),
                 auth_service.clone().into_inner(),
             ))
