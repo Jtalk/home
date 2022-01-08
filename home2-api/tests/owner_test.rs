@@ -9,6 +9,7 @@ mod common;
 #[actix_web::test]
 async fn update_and_fetch_owner() {
     let client = common::client_logged_in().await.unwrap();
+    let client_anon = common::client().unwrap();
 
     let owner = json!({
         "name": "Gull McBirdsson",
@@ -24,7 +25,18 @@ async fn update_and_fetch_owner() {
     assert_eq!(put_resp.status(), StatusCode::OK);
     assert_eq!(put_resp.json::<Value>().await.unwrap(), owner);
 
+    let mut put_resp_anon = client_anon
+        .put(url("/owner"))
+        .send_json(&owner)
+        .await
+        .unwrap();
+    assert_eq!(put_resp_anon.status(), StatusCode::FORBIDDEN);
+
     let mut resp = client.get(url("/owner")).send().await.unwrap();
     assert_eq!(resp.status(), StatusCode::OK);
     assert_eq!(resp.json::<Value>().await.unwrap(), owner);
+
+    let mut resp_anon = client_anon.get(url("/owner")).send().await.unwrap();
+    assert_eq!(resp_anon.status(), StatusCode::OK);
+    assert_eq!(resp_anon.json::<Value>().await.unwrap(), owner);
 }
