@@ -6,7 +6,7 @@ use actix_web::{delete, get, put, web, HttpResponse, Responder};
 use log::{debug, warn};
 use serde::{Deserialize, Serialize};
 
-use model::{Article, ArticleFieldName};
+pub use model::{Article, ArticleFieldName};
 use repo::Repo;
 use service::BlogService;
 

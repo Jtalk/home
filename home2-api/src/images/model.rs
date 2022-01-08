@@ -5,7 +5,7 @@ use mongodb::bson::serde_helpers::u64_as_f64;
 use serde::{Deserialize, Serialize};
 
 use crate::database::oid::{ConversionError, ObjectID};
-use crate::database::Sortable;
+use crate::database::{Persisted, Sortable};
 
 #[derive(Debug, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -71,4 +71,8 @@ impl Into<ImageFile> for DatabaseImageFile {
             metadata: self.metadata,
         }
     }
+}
+
+impl Persisted for DatabaseImageFile {
+    const COLLECTION: &'static str = "fs.files";
 }

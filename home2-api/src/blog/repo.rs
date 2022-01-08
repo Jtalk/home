@@ -1,16 +1,15 @@
 use std::sync::Arc;
 
+use crate::blog::Article;
 use convert_case::Case::Camel;
 use convert_case::Casing;
 use futures::TryStreamExt;
 use mongodb::bson::{doc, Document};
 
-use crate::database::{self, Database};
+use crate::database::{self, Database, Persisted};
 use crate::shared::crud::get::FindError;
 
 use super::model::ArticleFieldName;
-
-pub const TABLE_METADATA: &database::CollectionMetadata = "articles";
 
 pub type ListTagsError = FindError;
 pub type ListTagsResult = std::result::Result<Vec<String>, ListTagsError>;
@@ -25,7 +24,7 @@ impl Repo {
     }
 
     pub async fn tags(&self) -> ListTagsResult {
-        let col = self.db.db().collection::<Document>(TABLE_METADATA);
+        let col = self.db.db().collection::<Document>(Article::COLLECTION);
         let tags_field: String = ArticleFieldName::Tags.name().to_case(Camel);
         let tags_ref = format!("${}", tags_field);
         let agg = [

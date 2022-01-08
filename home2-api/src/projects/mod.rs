@@ -6,7 +6,7 @@ use log::debug;
 use serde::{Deserialize, Serialize};
 use Either::{Left, Right};
 
-use model::Project;
+pub use model::{DatabaseProject, Project};
 
 use crate::auth;
 use crate::database::Database;

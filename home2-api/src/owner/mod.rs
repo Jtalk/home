@@ -5,7 +5,7 @@ use actix_web::Either::{Left, Right};
 use actix_web::{get, put, web, HttpResponse, Responder};
 use log::{debug, warn};
 
-use model::OwnerInfo;
+pub use model::{DatabaseOwnerInfo, OwnerInfo};
 use service::OwnerService;
 
 use crate::auth;

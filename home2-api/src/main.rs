@@ -14,6 +14,7 @@ mod health;
 mod images;
 mod owner;
 mod projects;
+mod search;
 mod shared;
 
 #[cfg(debug_assertions)]
@@ -59,6 +60,7 @@ async fn main() -> BootstrapResult {
             .app_data(auth_config.clone())
             .configure(health::configure())
             .configure(auth::configure())
+            .configure(search::configure(db.clone().into_inner()))
             .configure(owner::configure(
                 db.clone().into_inner(),
                 auth_service.clone().into_inner(),

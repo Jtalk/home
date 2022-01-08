@@ -6,7 +6,7 @@ use uuid::Uuid;
 
 use crate::database::oid::ConversionError;
 use crate::database::oid::ObjectID;
-use crate::database::HasID;
+use crate::database::{HasID, Persisted};
 
 /// We want to know the ID of the owner entry in the database. It makes database code much simpler.
 pub const STATIC_OWNER_ID: &str = "owner";
@@ -61,4 +61,8 @@ impl Into<OwnerInfo> for DatabaseOwnerInfo {
         result.photo_id = result.photo_id.into_string();
         result
     }
+}
+
+impl Persisted for DatabaseOwnerInfo {
+    const COLLECTION: &'static str = "owner";
 }

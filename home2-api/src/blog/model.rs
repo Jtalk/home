@@ -3,7 +3,7 @@ use field_types::FieldName;
 use serde::{self, Deserialize, Serialize};
 use uuid::Uuid;
 
-use crate::database::{HasID, Sortable};
+use crate::database::{HasID, Persisted, Sortable};
 
 #[derive(Debug, Serialize, Deserialize, FieldName)]
 #[serde(rename_all = "camelCase")]
@@ -32,4 +32,8 @@ impl Sortable for Article {
     fn field_name_string(f: &ArticleFieldName) -> &'static str {
         return f.name();
     }
+}
+
+impl Persisted for Article {
+    const COLLECTION: &'static str = "articles";
 }

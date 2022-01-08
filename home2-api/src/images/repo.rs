@@ -1,6 +1,5 @@
 use std::sync::Arc;
 
-use crate::auth;
 use actix_web::{HttpRequest, HttpResponse, Responder};
 use derive_more::From;
 use futures::{AsyncRead, Stream};
@@ -9,13 +8,12 @@ use mongodb::bson::{doc, oid::ObjectId, to_document};
 use mongodb_gridfs::options::GridFSUploadOptions;
 use mongodb_gridfs::{GridFSBucket, GridFSError};
 
-use crate::database::{self, Database};
+use crate::auth;
+use crate::database::{self, Database, Persisted};
 use crate::images::model::ImageMetadata;
 use crate::shared::ErrorResponse;
 
 use super::model::{DatabaseImageFile, ImageFile};
-
-pub const FILES_COLLECTION_METADATA: &str = "fs.files";
 
 pub struct UploadRequest<'a, S: AsyncRead + Unpin> {
     pub name: &'a str,
@@ -65,7 +63,7 @@ impl Repo {
         let info_opt = self
             .db
             .db()
-            .collection::<DatabaseImageFile>(FILES_COLLECTION_METADATA)
+            .collection::<DatabaseImageFile>(DatabaseImageFile::COLLECTION)
             .find_one(doc! { "_id": oid }, None)
             .await?;
         if let None = info_opt {
@@ -100,7 +98,7 @@ impl Repo {
         let col = self
             .db
             .db()
-            .collection::<DatabaseImageFile>(FILES_COLLECTION_METADATA);
+            .collection::<DatabaseImageFile>(DatabaseImageFile::COLLECTION);
         let found = col.find_one(doc! { "_id": oid }, None).await?;
         Ok(found
             .map(DatabaseImageFile::into)

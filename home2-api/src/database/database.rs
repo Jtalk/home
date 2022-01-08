@@ -63,6 +63,10 @@ pub trait Sortable {
     fn field_name_string(f: &Self::Field) -> &'static str;
 }
 
+pub trait Persisted {
+    const COLLECTION: &'static str;
+}
+
 type Client = mongodb::Client;
 
 pub struct Database {

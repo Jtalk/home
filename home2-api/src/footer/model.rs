@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 use crate::database::oid::ConversionError;
-use crate::database::HasID;
+use crate::database::{HasID, Persisted};
 
 /// We want to know the ID of the owner entry in the database. It makes database code much simpler.
 pub const STATIC_FOOTER_ID: &str = "footer";
@@ -57,4 +57,8 @@ impl Into<Footer> for DatabaseFooter {
     fn into(self) -> Footer {
         self.parent
     }
+}
+
+impl Persisted for DatabaseFooter {
+    const COLLECTION: &'static str = "footer";
 }

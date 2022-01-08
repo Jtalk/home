@@ -11,14 +11,14 @@ use crate::database::{
 use crate::shared::crud::get::{FindService, ListResult};
 
 use super::model::{DatabaseImageFile, DatabaseImageFileFieldName, ImageFile};
+use super::repo::DatabaseFileStream;
 use super::repo::Repo;
-use super::repo::{DatabaseFileStream, FILES_COLLECTION_METADATA};
 pub use super::repo::{DeleteResult, ServeResult, UploadError, UploadRequest, UploadResult};
 
 pub struct Service {
     repo: Arc<Repo>,
     auth: Arc<auth::Service>,
-    find: FindService,
+    find: FindService<ImageFile, DatabaseImageFile>,
 }
 
 impl Service {
@@ -26,7 +26,7 @@ impl Service {
         Self {
             repo,
             auth: auth.clone(),
-            find: FindService::new(FILES_COLLECTION_METADATA, db, auth),
+            find: FindService::new(db, auth),
         }
     }
 
@@ -46,10 +46,7 @@ impl Service {
             }),
             filter: None,
         };
-        let found = self
-            .find
-            .list::<ImageFile, DatabaseImageFile>(session, &options)
-            .await?;
+        let found = self.find.list(session, &options).await?;
         Ok(found)
     }
 

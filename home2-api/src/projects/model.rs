@@ -4,7 +4,7 @@ use serde::{self, Deserialize, Serialize};
 
 use crate::database::oid::ConversionError;
 use crate::database::oid::ObjectID;
-use crate::database::{HasID, Sortable};
+use crate::database::{HasID, Persisted, Sortable};
 
 #[derive(Debug, Serialize, Deserialize, FieldName)]
 #[serde(rename_all = "camelCase")]
@@ -64,4 +64,8 @@ impl Into<Project> for DatabaseProject {
         result.logo_id = result.logo_id.map(ObjectID::into_string);
         result
     }
+}
+
+impl Persisted for DatabaseProject {
+    const COLLECTION: &'static str = "projects";
 }
