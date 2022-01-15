@@ -71,7 +71,7 @@ struct TestConfig {
     base_url: String,
 }
 fn default_base_path() -> String {
-    "http://localhost:8080".into()
+    "http://localhost:8090".into()
 }
 fn config() -> TestConfig {
     envy::prefixed("TEST_").from_env::<TestConfig>().unwrap()
