@@ -18,6 +18,17 @@ pub struct Article {
     pub atom_id: Uuid,
 }
 
+impl<'a> Article {
+    pub fn preview(&'a self) -> Option<&'a str> {
+        if let Some(post_preview) = self.content.splitn(2, "<preview>").skip(1).next() {
+            if let Some(preview) = post_preview.splitn(2, "</preview>").next() {
+                return Some(preview);
+            }
+        }
+        None
+    }
+}
+
 impl HasID for Article {
     fn id(&self) -> String {
         self.id.clone()

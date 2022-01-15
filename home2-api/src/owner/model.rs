@@ -27,7 +27,7 @@ pub struct OwnerInfo {
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Contact {
-    value: String,
+    pub value: String,
 }
 
 #[derive(Debug, Serialize, Deserialize)]

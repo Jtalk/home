@@ -5,6 +5,7 @@ use actix_web::{web, App, HttpServer};
 use derive_more::From;
 use log::LevelFilter;
 
+mod atom;
 mod auth;
 mod blog;
 mod config;
@@ -48,6 +49,8 @@ async fn main() -> BootstrapResult {
     let auth_repo = web::Data::new(auth::Repo::new(db.clone().into_inner()));
     let auth_service = web::Data::new(auth::Service::new(auth_repo.clone().into_inner()));
 
+    let atom_config = web::Data::new(config::atom()?);
+
     HttpServer::new(move || {
         App::new()
             .wrap(
@@ -58,8 +61,10 @@ async fn main() -> BootstrapResult {
             .app_data(db.clone())
             .app_data(auth_service.clone())
             .app_data(auth_config.clone())
+            .app_data(atom_config.clone())
             .configure(health::configure())
             .configure(auth::configure())
+            .configure(atom::configure())
             .configure(search::configure(db.clone().into_inner()))
             .configure(owner::configure(
                 db.clone().into_inner(),

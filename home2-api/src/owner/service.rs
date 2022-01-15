@@ -9,12 +9,12 @@ use crate::shared::crud::update::{UpdateResult, UpdateService};
 
 use super::model::{DatabaseOwnerInfo, OwnerInfo, STATIC_OWNER_ID};
 
-pub struct OwnerService {
+pub struct Service {
     find: FindService<OwnerInfo, DatabaseOwnerInfo>,
     update: UpdateService,
 }
 
-impl OwnerService {
+impl Service {
     pub fn new(db: Arc<Database>, auth_service: Arc<auth::Service>) -> Self {
         Self {
             find: FindService::new(db.clone(), auth_service.clone()),

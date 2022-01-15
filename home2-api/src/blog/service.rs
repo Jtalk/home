@@ -13,14 +13,14 @@ use super::model::Article;
 pub use super::repo::ListTagsResult;
 use super::repo::Repo;
 
-pub struct BlogService {
+pub struct Service {
     repo: Arc<Repo>,
     find: FindService<Article, Article>,
     update: UpdateService,
     delete: DeleteService,
 }
 
-impl BlogService {
+impl Service {
     pub fn new(db: Arc<Database>, auth_service: Arc<auth::Service>, repo: Arc<Repo>) -> Self {
         Self {
             repo,

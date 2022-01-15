@@ -6,20 +6,20 @@ use actix_web::{get, put, web, HttpResponse, Responder};
 use log::{debug, warn};
 
 pub use model::{DatabaseOwnerInfo, OwnerInfo};
-use service::OwnerService;
+pub use service::Service;
 
 use crate::auth;
 use crate::database::Database;
 use crate::shared::ErrorResponse;
 
 mod model;
-mod service;
+pub mod service;
 
 pub fn configure(
     db: Arc<Database>,
     auth_service: Arc<auth::Service>,
 ) -> impl Fn(&mut web::ServiceConfig) -> () {
-    let service = web::Data::new(OwnerService::new(db, auth_service));
+    let service = web::Data::new(Service::new(db, auth_service));
     move |config: &mut web::ServiceConfig| {
         config
             .app_data(service.clone())
@@ -29,7 +29,7 @@ pub fn configure(
 }
 
 #[get("/owner")]
-async fn find(service: web::Data<OwnerService>) -> impl Responder {
+async fn find(service: web::Data<Service>) -> impl Responder {
     match service.find().await {
         Ok(Some(v)) => {
             debug!("Found owner info");
@@ -49,7 +49,7 @@ async fn find(service: web::Data<OwnerService>) -> impl Responder {
 async fn update(
     session: Session,
     body: web::Json<OwnerInfo>,
-    service: web::Data<OwnerService>,
+    service: web::Data<Service>,
 ) -> impl Responder {
     match service.update(&session, body.into_inner()).await {
         Ok(v) => {

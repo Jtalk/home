@@ -8,7 +8,7 @@ use serde::{Deserialize, Serialize};
 
 pub use model::{Article, ArticleFieldName};
 use repo::Repo;
-use service::BlogService;
+pub use service::Service;
 
 use crate::auth;
 use crate::database::{Database, OrderDirection, OrderOptions, OrderedPaginationOptions};
@@ -23,7 +23,7 @@ pub fn configure(
     db: Arc<Database>,
     auth_service: Arc<auth::Service>,
 ) -> impl Fn(&mut web::ServiceConfig) -> () {
-    let service = web::Data::new(BlogService::new(
+    let service = web::Data::new(Service::new(
         db.clone(),
         auth_service,
         Arc::new(Repo::new(db.clone())),
@@ -74,7 +74,7 @@ impl Into<ListOptions<Article>> for ListQuery {
 async fn list(
     q: web::Query<ListQuery>,
     session: Session,
-    service: web::Data<BlogService>,
+    service: web::Data<Service>,
 ) -> impl Responder {
     let options = q.into_inner().into();
     match service.list(&session, &options).await {
@@ -84,7 +84,7 @@ async fn list(
 }
 
 #[get("/blog/articles/{id}")]
-async fn find(id: web::Path<String>, service: web::Data<BlogService>) -> impl Responder {
+async fn find(id: web::Path<String>, service: web::Data<Service>) -> impl Responder {
     match service.find(&id).await {
         Ok(Some(v)) => {
             // Allow accessing unpublished articles by direct link for easier sharing.
@@ -100,7 +100,7 @@ async fn find(id: web::Path<String>, service: web::Data<BlogService>) -> impl Re
 }
 
 #[get("/blog/tags")]
-async fn tags(service: web::Data<BlogService>, req: web::HttpRequest) -> impl Responder {
+async fn tags(service: web::Data<Service>, req: web::HttpRequest) -> impl Responder {
     match service.tags().await {
         Ok(tags) => {
             debug!("Tags request success: {:?}", tags);
@@ -115,7 +115,7 @@ async fn update(
     id: web::Path<String>,
     session: Session,
     body: web::Json<Article>,
-    service: web::Data<BlogService>,
+    service: web::Data<Service>,
 ) -> impl Responder {
     match service.update(&session, &id, body.into_inner()).await {
         Ok(v) => {
@@ -130,7 +130,7 @@ async fn update(
 async fn delete(
     id: web::Path<String>,
     session: Session,
-    service: web::Data<BlogService>,
+    service: web::Data<Service>,
 ) -> impl Responder {
     match service.delete(&session, &id).await {
         Ok(true) => {

@@ -3,6 +3,7 @@ use duration_string::DurationString;
 use rand::distributions::Uniform;
 use rand::{thread_rng, Rng};
 
+use crate::atom;
 use crate::auth;
 use crate::database as db;
 
@@ -24,5 +25,11 @@ pub fn auth() -> auth::config::PartialConfig {
     auth::config::PartialConfig {
         key: Some(base64ct::Base64::encode_string(&key)),
         max_age: Some(max_age),
+    }
+}
+
+pub fn atom() -> atom::config::PartialConfig {
+    atom::config::PartialConfig {
+        article_url_prefix: Some("http://localhost:8070/blog/articles".to_string()),
     }
 }

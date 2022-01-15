@@ -19,6 +19,7 @@ actix-http = "=3.0.0-beta.14"
 actix-multipart = "=0.4.0-beta.8"
 actix-web = "=4.0.0-beta.13"
 actix-session = "=0.5.0-beta.4"
+atom_syndication = "^0.11"
 awc = "=3.0.0-beta.12"
 base64ct = "~1.0"
 chrono = { version = "~0.4", features = ["serde"] }
