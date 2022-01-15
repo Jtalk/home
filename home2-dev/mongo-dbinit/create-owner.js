@@ -14,8 +14,8 @@ db.owner.createIndex({
 }, {})
 db.owner.insert({
 	id: "owner",
-	name: 'Vasya Pupkin',
-	nickname: 'pupkivas',
+	name: 'Gull Birdsson', // API integration tests depend on this name, it should not be changed without updating tests
+	nickname: 'gull',
 	description: 'A very cool guy with his own website',
 	photoId: photoId,
 	updated: "2020-05-01T12:00:00Z",
