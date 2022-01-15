@@ -6,7 +6,7 @@ use futures::StreamExt;
 use mongodb::bson::{doc, from_document, Document};
 
 use crate::database::{self, Database, DatabaseError};
-use crate::search::model::{DatabaseSearchItem, SearchItem};
+use crate::search::model::{DatabaseSearchItem, SearchItem, SearchItemMetadata};
 
 pub struct SearchRequest<'a> {
     pub search: &'a str,
@@ -29,8 +29,17 @@ impl Repo {
     }
 
     pub async fn search(&self, req: &SearchRequest<'_>) -> SearchResult {
-        let pipeline = search_pipeline(req);
-        let mut found = self.db.db().aggregate(pipeline, None).await?;
+        let collections = DatabaseSearchItem::collections();
+        let (root, rest) = collections
+            .split_first()
+            .expect("There should always be at least one collection");
+        let pipeline = search_pipeline(req, root, rest);
+        let mut found = self
+            .db
+            .db()
+            .collection::<Document>(root.collection)
+            .aggregate(pipeline, None)
+            .await?;
         let mut results: Vec<SearchItem> = Vec::with_capacity(req.limit as usize);
         while let Some(v) = found.next().await {
             match v {
@@ -56,21 +65,31 @@ impl Responder for SearchError {
     }
 }
 
-fn search_pipeline(req: &SearchRequest) -> Vec<Document> {
-    let all_colls = DatabaseSearchItem::collections().into_iter().map(|c| {
+fn search_pipeline(
+    req: &SearchRequest,
+    root: &SearchItemMetadata,
+    rest: &[SearchItemMetadata],
+) -> Vec<Document> {
+    let root_pipeline = search_collection_pipeline(root.denominator, req);
+    let all_colls = rest.into_iter().map(|c| {
         doc!{ "$unionWith": { "coll": c.collection, "pipeline": search_collection_pipeline(c.denominator, req) } }
     });
     let sort_all = vec![
         doc! { "$sort": { "score": -1 } },
         doc! { "$limit": req.limit },
     ];
-    all_colls.chain(sort_all).collect()
+    root_pipeline
+        .into_iter()
+        .chain(all_colls)
+        .chain(sort_all)
+        .collect()
 }
 
 fn search_collection_pipeline(denominator: &str, req: &SearchRequest) -> Vec<Document> {
     vec![
         doc! { "$match": { "$text": { "$search": req.search } } },
-        doc! { "$project": { "score": { "$meta": "textScore" }, "type": denominator, "value": "$$ROOT" } },
+        doc! { "$project": { "score": { "$meta": "textScore" }, "value": "$$ROOT" } },
+        doc! { "$set": { "type": denominator } },
         doc! { "$sort": { "score": -1 } },
         doc! { "$limit": req.limit },
     ]

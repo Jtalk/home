@@ -8,50 +8,45 @@ use crate::owner::{DatabaseOwnerInfo, OwnerInfo};
 use crate::projects::{DatabaseProject, Project};
 
 #[derive(Debug, Serialize, Deserialize)]
-#[serde(tag = "type", content = "value", rename_all = "kebab-case")]
-pub enum SearchItemContent {
-    Owner(OwnerInfo),
-    Project(Project),
-    Article(Article),
+#[serde(tag = "type", rename_all = "kebab-case")]
+pub enum SearchItem {
+    Owner { score: f32, value: OwnerInfo },
+    Project { score: f32, value: Project },
+    Article { score: f32, value: Article },
 }
 
 #[derive(Debug, Serialize, Deserialize)]
-#[serde(tag = "type", content = "value", rename_all = "kebab-case")]
-pub enum DatabaseSearchItemContent {
-    Owner(DatabaseOwnerInfo),
-    Project(DatabaseProject),
-    Article(Article),
-}
-
-#[derive(Debug, Serialize, Deserialize)]
-#[serde(rename_all = "camelCase")]
-pub struct SearchItem {
-    score: f32,
-    value: SearchItemContent,
-}
-
-#[derive(Debug, Serialize, Deserialize)]
-#[serde(rename_all = "camelCase")]
-pub struct DatabaseSearchItem {
-    score: f32,
-    value: DatabaseSearchItemContent,
+#[serde(tag = "type", rename_all = "kebab-case")]
+pub enum DatabaseSearchItem {
+    Owner {
+        score: f32,
+        value: DatabaseOwnerInfo,
+    },
+    Project {
+        score: f32,
+        value: DatabaseProject,
+    },
+    Article {
+        score: f32,
+        value: Article,
+    },
 }
 
 impl Into<SearchItem> for DatabaseSearchItem {
     fn into(self) -> SearchItem {
-        SearchItem {
-            score: self.score,
-            value: self.value.into(),
-        }
-    }
-}
-
-impl Into<SearchItemContent> for DatabaseSearchItemContent {
-    fn into(self) -> SearchItemContent {
         match self {
-            Self::Owner(v) => SearchItemContent::Owner(v.into()),
-            Self::Project(v) => SearchItemContent::Project(v.into()),
-            Self::Article(v) => SearchItemContent::Article(v.into()),
+            Self::Owner { score, value } => SearchItem::Owner {
+                score,
+                value: value.into(),
+            },
+            Self::Project { score, value } => SearchItem::Project {
+                score,
+                value: value.into(),
+            },
+            Self::Article { score, value } => SearchItem::Article {
+                score,
+                value: value.into(),
+            },
         }
     }
 }

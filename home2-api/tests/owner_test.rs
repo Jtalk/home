@@ -4,6 +4,8 @@ use serde_json::{json, Value};
 
 use common::url;
 
+use crate::common::OWNER_NAME;
+
 mod common;
 
 #[actix_web::test]
@@ -12,7 +14,7 @@ async fn update_and_fetch_owner() {
     let client_anon = common::client().unwrap();
 
     let owner = json!({
-        "name": "Gull McBirdsson",
+        "name": OWNER_NAME,
         "nickname": "gull",
         "description": "Cool Bird",
         "bio": "Test Bio\nTest",

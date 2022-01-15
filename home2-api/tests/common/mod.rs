@@ -12,6 +12,8 @@ use tokio::sync::OnceCell;
 pub const SESSION_COOKIE_NAME: &str = "api-session";
 static SESSION_COOKIE: OnceCell<String> = OnceCell::const_new();
 
+pub const OWNER_NAME: &str = "Gull Birdsson";
+
 pub fn url<'a, U>(path: U) -> Uri
 where
     Uri: TryFrom<&'a str> + TryFrom<U>,
