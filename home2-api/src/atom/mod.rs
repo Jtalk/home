@@ -1,14 +1,16 @@
+use std::str::FromStr;
+
 use actix_session::Session;
 use actix_web::Either::{Left, Right};
-use actix_web::{get, web, HttpRequest, HttpResponse, Responder};
+use actix_web::{get, rt, web, HttpRequest, HttpResponse, Responder};
 use atom_syndication::{Entry, Link, Person};
 use chrono::{DateTime, Utc};
 use derive_more::From;
+use futures::TryFutureExt;
 use http::uri::{Authority, Scheme};
 use http::Uri;
 use itertools::Itertools;
 use log::{debug, error};
-use std::str::FromStr;
 
 use crate::blog::Article;
 use crate::database::{
@@ -41,8 +43,8 @@ async fn atom(
     let self_url = self_uri(req);
 
     let result = fetch_data(&session, blog_service, owner_service)
-        .await
-        .and_then(|(owner, articles)| generate_feed(owner, articles, &self_url, &config));
+        .and_then(|(owner, articles)| generate_feed(owner, articles, &self_url, &config))
+        .await;
     match result {
         Ok(v) => {
             debug!("Atom feed generation successful");
@@ -62,6 +64,7 @@ enum AtomError {
     OwnerError(FindError),
     ArticleError(ListError),
     SerialisationError(atom_syndication::Error),
+    RuntimeError(rt::task::JoinError),
     OwnerNotFoundError,
 }
 type AtomResult<T> = std::result::Result<T, AtomError>;
@@ -94,7 +97,7 @@ async fn fetch_data(
     Ok((owner, articles))
 }
 
-fn generate_feed(
+async fn generate_feed(
     owner: OwnerInfo,
     articles: Vec<Article>,
     self_uri: &Uri,
@@ -130,8 +133,15 @@ fn generate_feed(
         feed.entries.push(e);
     }
 
-    let mut output: Vec<u8> = Vec::new();
-    let _ = feed.write_to(&mut output)?;
+    // This seems to be taking too long on the main thread
+    let output = rt::task::spawn_blocking(move || {
+        let mut output: Vec<u8> = Vec::new();
+        match feed.write_to(&mut output) {
+            Ok(_) => Ok(output),
+            Err(e) => Err(e),
+        }
+    })
+    .await??;
     Ok(output)
 }
 
@@ -186,6 +196,12 @@ impl Responder for AtomError {
                 error!("Error serialising atom feed: {:?}", e);
                 HttpResponse::InternalServerError().json(ErrorResponse::new(
                     "Could not serialise the Atom feed into XML",
+                ))
+            }
+            Self::RuntimeError(e) => {
+                error!("Error writing atom feed bytes: {:?}", e);
+                HttpResponse::InternalServerError().json(ErrorResponse::new(
+                    "Internal error trying to serialise the Atom feed into XML",
                 ))
             }
             Self::OwnerError(e) => e.respond_to(req),
