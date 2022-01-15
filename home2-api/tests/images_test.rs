@@ -1,13 +1,11 @@
 use std::convert::Infallible;
-use std::error::Error;
 
 use base64ct::Encoding;
 use bytes::Bytes;
 use chrono::{DateTime, Utc};
-use futures::{stream, TryStreamExt};
-use futures::{FutureExt, Stream, StreamExt};
+use futures::stream;
 use http::StatusCode;
-use mpart_async::client::{MultipartRequest, MultipartStream};
+use mpart_async::client::MultipartRequest;
 use serde_json::{json, Value};
 use spectral::assert_that;
 use spectral::prelude::{OptionAssertions, OrderedAssertions};

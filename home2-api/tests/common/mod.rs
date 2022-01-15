@@ -9,9 +9,11 @@ use serde_json::json;
 use simple_error::SimpleError;
 use tokio::sync::OnceCell;
 
+#[allow(dead_code)]
 pub const SESSION_COOKIE_NAME: &str = "api-session";
 static SESSION_COOKIE: OnceCell<String> = OnceCell::const_new();
 
+#[allow(dead_code)]
 pub const OWNER_NAME: &str = "Gull Birdsson";
 
 pub fn url<'a, U>(path: U) -> Uri

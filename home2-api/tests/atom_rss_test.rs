@@ -1,13 +1,8 @@
 use actix_http::HttpMessage;
-use std::collections::HashSet;
-
 use actix_web;
-use futures::{FutureExt, StreamExt};
 use http::StatusCode;
 use rstest::rstest;
-use serde_json::Value;
 use spectral::assert_that;
-use spectral::prelude::*;
 
 use common::url;
 

@@ -26,7 +26,7 @@ async fn update_and_fetch_footer() {
     assert_eq!(put_resp.status(), StatusCode::OK);
     assert_eq!(put_resp.json::<Value>().await.unwrap(), footer);
 
-    let mut put_resp_anon = client_anon
+    let put_resp_anon = client_anon
         .put(url("/footer"))
         .send_json(&footer)
         .await

@@ -27,7 +27,7 @@ async fn update_and_fetch_owner() {
     assert_eq!(put_resp.status(), StatusCode::OK);
     assert_eq!(put_resp.json::<Value>().await.unwrap(), owner);
 
-    let mut put_resp_anon = client_anon
+    let put_resp_anon = client_anon
         .put(url("/owner"))
         .send_json(&owner)
         .await
