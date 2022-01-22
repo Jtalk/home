@@ -3,9 +3,15 @@ use duration_string::DurationString;
 use rand::distributions::Uniform;
 use rand::{thread_rng, Rng};
 
-use crate::atom;
 use crate::auth;
 use crate::database as db;
+use crate::{atom, shared};
+
+pub fn app() -> shared::config::PartialAppConfig {
+    shared::config::PartialAppConfig {
+        cors_origins: Some(vec!["http://localhost:8070".to_string()]),
+    }
+}
 
 pub fn database() -> db::config::PartialConfig {
     db::config::PartialConfig {

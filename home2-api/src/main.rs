@@ -1,5 +1,6 @@
 use std::{io::Error as IOError, result};
 
+use actix_cors::Cors;
 use actix_session::CookieSession;
 use actix_web::{web, App, HttpServer};
 use derive_more::From;
@@ -52,7 +53,17 @@ async fn main() -> BootstrapResult {
     let atom_config = web::Data::new(config::atom()?);
 
     HttpServer::new(move || {
+        let app_config = config::app().unwrap();
+        let mut cors = Cors::default()
+            .supports_credentials()
+            .allow_any_method()
+            .allow_any_header();
+        for ref origin in app_config.cors_origins {
+            cors = cors.allowed_origin(origin);
+        }
+
         App::new()
+            .wrap(cors)
             .wrap(
                 CookieSession::private(session_key.clone().as_slice())
                     .max_age_time(max_age)

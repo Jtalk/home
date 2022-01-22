@@ -1,5 +1,6 @@
 use serde::Serialize;
 
+pub mod config;
 pub mod crud;
 
 #[derive(Debug, Serialize)]
