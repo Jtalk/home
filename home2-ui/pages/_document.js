@@ -12,7 +12,7 @@ const CSPValue = (nonce) =>
   "default-src 'self';" +
   `script-src 'self' 'nonce-${nonce}' ${isDev ? "'unsafe-eval'" : ""};` +
   "style-src * 'unsafe-inline';" +
-  "img-src *;" +
+  "img-src * data:;" + // We use data: for image uploader
   "font-src 'self' data: fonts.gstatic.com fonts.googleapis.com;" +
   "media-src *;" +
   `connect-src 'self' *.bugsnag.com ${apiHost};` +
