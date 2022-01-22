@@ -5,7 +5,7 @@ import getConfig from "next/config";
 
 const isDev = process.env.NODE_ENV !== "production";
 const apiUrl = new URL(getConfig().publicRuntimeConfig.api.prefix);
-const apiHost = `${apiUrl.protocol}//${apiUrl.hostname}`;
+const apiHost = `${apiUrl.protocol}//${apiUrl.hostname}:${apiUrl.port}`;
 
 const CSPHeader = "Content-Security-Policy";
 const CSPValue = (nonce) =>
