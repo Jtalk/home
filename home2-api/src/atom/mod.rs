@@ -1,6 +1,7 @@
 use std::str::FromStr;
 
 use actix_session::Session;
+use actix_web::http::header::{CacheControl, CacheDirective};
 use actix_web::Either::{Left, Right};
 use actix_web::{get, rt, web, HttpRequest, HttpResponse, Responder};
 use atom_syndication::{Entry, Link, Person};
@@ -51,7 +52,7 @@ async fn atom(
             Right(
                 HttpResponse::Ok()
                     .content_type("application/atom+xml")
-                    .insert_header(("Cache-Control", "max-age=3600"))
+                    .insert_header(CacheControl(vec![CacheDirective::MaxAge(3600)]))
                     .body(v),
             )
         }

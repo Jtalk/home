@@ -28,6 +28,7 @@ impl Config {
         Config::from_env_for::<Config>()
     }
 
+    #[allow(dead_code)]
     pub fn from_env_merged(defaults: PartialConfig) -> Result {
         let mut partial_env = Config::from_env_for::<PartialConfig>()?;
         partial_env.merge(defaults);
