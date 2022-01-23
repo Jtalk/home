@@ -25,7 +25,7 @@ mod dev;
 #[derive(Debug, From)]
 enum BootstrapError {
     Config(envy::Error),
-    Database(database::Error),
+    Database(database::ConnectError),
     Server(IOError),
     Logger(log::SetLoggerError),
 }

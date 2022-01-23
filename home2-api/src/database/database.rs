@@ -2,10 +2,13 @@ use actix_web::{HttpRequest, HttpResponse, Responder};
 use log::error;
 use std::fmt::Debug;
 use std::result;
+use std::str::FromStr;
 
 use convert_case::{Case::Camel, Casing};
 use derive_more::From;
 use futures::TryStreamExt;
+use http::uri::{InvalidUri, PathAndQuery};
+use http::Uri;
 use mockall::automock;
 use mongodb::bson::{doc, from_document, Document};
 use mongodb::options::{ClientOptions, ReplaceOptions};
@@ -20,6 +23,21 @@ pub enum Error {
     Database(DatabaseError),
 }
 pub type Result<T> = result::Result<T, Error>;
+
+#[derive(Debug, From)]
+pub enum ParseConnStringError {
+    Invalid(InvalidUri),
+    NoPath,
+    WrongDatabasePath,
+}
+
+#[derive(From, Debug)]
+pub enum ConnectError {
+    Database(DatabaseError),
+    Config(ParseConnStringError),
+}
+pub type ConnectResult<T> = result::Result<T, ConnectError>;
+
 pub type CollectionMetadata = str;
 
 #[derive(Debug, Eq, PartialEq)]
@@ -76,12 +94,13 @@ pub struct Database {
 
 #[automock]
 impl Database {
-    pub async fn new(config: &config::Config) -> Result<Self> {
-        let options = ClientOptions::parse(&config.connection).await?;
+    pub async fn new(config: &config::Config) -> ConnectResult<Self> {
+        let (connection, database) = parse_conn_string(&config.connection)?;
+        let options = ClientOptions::parse(&connection).await?;
         let client = Client::with_options(options)?;
         Ok(Database {
             client,
-            name: config.database.clone(),
+            name: database,
         })
     }
 
@@ -210,6 +229,42 @@ async fn paginated_result_extractor<T: DeserializeOwned>(
     Ok((found.data, found.total))
 }
 
+/// Extract database name from MongoDB connection string.
+///
+/// The Rust driver would not tell us what database was specified
+/// as default in the connection string. We're extracting it
+/// manually to make it work with the existing configuration set up
+/// built around ReactiveMongo.  
+///
+fn parse_conn_string(
+    connection: &str,
+) -> std::result::Result<(String, String), ParseConnStringError> {
+    let mut parsed = Uri::from_str(connection)?.into_parts();
+    let path = match parsed.path_and_query {
+        None => "/",
+        Some(ref path_and_q) => path_and_q.path(),
+    };
+    let split: Vec<&str> = path.splitn(3, '/').collect();
+    if split.len() < 2 || split[1].is_empty() {
+        return Err(ParseConnStringError::NoPath);
+    } else if split.len() > 2 {
+        return Err(ParseConnStringError::WrongDatabasePath);
+    }
+    let database = split[1].to_string();
+
+    parsed.path_and_query = parsed.path_and_query.map(|ref pnq| {
+        pnq.query().map_or(PathAndQuery::from_static(""), |q| {
+            PathAndQuery::try_from(format!("/?{}", q))
+                .expect("Already parsed earlier, should never fail")
+        })
+    });
+    let connection_without_database = Uri::from_parts(parsed)
+        .expect("Consist of static and constant parts, should not fail at this point")
+        .to_string();
+
+    Ok((connection_without_database, database))
+}
+
 impl Responder for Error {
     fn respond_to(self, req: &HttpRequest) -> HttpResponse {
         match self {
@@ -238,6 +293,45 @@ impl OrderDirection {
         match self {
             Self::Asc => 1,
             Self::Desc => -1,
+        }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    use rstest::rstest;
+    use spectral::{assert_that, prelude::*};
+
+    #[rstest]
+    #[case("mongodb://example.com/database", Some(("mongodb://example.com/", "database")))]
+    #[case("mongodb://host.example.com/database", Some(("mongodb://host.example.com/", "database")))]
+    #[case("mongodb://user:password@host.example.com/database", Some(("mongodb://user:password@host.example.com/", "database")))]
+    #[case("mongodb+srv://host.example.com/database", Some(("mongodb+srv://host.example.com/", "database")))]
+    #[case("mongodb+srv://user:password@host.example.com/database", Some(("mongodb+srv://user:password@host.example.com/", "database")))]
+    #[case("mongodb://example.com/database?query=1&param=value", Some(("mongodb://example.com/?query=1&param=value", "database")))]
+    #[case("mongodb://host.example.com/database?query=1&param=value", Some(("mongodb://host.example.com/?query=1&param=value", "database")))]
+    #[case("mongodb://user:password@host.example.com/database?query=1&param=value", Some(("mongodb://user:password@host.example.com/?query=1&param=value", "database")))]
+    #[case("mongodb+srv://host.example.com/database?query=1&param=value", Some(("mongodb+srv://host.example.com/?query=1&param=value", "database")))]
+    #[case("mongodb+srv://user:password@host.example.com/database?query=1&param=value", Some(("mongodb+srv://user:password@host.example.com/?query=1&param=value", "database")))]
+    #[case("example.com/database", None)]
+    #[case("mongodb://example.com/", None)]
+    #[case("mongodb://example.com", None)]
+    #[case("mongodb://example.com/database/other", None)]
+    #[case("mongodb://example.com/?query=1&param=value", None)]
+    #[case("mongodb://example.com?query=1&param=value", None)]
+    #[case("mongodb://example.com/database/other?query=1&param=value", None)]
+    #[test]
+    fn parse_conn_string_test(#[case] source: &str, #[case] expected: Option<(&str, &str)>) {
+        let result = parse_conn_string(source);
+        match expected {
+            Some((conn, db)) => assert_that!(result)
+                .is_ok()
+                .is_equal_to((conn.to_string(), db.to_string())),
+            None => {
+                assert_that!(result).is_err();
+            }
         }
     }
 }

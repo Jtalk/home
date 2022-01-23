@@ -15,8 +15,7 @@ pub fn app() -> shared::config::PartialAppConfig {
 
 pub fn database() -> db::config::PartialConfig {
     db::config::PartialConfig {
-        connection: Some("mongodb://localhost:27017".to_owned()),
-        database: Some("home".to_owned()),
+        connection: Some("mongodb://localhost:27017/home".to_owned()),
     }
 }
 

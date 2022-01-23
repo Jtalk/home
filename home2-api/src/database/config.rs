@@ -9,13 +9,11 @@ const CONFIG_PREFIX: &str = "DATABASE_";
 #[derive(Clone, Deserialize)]
 pub struct Config {
     pub connection: String,
-    pub database: String,
 }
 
 #[derive(Deserialize, Merge)]
 pub struct PartialConfig {
     pub connection: Option<String>,
-    pub database: Option<String>,
 }
 
 pub type Error = envy::Error;
@@ -34,13 +32,7 @@ impl Config {
         let connection = partial_env
             .connection
             .ok_or(Error::MissingValue("connection"))?;
-        let database = partial_env
-            .database
-            .ok_or(Error::MissingValue("database"))?;
-        Ok(Config {
-            connection,
-            database,
-        })
+        Ok(Config { connection })
     }
 
     fn from_env_for<T>() -> result::Result<T, Error>
