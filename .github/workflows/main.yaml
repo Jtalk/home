@@ -136,8 +136,8 @@ jobs:
         with:
           context: home2-api
           target: test
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          cache-from: type=gha,scope=unit-test
+          cache-to: type=gha,mode=max,scope=unit-test
       - name: Login to DockerHub
         if: github.ref == 'refs/heads/master'
         uses: docker/login-action@v1
@@ -152,8 +152,8 @@ jobs:
           tags: |
             ${{ env.API_DOCKER_IMAGE_PREFIX }}:${{ github.sha }}
             ${{ env.API_DOCKER_IMAGE_PREFIX }}:latest
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          cache-from: type=gha,scope=release
+          cache-to: type=gha,mode=max,scope=release
 
   build-release-backup:
     name: Build and Release Database Backup Script
