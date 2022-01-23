@@ -77,8 +77,7 @@ pub struct Database {
 #[automock]
 impl Database {
     pub async fn new(config: &config::Config) -> Result<Self> {
-        let mut options = ClientOptions::parse(&config.connection).await?;
-        options.credential = config.to_credentials();
+        let options = ClientOptions::parse(&config.connection).await?;
         let client = Client::with_options(options)?;
         Ok(Database {
             client,
