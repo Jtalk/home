@@ -5,7 +5,6 @@ basePath: ""
 staging: false
 
 atom:
-  xmlPath: /atom.xml
   urlBasePath: /blog/articles
 
 ui:
@@ -48,12 +47,11 @@ api:
   type: api
   name: home-api
   basePath: /api
-  encryption:
+  session:
     secret: ""
+    maxAge: 10m
   cors:
     localhostPort: 8070
-  initialSetup:
-    enabled: false
   service:
     port: 80
   deployment:
@@ -73,28 +71,28 @@ api:
         periodSeconds: 1
         timeoutSeconds: 1
       liveness:
-        path: /status
+        path: /health
         failureThreshold: 1
         periodSeconds: 10
         successThreshold: 1
         timeoutSeconds: 5
       readiness:
-        path: /status/ready
+        path: /ready
         failureThreshold: 1
         periodSeconds: 10
         successThreshold: 1
         timeoutSeconds: 5
     resources:
       limits:
-        memory: 400Mi
+        memory: 80Mi
       requests:
         cpu: 100m
-        memory: 400Mi
+        memory: 80Mi
 
 database:
   secret:
     name: database
-    urlKey: MONGODB_URI
+    urlKey: DATABASE_CONNECTION
   url: ""
   migration:
     name: database-migration
