@@ -112,34 +112,38 @@ jobs:
           docker stop home-ui-ci
 
   build-release-api:
-    name: Build and Release API
+    name: Build and Release the API
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Specify the current hash as a build version
-        run: |
-          sed -Ei 's/^version := "\w+"$/version := "${{ github.sha }}"/' build.sbt
-          echo The new build.sbt with its version updated
-          cat build.sbt
-        working-directory: home2-rest
-      - name: Choose whether to deploy to docker hub or build locally
-        id: publish_cmd
-        run: |
-          if [[ "${{ github.ref }}" == 'refs/heads/master' ]]; then
-            echo "::set-output name=action::docker:publish"
-          else
-            echo "::set-output name=action::docker:publishLocal"
-          fi
-      - name: Build & publish the project
-        uses: matankdr/github-docker-sbt@a8b6a773bcab2df439fe4150ff155196629d1d4f
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      # Using docker to run tests to optimise build time for dependencies
+      - name: Test project
+        uses: docker/build-push-action@v2
         with:
-          command: |
-            sbt test ${{ steps.publish_cmd.outputs.action }}
-          working-directory: home2-rest
-          docker-registry: docker.io
-          docker-login-username: ${{ secrets.DOCKER_USERNAME }}
-          docker-login-password: ${{ secrets.DOCKER_PASSWORD }}
-    # Waiting for https://github.com/docker/build-push-action/issues/17 to push multiple tags properly
+          context: home2-api
+          target: test
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+      - name: Login to DockerHub
+        if: github.ref == 'refs/heads/master'
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+      - name: Build project
+        uses: docker/build-push-action@v2
+        with:
+          context: home2-api
+          push: ${{ github.ref == 'refs/heads/master' }}
+          tags: |
+            ${{ env.API_DOCKER_IMAGE_PREFIX }}:${{ github.sha }}
+            ${{ env.API_DOCKER_IMAGE_PREFIX }}:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
   build-release-backup:
     name: Build and Release Database Backup Script
