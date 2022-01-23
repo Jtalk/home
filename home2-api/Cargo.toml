@@ -7,6 +7,7 @@ edition = "2021"
 [package.metadata.scripts]
 "run:watch" = "cargo watch -x run"
 "build:watch" = "cargo watch"
+"build:release" = "cargo build --release"
 "test:unit" = "cargo test --bins"
 "test:unit:watch" = "cargo watch -x 'run-script test:unit'"
 "test:integration" = "cargo test --test '*'"
