@@ -3,11 +3,13 @@ kind: ConfigMap
 metadata:
   name: {{ quote .Values.api.name }}
 data:
+  {{- $cors := list }}
   {{- range $index, $domain := .Values.domains }}
-  "CORS_ORIGINS.{{ $index }}": {{ printf "https://%s" $domain | quote }}
+    {{- $cors = append $cors (printf "https://%s" $domain) }}
   {{- end }}
   {{- if and .Values.staging .Values.api.cors.localhostPort }}
-  "CORS_ORIGINS.{{ len .Values.domains }}": {{ printf "http://localhost:%.0f" .Values.api.cors.localhostPort | quote }}
+    {{- $cors = append $cors (printf "http://localhost:%.0f" .Values.api.cors.localhostPort) }}
   {{- end }}
+  CORS_ORIGINS: {{ join "," $cors | quote }}
   ATOM_ARTICLE_URL_PREFIX: {{ printf "https://%s%s%s" (mustFirst .Values.domains) .Values.basePath .Values.atom.urlBasePath | quote }}
   AUTH_MAX_AGE: {{ required "Session max age is required" .Values.api.session.maxAge | quote }}
