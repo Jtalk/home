@@ -55,7 +55,7 @@ api:
   service:
     port: 80
   deployment:
-    port: 8080
+    port: 8090
     image:
       name: jtalk/home-api
     replicas: 1

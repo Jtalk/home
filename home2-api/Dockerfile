@@ -34,5 +34,7 @@ FROM gcr.io/distroless/cc-debian11
 
 COPY --from=build /build/target/release/home2-api /app
 
+EXPOSE 8090
+
 ENTRYPOINT ["/app"]
 CMD []
