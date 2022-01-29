@@ -5,20 +5,17 @@ photoId = db['fs.files'].findOne({filename: 'avatar.png'})._id
 print('Using GridFS object as the owner\'s photo: ' + photoId);
 
 db.owner.createIndex({
+	id: "text",
 	name: "text",
 	nickname: "text",
 	description: "text",
 	bio: "text",
 	contacts: "text",
-}, {
-	weights: {
-		name: 2,
-		nickname: 2
-	}
-})
+}, {})
 db.owner.insert({
-	name: 'Vasya Pupkin',
-	nickname: 'pupkivas',
+	id: "owner",
+	name: 'Gull Birdsson', // API integration tests depend on this name, it should not be changed without updating tests
+	nickname: 'gull',
 	description: 'A very cool guy with his own website',
 	photoId: photoId,
 	updated: "2020-05-01T12:00:00Z",

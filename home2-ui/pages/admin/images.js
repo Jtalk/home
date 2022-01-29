@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import { Pagination } from "../../component/pagination";
 import { checkTruthy } from "../../utils/validation";
 import { formatDateTime } from "../../utils/date-time";
@@ -130,10 +130,10 @@ export const ImageUpload = function ({ uploadStatus, errorMessage, uploadImage }
   if (isUploading ^ (uploadStatus === Uploading.UPLOADING)) {
     setUploading(uploadStatus === Uploading.UPLOADING);
   }
-  let onUploadClick = () => {
+  let onUploadClick = useCallback(() => {
     setUploading(true);
-    uploadImage({ description, file: selectedFile });
-  };
+    uploadImage({ name: description, file: selectedFile });
+  }, [description, selectedFile, uploadImage]);
   return (
     <ImageUploadStateless
       {...{ uploadStatus, errorMessage, description, setDescription, selectedFile, selectFile, onUploadClick }}

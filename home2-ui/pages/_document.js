@@ -5,14 +5,14 @@ import getConfig from "next/config";
 
 const isDev = process.env.NODE_ENV !== "production";
 const apiUrl = new URL(getConfig().publicRuntimeConfig.api.prefix);
-const apiHost = `${apiUrl.protocol}//${apiUrl.hostname}`;
+const apiHost = `${apiUrl.protocol}//${apiUrl.hostname}:${apiUrl.port}`;
 
 const CSPHeader = "Content-Security-Policy";
 const CSPValue = (nonce) =>
   "default-src 'self';" +
   `script-src 'self' 'nonce-${nonce}' ${isDev ? "'unsafe-eval'" : ""};` +
   "style-src * 'unsafe-inline';" +
-  "img-src *;" +
+  "img-src * data:;" + // We use data: for image uploader
   "font-src 'self' data: fonts.gstatic.com fonts.googleapis.com;" +
   "media-src *;" +
   `connect-src 'self' *.bugsnag.com ${apiHost};` +

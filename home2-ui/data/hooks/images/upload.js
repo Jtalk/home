@@ -8,7 +8,7 @@ export function useImageUploader(page) {
   const [status, setStatus] = useState();
   const [error, setError] = useState();
   const uploader = useCallback(
-    async (name, file) => {
+    async ({ name, file }) => {
       setStatus(Uploading.UPLOADING);
       setError(null);
       try {
