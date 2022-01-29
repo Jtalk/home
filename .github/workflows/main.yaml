@@ -66,12 +66,16 @@ jobs:
           tags: |
             ${{ env.UI_DOCKER_IMAGE_PREFIX }}:${{ github.sha }}
             ${{ env.UI_DOCKER_IMAGE_PREFIX }}:latest
-          push: ${{ github.ref == 'refs/heads/master' }}
           load: true
           build-args: |
             REACT_APP_VERSION=${{ env.REACT_APP_VERSION }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
+      - name: Push images
+        if: github.ref == 'refs/heads/master'
+        run: |
+          docker push ${{ env.UI_DOCKER_IMAGE_PREFIX }}:${{ github.sha }}
+          docker push ${{ env.UI_DOCKER_IMAGE_PREFIX }}:latest
       - name: Save image for testing
         id: export-docker
         run: |
