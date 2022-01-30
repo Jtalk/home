@@ -3,6 +3,7 @@ use field_types::FieldName;
 use mongodb::bson::serde_helpers::chrono_datetime_as_bson_datetime;
 use mongodb::bson::serde_helpers::u64_as_f64;
 use serde::{Deserialize, Serialize};
+use uuid::Uuid;
 
 use crate::database::oid::{ConversionError, ObjectID};
 use crate::database::{Persisted, Sortable};
@@ -30,6 +31,8 @@ pub struct ImageFile {
 pub struct DatabaseImageFile {
     #[serde(rename = "_id")]
     pub id: ObjectID,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub old_id: Option<Uuid>,
     pub filename: String,
     #[serde(with = "u64_as_f64")]
     pub length: u64,
@@ -53,6 +56,7 @@ impl TryFrom<ImageFile> for DatabaseImageFile {
     fn try_from(source: ImageFile) -> Result<Self, ConversionError> {
         Ok(DatabaseImageFile {
             id: source.id.into_raw("id")?,
+            old_id: None,
             length: source.length,
             filename: source.filename,
             upload_date: source.uploaded,
