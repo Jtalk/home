@@ -4,11 +4,15 @@
   "private": true,
   "dependencies": {
     "migrate-mongo": "^8.2.2",
+    "mongodb": "^4.3.1",
     "uuid": "^8.3.0"
   },
   "scripts": {
     "up": "migrate-mongo up -f config.js && npm run status",
     "down": "migrate-mongo down -f config.js && npm run status",
     "status": "migrate-mongo status -f config.js"
+  },
+  "devDependencies": {
+    "@types/migrate-mongo": "^8.1.3"
   }
 }
