@@ -56,7 +56,7 @@ impl Into<ListOptions<Article>> for ListQuery {
             pagination: Some(OrderedPaginationOptions {
                 order: OrderOptions {
                     field: &ArticleFieldName::Created,
-                    direction: OrderDirection::Asc,
+                    direction: OrderDirection::Desc,
                 },
                 pagination: Some(PaginationOptions {
                     page: self.page,
