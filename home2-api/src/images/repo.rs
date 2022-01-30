@@ -132,6 +132,7 @@ impl Repo {
     async fn find_id(&self, id: &str) -> std::result::Result<ObjectId, FindImageIdError> {
         match Uuid::parse_str(id) {
             Ok(_) => {
+                warn!("Old style image ID was used: {}", id);
                 let result: Option<DatabaseImageFile> = self
                     .db
                     .db()
@@ -152,10 +153,7 @@ impl Repo {
                     Err(FindImageIdError::NotFound)
                 }
             }
-            Err(e) => {
-                warn!("Old style image ID was used: {}, {:#?}", id, e);
-                Ok(ObjectId::parse_str(id)?)
-            }
+            Err(e) => Ok(ObjectId::parse_str(id)?),
         }
     }
 }
