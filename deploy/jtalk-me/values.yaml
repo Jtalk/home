@@ -58,7 +58,7 @@ api:
     port: 8090
     image:
       name: jtalk/home-api
-    replicas: 1
+    replicas: 2
     rollingUpdate:
       maxSurge: 100%
       maxUnavailable: 50%
@@ -87,7 +87,7 @@ api:
         memory: 80Mi
       requests:
         cpu: 100m
-        memory: 80Mi
+        memory: 20Mi
 
 database:
   secret:
