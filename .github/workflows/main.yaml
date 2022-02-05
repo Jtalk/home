@@ -156,19 +156,14 @@ jobs:
           cache-from: type=gha,scope=api
           cache-to: type=gha,mode=max,scope=api
       - name: Integration test project (prebuild)
-        uses: docker/build-push-action@v2
-        with:
-          context: home2-api
-          target: integration-test
-          load: true
-          cache-from: type=gha,scope=api-integration-test
-          cache-to: type=gha,mode=max,scope=api-integration-test
+        working-directory: home2-api
+        run: docker buildx bake -f docker-compose.yaml --load --set test.cache-from=type=gha,scope=api-integration-test --set test.cache-to=type=gha,mode=max,scope=api-integration-test
       - name: Integration test project
         working-directory: home2-api
         env:
           COMPOSE_DOCKER_CLI_BUILD: "1"
           DOCKER_BUILDKIT: "1"
-        run: docker-compose up --abort-on-container-exit --build
+        run: docker-compose up --abort-on-container-exit
       - name: Push project
         if: github.ref == 'refs/heads/master'
         uses: docker/build-push-action@v2
