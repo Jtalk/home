@@ -11,6 +11,7 @@ edition = "2021"
 "test:unit" = "cargo test --bins"
 "test:unit:watch" = "cargo watch -x 'run-script test:unit'"
 "test:integration" = "cargo test --test '*'"
+"test:integration:prebuild" = "cargo test --test '*' --no-run"
 "test:integration:watch" = "cargo watch -x 'run-script test:integration'"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html

@@ -1,0 +1,26 @@
+services:
+  api:
+    container_name: api
+    build:
+      context: .
+    ports:
+      - "8090"
+    environment:
+      DATABASE_CONNECTION: mongodb://database:27017/home
+      AUTH_KEY: bGthc2pkaGdrYXNkaGdoZGFzamtnaGpka3NoZ2FrbGpzZGhnamtsZGhzZwo=
+      AUTH_MAX_AGE: 60s
+      CORS_ORIGINS: http://localhost:8070
+      ATOM_ARTICLE_URL_PREFIX: http://localhost:8070/blog/articles
+  database:
+    container_name: database
+    extends:
+      file: ../home2-dev/docker-compose.yml
+      service: mongo
+  test:
+    build:
+      context: .
+      target: integration-test
+    environment:
+      TEST_BASE_URL: http://api:8090
+    healthcheck:
+      start_period: 2m

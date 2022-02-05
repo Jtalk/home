@@ -140,8 +140,8 @@ jobs:
         with:
           context: home2-api
           target: test
-          cache-from: type=gha,scope=unit-test
-          cache-to: type=gha,mode=max,scope=unit-test
+          cache-from: type=gha,scope=api-unit-test
+          cache-to: type=gha,mode=max,scope=api-unit-test
       - name: Login to DockerHub
         if: github.ref == 'refs/heads/master'
         uses: docker/login-action@v1
@@ -152,12 +152,30 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           context: home2-api
-          push: ${{ github.ref == 'refs/heads/master' }}
+          load: true
+          cache-from: type=gha,scope=api
+          cache-to: type=gha,mode=max,scope=api
+      - name: Integration test project (prebuild)
+        uses: docker/build-push-action@v2
+        with:
+          context: home2-api
+          target: integration-test
+          load: true
+          cache-from: type=gha,scope=api-integration-test
+          cache-to: type=gha,mode=max,scope=api-integration-test
+      - name: Integration test project
+        working-directory: home2-api
+        run: docker-compose up --abort-on-container-exit --build
+      - name: Push project
+        if: github.ref == 'refs/heads/master'
+        uses: docker/build-push-action@v2
+        with:
+          context: home2-api
+          push: true
           tags: |
             ${{ env.API_DOCKER_IMAGE_PREFIX }}:${{ github.sha }}
             ${{ env.API_DOCKER_IMAGE_PREFIX }}:latest
-          cache-from: type=gha,scope=release
-          cache-to: type=gha,mode=max,scope=release
+          cache-from: type=gha,mode=max,scope=api
 
   build-release-backup:
     name: Build and Release Database Backup Script

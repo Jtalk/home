@@ -21,6 +21,17 @@ RUN cargo chef cook --recipe-path deps.json
 COPY . .
 RUN cargo run-script test:unit
 
+FROM rust as integration-test
+
+# Prebuild dependencies into their own layer cache
+COPY --from=deps-plan /build/deps.json deps.json
+RUN cargo chef cook --recipe-path deps.json
+
+COPY . .
+RUN cargo run-script test:integration:prebuild
+
+CMD ["cargo", "run-script", "test:integration"]
+
 FROM rust as build
 
 # Prebuild dependencies into their own layer cache
