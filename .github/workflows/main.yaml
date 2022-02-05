@@ -165,6 +165,9 @@ jobs:
           cache-to: type=gha,mode=max,scope=api-integration-test
       - name: Integration test project
         working-directory: home2-api
+        env:
+          COMPOSE_DOCKER_CLI_BUILD: "1"
+          DOCKER_BUILDKIT: "1"
         run: docker-compose up --abort-on-container-exit --build
       - name: Push project
         if: github.ref == 'refs/heads/master'
