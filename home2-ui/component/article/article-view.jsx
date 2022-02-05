@@ -9,6 +9,7 @@ import Segment from "semantic-ui-react/dist/commonjs/elements/Segment";
 import Item from "semantic-ui-react/dist/commonjs/views/Item";
 import Divider from "semantic-ui-react/dist/commonjs/elements/Divider";
 import Button from "semantic-ui-react/dist/commonjs/elements/Button";
+import styles from "./article-view.module.css";
 
 export const ArticleView = function ({ article, loading, href, preview }) {
   const articleLoading = isEmpty(article) && loading !== Loading.READY;
@@ -16,7 +17,7 @@ export const ArticleView = function ({ article, loading, href, preview }) {
   return (
     <Segment className="items">
       <Item data-id="blog-article-view">
-        <Item.Content>
+        <Item.Content className={styles.articleContent}>
           <ContentPlaceholderOr header lines={0} loading={articleLoading}>
             <Item.Header data-id="header">
               <Link shallow={!preview} href={href}>

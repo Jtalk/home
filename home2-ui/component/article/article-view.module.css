@@ -1,0 +1,5 @@
+
+/* Not sure why it's not part of Semantic itself, but width: auto overflows the content box */
+.article-content {
+    width: 100%;
+}
