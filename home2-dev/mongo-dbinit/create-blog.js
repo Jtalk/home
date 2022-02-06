@@ -16,18 +16,6 @@ function pad2(value) {
 	return value;
 }
 
-db.articles.createIndex({id: 1}, {unique: true});
-db.articles.createIndex({
-	title: "text",
-	id: "text",
-	content: "text",
-	tags: "text"
-}, {
-	weights: {
-		title: 3,
-		id: 2
-	}
-})
 db.articles.insert({
 	title: 'Test Article 1',
 	id: 'test-article',
