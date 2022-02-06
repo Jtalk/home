@@ -1,4 +1,4 @@
-FROM node:16
+FROM node:17
 
 ARG REACT_APP_VERSION
 WORKDIR /app
