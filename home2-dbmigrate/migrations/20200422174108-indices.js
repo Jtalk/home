@@ -1,4 +1,11 @@
+const mongodb = require("mongodb");
+
 module.exports = {
+  /**
+   * 
+   * @param {mongodb.Db} db 
+   * @param {mongodb.MongoClient} client 
+   */
   async up(db, client) {
 
     console.log("Dropping old indices");
@@ -14,8 +21,8 @@ module.exports = {
     await db.collection("authentication").createIndex("login.login", {unique: true, name: "authentication.login"});
 
     console.log("Creating sort indices");
-    await db.collection("articles").createIndex(["published", "created"], {name: "articles.published-created"});
-    await db.collection("projects").createIndex(["published", "order"], {name: "projects.published-order"});
+    await db.collection("articles").createIndex({ published: 1, created: 1 }, {name: "articles.published-created"});
+    await db.collection("projects").createIndex({ published: 1, order: 1 }, {name: "projects.published-order"});
   },
 
   async down(db, client) {
