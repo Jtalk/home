@@ -20,8 +20,6 @@ services:
     build:
       context: ../home2-dbmigrate
     command: up:wait
-    depends_on:
-      - mongo
     environment:
       DATABASE_URL: mongodb://mongo:27017
       DATABASE_URL_WAIT_ON: tcp://mongo:27017
