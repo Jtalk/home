@@ -116,10 +116,16 @@ async fn fetch_articles() {
         .unwrap();
     assert_eq!(resp_unpublished_anon.status(), StatusCode::FORBIDDEN);
 
-    let published_expected = &published[0];
+    let published_expected = published
+        .iter()
+        .find(|p| p["title"].as_str().unwrap().starts_with("Test Article"))
+        .expect("Must be at least one, we set them up in the dev bootstrap script");
     let unpublished_expected = all
         .iter()
-        .find(|p| p["published"] == false)
+        .find(|p| {
+            !p["published"].as_bool().unwrap()
+                && p["title"].as_str().unwrap().starts_with("Test Article")
+        })
         .expect("above assertions ensure there's at least one");
 
     let mut resp_published_one = client_anonymous
@@ -225,7 +231,7 @@ async fn create_update_delete_article(
 
     let article = json!({
       "id": id,
-        "title": "Test article for integration tests",
+        "title": "IT: Article for create/update/delete flow",
         "published": published,
         "created": "2021-12-21T13:14:15Z",
         "updated": "2021-12-21T23:14:15Z",
@@ -283,7 +289,7 @@ async fn create_update_article_unauthenticated(#[case] published: bool, #[case] 
 
     let article = json!({
       "id": "cannot-create-id",
-        "title": "Test article for integration tests",
+        "title": "IT: Article for unauthenticated create/update flow",
         "published": published,
         "created": "2021-12-21T13:14:15Z",
         "updated": "2021-12-21T23:14:15Z",
