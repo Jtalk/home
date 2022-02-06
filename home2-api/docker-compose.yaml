@@ -6,6 +6,8 @@ services:
       context: .
     ports:
       - "8090"
+    depends_on:
+      - database
     environment:
       DATABASE_CONNECTION: mongodb://database:27017/home
       AUTH_KEY: bGthc2pkaGdrYXNkaGdoZGFzamtnaGpka3NoZ2FrbGpzZGhnamtsZGhzZwo=
@@ -17,12 +19,19 @@ services:
     extends:
       file: ../home2-dev/docker-compose.yml
       service: mongo
+  database_migrator:
+    container_name: migrator
+    extends:
+      file: ../home2-dev/docker-compose.yml
+      service: migrator
   test:
     image: integration-test
     build:
       context: .
       target: integration-test
+    depends_on:
+      - api
+      - database
+      - database_migrator
     environment:
       TEST_BASE_URL: http://api:8090
-    healthcheck:
-      start_period: 2m

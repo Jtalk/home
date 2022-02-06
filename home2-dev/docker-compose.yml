@@ -1,9 +1,6 @@
-version: '3'
-
 services:
   mongo:
     build: mongo-dbinit
-    restart: always
     ports:
       - 27017:27017
     environment:
@@ -16,3 +13,16 @@ services:
       - 8081:8081
     depends_on:
       - mongo
+      - migrator
+
+  migrator:
+    image: migrate-dev
+    build:
+      context: ../home2-dbmigrate
+    command: up:wait
+    depends_on:
+      - mongo
+    environment:
+      DATABASE_URL: mongodb://mongo:27017
+      DATABASE_URL_WAIT_ON: tcp://mongo:27017
+      DATABASE_NAME: home
