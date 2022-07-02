@@ -1,0 +1,9 @@
+deploy/
+.git/
+.github/
+.DS_Store/
+Dockerfile
+.dockerignore
+.prettierignore
+README*
+LICENSE*
