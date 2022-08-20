@@ -105,7 +105,7 @@ jobs:
       - name: Load the pre-build UI docker image
         run: |
           docker load --input "${{ env.UI_IMAGE_ARTEFACT_NAME }}"
-      - uses: cypress-io/github-action@v2
+      - uses: cypress-io/github-action@v4
         with:
           browser: firefox
           headless: true
