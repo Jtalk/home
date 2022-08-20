@@ -1,7 +1,0 @@
-{
-  "baseUrl": "http://localhost:8070",
-  "projectId": "k3zgy6",
-  "env": {
-    "API_PREFIX": "http://localhost:8090"
-  }
-}

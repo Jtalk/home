@@ -10,7 +10,7 @@ on:
 
 env:
   CI: true
-  NODE_VERSION: 17.x
+  NODE_VERSION: 16.x
   NODE_ENV: production
 
   UI_IMAGE_ARTEFACT_NAME: "ui-docker-image"
@@ -105,7 +105,7 @@ jobs:
       - name: Load the pre-build UI docker image
         run: |
           docker load --input "${{ env.UI_IMAGE_ARTEFACT_NAME }}"
-      - uses: cypress-io/github-action@v2
+      - uses: cypress-io/github-action@v4
         with:
           browser: firefox
           headless: true

@@ -139,6 +139,5 @@ module.exports = withBundleAnalyzer(
         },
       ];
     },
-    excludeFile: (str) => /\*.{spec,test}.js/.test(str),
   })
 );
