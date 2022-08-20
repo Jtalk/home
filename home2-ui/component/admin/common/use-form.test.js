@@ -1,4 +1,4 @@
-import { act, renderHook } from "@testing-library/react-hooks";
+import { act, renderHook } from "@testing-library/react";
 import { reportError } from "../../../utils/error-reporting";
 import { useForm } from "./use-form";
 
