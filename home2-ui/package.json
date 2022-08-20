@@ -48,7 +48,7 @@
   "dependencies": {
     "@bugsnag/js": "^7.17.0",
     "@bugsnag/plugin-react": "^7.17.0",
-    "@jtalk/react-image-loading": "^0.4.0",
+    "@jtalk/react-image-loading": "~0.4.0",
     "@next/bundle-analyzer": "^12.2.5",
     "@zeit/next-source-maps": "0.0.3",
     "dayjs": "^1.11.5",
